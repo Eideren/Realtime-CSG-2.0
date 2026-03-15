@@ -56,7 +56,7 @@ namespace InternalRealtimeCSG
 			int colliderCounter = 1;
 			int shadowOnlyCounter = 1;
 			var materialMeshCounters = new Dictionary<Material, int>();
-			
+
 			var currentScene = model.gameObject.scene;
 			var foundMeshContainers = SceneQueryUtility.GetAllComponentsInScene<GeneratedMeshes>(currentScene);
 			var bounds = new AABB();
@@ -174,7 +174,7 @@ namespace InternalRealtimeCSG
 				if (float.IsInfinity(center.x) || float.IsNaN(center.x)) center.x = 0;
 				if (float.IsInfinity(center.y) || float.IsNaN(center.y)) center.y = 0;
 				if (float.IsInfinity(center.z) || float.IsNaN(center.z)) center.z = 0;
-				
+
 				var modifiedMeshes = new Dictionary<Mesh, Mesh>();
 				foreach (var meshFilter in foundMeshFilters)
 				{
@@ -183,7 +183,7 @@ namespace InternalRealtimeCSG
 					{
 						continue;
 					}
-					
+
 					Mesh newMesh;
 					if (!modifiedMeshes.TryGetValue(mesh, out newMesh))
 					{
@@ -201,7 +201,7 @@ namespace InternalRealtimeCSG
 					meshFilter.sharedMesh = newMesh;
 					meshFilter.transform.position = Vector3.zero;
 				}
-				
+
 				foreach (var meshCollider in foundMeshColliders)
 				{
 					var mesh = meshCollider.sharedMesh;
@@ -209,7 +209,7 @@ namespace InternalRealtimeCSG
 					{
 						continue;
 					}
-					
+
 					Mesh newMesh;
 					if (!modifiedMeshes.TryGetValue(mesh, out newMesh))
 					{
@@ -227,7 +227,7 @@ namespace InternalRealtimeCSG
 					meshCollider.sharedMesh = newMesh;
 					meshCollider.transform.position = Vector3.zero;
 				}
-				
+
 				UnityEngine.GameObject prefabObj;
 				GameObject modelGameObject;
 				switch (exportType)
@@ -243,7 +243,7 @@ namespace InternalRealtimeCSG
 						prefabObj = AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(newPath);
 
 						modelGameObject = CSGPrefabUtility.Instantiate(prefabObj);
-						
+
 						foreach (var renderer in modelGameObject.GetComponentsInChildren<MeshRenderer>())
 						{
 							var gameObject = renderer.gameObject;
@@ -294,10 +294,10 @@ namespace InternalRealtimeCSG
 						if (!int.TryParse(nameSplit[1], out instanceId))
 							continue;
 
-						var realMaterial = EditorUtility.InstanceIDToObject(instanceId) as Material;
+						var realMaterial = EditorUtility.EntityIdToObject(instanceId) as Material;
 						if (!realMaterial)
 							continue;
-						
+
 						meshRenderer.sharedMaterial = realMaterial;
 						gameObject.name = nameSplit[0];
 					}
@@ -316,10 +316,10 @@ namespace InternalRealtimeCSG
 				modelGameObject.transform.SetParent(model.transform, true);
 				modelGameObject.transform.SetSiblingIndex(0);
 				modelGameObject.tag						= model.gameObject.tag;
-				
-				modelGameObject.transform.localPosition = center - position; 
 
-				
+				modelGameObject.transform.localPosition = center - position;
+
+
 				Undo.RegisterCreatedObjectUndo(modelGameObject, "Instantiated model");
 
 
@@ -336,7 +336,7 @@ namespace InternalRealtimeCSG
 				var foundContainers = model.GetComponentsInChildren<GeneratedMeshes>(true);
 
 				var foundBehaviours = new HashSet<MonoBehaviour>();
-					
+
 				foreach (var foundBrush		in foundBrushes	  ) foundBehaviours.Add(foundBrush);
 				foreach (var foundOperation in foundOperations) foundBehaviours.Add(foundOperation);
 				foreach (var foundModel		in foundModels	  ) foundBehaviours.Add(foundModel);
@@ -357,7 +357,7 @@ namespace InternalRealtimeCSG
 					exported.hiddenComponents[i].hideFlags	= exported.hiddenComponents[i].behaviour.hideFlags;
 					exported.hiddenComponents[i].enabled	= exported.hiddenComponents[i].behaviour.enabled;
 				}
-				
+
 				for (var i = 0; i < exported.hiddenComponents.Length; i++)
 				{
 					exported.hiddenComponents[i].behaviour.hideFlags	= exported.hiddenComponents[i].behaviour.hideFlags | ComponentHideFlags;
@@ -392,7 +392,7 @@ namespace InternalRealtimeCSG
 				{
 					if (!exported.hiddenComponents[i].behaviour)
 						continue;
-					
+
 					Undo.RegisterCompleteObjectUndo(exported.hiddenComponents[i].behaviour, "Show hidden component");
 					exported.hiddenComponents[i].behaviour.enabled = exported.hiddenComponents[i].enabled;
 					exported.hiddenComponents[i].behaviour.hideFlags = exported.hiddenComponents[i].hideFlags;

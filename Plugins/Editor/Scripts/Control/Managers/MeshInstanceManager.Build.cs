@@ -13,12 +13,12 @@ namespace InternalRealtimeCSG
         internal static void OnBuild()
         {
             // apparently only way to determine current scene while post processing a scene
-            var randomObject = UnityEngine.Object.FindObjectOfType<Transform>();
+            var randomObject = UnityEngine.Object.FindAnyObjectByType<Transform>();
             if (!randomObject)
                 return;
 
             var currentScene = randomObject.gameObject.scene;
-            
+
             var foundMeshContainers = SceneQueryUtility.GetAllComponentsInScene<GeneratedMeshes>(currentScene);
             foreach (var meshContainer in foundMeshContainers)
             {
@@ -28,7 +28,7 @@ namespace InternalRealtimeCSG
                     UnityEngine.Object.DestroyImmediate(meshContainer.gameObject);
                     continue;
                 }
-                
+
                 if (model.NeedAutoUpdateRigidBody)
                     AutoUpdateRigidBody(meshContainer);
 
@@ -75,7 +75,7 @@ namespace InternalRealtimeCSG
                     {
                         var meshRenderer = instance.gameObject.GetComponent<MeshRenderer>();
                         if (meshRenderer)
-                        { 
+                        {
                             meshRenderer.enabled = true;
                         }
                     }
@@ -160,7 +160,7 @@ namespace InternalRealtimeCSG
                 var model = csgnode as CSGModel;
 
                 if (
-                        (model && model.name == InternalCSGModelManager.DefaultModelName && 
+                        (model && model.name == InternalCSGModelManager.DefaultModelName &&
                             (model.transform.childCount == 0 ||
                                 (model.transform.childCount == 1 &&
                                 model.transform.GetChild(0).name == MeshContainerName &&
@@ -179,7 +179,7 @@ namespace InternalRealtimeCSG
                 } else
                 if (gameObject.CompareTag("Untagged"))
                     removableGameObjects.Add(gameObject);
-                
+
                 if (csgnode)
                 {
                     if (CSGProjectSettings.Instance.SaveMeshesInSceneFiles || !EditorApplication.isPlayingOrWillChangePlaymode)

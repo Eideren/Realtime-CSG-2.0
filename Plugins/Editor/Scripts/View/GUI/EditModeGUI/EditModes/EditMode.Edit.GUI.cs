@@ -47,7 +47,7 @@ namespace RealtimeCSG
 						buttonArea.y += 2;
 						buttonArea.height = 13;
 						buttonArea.width = 13;
-						if (GUI.Button(buttonArea, GUIContent.none, "WinBtnClose"))
+						if (GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
 							EditModeToolWindowSceneGUI.GetWindow();
 						TooltipUtility.SetToolTip(CSG_GUIStyleUtility.PopOutTooltip, buttonArea);
 
@@ -122,7 +122,7 @@ namespace RealtimeCSG
 				{
 					bool passThroughValue = false;
 					if (tool != null &&
-						//filteredSelection.BrushTargets.Length == 0 && 
+						//filteredSelection.BrushTargets.Length == 0 &&
 						filteredSelection.OperationTargets.Length > 0 &&
 						filteredSelection.OperationTargets.Length == filteredSelection.NodeTargets.Length) // only operations
 					{
@@ -181,7 +181,7 @@ namespace RealtimeCSG
 		/*
 				GUILayout.BeginHorizontal(GUIStyleUtility.ContentEmpty);
 				{
-					
+
 					GUILayout.BeginVertical(isSceneGUI ? GUI.skin.box : GUIStyle.none);
 					{
 						//GUILayout.Label(Keys.VerticalMoveMode.ToString() + " to dragging brush up/down", EditorStyles.miniLabel);
@@ -197,12 +197,12 @@ namespace RealtimeCSG
 			EditModeCommonGUI.StartToolGUI();
 
 			var filteredSelection = EditModeManager.FilteredSelection;
-			
+
 			var left	= EditorStyles.miniButtonLeft;
 			var middle	= EditorStyles.miniButtonMid;
 			var right	= EditorStyles.miniButtonRight;
 			var button	= GUI.skin.button;
-								   
+
 
 			var defaultMaterial = CSGSettings.DefaultMaterial;
 			GUILayout.BeginVertical(isSceneGUI ? InSceneWidth : CSG_GUIStyleUtility.ContentEmpty);
@@ -217,7 +217,7 @@ namespace RealtimeCSG
 
 					EditorGUILayout.LabelField(ContentSelection);
 					EditorGUI.BeginChangeCheck();
-					{ 
+					{
 						GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
 						{
 							selectionIgnoreBackfaced = GUILayout.Toggle(selectionIgnoreBackfaced, ContentIgnoreHidden, button);
@@ -256,7 +256,7 @@ namespace RealtimeCSG
 				{
 					var autoCommitExtrusion = CSGSettings.AutoCommitExtrusion;
 					EditorGUI.BeginChangeCheck();
-					{ 
+					{
 						autoCommitExtrusion = GUILayout.Toggle(autoCommitExtrusion, ContentAutoCommitExtrusion, button);
 						TooltipUtility.SetToolTip(TooltipAutoCommitExtrusion);
 					}
@@ -313,7 +313,7 @@ namespace RealtimeCSG
 							GUILayout.BeginHorizontal(GUIStyleUtility.ContentEmpty);
 							{
 								EditorGUI.BeginDisabledGroup(!tool.CanSmooth());
-								{ 
+								{
 									if (GUILayout.Button("Smooth"))		{ tool.Smooth(); }
 								}
 								EditorGUI.EndDisabledGroup();
@@ -325,7 +325,7 @@ namespace RealtimeCSG
 							}
 							GUILayout.EndHorizontal();
 							*/
-						
+
 							if (GUILayout.Button(ContentSnapToGrid)) { tool.SnapToGrid(Camera.current); }
 							TooltipUtility.SetToolTip(TooltipSnapToGrid);
 						}
@@ -370,7 +370,7 @@ namespace RealtimeCSG
 					GUILayout.EndVertical();
 					*/
 				} else
-				{ 
+				{
 					EditorGUI.BeginChangeCheck();
 					{
 						defaultMaterial = EditorGUILayout.ObjectField(defaultMaterial, typeof(Material), true) as Material;

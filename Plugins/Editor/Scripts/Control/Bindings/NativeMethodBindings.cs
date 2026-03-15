@@ -83,32 +83,32 @@ namespace RealtimeCSG
 
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern void ClearMethods();
-		
+
 		public static void RegisterUnityMethods()
 		{
 			UnityMethods unityMethods;
-			
+
 			unityMethods.DebugLog           = delegate (string message, int uniqueObjectID)
 			{
-				Debug.Log(message, (uniqueObjectID != 0) ? EditorUtility.InstanceIDToObject(uniqueObjectID) : null);
+				Debug.Log(message, (uniqueObjectID != 0) ? EditorUtility.EntityIdToObject(uniqueObjectID) : null);
 			};
-			unityMethods.DebugLogError      = delegate (string message, int uniqueObjectID) 
+			unityMethods.DebugLogError      = delegate (string message, int uniqueObjectID)
 			{
-				Debug.LogError(message, (uniqueObjectID != 0) ? EditorUtility.InstanceIDToObject(uniqueObjectID) : null);
+				Debug.LogError(message, (uniqueObjectID != 0) ? EditorUtility.EntityIdToObject(uniqueObjectID) : null);
 			};
-			unityMethods.DebugLogWarning    = delegate (string message, int uniqueObjectID) 
+			unityMethods.DebugLogWarning    = delegate (string message, int uniqueObjectID)
 			{
-				Debug.LogWarning(message, (uniqueObjectID != 0) ? EditorUtility.InstanceIDToObject(uniqueObjectID) : null);
+				Debug.LogWarning(message, (uniqueObjectID != 0) ? EditorUtility.EntityIdToObject(uniqueObjectID) : null);
 			};
 			unityMethods.NameForUserID		= delegate (int uniqueObjectID)
 			{
-				var obj = (uniqueObjectID != 0) ? EditorUtility.InstanceIDToObject(uniqueObjectID) : null;
+				var obj = (uniqueObjectID != 0) ? EditorUtility.EntityIdToObject(uniqueObjectID) : null;
 				if (obj == null)
 					return "<unknown>";
 				else
 					return obj.name;
 			};
-			
+
 			RegisterMethods(ref unityMethods);
 		}
 
@@ -136,12 +136,12 @@ namespace RealtimeCSG
 		#endregion
 
 		#region Polygon Convex Decomposition
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool DecomposeStart(Int32			vertexCount,
-												  [In] IntPtr	vertices,		
+												  [In] IntPtr	vertices,
 												  out Int32		polygonCount);
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool DecomposeGetSizes(Int32			polygonCount,
 													 [Out] IntPtr	polygonSizes);
@@ -191,7 +191,7 @@ namespace RealtimeCSG
 
 		#endregion
 
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool SetDirty			(Int32				nodeID);
 
@@ -201,7 +201,7 @@ namespace RealtimeCSG
 													 out Int32			generatedTreeNodeID);
 
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
-		private static extern bool SetTreeEnabled	(Int32				modelNodeID, 
+		private static extern bool SetTreeEnabled	(Int32				modelNodeID,
 												     bool				isEnabled);
 
 
@@ -241,7 +241,7 @@ namespace RealtimeCSG
 
 			IntPtr		ignoreNodeIDsPtr	= IntPtr.Zero;
 			GCHandle	ignoreNodeIDsHandle	= new GCHandle();
-			
+
 			if (ignoreBrushes != null)
 			{
 				var ignoreNodeIDsList = new List<Int32>(ignoreBrushes.Length);
@@ -253,14 +253,14 @@ namespace RealtimeCSG
 						continue;
 					ignoreNodeIDsList.Add(ignoreBrushes[i].brushNodeID);
 				}
-				
+
 				var ignoreNodeIDs	= ignoreNodeIDsList.ToArray();
 				ignoreNodeIDsHandle	= GCHandle.Alloc(ignoreNodeIDs, GCHandleType.Pinned);
 				ignoreNodeIDsPtr	= ignoreNodeIDsHandle.AddrOfPinnedObject();
 			}
 
 			var modelLocalToWorldMatrix = model.transform.localToWorldMatrix;
-			Int32 intersectionCount = RayCastIntoTreeMultiCount(model.modelNodeID, 
+			Int32 intersectionCount = RayCastIntoTreeMultiCount(model.modelNodeID,
 																 ref worldRayStart,
 																 ref worldRayEnd,
 																 ref modelLocalToWorldMatrix,
@@ -283,7 +283,7 @@ namespace RealtimeCSG
 				__outputIntersections = new CSGTreeBrushIntersection[intersectionCount];
 				__prevIntersectionCount = intersectionCount;
 			}
-			
+
 			GCHandle	outputIntersectionsHandle	= GCHandle.Alloc(__outputIntersections, GCHandleType.Pinned);
 			IntPtr		outputIntersectionsPtr		= outputIntersectionsHandle.AddrOfPinnedObject();
 
@@ -297,11 +297,11 @@ namespace RealtimeCSG
 				intersections = null;
 				return false;
 			}
-			
-			var intersectionList = new List<LegacyBrushIntersection>();			
+
+			var intersectionList = new List<LegacyBrushIntersection>();
 			for (int i = 0, t = 0; i < intersectionCount; i++, t+=3)
 			{
-				var obj					= EditorUtility.InstanceIDToObject(__outputIntersections[i].brushUserID);
+				var obj					= EditorUtility.EntityIdToObject(__outputIntersections[i].brushUserID);
 				var monoBehaviour = obj as MonoBehaviour;
 				if (monoBehaviour == null || !monoBehaviour)
 					continue;
@@ -309,7 +309,7 @@ namespace RealtimeCSG
 				var gameObject = monoBehaviour.gameObject;
 				if (((1 << gameObject.layer) & visibleLayers) == 0)
 					continue;
-					
+
 				var distance = (__outputIntersections[i].intersection.worldIntersection - worldRayStart).magnitude;
 
 				intersectionList.Add(new LegacyBrushIntersection
@@ -318,7 +318,7 @@ namespace RealtimeCSG
 					model				= model,
 					brushNodeID			= __outputIntersections[i].brush.NodeID,
 					surfaceIndex		= __outputIntersections[i].surfaceID,
-					
+
 					localPlane			= new CSGPlane(__outputIntersections[i].intersection.localPlane),
 					modelPlane			= new CSGPlane(__outputIntersections[i].intersection.modelPlane),
 					worldPlane			= new CSGPlane(__outputIntersections[i].intersection.worldPlane),
@@ -337,7 +337,7 @@ namespace RealtimeCSG
 			intersections = intersectionList.ToArray();
 			return true;
 		}
-		
+
 		static readonly List<LegacyBrushIntersection> __intersectionList = new List<LegacyBrushIntersection>();
 		private static bool RayCastMulti(int						modelCount,
 										 CSGModel[]					models,
@@ -355,7 +355,7 @@ namespace RealtimeCSG
 
 			IntPtr ignoreNodeIDsPtr = IntPtr.Zero;
 			GCHandle ignoreNodeIDsHandle = new GCHandle();
-			
+
 			if (ignoreBrushes != null)
 			{
 				var ignoreNodeIDsList = new List<Int32>(ignoreBrushes.Length);
@@ -367,12 +367,12 @@ namespace RealtimeCSG
 						continue;
 					ignoreNodeIDsList.Add(ignoreBrushes[i].brushNodeID);
 				}
-				
+
 				var ignoreNodeIDs	= ignoreNodeIDsList.ToArray();
 				ignoreNodeIDsHandle = GCHandle.Alloc(ignoreNodeIDs, GCHandleType.Pinned);
 				ignoreNodeIDsPtr	= ignoreNodeIDsHandle.AddrOfPinnedObject();
 			}
-			
+
 			GCHandle outputIntersectionsHandle = GCHandle.Alloc(__outputIntersections, GCHandleType.Pinned);
 
 			var visibleLayers	 = Tools.visibleLayers;
@@ -381,7 +381,7 @@ namespace RealtimeCSG
 			{
 				var model					= models[m];
 				var modelLocalToWorldMatrix	= model.transform.localToWorldMatrix;
-				Int32 intersectionCount		= RayCastIntoTreeMultiCount(model.modelNodeID, 
+				Int32 intersectionCount		= RayCastIntoTreeMultiCount(model.modelNodeID,
 																		 ref rayStart,
 																		 ref rayEnd,
 																		 ref modelLocalToWorldMatrix,
@@ -392,27 +392,27 @@ namespace RealtimeCSG
 
 				if (intersectionCount == 0)
 					continue;
-				
+
 				if (__prevIntersectionCount < intersectionCount)
 				{
-					if (outputIntersectionsHandle.IsAllocated) 
+					if (outputIntersectionsHandle.IsAllocated)
 						outputIntersectionsHandle.Free();
 					__outputIntersections		= new CSGTreeBrushIntersection[intersectionCount];
 					__prevIntersectionCount		= intersectionCount;
 					outputIntersectionsHandle	= GCHandle.Alloc(__outputIntersections, GCHandleType.Pinned);
 				}
-			
+
 				IntPtr	outputIntersectionsPtr = outputIntersectionsHandle.AddrOfPinnedObject();
 
 				var result = RayCastMultiGet(intersectionCount,
 											 outputIntersectionsPtr);
-								
+
 				if (!result)
 					continue;
-				
+
 				for (int i = 0, t = 0; i < intersectionCount; i++, t+=3)
 				{
-					var obj					= EditorUtility.InstanceIDToObject(__outputIntersections[i].brushUserID);
+					var obj					= EditorUtility.EntityIdToObject(__outputIntersections[i].brushUserID);
 					var monoBehaviour = obj as MonoBehaviour;
 					if (monoBehaviour == null || !monoBehaviour)
 						continue;
@@ -422,27 +422,27 @@ namespace RealtimeCSG
 						continue;
 
 					var distance = (__outputIntersections[i].intersection.worldIntersection - rayStart).magnitude;
-					
+
 					__intersectionList.Add(new LegacyBrushIntersection
 					{
 						gameObject			= gameObject,
 						model				= model,
 						brushNodeID			= __outputIntersections[i].brush.NodeID,
 						surfaceIndex		= __outputIntersections[i].surfaceID,
-						
+
 						localPlane			= new CSGPlane(__outputIntersections[i].intersection.localPlane),
 						modelPlane			= new CSGPlane(__outputIntersections[i].intersection.modelPlane),
 						worldPlane			= new CSGPlane(__outputIntersections[i].intersection.worldPlane),
 						worldIntersection	= __outputIntersections[i].intersection.worldIntersection,
 						surfaceIntersection = __outputIntersections[i].intersection.surfaceIntersection,
-						distance			= distance//__outputIntersections[i].intersection.distance,						
+						distance			= distance//__outputIntersections[i].intersection.distance,
 					});
 				}
 			}
 
 			if (outputIntersectionsHandle.IsAllocated)
 				outputIntersectionsHandle.Free();
-			
+
 			if (ignoreNodeIDsHandle.IsAllocated)
 				ignoreNodeIDsHandle.Free();
 
@@ -460,7 +460,7 @@ namespace RealtimeCSG
 			intersections = __intersectionList.ToArray();
 			return true;
 		}
-		
+
 
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool RayCastIntoBrush(Int32				brushNodeID,
@@ -470,7 +470,7 @@ namespace RealtimeCSG
 													bool				ignoreInvisiblePolygons,
 													out CSGTreeBrushIntersection	outputBrushIntersection);
 
-		private static bool RayCastIntoBrush(Int32					brushNodeID, 
+		private static bool RayCastIntoBrush(Int32					brushNodeID,
 											 Vector3				rayStart,
 											 Vector3				rayEnd,
 											 Matrix4x4				modelLocalToWorldMatrix,
@@ -501,12 +501,12 @@ namespace RealtimeCSG
 				model				= null,
 				brushNodeID			= brushNodeID,
 				surfaceIndex		= outputBrushIntersection.surfaceID,
-				
+
 				localPlane			= new CSGPlane(outputBrushIntersection.intersection.localPlane),
 				modelPlane			= new CSGPlane(outputBrushIntersection.intersection.modelPlane),
 				worldPlane			= new CSGPlane(outputBrushIntersection.intersection.worldPlane),
 				worldIntersection	= outputBrushIntersection.intersection.worldIntersection,
-				surfaceIntersection = outputBrushIntersection.intersection.surfaceIntersection				
+				surfaceIntersection = outputBrushIntersection.intersection.surfaceIntersection
 			};
 			return true;
 		}
@@ -515,15 +515,15 @@ namespace RealtimeCSG
 
 
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
-		private static extern bool RayCastIntoBrushSurface(Int32				brushNodeID, 
+		private static extern bool RayCastIntoBrushSurface(Int32				brushNodeID,
 														   Int32				surfaceID,
 														   [In]ref Vector3		rayStart,
 														   [In]ref Vector3		rayEnd,
 														   [In]ref Matrix4x4	modelLocalToWorldMatrix,
 														   out  CSGSurfaceIntersection outputSurfaceIntersection);
 
-		private static bool RayCastIntoBrushSurface(Int32							brushNodeID, 
-													Int32							surfaceID, 
+		private static bool RayCastIntoBrushSurface(Int32							brushNodeID,
+													Int32							surfaceID,
 													Vector3							rayStart,
 													Vector3							rayEnd,
 													Matrix4x4						modelLocalToWorldMatrix,
@@ -546,7 +546,7 @@ namespace RealtimeCSG
 				intersection = null;
 				return false;
 			}
-					
+
 			var distance = (outputSurfaceIntersection.worldIntersection - rayStart).magnitude;
 
 			intersection = new LegacySurfaceIntersection
@@ -560,20 +560,20 @@ namespace RealtimeCSG
 			};
 			return true;
 		}
-		
-			
-		
+
+
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
-		private static extern int FindNodesInFrustum(Int32			modelNodeID, 
+		private static extern int FindNodesInFrustum(Int32			modelNodeID,
 													 Int32			planeCount,
 													 [In] IntPtr	planes);
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool RetrieveUserIDsInFrustum(Int32			objectIDCount,
 															[Out] IntPtr	objectIDs);
 
-		private static bool GetItemsInFrustum(CSGModel				model, 
-											  Plane[]				planes, 
+		private static bool GetItemsInFrustum(CSGModel				model,
+											  Plane[]				planes,
 											  HashSet<GameObject>	gameObjects)
 		{
 			var visibleLayers = Tools.visibleLayers;
@@ -581,7 +581,7 @@ namespace RealtimeCSG
 			{
 				return false;
 			}
-						
+
 			if (planes == null ||
 				planes.Length != 6)
 			{
@@ -624,12 +624,12 @@ namespace RealtimeCSG
 			bool found = false;
 			for (int i = ids.Length - 1; i >= 0; i--)
 			{
-				var obj			= EditorUtility.InstanceIDToObject(ids[i]);
+				var obj			= EditorUtility.EntityIdToObject(ids[i]);
 				var brush		= obj as MonoBehaviour;
 				var gameObject	= (brush != null) ? brush.gameObject : null;
 				if (gameObject == null)
 					continue;
-				
+
 				gameObjects.Add(gameObject);
 				found = true;
 			}
@@ -652,10 +652,10 @@ namespace RealtimeCSG
 		}
 
 
-				
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool DestroyNode(Int32			nodeID);
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool DestroyNodes(Int32			nodeCount,
 												 [In] IntPtr	nodeIDs);
@@ -678,7 +678,7 @@ namespace RealtimeCSG
 												  out Int32	generatedOperationNodeID);
 
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
-		private static extern bool SetBranchOperationType(Int32				operationNodeID, 
+		private static extern bool SetBranchOperationType(Int32				operationNodeID,
 															 CSGOperationType	operation);
 
 
@@ -689,7 +689,7 @@ namespace RealtimeCSG
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool GenerateBrush(Int32		userID,
 												 out Int32	generatedBrushNodeID);
-		
+
 		[DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
 		private static extern Int32 GetBrushMeshID(Int32 brushNodeID);
 
@@ -706,7 +706,7 @@ namespace RealtimeCSG
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool SetBrushOperationType(Int32				brushNodeID,
 														 CSGOperationType	operation);
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern Int32 CreateBrushMesh(Int32		userID,
 													Int32		vertexCount,
@@ -728,12 +728,12 @@ namespace RealtimeCSG
 			IntPtr		verticesPtr		= verticesHandle.AddrOfPinnedObject();
 			IntPtr		halfEdgesPtr	= halfEdgesHandle.AddrOfPinnedObject();
 			IntPtr		polygonsPtr		= polygonsHandle.AddrOfPinnedObject();
-			
+
 			var result = CreateBrushMesh(userID,
 										 brushMesh.vertices.Length,	 verticesPtr,
 										 brushMesh.halfEdges.Length, halfEdgesPtr,
 										 brushMesh.polygons.Length,	 polygonsPtr);
-			
+
 			polygonsHandle.Free();
 			halfEdgesHandle.Free();
 			verticesHandle.Free();
@@ -760,18 +760,18 @@ namespace RealtimeCSG
 			IntPtr		verticesPtr		= verticesHandle.AddrOfPinnedObject();
 			IntPtr		halfEdgesPtr	= halfEdgesHandle.AddrOfPinnedObject();
 			IntPtr		polygonsPtr		= polygonsHandle.AddrOfPinnedObject();
-			
-			var result = UpdateBrushMesh(brushMeshIndex, 
+
+			var result = UpdateBrushMesh(brushMeshIndex,
 										 brushMesh.vertices.Length,	 verticesPtr,
 										 brushMesh.halfEdges.Length, halfEdgesPtr,
 										 brushMesh.polygons.Length,	 polygonsPtr);
-			
+
 			polygonsHandle.Free();
 			halfEdgesHandle.Free();
 			verticesHandle.Free();
 			return result;
 		}
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool DestroyBrushMesh(Int32	brushMeshIndex);
 
@@ -782,8 +782,8 @@ namespace RealtimeCSG
 		[DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
 		private static extern bool SetNodeLocalTransformation(Int32 brushNodeID,
 														[In]ref Matrix4x4 localToModelSpace);
-		
-		private static bool SetBrushToModelSpace(Int32 brushNodeID, 
+
+		private static bool SetBrushToModelSpace(Int32 brushNodeID,
 												 Matrix4x4 localToModelSpace)
 		{
 			return SetNodeLocalTransformation(brushNodeID, ref localToModelSpace);
@@ -794,9 +794,9 @@ namespace RealtimeCSG
 
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool GetSurfaceMinMaxTexCoords (Int32			brushNodeID,
-															  Int32			surfaceID, 
+															  Int32			surfaceID,
 															  Matrix4x4		modelLocalToWorldMatrix,
-															  out Vector2	minTextureCoordinate, 		
+															  out Vector2	minTextureCoordinate,
 															  out Vector2	maxTextureCoordinate);
 
 
@@ -804,18 +804,18 @@ namespace RealtimeCSG
 		private static extern bool ConvertWorldToTextureCoord(Int32			brushNodeID,
 															  Int32			surfaceID,
 															  Matrix4x4		modelLocalToWorldMatrix,
-															  Vector3		worldCoordinate, 
+															  Vector3		worldCoordinate,
 															  out Vector2	textureCoordinate);
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool ConvertTextureToWorldCoord(Int32			brushNodeID,
-															  Int32			surfaceID, 
-															  float			textureCoordinateU, 
+															  Int32			surfaceID,
+															  float			textureCoordinateU,
 															  float			textureCoordinateV,
 															  // workaround for mac-osx related bug
 															  ref Matrix4x4 modelLocalToWorldMatrix,
-															  ref float		worldCoordinateX, 
-															  ref float		worldCoordinateY, 
+															  ref float		worldCoordinateX,
+															  ref float		worldCoordinateY,
 															  ref float		worldCoordinateZ);
 		#endregion
 
@@ -824,33 +824,33 @@ namespace RealtimeCSG
 		private static extern bool UpdateAllTreeMeshes();
 
 		[DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
-		private static extern bool GenerateMeshDescriptions(Int32				modelNodeID, 
+		private static extern bool GenerateMeshDescriptions(Int32				modelNodeID,
 														    Int32				meshTypeCount,
 														    [In]IntPtr			meshTypes,
 														    VertexChannelFlags	vertexChannelMask,
 														    out Int32			meshDescriptionCount);
 
 		[DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
-		private static extern bool GetMeshDescriptions(Int32		modelNodeID, 
+		private static extern bool GetMeshDescriptions(Int32		modelNodeID,
 													   Int32        meshDescriptionCount,
 													   [Out] IntPtr meshDescriptions);
 
-		private static bool GetMeshDescriptions(Int32					modelNodeID, 	
+		private static bool GetMeshDescriptions(Int32					modelNodeID,
 												Foundation.MeshQuery[]	meshTypes,
-												VertexChannelFlags		vertexChannelMask, 
+												VertexChannelFlags		vertexChannelMask,
 												ref Foundation.GeneratedMeshDescription[] meshDescriptions)
 		{
 			Int32 meshDescriptionCount = 0;
-		
+
 			GCHandle	nativeMeshTypeHandle	= GCHandle.Alloc(meshTypes, GCHandleType.Pinned);
 			IntPtr		nativeMeshTypePtr		= nativeMeshTypeHandle.AddrOfPinnedObject();
-			
+
 			var result = GenerateMeshDescriptions(modelNodeID, meshTypes.Length, nativeMeshTypePtr, vertexChannelMask, out meshDescriptionCount);
-			
+
 			nativeMeshTypeHandle.Free();
 			if (!result)
 				return false;
-			
+
 			if (meshDescriptionCount != meshDescriptions.Length)
 				meshDescriptions = new Foundation.GeneratedMeshDescription[meshDescriptionCount];
 
@@ -859,20 +859,20 @@ namespace RealtimeCSG
 
 			var meshDescriptionsHandle	= GCHandle.Alloc(meshDescriptions, GCHandleType.Pinned);
 			var meshDescriptionsPtr		= meshDescriptionsHandle.AddrOfPinnedObject();
-			
+
 			result = GetMeshDescriptions(modelNodeID, meshDescriptionCount, meshDescriptionsPtr);
-			
+
 			meshDescriptionsHandle.Free();
 			return result;
 		}
-		
+
 		private static bool GetMeshDescriptions(CSGModel model, ref Foundation.GeneratedMeshDescription[] meshDescriptions)
 		{
 			return GetMeshDescriptions(model.modelNodeID, InternalCSGModelManager.GetMeshTypesForModel(model), model.VertexChannels, ref meshDescriptions);
 		}
-		
+
 		[DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
-		private static extern bool GetGeneratedMesh(Int32			modelNodeID, 
+		private static extern bool GetGeneratedMesh(Int32			modelNodeID,
 													Int32			meshIndex,
 													Int32			subMeshIndex,
 
@@ -887,11 +887,11 @@ namespace RealtimeCSG
 													[Out] IntPtr	uvs,
 													out Vector3		boundsCenter,
 													out Vector3		boundsSize);	// singular value
-		
+
 		private static bool GetModelMesh(int		modelNodeID,
 										 int		meshIndex,
 										 int		subMeshIndex,
-										 
+
 										 int		indexCount,
 										 Int32[]	indices,
 
@@ -915,14 +915,14 @@ namespace RealtimeCSG
 				boundsSize = Vector3.zero;
 				return false;
 			}
-			
+
 			GCHandle indicesHandle		= GCHandle.Alloc(indices, GCHandleType.Pinned);
 			GCHandle positionHandle		= GCHandle.Alloc(positions, GCHandleType.Pinned);
 			GCHandle tangentHandle		= new GCHandle();
 			GCHandle normalHandle		= new GCHandle();
 //			GCHandle colorHandle		= new GCHandle();
 			GCHandle uv0Handle			= new GCHandle();
-			
+
 			IntPtr	indicesPtr	= indicesHandle.AddrOfPinnedObject();
 			IntPtr	positionPtr	= positionHandle.AddrOfPinnedObject();
 			IntPtr	tangentPtr	= IntPtr.Zero;
@@ -934,7 +934,7 @@ namespace RealtimeCSG
 			if (normals		!= null) { normalHandle		= GCHandle.Alloc(normals,	GCHandleType.Pinned); normalPtr   = normalHandle.AddrOfPinnedObject(); }
 //			if (colors		!= null) { colorHandle		= GCHandle.Alloc(colors,	GCHandleType.Pinned); colorPtr	  = colorHandle.AddrOfPinnedObject(); }
 			if (uv0			!= null) { uv0Handle		= GCHandle.Alloc(uv0,		GCHandleType.Pinned); uv0Ptr	  = uv0Handle.AddrOfPinnedObject(); }
-			
+
 			var result = GetGeneratedMesh((Int32)modelNodeID,
 									  (Int32)meshIndex,
 									  (Int32)subMeshIndex,
@@ -948,17 +948,17 @@ namespace RealtimeCSG
 									  uv0Ptr,
 									  out boundsCenter,
 									  out boundsSize);
-			
+
 			if (uv0			!= null) { uv0Handle	 .Free(); }
 //			if (colors		!= null) { colorHandle	 .Free(); }
 			if (normals		!= null) { normalHandle	 .Free(); }
 			if (tangents	!= null) { tangentHandle .Free(); }
-			positionHandle.Free(); 
+			positionHandle.Free();
 			indicesHandle.Free();
 			return result;
 		}
-		
-		
+
+
 		static GeneratedMeshContents GetModelMesh(int modelNodeID, GeneratedMeshDescription	meshDescription)
 		{
 			var generatedMesh = new GeneratedMeshContents();
@@ -1007,17 +1007,17 @@ namespace RealtimeCSG
 			var indexCount			= meshDescription.indexCount;
 			var meshIndex			= meshDescription.meshQueryIndex;
 			var subMeshIndex		= meshDescription.subMeshQueryIndex;
-			
+
 			var tangents		= ((usedVertexChannels & VertexChannelFlags.Tangent) != 0) ? generatedMesh.tangents : null;
 			var normals			= ((usedVertexChannels & VertexChannelFlags.Normal ) != 0) ? generatedMesh.normals  : null;
 			var uv0				= ((usedVertexChannels & VertexChannelFlags.UV0    ) != 0) ? generatedMesh.uv0      : null;
 //			var colors			= ((usedVertexChannels & VertexChannelFlags.Color  ) != 0) ? generatedMesh.colors   : null;
 			var positions		= generatedMesh.positions;
 			var indices			= generatedMesh.indices;
-			
+
 			var boundsCenter	= Vector3.zero;
 			var boundsSize		= Vector3.zero;
-			
+
 			if (!GetModelMesh(modelNodeID,
 							  meshIndex,
 							  subMeshIndex,
@@ -1070,7 +1070,7 @@ namespace RealtimeCSG
 														 [Out] IntPtr	invisibleInnerLines,
 														 Int32			invalidLineCount,
 														 [Out] IntPtr	invalidLines);
-		
+
 		private static bool GetBrushOutline(Int32					brushNodeID,
 											out GeometryWireframe	outline)
 		{
@@ -1091,16 +1091,16 @@ namespace RealtimeCSG
 				outline = null;
 				return false;
 			}
-			
+
 			if (vertexCount == 0 ||
-				(visibleOuterLineCount == 0 && invisibleOuterLineCount == 0 && 
-				 visibleInnerLineCount == 0 && invisibleInnerLineCount == 0 && 
+				(visibleOuterLineCount == 0 && invisibleOuterLineCount == 0 &&
+				 visibleInnerLineCount == 0 && invisibleInnerLineCount == 0 &&
 				 invalidLineCount == 0))
 			{
 				outline = null;
 				return false;
 			}
-			
+
 			outline = new GeometryWireframe();
 			outline.vertices = null;
 			outline.visibleOuterLines = null;
@@ -1157,7 +1157,7 @@ namespace RealtimeCSG
 			IntPtr invisibleOuterLinesPtr	= invisibleOuterLinesHandle.AddrOfPinnedObject();
 			IntPtr invisibleInnerLinesPtr	= invisibleInnerLinesHandle.AddrOfPinnedObject();
 			IntPtr invalidLinesPtr			= invalidLinesHandle.AddrOfPinnedObject();
-			
+
 			if (!GetBrushOutlineValues(brushNodeID,
 									   vertexCount,
 									   verticesPtr,
@@ -1183,7 +1183,7 @@ namespace RealtimeCSG
 		}
 
 
-		
+
 		[DllImport(NativePluginName, CallingConvention=CallingConvention.Cdecl)]
 		private static extern bool GetSurfaceOutlineSizes(Int32			brushNodeID,
 														  Int32			surfaceID,
@@ -1211,7 +1211,7 @@ namespace RealtimeCSG
 														  [Out] IntPtr	invisibleInnerLines,
 														  Int32			invalidLineCount,
 														  [Out] IntPtr	invalidLines);
-		
+
 		private static bool GetSurfaceOutline(Int32			brushNodeID,
 											  Int32			surfaceID,
 											  out GeometryWireframe outline)
@@ -1236,9 +1236,9 @@ namespace RealtimeCSG
 				outline = null;
 				return false;
 			}
-			
+
 			if (vertexCount == 0 ||
-				(visibleOuterLineCount == 0 && invisibleOuterLineCount == 0 && 
+				(visibleOuterLineCount == 0 && invisibleOuterLineCount == 0 &&
 				 visibleInnerLineCount == 0 && invisibleInnerLineCount == 0 &&
 				 visibleTriangleCount == 0 &&
 				invalidLineCount == 0))
@@ -1253,13 +1253,13 @@ namespace RealtimeCSG
 				outline = null;
 				return false;
 			}
-			
+
 			outline = new GeometryWireframe();
 			if (outline.vertices == null || outline.vertices.Length != vertexCount)
 			{
 				outline.vertices = new Vector3[vertexCount];
 			}
-			
+
 
 			if (visibleOuterLineCount > 0 &&
 				(outline.visibleOuterLines == null || outline.visibleOuterLines.Length != visibleOuterLineCount))
@@ -1365,11 +1365,11 @@ namespace RealtimeCSG
 			methods.RayCastIntoBrush			= RayCastIntoBrush;
 			methods.RayCastIntoBrushSurface		= RayCastIntoBrushSurface;
 			methods.GetItemsInFrustum			= GetItemsInFrustum;
-			
+
 
 			methods.GenerateOperation			= GenerateBranch;
 			methods.SetOperationOperationType	= SetBranchOperationType;
-			
+
 			methods.GenerateBrush				= GenerateBrush;
 			methods.GetBrushMeshID				= GetBrushMeshID;
 			methods.SetBrushMeshID				= SetBrushMeshID;
@@ -1378,12 +1378,12 @@ namespace RealtimeCSG
 			methods.SetBrushOperationType		= SetBrushOperationType;
 			methods.SetBrushToModelSpace		= SetBrushToModelSpace;
 
-		
+
 			methods.CreateBrushMesh				= CreateBrushMesh;
 			methods.UpdateBrushMesh				= UpdateBrushMesh;
 			methods.DestroyBrushMesh			= DestroyBrushMesh;
 
-			
+
 //			methods.FitSurface					= FitSurface;
 //			methods.FitSurfaceX					= FitSurfaceX;
 //			methods.FitSurfaceY					= FitSurfaceY;
@@ -1397,7 +1397,7 @@ namespace RealtimeCSG
 
 			methods.UpdateAllModelMeshes		= UpdateAllTreeMeshes;
 			methods.GetMeshDescriptions			= GetMeshDescriptions;
-			
+
 			methods.GetModelMesh				= GetModelMesh;
 			methods.GetModelMeshNoAlloc			= GetModelMeshNoAlloc;
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Reflection;
 using System.Linq;
+using UnityEditor.Build;
 using UnityEngine.SceneManagement;
 
 namespace RealtimeCSG
@@ -54,8 +55,8 @@ namespace RealtimeCSG
 #endif
 					)
 					continue;
-				
-				var symbol_string = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+				var symbol_string = PlayerSettings.GetScriptingDefineSymbols( NamedBuildTarget.FromBuildTargetGroup( targetGroup ) );
 				if (symbol_string == null)
 					continue;
 
@@ -109,7 +110,7 @@ namespace RealtimeCSG
 
 				var newSymbolString = stringBuilder.ToString();
 				if (newSymbolString != symbol_string)
-					PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, newSymbolString);
+					PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup( targetGroup ), newSymbolString);
 			}
 		}
 	}

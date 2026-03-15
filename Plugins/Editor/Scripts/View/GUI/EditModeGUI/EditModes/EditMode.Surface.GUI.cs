@@ -45,7 +45,7 @@ namespace RealtimeCSG
 				} else
 					GUILayout.Label(ContentJustifyLabel);
 				GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
-				{ 
+				{
 					GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
 					{
 						if (GUILayout.Button(ContentJustifyUpLeft,	justifyButtonLayout)) SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1,-1);
@@ -80,7 +80,7 @@ namespace RealtimeCSG
 					GUILayout.EndHorizontal();
 				}
 				GUILayout.EndVertical();
-				
+
 				if (!isSceneGUI)
 				{
 					GUILayout.EndHorizontal();
@@ -316,7 +316,7 @@ namespace RealtimeCSG
 						if (surfaceIndex >= brush.Shape.Surfaces.Length)
 						{
 							Debug.LogWarning("surface_index >= brush.Shape.Surfaces.Length");
-							continue; 
+							continue;
 						}
 
 						var texGenIndex	= brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
@@ -394,7 +394,7 @@ namespace RealtimeCSG
 						} else
 						{/*
 							if (!multipleColors)
-							{ 
+							{
 								var color			= brush.Shape.TexGens[texGenIndex].Color;
 								multipleColors		= currentTexGen.Color.a != color.a ||
 													  currentTexGen.Color.b != color.b ||
@@ -402,14 +402,14 @@ namespace RealtimeCSG
 													  currentTexGen.Color.r != color.r;
 							}*/
 							if (!multipleScaleX || !multipleScaleY)
-							{ 
+							{
 								var scale			= brush.Shape.TexGens[texGenIndex].Scale;
 								multipleScaleX	= multipleScaleX || currentTexGen.Scale.x != scale.x;
 								multipleScaleY	= multipleScaleY || currentTexGen.Scale.y != scale.y;
 							}
 
 							if (!multipleTranslationX || !multipleTranslationY)
-							{ 
+							{
 								var translation			= brush.Shape.TexGens[texGenIndex].Translation;
 								multipleTranslationX	= multipleTranslationX || currentTexGen.Translation.x != translation.x;
 								multipleTranslationY	= multipleTranslationY || currentTexGen.Translation.y != translation.y;
@@ -429,7 +429,7 @@ namespace RealtimeCSG
 						else
 							firstMaterial = MaterialUtility.HiddenMaterial;
 					}
-				}			
+				}
 				if (currentTexGen.Scale.x == 0.0f) currentTexGen.Scale.x = 1.0f;
 				if (currentTexGen.Scale.y == 0.0f) currentTexGen.Scale.y = 1.0f;
 
@@ -449,19 +449,19 @@ namespace RealtimeCSG
 		static SurfaceState surfaceState;
 		const int lightMapUVButtonOffset = 20;
 
-		
+
 		const int boxOffset					= 4;
 		const int boxWidth					= 213;
-		
+
 		const int materialViewBoxHeight		= 134;
 		const int textureLockedBoxHeight	= 22;
 		const int selectionBoxHeight        = 22;
 		const int transformationBoxHeight	= 58;
 		const int uvCommandsBoxHeight		= 76;
 		const int surfaceFlagsBoxHeight		= 56;
-		
+
 		const int surfaceEditTitleHeight	= 16;
-		const int surfaceEditWindowHeight   = surfaceEditTitleHeight	+ 
+		const int surfaceEditWindowHeight   = surfaceEditTitleHeight	+
 
 											  materialViewBoxHeight		+ boxOffset +
 											  textureLockedBoxHeight	+ boxOffset +
@@ -482,7 +482,7 @@ namespace RealtimeCSG
 
 			if (surfaceState == null)
 				return;
-			
+
 			var leftStyle	= EditorStyles.miniButtonLeft;
 			var middleStyle	= EditorStyles.miniButtonMid;
 			var rightStyle	= EditorStyles.miniButtonRight;
@@ -542,12 +542,12 @@ namespace RealtimeCSG
 			}
 			EditorGUI.BeginDisabledGroup(!surfaceState.enabled);
 			{
-				{ 
-					
+				{
+
 					offset += boxOffset;
 					tempRect.Set(rect.x + 4, rect.y + offset,  boxWidth, textureLockedBoxHeight);//138
 					GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
-					{						
+					{
 						EditorGUI.BeginChangeCheck();
 						{
 							EditorGUI.showMixedValue = !surfaceState.textureLocked.HasValue;
@@ -561,7 +561,7 @@ namespace RealtimeCSG
 						}
 					}
 					offset += textureLockedBoxHeight;
-					
+
 					offset += boxOffset;
 					tempRect.Set(rect.x+4, rect.y + offset, boxWidth, selectionBoxHeight);
 					GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
@@ -575,7 +575,7 @@ namespace RealtimeCSG
 						}
 					}
 					offset += selectionBoxHeight;
-					
+
 					offset += boxOffset;
 					tempRect.Set(rect.x+4, rect.y + offset, boxWidth, transformationBoxHeight);//164
 					GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
@@ -583,16 +583,16 @@ namespace RealtimeCSG
 						{
 							tempRect.Set(rect.x+8, rect.y + offset + 3, 56, 16);
 							EditorGUI.LabelField(tempRect, ContentUVScale, EditorStyles.miniLabel);
-							TooltipUtility.SetToolTip(ToolTipScaleUV, tempRect); 
+							TooltipUtility.SetToolTip(ToolTipScaleUV, tempRect);
 
-							{ 
+							{
 								EditorGUI.BeginChangeCheck();
 								{
 									EditorGUI.showMixedValue = surfaceState.multipleScaleX;
 									tempRect.Set(rect.x + 68, rect.y + offset + 3, 70, 16);
 									surfaceState.currentTexGen.Scale.x = EditorGUI.FloatField(tempRect, surfaceState.currentTexGen.Scale.x);
 								}
-								if (EditorGUI.EndChangeCheck()) { SurfaceUtility.SetScaleX(surfaceState.selectedBrushSurfaces, surfaceState.currentTexGen.Scale.x); }	
+								if (EditorGUI.EndChangeCheck()) { SurfaceUtility.SetScaleX(surfaceState.selectedBrushSurfaces, surfaceState.currentTexGen.Scale.x); }
 								EditorGUI.BeginChangeCheck();
 								{
 									EditorGUI.showMixedValue = surfaceState.multipleScaleY;
@@ -607,7 +607,7 @@ namespace RealtimeCSG
 							EditorGUI.LabelField(tempRect, ContentOffset, EditorStyles.miniLabel);
 							TooltipUtility.SetToolTip(ToolTipOffsetUV, tempRect);
 
-							{ 
+							{
 								EditorGUI.BeginChangeCheck();
 								{
 									EditorGUI.showMixedValue = surfaceState.multipleTranslationX;
@@ -615,7 +615,7 @@ namespace RealtimeCSG
 									surfaceState.currentTexGen.Translation.x = EditorGUI.FloatField(tempRect, surfaceState.currentTexGen.Translation.x);
 								}
 								if (EditorGUI.EndChangeCheck()) { SurfaceUtility.SetTranslationX(surfaceState.selectedBrushSurfaces, surfaceState.currentTexGen.Translation.x); }
-								
+
 								EditorGUI.BeginChangeCheck();
 								{
 									EditorGUI.showMixedValue = surfaceState.multipleTranslationY;
@@ -630,7 +630,7 @@ namespace RealtimeCSG
 							EditorGUI.LabelField(tempRect, ContentRotate, EditorStyles.miniLabel);
 							TooltipUtility.SetToolTip(ToolTipRotation, tempRect);
 
-							{ 
+							{
 								EditorGUI.BeginChangeCheck();
 								{
 									EditorGUI.showMixedValue = surfaceState.multipleRotationAngle;
@@ -642,7 +642,7 @@ namespace RealtimeCSG
 							{
 								tempRect.Set(rect.x+129, rect.y + offset + 39, 42, 15);
 								if (GUI.Button(tempRect, ContentRotate90Negative, leftStyle))
-								{ SurfaceUtility.AddRotationAngle(surfaceState.selectedBrushSurfaces, -90.0f); } 
+								{ SurfaceUtility.AddRotationAngle(surfaceState.selectedBrushSurfaces, -90.0f); }
 								TooltipUtility.SetToolTip(ToolTipRotate90Negative, tempRect);
 
 								tempRect.x = rect.x + 171;
@@ -653,7 +653,7 @@ namespace RealtimeCSG
 						}
 					}
 					offset += transformationBoxHeight;
-					
+
 					offset += boxOffset;
 					tempRect.Set(rect.x+4, rect.y + offset, boxWidth, uvCommandsBoxHeight);
 					GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
@@ -731,7 +731,7 @@ namespace RealtimeCSG
 						}
 					}
 					offset += uvCommandsBoxHeight;
-					
+
 					offset += boxOffset;
 					tempRect.Set(rect.x+4, rect.y + offset, boxWidth, surfaceFlagsBoxHeight);
 					GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
@@ -762,7 +762,7 @@ namespace RealtimeCSG
 			EditorGUI.EndDisabledGroup();
 			EditorGUI.showMixedValue = false;
 		}
-		
+
 		private static void OnGUIContents(bool isSceneGUI, EditModeSurface tool)
 		{
 			EditModeCommonGUI.StartToolGUI();
@@ -775,7 +775,7 @@ namespace RealtimeCSG
 
 			if (surfaceState == null)
 				return;
-			
+
 			var leftStyle	= isSceneGUI ? EditorStyles.miniButtonLeft  : GUI.skin.button;
 			var middleStyle	= isSceneGUI ? EditorStyles.miniButtonMid   : GUI.skin.button;
 			var rightStyle	= isSceneGUI ? EditorStyles.miniButtonRight : GUI.skin.button;
@@ -785,9 +785,9 @@ namespace RealtimeCSG
 				GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
 				{
 					EditorGUILayout.Space();
-					
+
 					GUILayout.BeginVertical(GUIStyle.none);
-					{						
+					{
 						EditorGUI.BeginChangeCheck();
 						{
 							EditorGUI.showMixedValue = !surfaceState.textureLocked.HasValue;
@@ -797,26 +797,26 @@ namespace RealtimeCSG
 						if (EditorGUI.EndChangeCheck())
 						{
 							SurfaceUtility.SetTextureLock(surfaceState.selectedBrushSurfaces, surfaceState.textureLocked.Value);
-						}							
+						}
 					}
 					GUILayout.EndVertical();
 
 					GUILayout.BeginVertical(GUIStyle.none);
-					{ 				
+					{
 						GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
 						{
 							EditorGUILayout.LabelField(ContentUVScale, largeLabelWidth);
-							TooltipUtility.SetToolTip(ToolTipScaleUV); 
+							TooltipUtility.SetToolTip(ToolTipScaleUV);
 
 							GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
-							{ 
+							{
 								EditorGUILayout.LabelField(ContentUSymbol, unitWidth);
 								EditorGUI.BeginChangeCheck();
 								{
 									EditorGUI.showMixedValue = surfaceState.multipleScaleX;
 									surfaceState.currentTexGen.Scale.x = EditorGUILayout.FloatField(surfaceState.currentTexGen.Scale.x, minFloatFieldWidth);
 								}
-								if (EditorGUI.EndChangeCheck()) { SurfaceUtility.SetScaleX(surfaceState.selectedBrushSurfaces, surfaceState.currentTexGen.Scale.x); }	
+								if (EditorGUI.EndChangeCheck()) { SurfaceUtility.SetScaleX(surfaceState.selectedBrushSurfaces, surfaceState.currentTexGen.Scale.x); }
 								EditorGUILayout.LabelField(ContentVSymbol, unitWidth);
 								EditorGUI.BeginChangeCheck();
 								{
@@ -834,7 +834,7 @@ namespace RealtimeCSG
 							TooltipUtility.SetToolTip(ToolTipOffsetUV);
 
 							GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
-							{ 
+							{
 								EditorGUILayout.LabelField(ContentUSymbol, unitWidth);
 								EditorGUI.BeginChangeCheck();
 								{
@@ -842,7 +842,7 @@ namespace RealtimeCSG
 									surfaceState.currentTexGen.Translation.x = EditorGUILayout.FloatField(surfaceState.currentTexGen.Translation.x, minFloatFieldWidth);
 								}
 								if (EditorGUI.EndChangeCheck()) { SurfaceUtility.SetTranslationX(surfaceState.selectedBrushSurfaces, surfaceState.currentTexGen.Translation.x); }
-								
+
 								EditorGUILayout.LabelField(ContentVSymbol, unitWidth);
 								EditorGUI.BeginChangeCheck();
 								{
@@ -860,9 +860,9 @@ namespace RealtimeCSG
 							TooltipUtility.SetToolTip(ToolTipRotation);
 
 							GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
-								
+
 							GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
-							{ 
+							{
 								EditorGUI.BeginChangeCheck();
 								{
 									EditorGUI.showMixedValue = surfaceState.multipleRotationAngle;
@@ -872,7 +872,7 @@ namespace RealtimeCSG
 								if (EditorGUI.EndChangeCheck()) { SurfaceUtility.SetRotationAngle(surfaceState.selectedBrushSurfaces, surfaceState.currentTexGen.RotationAngle); }
 							}
 							GUILayout.EndHorizontal();
-							
+
 							var buttonWidth = new GUILayoutOption[0];
 							GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
 							{
@@ -889,9 +889,9 @@ namespace RealtimeCSG
 					GUILayout.EndVertical();
 
 					EditorGUILayout.Space();
-					
+
 					GUILayout.BeginVertical(GUIStyle.none);
-					{ 				
+					{
 						GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
 						{
 							GUILayout.Label(ContentFit, largeLabelWidth);
@@ -912,7 +912,7 @@ namespace RealtimeCSG
 							TooltipUtility.SetToolTip(ToolTipResetXY);
 							if (GUILayout.Button(ContentResetY , rightStyle )) { SurfaceUtility.ResetSurfaceY(surfaceState.selectedBrushSurfaces); }
 							TooltipUtility.SetToolTip(ToolTipResetY);
-							
+
 						}
 						GUILayout.EndHorizontal();
 						GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
@@ -939,11 +939,11 @@ namespace RealtimeCSG
 					GUILayout.EndVertical();
 
 					EditorGUILayout.Space();
-					
+
 					OnGUIContentsJustify(false, surfaceState.selectedBrushSurfaces);
-						
+
 					EditorGUILayout.Space();
-						
+
 					GUILayout.BeginVertical(GUIStyle.none);
 					{
 						EditModeCommonGUI.OnSurfaceFlagButtons(surfaceState.surfaceFlagState, surfaceState.selectedBrushSurfaces, false);
@@ -965,7 +965,7 @@ namespace RealtimeCSG
 						GUILayout.EndHorizontal();
 					}
 					GUILayout.EndVertical();
-						
+
 					EditorGUILayout.Space();
 					Material new_material;
 					GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
@@ -1002,16 +1002,16 @@ namespace RealtimeCSG
 			EditorGUI.EndDisabledGroup();
 			EditorGUI.showMixedValue = false;
 		}
-		
+
 		static Rect lastGuiRect;
 		public static Rect GetLastSceneGUIRect(EditModeSurface tool)
 		{
 			return lastGuiRect;
 		}
-		
+
 		static Vector2 scrollbarPosition = Vector2.zero;
 
-		 
+
 		static Rect sceneGUIRect = new Rect(0, 0, 232, 0);
 		public static void OnSceneGUI(Rect windowRect, EditModeSurface tool)
 		{
@@ -1019,12 +1019,12 @@ namespace RealtimeCSG
 			InitLocalStyles();
 
 			var maxHeight = windowRect.height - 80;
-			
+
 			CSG_GUIStyleUtility.ResetGUIState();
-						
+
 			GUIStyle windowStyle = GUI.skin.window;
 
-			
+
 			var models					= InternalCSGModelManager.Models;
 			var needLightmapUVUpdate	= EditModeCommonGUI.NeedLightmapUVUpdate(models);
 			var originalHeight			= surfaceEditWindowHeight + (needLightmapUVUpdate ? lightMapUVButtonOffset : 0);
@@ -1035,7 +1035,7 @@ namespace RealtimeCSG
 			var currentArea = sceneGUIRect;
 			currentArea.y = y;
 			currentArea.height = height;
-			
+
 			var boxArea = currentArea;
 			const int scrollbarWidth = 10;
 			const int scrollbarRightOffset = 7;
@@ -1064,7 +1064,7 @@ namespace RealtimeCSG
 				{
 					internalScrollbarArea.height = originalHeight - scrollbarTopOffset;
 					internalScrollbarArea.width -= 50;
-					scrollbarPosition = GUI.BeginScrollView(currentArea, scrollbarPosition, internalScrollbarArea); 
+					scrollbarPosition = GUI.BeginScrollView(currentArea, scrollbarPosition, internalScrollbarArea);
 				} else
 					scrollbarPosition.y = 0;
 				currentArea.y += 8;
@@ -1077,13 +1077,13 @@ namespace RealtimeCSG
 			}
 
 			lastGuiRect = boxArea;
-						
+
 			var buttonArea = boxArea;
 			buttonArea.x += buttonArea.width - 17;
 			buttonArea.y += 2;
 			buttonArea.height = 13;
 			buttonArea.width = 13;
-			if (GUI.Button(buttonArea, GUIContent.none, "WinBtnClose"))
+			if (GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
 				EditModeToolWindowSceneGUI.GetWindow();
 
 			TooltipUtility.SetToolTip(CSG_GUIStyleUtility.PopOutTooltip, buttonArea);
