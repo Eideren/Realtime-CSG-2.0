@@ -13,7 +13,7 @@ namespace RealtimeCSG
 
 
 		public static float OnEditModeSelectionGUI()
-		{			
+		{
 			CSG_GUIStyleUtility.InitStyles();
 
 			EditorGUI.BeginChangeCheck();
@@ -25,14 +25,14 @@ namespace RealtimeCSG
 				CSG_EditorGUIUtility.RepaintAll();
 			}
 			GUILayout.Space(editModeBounds.height);
-				
+
 
 			return editModeBounds.height;
 		}
 
 		static GUIStyle sceneViewOverlayTransparentBackground = "SceneViewOverlayTransparentBackground";
 		static GUI.WindowFunction windowFunction = new GUI.WindowFunction(EditModeSelectionGUI.HandleSceneGUI);
-		
+
 		public static void HandleWindowGUI(Rect windowRect)
 		{
 			GUILayout.Window(SceneViewBrushEditorOverlayHash,
@@ -71,7 +71,7 @@ namespace RealtimeCSG
 			TooltipUtility.DrawToolTip(getLastRect: false);
 			Handles.EndGUI();
 		}
-		
+
 		//static Vector2 scrollPos;
 
 		public static void HandleWindowGUI(EditorWindow window)
@@ -79,7 +79,7 @@ namespace RealtimeCSG
 			TooltipUtility.InitToolTip(window);
 			var originalSkin = GUI.skin;
 			{
-				var height = OnEditModeSelectionGUI(); 
+				var height = OnEditModeSelectionGUI();
 				//var applyOffset = !TooltipUtility.FoundToolTip();
 
 				EditorGUILayout.Space();
@@ -96,7 +96,7 @@ namespace RealtimeCSG
 					EditorGUI.EndDisabledGroup();
 				}
 				//EditorGUILayout.EndScrollView();
-				//if (applyOffset) 
+				//if (applyOffset)
 				//	TooltipUtility.HandleAreaOffset(scrollPos);
 
 				GUILayout.Label(VersionLabel, EditorStyles.miniLabel);
@@ -108,7 +108,7 @@ namespace RealtimeCSG
 
 		static Rect[] editModeRects;
 
-		
+
 		static void OnEditModeSelectionSceneGUI()
 		{
 			CSG_GUIStyleUtility.InitStyles();
@@ -135,7 +135,7 @@ namespace RealtimeCSG
 				{
 					//GUILayout.Space(bounds.height);
 					Rect editModeBounds;
-			
+
 					CSG_GUIStyleUtility.InitStyles();
 					EditorGUI.BeginChangeCheck();
 					var newEditMode = (ToolEditMode)CSG_EditorGUIUtility.ToolbarWrapped((int)EditModeManager.EditMode, ref editModeRects, out editModeBounds, CSG_GUIStyleUtility.brushEditModeContent, CSG_GUIStyleUtility.brushEditModeTooltips, yOffset:20, areaWidth: bounds.width);
@@ -145,15 +145,15 @@ namespace RealtimeCSG
 						EditModeManager.EditMode = newEditMode;
 						CSG_EditorGUIUtility.RepaintAll();
 					}
-				
+
 					var buttonArea = bounds;
 					buttonArea.x = bounds.width - 17;
 					buttonArea.y = 2;
 					buttonArea.height = 13;
 					buttonArea.width = 13;
-					if (GUI.Button(buttonArea, GUIContent.none, "WinBtnClose"))
+					if (GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
 						EditModeToolWindowSceneGUI.GetWindow();
-					TooltipUtility.SetToolTip(CSG_GUIStyleUtility.PopOutTooltip, buttonArea); 
+					TooltipUtility.SetToolTip(CSG_GUIStyleUtility.PopOutTooltip, buttonArea);
 
 					var versionWidth = CSG_GUIStyleUtility.versionLabelStyle.CalcSize(VersionLabel);
 					var versionArea = bounds;
@@ -164,7 +164,7 @@ namespace RealtimeCSG
 					GUI.Label(versionArea, VersionLabel, CSG_GUIStyleUtility.versionLabelStyle);
 				}
 				GUILayout.EndArea();
-					 
+
 				int controlID = GUIUtility.GetControlID(SceneViewBrushEditorOverlayHash, FocusType.Keyboard, bounds);
 				switch (Event.current.GetTypeForControl(controlID))
 				{
@@ -179,8 +179,8 @@ namespace RealtimeCSG
 			GUI.skin = oldSkin;
 		}
 
-		
-		
+
+
 		static Camera MainCamera
 		{
 			get
@@ -217,7 +217,7 @@ namespace RealtimeCSG
 		{
 			TooltipUtility.InitToolTip(editor);
 			try
-			{ 
+			{
 				var models = new CSGModel[targets.Length];
 
 				for (int i = targets.Length - 1; i >= 0; i--)
@@ -228,7 +228,7 @@ namespace RealtimeCSG
 						ArrayUtility.RemoveAt(ref models, i);
 					}
 				}
-			
+
 				CSG_GUIStyleUtility.InitStyles();
 				ShowRealtimeCSGDisabledMessage();
 
@@ -248,13 +248,13 @@ namespace RealtimeCSG
 					return;
 				}
 
-			
+
 
 				bool? isPrefab = false;
 				PrefabInstantiateBehaviour? prefabBehaviour				= PrefabInstantiateBehaviour.Reference;
 				PrefabSourceAlignment?		prefabSourceAlignment		= PrefabSourceAlignment.AlignedTop;
 				PrefabDestinationAlignment?	prefabDestinationAlignment	= PrefabDestinationAlignment.AlignToSurface;
-				
+
 				if (targetNodes.Length > 0)
 				{
 					var gameObject = targetNodes[0].gameObject;
@@ -280,7 +280,7 @@ namespace RealtimeCSG
 							prefabDestinationAlignment = null;
 					}
 				}
-				
+
 				GUILayout.BeginVertical(GUI.skin.box);
 				{
 					if (isPrefab.HasValue && isPrefab.Value)
@@ -291,7 +291,7 @@ namespace RealtimeCSG
 						EditorGUILayout.LabelField(RaySnappingLabelContent);
 						TooltipUtility.SetToolTip(RaySnappingBehaviourTooltip);
 					}
-			
+
 					EditorGUI.indentLevel++;
 					{
 						if (isPrefab.HasValue && isPrefab.Value)
@@ -354,7 +354,7 @@ namespace RealtimeCSG
 				}
 				GUILayout.EndVertical();
 				GUILayout.Space(10);
-				
+
 
 				if (targetModels.Length == 0)
 				{
@@ -385,14 +385,14 @@ namespace RealtimeCSG
 						{
 							opMixedValues = true;
 						}
-					
+
 						if (!handleAsOne.HasValue)
 						{
 							handleAsOne = operation.HandleAsOne;
 						} else
 						if (handleAsOne.Value != operation.HandleAsOne)
 						{
-							selMixedValues	= true; 
+							selMixedValues	= true;
 						}
 					}
 					GUILayout.BeginVertical(GUI.skin.box);
@@ -409,7 +409,7 @@ namespace RealtimeCSG
 									break;
 								}
 							}
-							
+
 							opMixedValues = !passThrough.HasValue || passThrough.Value;
 
 							var ptMixedValues		= !passThrough.HasValue;
@@ -425,7 +425,7 @@ namespace RealtimeCSG
 								EditorApplication.RepaintHierarchyWindow();
 							}
 
-							if (passThroughValue)							
+							if (passThroughValue)
 								operationType = (CSGOperationType)255;
 						}
 						EditorGUI.BeginChangeCheck();
@@ -454,14 +454,14 @@ namespace RealtimeCSG
 					{
 						GUILayout.Space(10);
 						if (targetBrushes.Length == 1)
-						{ 
+						{
 							GUILayout.BeginVertical(GUI.skin.box);
 							{
 								EditorGUI.indentLevel++;
 								OpenSurfaces = EditorGUILayout.Foldout(OpenSurfaces, SurfacesContent);
 								EditorGUI.indentLevel--;
 								if (OpenSurfaces)
-								{ 
+								{
 									var targetShape		= targetBrushes[0].Shape;
 									var texGens			= targetShape.TexGens;
 									var texGenFlagArray = targetShape.TexGenFlags;
@@ -514,7 +514,7 @@ namespace RealtimeCSG
 					}
 
 					if (handleAsOne.HasValue)
-					{ 
+					{
 						EditorGUI.BeginChangeCheck();
 						{
 							EditorGUI.showMixedValue = selMixedValues;
