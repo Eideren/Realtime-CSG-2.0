@@ -22,10 +22,10 @@ namespace InternalRealtimeCSG
 
         public static void ForceUpdateOutlines(int brushNodeId)
         {
-            ulong externalOutlineGeneration = InternalCSGModelManager.External.GetBrushOutlineGeneration(brushNodeId);
+            ulong externalOutlineGeneration = InternalCSGModelManager.External.getBrushOutlineGeneration(brushNodeId);
             GeometryWireframe outline = new GeometryWireframe();
 
-            if(!InternalCSGModelManager.External.GetBrushOutline(brushNodeId, out outline))
+            if(!InternalCSGModelManager.External.getBrushOutline(brushNodeId, out outline))
             {
                 return;
             }
@@ -45,7 +45,7 @@ namespace InternalRealtimeCSG
                 return null;
             }
 
-            ulong externalOutlineGeneration = InternalCSGModelManager.External.GetBrushOutlineGeneration(brushNodeId);
+            ulong externalOutlineGeneration = InternalCSGModelManager.External.getBrushOutlineGeneration(brushNodeId);
 
             GeometryWireframe outline;
 
@@ -62,7 +62,7 @@ namespace InternalRealtimeCSG
 
             outline = new GeometryWireframe();
 
-            if(!InternalCSGModelManager.External.GetBrushOutline(brushNodeId, out outline))
+            if(!InternalCSGModelManager.External.getBrushOutline(brushNodeId, out outline))
             {
                 return null;
             }
@@ -89,7 +89,7 @@ namespace InternalRealtimeCSG
                 }
 
                 ulong externalOutlineGeneration =
-                    InternalCSGModelManager.External.GetBrushOutlineGeneration(brushNodeId);
+                    InternalCSGModelManager.External.getBrushOutlineGeneration(brushNodeId);
 
                 GeometryWireframe outline;
 
@@ -101,7 +101,7 @@ namespace InternalRealtimeCSG
                 if(outline == null ||
                    externalOutlineGeneration != outline.outlineGeneration)
                 {
-                    if(!InternalCSGModelManager.External.GetBrushOutline(brushNodeId, out outline))
+                    if(!InternalCSGModelManager.External.getBrushOutline(brushNodeId, out outline))
                     {
                         outline = null;
                     }
@@ -147,7 +147,7 @@ namespace InternalRealtimeCSG
 
                 GeometryWireframe outline;
 
-                if(!InternalCSGModelManager.External.GetSurfaceOutline(
+                if(!InternalCSGModelManager.External.getSurfaceOutline(
                        brushNodeId,
                        surfaceIndex,
                        out outline

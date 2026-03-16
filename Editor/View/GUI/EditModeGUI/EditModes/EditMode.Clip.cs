@@ -270,7 +270,7 @@ namespace RealtimeCSG
 
         public void Commit()
         {
-            InternalCSGModelManager.skipCheckForChanges = true;
+            InternalCSGModelManager.SkipCheckForChanges = true;
 
             try
             {
@@ -339,7 +339,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 CSG_EditorGUIUtility.RepaintAll();
                 forceWireframeUpdate = true;
             }
@@ -347,7 +347,7 @@ namespace RealtimeCSG
 
         public void Cancel()
         {
-            InternalCSGModelManager.skipCheckForChanges = true;
+            InternalCSGModelManager.SkipCheckForChanges = true;
 
             try
             {
@@ -382,7 +382,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 CSG_EditorGUIUtility.RepaintAll();
                 //backupData = null;
                 forceWireframeUpdate = true;
@@ -473,7 +473,7 @@ namespace RealtimeCSG
 
             try
             {
-                InternalCSGModelManager.skipCheckForChanges = true;
+                InternalCSGModelManager.SkipCheckForChanges = true;
                 HashSet<CSGModel> uniqueModels = new HashSet<CSGModel>();
                 bool              need_refresh = false;
 
@@ -585,7 +585,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
             }
         }
 
@@ -699,7 +699,7 @@ namespace RealtimeCSG
 
             try
             {
-                InternalCSGModelManager.skipCheckForChanges = true;
+                InternalCSGModelManager.SkipCheckForChanges = true;
 
                 for(int t = backupData.Length - 1; t >= offset; t--)
                 {
@@ -885,7 +885,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
             }
         }
 

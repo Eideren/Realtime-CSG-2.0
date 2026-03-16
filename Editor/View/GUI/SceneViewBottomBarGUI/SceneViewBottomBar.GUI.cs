@@ -822,14 +822,14 @@ namespace RealtimeCSG
 
                 MaterialUtility.ResetMaterialTypeLookup();
 
-                InternalCSGModelManager.skipCheckForChanges = true;
+                InternalCSGModelManager.SkipCheckForChanges = true;
                 CSGSettings.Reload();
                 UnityCompilerDefineManager.UpdateUnityDefines();
 
-                InternalCSGModelManager.registerTime          = 0.0;
-                InternalCSGModelManager.validateTime          = 0.0;
-                InternalCSGModelManager.hierarchyValidateTime = 0.0;
-                InternalCSGModelManager.updateHierarchyTime   = 0.0;
+                InternalCSGModelManager.RegisterTime          = 0.0;
+                InternalCSGModelManager.ValidateTime          = 0.0;
+                InternalCSGModelManager.HierarchyValidateTime = 0.0;
+                InternalCSGModelManager.UpdateHierarchyTime   = 0.0;
 
                 double startTime = EditorApplication.timeSinceStartup;
                 InternalCSGModelManager.ForceRebuildAll();
@@ -855,7 +855,7 @@ namespace RealtimeCSG
                 updateSurfaces = true;
                 UpdateLoop.ResetUpdateRoutine();
                 CSGSettings.Save();
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
 
                 HashSet<Scene> scenes = new HashSet<UnityEngine.SceneManagement.Scene>();
 

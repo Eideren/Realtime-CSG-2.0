@@ -845,8 +845,7 @@ namespace RealtimeCSG.Legacy
                     shape.Surfaces[n].TexGenIndex = n;
 
                     SurfaceUtility.AlignTextureSpaces(
-                        textureMatrices[i], textureMatrixSpace == TextureMatrixSpace.PlaneSpace, ref shape.TexGens[n]
-                      , ref shape.TexGenFlags[n], ref shape.Surfaces[n]
+                        textureMatrices[i], textureMatrixSpace == TextureMatrixSpace.PlaneSpace, ref shape.TexGens[n], ref shape.Surfaces[n]
                     );
 
                     n++;

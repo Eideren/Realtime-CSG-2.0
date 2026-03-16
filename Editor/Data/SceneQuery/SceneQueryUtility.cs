@@ -488,7 +488,7 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                found = InternalCSGModelManager.External.GetItemsInFrustum(model, planes, objectsInFrustum) || found;
+                found = InternalCSGModelManager.External.getItemsInFrustum(model, planes, objectsInFrustum) || found;
             }
 
             int visibleLayers = Tools.visibleLayers;
@@ -1171,7 +1171,7 @@ namespace InternalRealtimeCSG
             intersection = null;
 
             if(InternalCSGModelManager.External == null ||
-               InternalCSGModelManager.External.RayCastMulti == null)
+               InternalCSGModelManager.External.rayCastMulti == null)
             {
                 return false;
             }
@@ -1212,7 +1212,7 @@ namespace InternalRealtimeCSG
 
             LegacyBrushIntersection[] modelIntersections;
 
-            if(!InternalCSGModelManager.External.RayCastMulti(
+            if(!InternalCSGModelManager.External.rayCastMulti(
                    foundModelCount,
                    __foundModels,
                    rayStart,
@@ -1269,7 +1269,7 @@ namespace InternalRealtimeCSG
             intersections = null;
 
             if(InternalCSGModelManager.External == null ||
-               InternalCSGModelManager.External.RayCastIntoModelMulti == null)
+               InternalCSGModelManager.External.rayCastIntoModelMulti == null)
             {
                 return false;
             }
@@ -1293,7 +1293,7 @@ namespace InternalRealtimeCSG
 
             LegacyBrushIntersection[] modelIntersections;
 
-            if(!InternalCSGModelManager.External.RayCastIntoModelMulti(
+            if(!InternalCSGModelManager.External.rayCastIntoModelMulti(
                    model,
                    worldRayStart,
                    worldRayEnd,
@@ -1357,7 +1357,7 @@ namespace InternalRealtimeCSG
             intersections = null;
 
             if(InternalCSGModelManager.External == null ||
-               InternalCSGModelManager.External.RayCastIntoModelMulti == null)
+               InternalCSGModelManager.External.rayCastIntoModelMulti == null)
             {
                 return false;
             }
@@ -1385,7 +1385,7 @@ namespace InternalRealtimeCSG
 
                 LegacyBrushIntersection[] modelIntersections;
 
-                if(!InternalCSGModelManager.External.RayCastIntoModelMulti(
+                if(!InternalCSGModelManager.External.rayCastIntoModelMulti(
                        model,
                        worldRayStart,
                        worldRayEnd,
@@ -1449,12 +1449,12 @@ namespace InternalRealtimeCSG
         {
             intersection = null;
 
-            if(!brush || InternalCSGModelManager.External.RayCastIntoBrush == null)
+            if(!brush || InternalCSGModelManager.External.rayCastIntoBrush == null)
             {
                 return false;
             }
 
-            if(!InternalCSGModelManager.External.RayCastIntoBrush(
+            if(!InternalCSGModelManager.External.rayCastIntoBrush(
                    brush.brushNodeID,
                    rayStart,
                    rayEnd,
@@ -1491,12 +1491,12 @@ namespace InternalRealtimeCSG
             intersection = null;
 
             if(!brush ||
-               InternalCSGModelManager.External.RayCastIntoBrushSurface == null)
+               InternalCSGModelManager.External.rayCastIntoBrushSurface == null)
             {
                 return false;
             }
 
-            if(!InternalCSGModelManager.External.RayCastIntoBrushSurface(
+            if(!InternalCSGModelManager.External.rayCastIntoBrushSurface(
                    brush.brushNodeID,
                    surfaceIndex,
                    rayStart,

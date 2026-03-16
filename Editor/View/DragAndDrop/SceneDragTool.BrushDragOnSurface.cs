@@ -317,7 +317,7 @@ namespace RealtimeCSG
 
         public bool DragUpdated(SceneView sceneView, Transform transformInInspector, Rect selectionRect)
         {
-            InternalCSGModelManager.skipCheckForChanges = true;
+            InternalCSGModelManager.SkipCheckForChanges = true;
 
             try
             {
@@ -354,7 +354,7 @@ namespace RealtimeCSG
 
         public bool DragUpdated(SceneView sceneView)
         {
-            InternalCSGModelManager.skipCheckForChanges = true;
+            InternalCSGModelManager.SkipCheckForChanges = true;
 
             try
             {
@@ -426,7 +426,7 @@ namespace RealtimeCSG
         {
             try
             {
-                InternalCSGModelManager.skipCheckForChanges = true;
+                InternalCSGModelManager.SkipCheckForChanges = true;
 
                 if(visualDragGameObject == null)
                 {
@@ -519,7 +519,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 CSGGrid.ForcedGridCenter                    = prevForcedGridCenter;
                 CSGGrid.ForcedGridRotation                  = prevForcedGridRotation;
                 CSGGrid.ForceGrid                           = false;
@@ -534,7 +534,7 @@ namespace RealtimeCSG
         {
             try
             {
-                InternalCSGModelManager.skipCheckForChanges = true;
+                InternalCSGModelManager.SkipCheckForChanges = true;
 
                 try
                 {
@@ -552,7 +552,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 CSGGrid.ForcedGridCenter                    = prevForcedGridCenter;
                 CSGGrid.ForcedGridRotation                  = prevForcedGridRotation;
                 CSGGrid.ForceGrid                           = false;

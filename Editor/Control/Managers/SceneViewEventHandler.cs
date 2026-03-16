@@ -7,9 +7,8 @@ namespace RealtimeCSG
 {
     internal sealed class SceneViewEventHandler
     {
-        private static bool mousePressed;
-
-        private static int prevFocusControl;
+        private static bool m_MousePressed;
+        private static int m_PrevFocusControl;
 
         internal static void OnScene(SceneView sceneView)
         {
@@ -46,11 +45,11 @@ namespace RealtimeCSG
 
             if(Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseDrag)
             {
-                mousePressed = true;
+                m_MousePressed = true;
             }
             else if(Event.current.type == EventType.MouseUp || Event.current.type == EventType.MouseMove)
             {
-                mousePressed = false;
+                m_MousePressed = false;
             }
 
             SceneDragToolManager.OnHandleDragAndDrop(sceneView);
@@ -67,7 +66,6 @@ namespace RealtimeCSG
                 SceneToolRenderer.OnPaint(sceneView);
             }
             else
-                //if (fallbackGUI)
             {
                 SceneViewBottomBarGUI.ShowGUI(sceneView);
                 SceneViewInfoGUI.DrawInfoGUI(sceneView);
@@ -75,31 +73,28 @@ namespace RealtimeCSG
 
             EditModeManager.OnSceneGUI(sceneView);
 
-            //if (fallbackGUI)
+            TooltipUtility.InitToolTip(sceneView);
+
+            if(Event.current.type == EventType.Repaint)
             {
-                TooltipUtility.InitToolTip(sceneView);
+                SceneViewBottomBarGUI.ShowGUI(sceneView, false);
+                SceneViewInfoGUI.DrawInfoGUI(sceneView);
+            }
 
-                if(Event.current.type == EventType.Repaint)
-                {
-                    SceneViewBottomBarGUI.ShowGUI(sceneView, false);
-                    SceneViewInfoGUI.DrawInfoGUI(sceneView);
-                }
-
-                if(!mousePressed)
-                {
-                    Handles.BeginGUI();
-                    TooltipUtility.DrawToolTip(false);
-                    Handles.EndGUI();
-                }
+            if(!m_MousePressed)
+            {
+                Handles.BeginGUI();
+                TooltipUtility.DrawToolTip(false);
+                Handles.EndGUI();
             }
 
             if(Event.current.type == EventType.Layout)
             {
                 int currentFocusControl = CSGHandles.FocusControl;
 
-                if(prevFocusControl != currentFocusControl)
+                if(m_PrevFocusControl != currentFocusControl)
                 {
-                    prevFocusControl = currentFocusControl;
+                    m_PrevFocusControl = currentFocusControl;
                     HandleUtility.Repaint();
                 }
             }

@@ -9,30 +9,8 @@ namespace RealtimeCSG
 {
     internal sealed class OperationsUtility
     {
-        private static readonly Type CSGOperationType = typeof(CSGOperation);
-        private static readonly Type CSGBrushType = typeof(CSGBrush);
-
-        public static bool CanModifyOperationsOnSelected()
-        {
-            foreach(GameObject gameObject in Selection.gameObjects)
-            {
-                CSGBrush brush = gameObject.GetComponentInChildren<CSGBrush>();
-
-                if(brush != null)
-                {
-                    return true;
-                }
-
-                CSGOperation operation = gameObject.GetComponentInChildren<CSGOperation>();
-
-                if(operation != null)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        private static readonly Type csgOperationType = typeof(CSGOperation);
+        private static readonly Type csgBrushType = typeof(CSGBrush);
 
         public static void SetPassThroughOnSelected()
         {
@@ -40,7 +18,7 @@ namespace RealtimeCSG
 
             foreach(GameObject gameObject in Selection.gameObjects)
             {
-                Component obj = gameObject.GetComponent(CSGOperationType);
+                Component obj = gameObject.GetComponent(csgOperationType);
 
                 if(!obj)
                 {
@@ -74,7 +52,7 @@ namespace RealtimeCSG
 
             foreach(GameObject gameObject in Selection.gameObjects)
             {
-                Component obj = gameObject.GetComponent(CSGBrushType);
+                Component obj = gameObject.GetComponent(csgBrushType);
 
                 if(obj)
                 {
@@ -88,7 +66,7 @@ namespace RealtimeCSG
                     }
                 }
 
-                obj = gameObject.GetComponent(CSGOperationType);
+                obj = gameObject.GetComponent(csgOperationType);
 
                 if(obj)
                 {
@@ -115,16 +93,7 @@ namespace RealtimeCSG
 
         public static GameObject CreateGameObject(Transform parent, string name, bool worldPositionStays)
         {
-            GameObject gameObject;
-
-            if(name == null)
-            {
-                gameObject = new GameObject();
-            }
-            else
-            {
-                gameObject = new GameObject(name);
-            }
+            GameObject gameObject = name == null ? new GameObject() : new GameObject(name);
 
             if(parent != null && parent)
             {
@@ -204,7 +173,6 @@ namespace RealtimeCSG
         public static GameObject CreateOperation(Transform parent, string name, bool worldPositionStays)
         {
             GameObject gameObject = CreateGameObject(parent, name, worldPositionStays);
-            //var operation = 
             gameObject.AddComponent<CSGOperation>();
             Undo.RegisterCreatedObjectUndo(gameObject, "Created operation");
             InternalCSGModelManager.CheckForChanges();
@@ -242,21 +210,6 @@ namespace RealtimeCSG
             InternalCSGModelManager.UpdateMeshes();
 
             return operation;
-        }
-
-        public static GameObject CreateBrush(
-            ControlMesh controlMesh, Shape shape, Transform parent, string name, bool worldPositionStays
-        )
-        {
-            GameObject gameObject = CreateGameObject(parent, name, worldPositionStays);
-            CSGBrush   brush      = gameObject.AddComponent<CSGBrush>();
-            brush.ControlMesh = controlMesh;
-            brush.Shape       = shape;
-            gameObject.SetActive(shape != null && controlMesh != null);
-            Undo.RegisterCreatedObjectUndo(gameObject, "Created brush");
-            InternalCSGModelManager.CheckForChanges();
-
-            return gameObject;
         }
 
         [MenuItem("GameObject/Realtime-CSG/Brush", false, 31)]
@@ -361,7 +314,7 @@ namespace RealtimeCSG
             }
 
             Undo.IncrementCurrentGroup();
-            int undo_group_index = Undo.GetCurrentGroup();
+            int undoGroupIndex = Undo.GetCurrentGroup();
 
             foreach(Transform parentTransform in parentTransforms)
             {
@@ -375,7 +328,6 @@ namespace RealtimeCSG
 
             Transform prevGroup = null;
 
-            //for (int i = childTransforms.Count - 1; i >= 0; i--)
             for(int i = 0; i < childTransforms.Count; i++)
             {
                 Transform group = groupTransforms[parentIndices[i]];
@@ -391,7 +343,7 @@ namespace RealtimeCSG
                 prevGroup = group;
             }
 
-            Undo.CollapseUndoOperations(undo_group_index);
+            Undo.CollapseUndoOperations(undoGroupIndex);
         }
     }
 }

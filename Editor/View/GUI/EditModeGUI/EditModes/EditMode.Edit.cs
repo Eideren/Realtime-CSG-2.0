@@ -2531,7 +2531,7 @@ namespace RealtimeCSG
                                 Undo.PerformUndo();
                             }
 
-                            InternalCSGModelManager.CheckSurfaceModifications(_brushSelection.Brushes, true);
+                            InternalCSGModelManager.CheckSurfaceModifications(_brushSelection.Brushes);
                             _usingControl = false;
                         };
 
@@ -2643,7 +2643,7 @@ namespace RealtimeCSG
                                 Undo.PerformUndo();
                             }
 
-                            InternalCSGModelManager.CheckSurfaceModifications(_brushSelection.Brushes, true);
+                            InternalCSGModelManager.CheckSurfaceModifications(_brushSelection.Brushes);
                             _usingControl = false;
                         };
 
@@ -4146,7 +4146,7 @@ namespace RealtimeCSG
                                         }
 
                                         InternalCSGModelManager.CheckSurfaceModifications(
-                                            _brushSelection.Brushes, true
+                                            _brushSelection.Brushes
                                         );
 
                                         break;

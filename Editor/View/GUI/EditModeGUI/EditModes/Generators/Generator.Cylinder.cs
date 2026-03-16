@@ -400,7 +400,7 @@ namespace RealtimeCSG
             InternalCSGModelManager.ValidateBrush(brush, true);
             ControlMeshUtility.RebuildShape(brush);
 
-            Vector3[] vertices      = polygon.Vertices;
+            Vector3[] vertices      = polygon.vertices;
             float     circumference = 0.0f;
 
             for(int j = vertices.Length - 1, i = 0; i < vertices.Length; j = i, i++)

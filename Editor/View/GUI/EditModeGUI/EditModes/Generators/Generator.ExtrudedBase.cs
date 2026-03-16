@@ -424,7 +424,7 @@ namespace RealtimeCSG
                         Undo.RecordObjects(generatedGameObjects, "Extruded brush");
                     }
 
-                    InternalCSGModelManager.skipCheckForChanges = false;
+                    InternalCSGModelManager.SkipCheckForChanges = false;
                     int brushIndex = 0;
 
                     for(int slice = 0; slice < extrusionPoints.Length - 1; slice++)
@@ -453,7 +453,7 @@ namespace RealtimeCSG
 
             try
             {
-                InternalCSGModelManager.skipCheckForChanges = true;
+                InternalCSGModelManager.SkipCheckForChanges = true;
 
                 if(registerUndo)
                 {
@@ -465,7 +465,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
             }
 
             if(shapeEdges != null && smearTextures)
@@ -477,8 +477,8 @@ namespace RealtimeCSG
                 {
                     for(int se = 0; se < shapeEdges.Length; se++)
                     {
-                        int brushIndex   = shapeEdges[se].PolygonIndex + slice * shapeEdges.Length;
-                        int surfaceIndex = shapeEdges[se].EdgeIndex;
+                        int brushIndex   = shapeEdges[se].polygonIndex + slice * shapeEdges.Length;
+                        int surfaceIndex = shapeEdges[se].edgeIndex;
 
                         if(brushIndex < 0 ||
                            brushIndex >= generatedBrushes.Length ||
@@ -494,8 +494,8 @@ namespace RealtimeCSG
                             if(lastBrush && lastBrush.brushNodeID != CSGNode.InvalidNodeID)
                             {
                                 SurfaceUtility.CopyLastMaterial(
-                                    brush, surfaceIndex, false,
-                                    lastBrush, lastSurfaceIndex, false,
+                                    brush, surfaceIndex,
+                                    lastBrush, lastSurfaceIndex,
                                     registerUndo = false
                                 );
                             }
@@ -809,7 +809,7 @@ namespace RealtimeCSG
 
                             for(int i = 0; i < polygons.Length; i++)
                             {
-                                PaintUtility.DrawPolygon(poly2dToWorldMatrix, polygons[i].Vertices, surfaceColor);
+                                PaintUtility.DrawPolygon(poly2dToWorldMatrix, polygons[i].vertices, surfaceColor);
                             }
 
                             poly2dToWorldMatrix = Matrix4x4.TRS(

@@ -196,10 +196,6 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                //				var brushTransform		= brush.GetComponent<Transform>();
-//				var brushLocalToWorld	= brushTransform.localToWorldMatrix;
-//				var brushWorldToLocal	= brushTransform.worldToLocalMatrix;
-
                 ControlMesh controlMesh    = brush.ControlMesh;
                 Vector3[]   points         = controlMesh.Vertices;
                 bool        vertexModified = false;

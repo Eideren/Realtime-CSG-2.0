@@ -55,13 +55,8 @@ namespace InternalRealtimeCSG
                         continue;
                     }
 
-                    instance.gameObject.hideFlags = HideFlags.None; // HideFlags.NotEditable;
+                    instance.gameObject.hideFlags = HideFlags.None;
                     instance.gameObject.SetActive(true);
-
-                    //Refresh(instance, model, postProcessScene: true);
-#if SHOW_GENERATED_MESHES
-                    UpdateName(instance);
-#endif
 
                     // TODO: make sure meshes are no longer marked as dynamic!
 
@@ -99,8 +94,7 @@ namespace InternalRealtimeCSG
                         }
                     }
 
-                    if(surfaceType == RenderSurfaceType.Collider ||
-                       surfaceType == RenderSurfaceType.Trigger)
+                    if(surfaceType == RenderSurfaceType.Collider || surfaceType == RenderSurfaceType.Trigger)
                     {
                         MeshRenderer meshRenderer = instance.gameObject.GetComponent<MeshRenderer>();
 
@@ -127,10 +121,6 @@ namespace InternalRealtimeCSG
                                 Object.DestroyImmediate(oldMeshCollider);
                             }
                         }
-
-                        RemoveIfEmpty(instance.gameObject);
-
-                        continue;
                     }
 
                     RemoveIfEmpty(instance.gameObject);
@@ -152,7 +142,7 @@ namespace InternalRealtimeCSG
                     if(child.SharedMesh && !UsesLightmapUVs(model))
                     {
                         MeshUtility.Optimize(child.SharedMesh);
-#if UNITY_EDITOR
+
                         MeshCollider currentMeshCollider = child.gameObject.GetComponent<MeshCollider>();
 
                         if(currentMeshCollider && currentMeshCollider.enabled)
@@ -160,7 +150,6 @@ namespace InternalRealtimeCSG
                             currentMeshCollider.enabled = false;
                             currentMeshCollider.enabled = true;
                         }
-#endif
                     }
                 }
 
@@ -209,20 +198,20 @@ namespace InternalRealtimeCSG
                 GameObject gameObject = csgnode.gameObject;
                 CSGModel   model      = csgnode as CSGModel;
 
-                if(
-                    model && model.name == InternalCSGModelManager.DefaultModelName &&
-                    (model.transform.childCount == 0 ||
-                        (model.transform.childCount == 1 &&
-                            model.transform.GetChild(0).name == MeshContainerName &&
-                            model.transform.GetChild(0).childCount == 0)
-                    )
-                )
+                if(model && model.name == InternalCSGModelManager.DEFAULT_MODEL_NAME &&
+                   (model.transform.childCount == 0 ||
+                       (model.transform.childCount == 1 &&
+                           model.transform.GetChild(0).name == MESH_CONTAINER_NAME &&
+                           model.transform.GetChild(0).childCount == 0)
+                   )
+                  )
                 {
                     Object.DestroyImmediate(gameObject);
 
                     continue;
                 }
-                else if(model)
+
+                if(model)
                 {
                     gameObject.tag = "Untagged";
                     AssignLayerToChildren(gameObject);
@@ -246,42 +235,26 @@ namespace InternalRealtimeCSG
                 }
             }
 
-            HashSet<Transform> removableTransforms = new HashSet<Transform>();
-
             for(int i = 0; i < removableGameObjects.Count; i++)
             {
                 GameObject gameObject = removableGameObjects[i];
                 Transform  transform  = gameObject.transform;
 
-                if(removableTransforms.Contains(transform))
-                {
-                    continue;
-                }
-
                 if(CSGProjectSettings.Instance.SaveMeshesInSceneFiles
                 || !EditorApplication.isPlayingOrWillChangePlaymode)
                 {
-                    RemoveWithChildrenIfPossible(transform, removableTransforms);
+                    RemoveWithChildrenIfPossible(transform);
                 }
             }
         }
 
-        private static bool RemoveWithChildrenIfPossible(Transform transform, HashSet<Transform> removableTransforms)
+        private static bool RemoveWithChildrenIfPossible(Transform transform)
         {
             for(int i = 0; i < transform.childCount; i++)
             {
                 Transform childTransform = transform.GetChild(i);
 
-                //if (!childTransform.CompareTag(CSGContstants.kRemoveNodeTag))
-                //    return false;
-                if(childTransform.GetComponent<CSGNode>() == null)
-                {
-                    transform.gameObject.tag = "Untagged";
-
-                    return false;
-                }
-
-                if(!RemoveWithChildrenIfPossible(childTransform, removableTransforms))
+                if(childTransform.GetComponent<CSGNode>() == null || !RemoveWithChildrenIfPossible(childTransform))
                 {
                     transform.gameObject.tag = "Untagged";
 
@@ -329,14 +302,12 @@ namespace InternalRealtimeCSG
                             continue;
                         }
 
-                        if(generateMeshesTransform.name != MeshContainerName)
+                        if(generateMeshesTransform.name != MESH_CONTAINER_NAME)
                         {
                             continue;
                         }
 
-                        Transform childTransforms = generateMeshesTransform;
-
-                        foreach(Transform childTransform in childTransforms)
+                        foreach(Transform childTransform in generateMeshesTransform)
                         {
                             GameObjectExtensions.Destroy(childTransform.gameObject);
                         }

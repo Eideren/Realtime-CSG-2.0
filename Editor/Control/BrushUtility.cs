@@ -19,15 +19,15 @@ namespace InternalRealtimeCSG
     [Serializable]
     internal struct TangentCurve2D
     {
-        public Vector3 Tangent;
-        public HandleConstraints Constraint;
+        public Vector3 tangent;
+        public HandleConstraints constraint;
     }
 
     [Serializable]
     internal class Curve2D
     {
-        public Vector3[] Points;
-        public TangentCurve2D[] Tangents;
+        public Vector3[] points;
+        public TangentCurve2D[] tangents;
     }
 
     public static class BrushUtility

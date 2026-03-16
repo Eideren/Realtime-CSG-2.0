@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-using UnityEngine.SceneManagement;
-using UnityEditor;
 using InternalRealtimeCSG;
 using RealtimeCSG.Components;
+using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace RealtimeCSG
 {
@@ -13,13 +13,13 @@ namespace RealtimeCSG
     {
         private class CSGSceneState
         {
-            public GameObject DefaultModelObject = null;
-            public CSGModel DefaultModel = null;
+            public GameObject defaultModelObject;
+            public CSGModel defaultModel;
         }
 
-        internal const string DefaultModelName = "[default-CSGModel]";
-        internal const string DefaultPrefabModelName = "[prefab-CSGModel]";
-        private static readonly Dictionary<Scene, CSGSceneState> SceneStates = new Dictionary<Scene, CSGSceneState>();
+        internal const string DEFAULT_MODEL_NAME = "[default-CSGModel]";
+        internal const string DEFAULT_PREFAB_MODEL_NAME = "[prefab-CSGModel]";
+        private static readonly Dictionary<Scene, CSGSceneState> sceneStates = new Dictionary<Scene, CSGSceneState>();
 
 #region DefaultCSGModel
 
@@ -64,51 +64,22 @@ namespace RealtimeCSG
             }
 
             // make sure we're properly initialized (just in case)
-            if(!SceneStates.ContainsKey(scene))
+            if(!sceneStates.ContainsKey(scene))
             {
-                SceneStates[scene] = new CSGSceneState();
+                sceneStates[scene] = new CSGSceneState();
             }
 
-            if(!SceneStates[scene].DefaultModel)
+            if(!sceneStates[scene].defaultModel)
             {
-                InitializeDefaultCSGModel(scene, SceneStates[scene], true);
+                InitializeDefaultCSGModel(scene, sceneStates[scene]);
             }
 
-            return SceneStates[scene].DefaultModel;
+            return sceneStates[scene].defaultModel;
         }
 
 #endregion
 
 #region InitializeDefaultCSGModel
-
-        private static void InitializeDefaultCSGModel(bool createIfNoExists = true)
-        {
-            HashSet<Scene> loadedScenes = new HashSet<Scene>();
-
-            for(int sceneIndex = 0; sceneIndex < SceneManager.sceneCount; sceneIndex++)
-            {
-                Scene currentScene = SceneManager.GetSceneAt(sceneIndex);
-
-                if(!currentScene.IsValid() ||
-                   !currentScene.isLoaded)
-                {
-                    continue;
-                }
-
-                CSGSceneState sceneState = SceneStates[currentScene];
-                InitializeDefaultCSGModel(currentScene, sceneState, createIfNoExists);
-            }
-
-            Scene[] usedScenes = SceneStates.Keys.ToArray();
-
-            foreach(Scene usedScene in usedScenes)
-            {
-                if(!loadedScenes.Contains(usedScene))
-                {
-                    SceneStates.Remove(usedScene);
-                }
-            }
-        }
 
         private static void InitializeDefaultCSGModel(
             Scene currentScene, CSGSceneState sceneState, bool createIfNoExists = true
@@ -116,45 +87,41 @@ namespace RealtimeCSG
         {
             bool      inPrefabMode        = false;
             Transform prefabRootTransform = null;
-#if UNITY_2018_3_OR_NEWER
-#if !UNITY_2021_2_OR_NEWER
-			var currentPrefabStage =
- UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
-#else
-            PrefabStage currentPrefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
-#endif
+
+            PrefabStage currentPrefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+
             if(currentPrefabStage != null)
             {
                 GameObject prefabRoot = currentPrefabStage.prefabContentsRoot;
                 prefabRootTransform = prefabRoot.transform;
                 inPrefabMode        = prefabRoot.scene == currentScene;
             }
-#endif
-            string defaultModelName = inPrefabMode ? DefaultPrefabModelName : DefaultModelName;
+
+            string defaultModelName = inPrefabMode ? DEFAULT_PREFAB_MODEL_NAME : DEFAULT_MODEL_NAME;
 
             // make sure we have a default CSG model
-            sceneState.DefaultModelObject =
+            sceneState.defaultModelObject =
                 SceneQueryUtility.GetUniqueHiddenGameObjectInSceneWithName(currentScene, defaultModelName);
 
             if(createIfNoExists)
             {
-                if(!sceneState.DefaultModelObject)
+                if(!sceneState.defaultModelObject)
                 {
-                    sceneState.DefaultModelObject = new GameObject(defaultModelName);
-                    sceneState.DefaultModel       = CreateCSGModel(sceneState.DefaultModelObject);
+                    sceneState.defaultModelObject = new GameObject(defaultModelName);
+                    sceneState.defaultModel       = CreateCSGModel(sceneState.defaultModelObject);
                 }
                 else
                 {
-                    sceneState.DefaultModel = sceneState.DefaultModelObject.GetComponent<CSGModel>();
+                    sceneState.defaultModel = sceneState.defaultModelObject.GetComponent<CSGModel>();
 
-                    if(!sceneState.DefaultModel)
+                    if(!sceneState.defaultModel)
                     {
-                        sceneState.DefaultModel = CreateCSGModel(sceneState.DefaultModelObject);
+                        sceneState.defaultModel = CreateCSGModel(sceneState.defaultModelObject);
                     }
                 }
 
                 // make sure it's transformation has sensible values
-                Transform transform = sceneState.DefaultModel.transform;
+                Transform transform = sceneState.defaultModel.transform;
 
                 if(inPrefabMode)
                 {
@@ -169,29 +136,28 @@ namespace RealtimeCSG
                 transform.localScale    = MathConstants.oneVector3;
                 transform.localRotation = Quaternion.identity;
 
-                StaticEditorFlags defaultFlags = //StaticEditorFlags.LightmapStatic |
-                    StaticEditorFlags.BatchingStatic |
+                const StaticEditorFlags defaultFlags = StaticEditorFlags.BatchingStatic |
                     StaticEditorFlags.NavigationStatic |
                     StaticEditorFlags.OccludeeStatic |
                     StaticEditorFlags.OffMeshLinkGeneration |
                     StaticEditorFlags.ReflectionProbeStatic;
 
-                GameObjectUtility.SetStaticEditorFlags(sceneState.DefaultModel.gameObject, defaultFlags);
+                GameObjectUtility.SetStaticEditorFlags(sceneState.defaultModel.gameObject, defaultFlags);
 
-                RegisterModel(sceneState.DefaultModel);
+                RegisterModel(sceneState.defaultModel);
             }
 
             // do not give default CSG model any extra abilities other than rendering
             //  since an invisible object doesn't work well with navmesh/colliders etc.
-            // force the users to use a CSG-model, but gracefully let it still be 
+            // force the users to use a CSG-model, but gracefully let it still be
             //  visible for objects outside of it.
             if(inPrefabMode)
             {
-                sceneState.DefaultModelObject.hideFlags = MeshInstanceManager.ComponentHideFlags | HideFlags.DontSave;
+                sceneState.defaultModelObject.hideFlags = MeshInstanceManager.COMPONENT_HIDE_FLAGS | HideFlags.DontSave;
             }
             else
             {
-                sceneState.DefaultModelObject.hideFlags = MeshInstanceManager.ComponentHideFlags;
+                sceneState.defaultModelObject.hideFlags = MeshInstanceManager.COMPONENT_HIDE_FLAGS;
             }
         }
 

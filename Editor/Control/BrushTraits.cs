@@ -56,7 +56,7 @@ namespace RealtimeCSG
                     return false;
                 }
 
-                if(isNotRenderable && CSGSettings.ShowHiddenSurfaces)
+                if(CSGSettings.ShowHiddenSurfaces)
                 {
                     return false;
                 }

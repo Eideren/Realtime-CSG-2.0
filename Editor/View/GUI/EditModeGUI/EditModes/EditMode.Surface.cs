@@ -765,7 +765,7 @@ namespace RealtimeCSG
                 RestoreBackupTexgens();
 
                 if(SurfaceUtility.TranslateSurfaces(
-                       selectedSurfaces, modelTransform, old_world_position, new_world_position
+                       selectedSurfaces, old_world_position, new_world_position
                    ))
                 {
                     deltaMovement = hoverOnShape.TexGens[hoverOnTexGenIndex].Translation - backupTexGen.Translation;

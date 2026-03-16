@@ -15,11 +15,6 @@ namespace RealtimeCSG
         out int generatedModelNodeID
     );
 
-    internal delegate bool SetModelDelegate(
-        int modelNodeID,
-        bool isEnabled
-    );
-
     internal delegate bool SetDirtyDelegate(int nodeID);
 
     internal delegate bool SetModelEnabledDelegate(
@@ -159,13 +154,6 @@ namespace RealtimeCSG
         out Vector2 maxTextureCoordinate
     );
 
-    internal delegate bool GetSurfaceMinMaxWorldCoordDelegate(
-        int brushNodeID,
-        int surfaceIndex,
-        out Vector3 minWorldCoordinate,
-        out Vector3 maxWorldCoordinate
-    );
-
     internal delegate bool ConvertWorldToTextureCoordDelegate(
         int brushNodeID,
         int surfaceIndex,
@@ -210,7 +198,6 @@ namespace RealtimeCSG
     internal delegate void ResetCSGDelegate();
 
     internal delegate bool UpdateAllModelMeshesDelegate();
-    internal delegate bool ModelMeshesNeedUpdateDelegate();
 
     internal delegate bool GetMeshDescriptionsDelegate(
         CSGModel model,
@@ -231,51 +218,51 @@ namespace RealtimeCSG
 
     internal sealed class NativeMethods
     {
-        public ResetCSGDelegate ResetCSG;
-        public ConvexPartitionDelegate ConvexPartition;
+        public ResetCSGDelegate resetCSG;
+        public ConvexPartitionDelegate convexPartition;
 
-        public SetDirtyDelegate SetDirty;
-        public SetChildNodesDelegate SetChildNodes;
-        public DestroyNodeDelegate DestroyNode;
-        public DestroyNodesDelegate DestroyNodes;
+        public SetDirtyDelegate setDirty;
+        public SetChildNodesDelegate setChildNodes;
+        public DestroyNodeDelegate destroyNode;
+        public DestroyNodesDelegate destroyNodes;
 
-        public GenerateModelDelegate GenerateModel;
-        public SetModelEnabledDelegate SetModelEnabled;
+        public GenerateModelDelegate generateModel;
+        public SetModelEnabledDelegate setModelEnabled;
 
-        public GenerateOperationDelegate GenerateOperation;
-        public SetOperationOperationTypeDelegate SetOperationOperationType;
+        public GenerateOperationDelegate generateOperation;
+        public SetOperationOperationTypeDelegate setOperationOperationType;
 
-        public GenerateBrushDelegate GenerateBrush;
-        public GetBrushMeshIDDelegate GetBrushMeshID;
-        public SetBrushMeshIDDelegate SetBrushMeshID;
-        public GetBrushFlagsDelegate GetBrushFlags;
-        public SetBrushFlagsDelegate SetBrushFlags;
-        public SetBrushOperationTypeDelegate SetBrushOperationType;
-        public SetBrushToModelSpaceDelegate SetBrushToModelSpace;
+        public GenerateBrushDelegate generateBrush;
+        public GetBrushMeshIDDelegate getBrushMeshID;
+        public SetBrushMeshIDDelegate setBrushMeshID;
+        public GetBrushFlagsDelegate getBrushFlags;
+        public SetBrushFlagsDelegate setBrushFlags;
+        public SetBrushOperationTypeDelegate setBrushOperationType;
+        public SetBrushToModelSpaceDelegate setBrushToModelSpace;
 
-        public CreateBrushMeshDelegate CreateBrushMesh;
-        public UpdateBrushMeshDelegate UpdateBrushMesh;
-        public DestroyBrushMeshDelegate DestroyBrushMesh;
+        public CreateBrushMeshDelegate createBrushMesh;
+        public UpdateBrushMeshDelegate updateBrushMesh;
+        public DestroyBrushMeshDelegate destroyBrushMesh;
 
-        public UpdateAllModelMeshesDelegate UpdateAllModelMeshes;
-        public GetMeshDescriptionsDelegate GetMeshDescriptions;
+        public UpdateAllModelMeshesDelegate updateAllModelMeshes;
+        public GetMeshDescriptionsDelegate getMeshDescriptions;
 
-        public GetModelMeshDelegate GetModelMesh;
-        public GetModelMeshNoAllocDelegate GetModelMeshNoAlloc;
+        public GetModelMeshDelegate getModelMesh;
+        public GetModelMeshNoAllocDelegate getModelMeshNoAlloc;
 
-        public RayCastMultiDelegate RayCastMulti;
-        public RayCastIntoModelMultiDelegate RayCastIntoModelMulti;
-        public RayCastIntoBrushDelegate RayCastIntoBrush;
-        public RayCastIntoBrushSurfaceDelegate RayCastIntoBrushSurface;
-        public GetItemsInFrustumDelegate GetItemsInFrustum;
+        public RayCastMultiDelegate rayCastMulti;
+        public RayCastIntoModelMultiDelegate rayCastIntoModelMulti;
+        public RayCastIntoBrushDelegate rayCastIntoBrush;
+        public RayCastIntoBrushSurfaceDelegate rayCastIntoBrushSurface;
+        public GetItemsInFrustumDelegate getItemsInFrustum;
 
-        public GetSurfaceMinMaxTexCoordsDelegate GetSurfaceMinMaxTexCoords;
-        public ConvertWorldToTextureCoordDelegate ConvertModelToTextureSpace;
-        public ConvertTextureToWorldCoordDelegate ConvertTextureToModelSpace;
+        public GetSurfaceMinMaxTexCoordsDelegate getSurfaceMinMaxTexCoords;
+        public ConvertWorldToTextureCoordDelegate convertModelToTextureSpace;
+        public ConvertTextureToWorldCoordDelegate convertTextureToModelSpace;
 
-        public GetBrushOutlineGenerationDelegate GetBrushOutlineGeneration;
-        public GetBrushOutlineDelegate GetBrushOutline;
-        public GetSurfaceOutlineDelegate GetSurfaceOutline;
+        public GetBrushOutlineGenerationDelegate getBrushOutlineGeneration;
+        public GetBrushOutlineDelegate getBrushOutline;
+        public GetSurfaceOutlineDelegate getSurfaceOutline;
     }
 }
 #endif

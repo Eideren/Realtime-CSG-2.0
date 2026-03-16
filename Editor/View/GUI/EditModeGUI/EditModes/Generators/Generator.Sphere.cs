@@ -1359,8 +1359,7 @@ namespace RealtimeCSG
                 Matrix4x4  matrix   = Matrix4x4.TRS(MathConstants.zeroVector3, rotation, MathConstants.oneVector3);
 
                 SurfaceUtility.AlignTextureSpaces(
-                    matrix, false, ref shape.TexGens[texGenIndex], ref shape.TexGenFlags[texGenIndex]
-                  , ref shape.Surfaces[s]
+                    matrix, false, ref shape.TexGens[texGenIndex], ref shape.Surfaces[s]
                 );
 
                 shape.TexGens[texGenIndex].RenderMaterial = defaultMaterial;
@@ -1427,7 +1426,7 @@ namespace RealtimeCSG
 
             if(radius == 0 || generatedBrushes == null || generatedBrushes.Length < 1)
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 HideGenerateBrushes();
 
                 return false;
@@ -1507,7 +1506,7 @@ namespace RealtimeCSG
 
             try
             {
-                InternalCSGModelManager.skipCheckForChanges = true;
+                InternalCSGModelManager.SkipCheckForChanges = true;
 
                 if(registerUndo)
                 {
@@ -1519,7 +1518,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
             }
 
             return !failures;

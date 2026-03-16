@@ -19,8 +19,7 @@ namespace InternalRealtimeCSG
 
             for(int b = 0; b < brushes.Length; b++)
             {
-                if(brushes[b] == null ||
-                   !brushes[b])
+                if(brushes[b] == null || !brushes[b])
                 {
                     continue;
                 }
@@ -32,8 +31,7 @@ namespace InternalRealtimeCSG
 
                 ControlMesh controlMesh = brushes[b].ControlMesh;
                 Vector3[]   points      = controlMesh.Vertices;
-
-                Vector3[] worldPoints = new Vector3[points.Length];
+                Vector3[]   worldPoints = new Vector3[points.Length];
 
                 for(int p = 0; p < points.Length; p++)
                 {
@@ -148,30 +146,24 @@ namespace InternalRealtimeCSG
                 ControlMeshUtility.RebuildShape(brush);
             }
 
-            if(fail)
-            {
-                Debug.LogWarning("Failed to perform operation");
-                Undo.RevertAllInCurrentGroup();
-            }
-
             InternalCSGModelManager.CheckForChanges();
         }
 
-        public static void FlipX(CSGBrush[] flipBrushes, string undoDescription = "Flip brushes on X Axis")
+        public static void FlipX(CSGBrush[] flipBrushes)
         {
             Matrix4x4 flipMatrix = MathConstants.identityMatrix;
             flipMatrix.m00 = -1;
             Flip(flipBrushes, flipMatrix, "Flip brushes on X Axis");
         }
 
-        public static void FlipY(CSGBrush[] flipBrushes, string undoDescription = "Flip brushes on Y Axis")
+        public static void FlipY(CSGBrush[] flipBrushes)
         {
             Matrix4x4 flipMatrix = MathConstants.identityMatrix;
             flipMatrix.m11 = -1;
             Flip(flipBrushes, flipMatrix, "Flip brushes on Y Axis");
         }
 
-        public static void FlipZ(CSGBrush[] flipBrushes, string undoDescription = "Flip brushes on Z Axis")
+        public static void FlipZ(CSGBrush[] flipBrushes)
         {
             Matrix4x4 flipMatrix = MathConstants.identityMatrix;
             flipMatrix.m22 = -1;

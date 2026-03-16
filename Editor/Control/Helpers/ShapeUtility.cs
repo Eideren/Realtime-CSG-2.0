@@ -65,8 +65,6 @@ namespace RealtimeCSG
                 }
             }
 
-            Vector3 tangent = MathConstants.zeroVector3, binormal = MathConstants.zeroVector3;
-
             for(int i = 0; i < shape.Surfaces.Length; i++)
             {
                 if(shape.Surfaces[i].Tangent == MathConstants.zeroVector3 ||
@@ -74,15 +72,10 @@ namespace RealtimeCSG
                 {
                     dirty = true;
                     Vector3 normal = shape.Surfaces[i].Plane.normal;
-                    GeometryUtility.CalculateTangents(normal, out tangent, out binormal);
+                    GeometryUtility.CalculateTangents(normal, out Vector3 tangent, out Vector3 binormal);
                     shape.Surfaces[i].Tangent  = tangent;
                     shape.Surfaces[i].BiNormal = binormal;
                 }
-//				if (Surfaces[i].Stretch == MathConstants.zeroVector2)
-//				{
-//					Surfaces[i].Stretch = MathConstants.oneVector2;
-//					dirty = true;
-//				}
             }
 
             return dirty;

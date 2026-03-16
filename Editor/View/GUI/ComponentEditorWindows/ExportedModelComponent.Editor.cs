@@ -76,7 +76,7 @@ namespace RealtimeCSG
 
                         Selection.objects = selection.ToArray();
 
-                        InternalCSGModelManager.skipCheckForChanges = true;
+                        InternalCSGModelManager.SkipCheckForChanges = true;
 
                         BrushOutlineManager.ClearOutlines();
                         //CSGModelManager.Refresh(forceHierarchyUpdate: true);
@@ -89,7 +89,7 @@ namespace RealtimeCSG
                     }
                     finally
                     {
-                        InternalCSGModelManager.skipCheckForChanges = false;
+                        InternalCSGModelManager.SkipCheckForChanges = false;
                         Undo.CollapseUndoOperations(groupIndex);
                     }
                 }

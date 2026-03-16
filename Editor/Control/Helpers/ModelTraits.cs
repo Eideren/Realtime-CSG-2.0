@@ -1,15 +1,15 @@
-﻿using InternalRealtimeCSG;
-using UnityEditor;
+﻿using System.Collections.Generic;
+using InternalRealtimeCSG;
 using RealtimeCSG.Components;
+using UnityEditor;
 using UnityEngine;
-using System.Collections.Generic;
 using Object = UnityEngine.Object;
 
 namespace RealtimeCSG
 {
     internal static class ModelTraits
     {
-        private static bool IsObjectPartOfAsset(string assetPath, UnityEngine.Object obj)
+        private static bool IsObjectPartOfAsset(string assetPath, Object obj)
         {
             if(!obj)
             {
@@ -21,7 +21,7 @@ namespace RealtimeCSG
             return assetPath == objPath;
         }
 
-        private static bool IsObjectPartOfAnotherAsset(string assetPath, UnityEngine.Object obj)
+        private static bool CanAddObjectToAsset(string assetPath, Object obj)
         {
             if(!obj ||
                string.IsNullOrEmpty(assetPath))
@@ -36,45 +36,13 @@ namespace RealtimeCSG
                 return false;
             }
 
-            if(!string.IsNullOrEmpty(objPath) &&
-               assetPath != objPath)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool CanAddObjectToAsset(string assetPath, UnityEngine.Object obj)
-        {
-            if(!obj ||
-               string.IsNullOrEmpty(assetPath))
-            {
-                return false;
-            }
-
-            string objPath = AssetDatabase.GetAssetPath(obj);
-
-            if(assetPath == objPath)
-            {
-                return false;
-            }
-
-            if(!string.IsNullOrEmpty(objPath) &&
-               assetPath != objPath)
-            {
-                //Debug.LogError(string.Format("Object is already owned by another prefab \"{0}\" \"{1}\"", assetPath, objPath));
-                return false;
-            }
-
-            return true;
+            return string.IsNullOrEmpty(objPath) || assetPath == objPath;
         }
 
         private static bool CanRemoveObjectFromAsset(
-            string assetPath, UnityEngine.Object obj, bool ignoreWhenPartOfOtherAsset = false
+            string assetPath, Object obj, bool ignoreWhenPartOfOtherAsset = false
         )
         {
-#if UNITY_2018_3_OR_NEWER
             if(!obj)
             {
                 return false;
@@ -101,153 +69,12 @@ namespace RealtimeCSG
 
                 return false;
             }
-#endif
+
             return true;
         }
-        /*
-        public static void AddObjectToModel(CSGModel model, UnityEngine.Object obj)
-        {
-            if (!model || !obj)
-                return;
 
-            if (!CSGPrefabUtility.IsPrefab(model))
-                return;
-
-            var asset       = CSGPrefabUtility.GetPrefabAsset(model.gameObject);
-            var assetPath   = AssetDatabase.GetAssetPath(asset);
-            if (!CanAddObjectToAsset(assetPath, obj))
-                return;
-
-            AssetDatabase.AddObjectToAsset(obj, asset);
-        }
-
-        public static void AddObjectsToModel(CSGModel model, UnityEngine.Object[] objs)
-        {
-            if (!model)
-                return;
-
-            if (!CSGPrefabUtility.IsPrefab(model))
-                return;
-
-            var asset       = CSGPrefabUtility.GetPrefabAsset(model.gameObject);
-            var assetPath   = AssetDatabase.GetAssetPath(asset);
-            if (string.IsNullOrEmpty(assetPath))
-                return;
-
-            foreach (var obj in objs)
-            {
-                if (!CanAddObjectToAsset(assetPath, obj))
-                    continue;
-
-                AssetDatabase.AddObjectToAsset(obj, asset);
-            }
-        }
-
-        public static void RemoveObjectFromModel(CSGModel model, UnityEngine.Object obj)
-        {
-#if UNITY_2018_3_OR_NEWER
-            if (!model || !obj)
-                return;
-
-            if (!CSGPrefabUtility.IsPrefab(model))
-                return;
-
-            var asset       = CSGPrefabUtility.GetPrefabAsset(model.gameObject);
-            var assetPath   = AssetDatabase.GetAssetPath(asset);
-            if (!CanRemoveObjectFromAsset(assetPath, obj))
-                return;
-
-            AssetDatabase.RemoveObjectFromAsset(obj);
-#endif
-        }
-        */
-
-        public static void RemoveObjectsFromModel(CSGModel model, UnityEngine.Object[] objs)
-        {
-#if UNITY_2018_3_OR_NEWER
-            if(!model)
-            {
-                return;
-            }
-
-            if(!CSGPrefabUtility.IsPrefab(model))
-            {
-                return;
-            }
-
-            GameObject asset     = CSGPrefabUtility.GetPrefabAsset(model.gameObject);
-            string     assetPath = AssetDatabase.GetAssetPath(asset);
-
-            foreach(Object obj in objs)
-            {
-                if(!obj)
-                {
-                    continue;
-                }
-
-                if(!CanRemoveObjectFromAsset(assetPath, obj))
-                {
-                    continue;
-                }
-
-                AssetDatabase.RemoveObjectFromAsset(obj);
-            }
-#endif
-        }
-
-#if UNITY_2018_3_OR_NEWER
-        private static Mesh CloneMesh(
-            Mesh prevMesh, List<GeneratedMeshInstance> foundGeneratedMeshInstances
-          , List<HelperSurfaceDescription> foundHelperSurfaces
-        )
-        {
-            Mesh newMesh = prevMesh.Clone();
-
-            foreach(GeneratedMeshInstance generatedMeshInstance in foundGeneratedMeshInstances)
-            {
-                if(!generatedMeshInstance)
-                {
-                    continue;
-                }
-
-                if(generatedMeshInstance.SharedMesh == prevMesh)
-                {
-                    generatedMeshInstance.SharedMesh = newMesh;
-                }
-
-                if(generatedMeshInstance.TryGetComponent(out MeshFilter meshFilter))
-                {
-                    if(meshFilter.sharedMesh == prevMesh)
-                    {
-                        meshFilter.sharedMesh = newMesh;
-                    }
-                }
-
-                if(generatedMeshInstance.TryGetComponent(out MeshCollider meshCollider))
-                {
-                    if(meshCollider.sharedMesh == prevMesh)
-                    {
-                        meshCollider.sharedMesh = newMesh;
-                    }
-                }
-            }
-
-            foreach(HelperSurfaceDescription helperSurface in foundHelperSurfaces)
-            {
-                if(helperSurface.SharedMesh == prevMesh)
-                {
-                    helperSurface.SharedMesh = newMesh;
-                }
-            }
-
-            return newMesh;
-        }
-
-        private static HashSet<Mesh> oldMeshes = new HashSet<Mesh>();
-        private static HashSet<Mesh> newMeshes = new HashSet<Mesh>();
-        private static List<GeneratedMeshInstance> foundGeneratedMeshInstances = new List<GeneratedMeshInstance>();
-        private static List<HelperSurfaceDescription> foundHelperSurfaces = new List<HelperSurfaceDescription>();
-        private static HashSet<string> foundNestedPrefabs = new HashSet<string>();
+        private static readonly HashSet<Mesh> oldMeshes = new HashSet<Mesh>();
+        private static readonly HashSet<Mesh> newMeshes = new HashSet<Mesh>();
 
         public static void OnPrefabSaving(GameObject obj)
         {
@@ -276,8 +103,6 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    foundGeneratedMeshInstances.Add(generatedMeshInstance);
-
                     if(generatedMeshInstance.SharedMesh)
                     {
                         newMeshes.Add(generatedMeshInstance.SharedMesh);
@@ -286,7 +111,6 @@ namespace RealtimeCSG
 
                 foreach(HelperSurfaceDescription helperSurface in generatedMeshesInstance.HelperSurfaces)
                 {
-                    foundHelperSurfaces.Add(helperSurface);
                     newMeshes.Add(helperSurface.SharedMesh);
                 }
             }
@@ -331,10 +155,8 @@ namespace RealtimeCSG
                     }
                 }
 
-                foreach(Mesh _newMesh in newMeshes)
+                foreach(Mesh newMesh in newMeshes)
                 {
-                    Mesh newMesh = _newMesh;
-
                     if(oldMeshes.Contains(newMesh))
                     {
                         if(IsObjectPartOfAsset(assetPath, newMesh))
@@ -354,17 +176,13 @@ namespace RealtimeCSG
                 AssetDatabase.StopAssetEditing();
             }
         }
-#endif
+
         public static bool IsDefaultModel(CSGModel model)
         {
-            if((model.hideFlags & MeshInstanceManager.ComponentHideFlags) == MeshInstanceManager.ComponentHideFlags ||
-               (model.hideFlags & HideFlags.DontSave) == HideFlags.DontSave ||
-               (model.hideFlags & HideFlags.DontSaveInEditor) == HideFlags.DontSaveInEditor)
-            {
-                return true;
-            }
-
-            return false;
+            return (model.hideFlags & MeshInstanceManager.COMPONENT_HIDE_FLAGS) == MeshInstanceManager.COMPONENT_HIDE_FLAGS
+              ||
+                (model.hideFlags & HideFlags.DontSave) == HideFlags.DontSave ||
+                (model.hideFlags & HideFlags.DontSaveInEditor) == HideFlags.DontSaveInEditor;
         }
 
         public static bool IsModelEditable(CSGModel model)
@@ -374,15 +192,11 @@ namespace RealtimeCSG
                 return false;
             }
 
-#if UNITY_2018_3_OR_NEWER && UNITY_EDITOR
-            if(CSGPrefabUtility.AreInPrefabMode())
-            {
-                // Nested prefabs do not play nice with editing in scene, so it's best to edit them in prefab mode themselves
-                // We only allow editing of nested prefabs when in prefab mode
-                return CSGPrefabUtility.IsEditedInPrefabMode(model);
-            }
-#endif
-            return model.isActiveAndEnabled;
+            // Nested prefabs do not play nice with editing in scene, so it's best to edit them in prefab mode themselves
+            // We only allow editing of nested prefabs when in prefab mode
+            return CSGPrefabUtility.AreInPrefabMode()
+                ? CSGPrefabUtility.IsEditedInPrefabMode(model)
+                : model.isActiveAndEnabled;
         }
 
         public static bool IsModelSelectable(CSGModel model)
@@ -392,12 +206,7 @@ namespace RealtimeCSG
                 return false;
             }
 
-            if(((1 << model.gameObject.layer) & Tools.visibleLayers) == 0)
-            {
-                return false;
-            }
-
-            return true;
+            return ((1 << model.gameObject.layer) & Tools.visibleLayers) != 0;
         }
 
         public static bool WillModelRender(CSGModel model)
@@ -408,7 +217,6 @@ namespace RealtimeCSG
                 return false;
             }
 
-#if UNITY_2018_3_OR_NEWER
             if(CSGPrefabUtility.AreInPrefabMode())
             {
                 if(!CSGPrefabUtility.IsEditedInPrefabMode(model))
@@ -416,17 +224,10 @@ namespace RealtimeCSG
                     return false;
                 }
             }
-#endif
+
             // Does our model have a meshRenderer?
             if(model.IsRenderable)
             {
-                // If so, is it shadow-only?
-//				if (model.ShadowsOnly)
-//				{
-                // .. and do we need to show shadow-only surfaces?
-//					return CSGSettings.ShowCastShadowsSurfaces;
-//				}
-
                 // Otherwise, it is always rendering (with the exception of manually hidden surfaces)
                 return true;
             }
@@ -452,9 +253,6 @@ namespace RealtimeCSG
             if(model.IsRenderable) // if it's renderable then it's already being rendered using a MeshRenderer
             {
                 // except if it's a shadow only surface, it has a MeshRenderer, but is not usually visible ...
-//				if (model.ShadowsOnly)
-//					return RenderSurfaceType.ShadowOnly;
-
                 return RenderSurfaceType.Normal;
             }
 
@@ -463,12 +261,7 @@ namespace RealtimeCSG
                 return RenderSurfaceType.Trigger;
             }
 
-            if(model.HaveCollider)
-            {
-                return RenderSurfaceType.Collider;
-            }
-
-            return RenderSurfaceType.Culled;
+            return model.HaveCollider ? RenderSurfaceType.Collider : RenderSurfaceType.Culled;
         }
 
         public static bool NeedsRigidBody(CSGModel model)

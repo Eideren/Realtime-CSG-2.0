@@ -6,7 +6,7 @@ using RealtimeCSG.Helpers;
 using RealtimeCSG.Legacy;
 using RealtimeCSG.Components;
 
-// TODO: 
+// TODO:
 //	test on non straight walls/floors
 //  optional one step less in height (so that the last step is on the wall it's put against
 //	make it possible to move steps in slope direction
@@ -451,7 +451,7 @@ namespace RealtimeCSG
 
                 CSGPlane worldPlane = new CSGPlane(normal, point0);
 
-                // note, we use 'inverse' of the worldToLocalMatrix because to transform a plane we'd need to do an inverse, 
+                // note, we use 'inverse' of the worldToLocalMatrix because to transform a plane we'd need to do an inverse,
                 // and using the already inversed matrix we don't need to do a costly inverse.
                 CSGPlane localPlane = GeometryUtility.InverseTransformPlane(
                     firstSnappedBrush.transform.localToWorldMatrix, worldPlane
@@ -1307,7 +1307,7 @@ namespace RealtimeCSG
 
             if(length <= 0)
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 HideGenerateBrushes();
 
                 return false;
@@ -1321,7 +1321,7 @@ namespace RealtimeCSG
 
             if(!GenerateBrushObjects(totalSteps))
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 HideGenerateBrushes();
 
                 return false;
@@ -1337,7 +1337,7 @@ namespace RealtimeCSG
                  , StairsHeight, ExtraDepth, ExtraHeight, StairsBottom
                ))
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 HideGenerateBrushes();
 
                 return false;
@@ -1350,7 +1350,7 @@ namespace RealtimeCSG
 
             try
             {
-                InternalCSGModelManager.skipCheckForChanges = true;
+                InternalCSGModelManager.SkipCheckForChanges = true;
 
                 if(registerUndo)
                 {
@@ -1363,7 +1363,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
             }
 
             return true;

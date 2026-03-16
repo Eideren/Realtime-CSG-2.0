@@ -162,7 +162,7 @@ namespace RealtimeCSG
 
             GeometryWireframe outline;
 
-            if(!InternalCSGModelManager.External.GetSurfaceOutline(
+            if(!InternalCSGModelManager.External.getSurfaceOutline(
                    brushNodeID,
                    surfaceIndex,
                    out outline

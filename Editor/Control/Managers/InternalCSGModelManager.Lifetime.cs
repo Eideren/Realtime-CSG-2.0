@@ -1,28 +1,27 @@
-using UnityEngine;
-using UnityEditor;
 using InternalRealtimeCSG;
 using RealtimeCSG.Components;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace RealtimeCSG
 {
     internal partial class InternalCSGModelManager
     {
-        private static bool _isInitialized = false;
-        private static readonly object _lockObj = new object();
+        private static bool m_IsInitialized;
+        private static readonly object lockObj = new object();
 
         internal static NativeMethods External;
 
 #region Clear
 
-#if UNITY_2019_4_OR_NEWER
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-#endif
         public static void Clear()
         {
             BrushOutlineManager.ClearOutlines();
             ClearRegistration();
             ClearCaches();
-            _isHierarchyModified = true;
+            m_IsHierarchyModified = true;
         }
 
 #endregion
@@ -36,8 +35,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(External == null ||
-               External.ResetCSG == null)
+            if(External == null || External.resetCSG == null)
             {
                 NativeMethodBindings.RegisterUnityMethods();
                 NativeMethodBindings.RegisterExternalMethods();
@@ -50,7 +48,7 @@ namespace RealtimeCSG
 
             if(RegisterAllComponents())
             {
-                External.ResetCSG();
+                External.resetCSG();
             }
         }
 
@@ -60,12 +58,12 @@ namespace RealtimeCSG
 
         public static void Shutdown()
         {
-            SceneStates.Clear();
+            sceneStates.Clear();
 
             ClearRegistration();
             ClearCaches();
 
-            _isInitialized = false;
+            m_IsInitialized = false;
         }
 
 #endregion
@@ -84,29 +82,15 @@ namespace RealtimeCSG
             {
                 foreach(CSGBrush brush in Brushes)
                 {
-                    try
+                    if(brush.Shape != null)
                     {
-                        //brush.EnsureInitialized();
-                        if(brush.Shape != null)
-                        {
-                            ShapeUtility.CheckMaterials(brush.Shape);
-                        }
-                    }
-                    finally
-                    {
+                        ShapeUtility.CheckMaterials(brush.Shape);
                     }
                 }
 
                 foreach(CSGBrush brush in Brushes)
                 {
-                    try
-                    {
-                        CheckSurfaceModifications(brush, true);
-                        //InternalCSGModelManager.ValidateBrush(brush);
-                    }
-                    finally
-                    {
-                    }
+                    CheckSurfaceModifications(brush, true);
                 }
             }
         }
@@ -115,7 +99,7 @@ namespace RealtimeCSG
 
 #region CheckForChanges
 
-        public static bool skipCheckForChanges = false;
+        public static bool SkipCheckForChanges = false;
 
         public static void CheckForChanges(bool forceHierarchyUpdate = false)
         {
@@ -124,18 +108,18 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(!forceHierarchyUpdate && skipCheckForChanges)
+            if(!forceHierarchyUpdate && SkipCheckForChanges)
             {
                 return;
             }
 
-            lock(_lockObj)
+            lock(lockObj)
             {
-                if(!_isInitialized)
+                if(!m_IsInitialized)
                 {
                     RegisterAllComponents();
                     forceHierarchyUpdate = true;
-                    _isInitialized       = true;
+                    m_IsInitialized      = true;
 
                     OnHierarchyModified();
                     UpdateRemoteMeshes();
@@ -144,15 +128,15 @@ namespace RealtimeCSG
                 forceHierarchyUpdate = UpdateModelSettings() || forceHierarchyUpdate;
 
                 // unfortunately this is the only reliable way I could find
-                // to determine when a transform is modified, either in 
+                // to determine when a transform is modified, either in
                 // the inspector or the scene.
                 CheckTransformChanged(forceHierarchyUpdate);
 
-                if(_isHierarchyModified || forceHierarchyUpdate)
+                if(m_IsHierarchyModified || forceHierarchyUpdate)
                 {
                     OnHierarchyModified();
                     OnHierarchyModified();
-                    _isHierarchyModified = false;
+                    m_IsHierarchyModified = false;
                 }
 
                 UpdateMeshes();
@@ -168,8 +152,7 @@ namespace RealtimeCSG
         {
             Clear();
 
-            if(External == null ||
-               External.ResetCSG == null)
+            if(External == null || External.resetCSG == null)
             {
                 NativeMethodBindings.RegisterUnityMethods();
                 NativeMethodBindings.RegisterExternalMethods();
@@ -179,7 +162,7 @@ namespace RealtimeCSG
 
             if(RegisterAllComponents())
             {
-                External.ResetCSG();
+                External.resetCSG();
             }
         }
 
@@ -196,19 +179,19 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(!ensureExternalMethodsPopulated())
+            if(!EnsureExternalMethodsPopulated())
             {
                 return;
             }
 
-            EditorApplication.playModeStateChanged               += onPlayModeChange;
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded += sceneLoaded;
+            EditorApplication.playModeStateChanged += OnPlayModeChange;
+            SceneManager.sceneLoaded               += SceneLoaded;
         }
 
-        private static bool ensureExternalMethodsPopulated()
+        private static bool EnsureExternalMethodsPopulated()
         {
             if(External == null ||
-               External.ResetCSG == null)
+               External.resetCSG == null)
             {
                 NativeMethodBindings.RegisterUnityMethods();
                 NativeMethodBindings.RegisterExternalMethods();
@@ -226,9 +209,9 @@ namespace RealtimeCSG
             return true;
         }
 
-        private static void rebuildMeshes()
+        private static void RebuildMeshes()
         {
-            if(!ensureExternalMethodsPopulated())
+            if(!EnsureExternalMethodsPopulated())
             {
                 return;
             }
@@ -236,25 +219,23 @@ namespace RealtimeCSG
             CSGModelManager.AllowInEditorPlayMode = true;
             Shutdown();
             DoForcedMeshUpdate();
-            CheckForChanges(false);
+            CheckForChanges();
             CSGModelManager.AllowInEditorPlayMode = false;
         }
 
-        private static void sceneLoaded(
-            UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode
-        )
+        private static void SceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            rebuildMeshes();
+            RebuildMeshes();
         }
 
-        private static void onPlayModeChange(PlayModeStateChange playMode)
+        private static void OnPlayModeChange(PlayModeStateChange playMode)
         {
             if(playMode == PlayModeStateChange.EnteredEditMode)
             {
-                UnityEngine.SceneManagement.SceneManager.sceneLoaded -= sceneLoaded;
-                EditorApplication.playModeStateChanged               -= onPlayModeChange;
+                SceneManager.sceneLoaded               -= SceneLoaded;
+                EditorApplication.playModeStateChanged -= OnPlayModeChange;
 
-                rebuildMeshes();
+                RebuildMeshes();
             }
         }
 #endif

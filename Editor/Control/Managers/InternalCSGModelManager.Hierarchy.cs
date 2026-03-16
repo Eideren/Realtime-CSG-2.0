@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-using UnityEditor;
 using RealtimeCSG.Components;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
     internal partial class InternalCSGModelManager
     {
-        private static bool _isHierarchyModified = true;
+        private static bool m_IsHierarchyModified = true;
 
         public static void UpdateHierarchy()
         {
-            _isHierarchyModified = true;
+            m_IsHierarchyModified = true;
         }
 
 #region GetParentData
@@ -33,12 +33,7 @@ namespace RealtimeCSG
                 return model.parentData;
             }
 
-            if(parent.operationNodeID == CSGNode.InvalidNodeID)
-            {
-                return null;
-            }
-
-            return parent.ParentData;
+            return parent.operationNodeID == CSGNode.InvalidNodeID ? null : parent.ParentData;
         }
 
 #endregion
@@ -47,13 +42,13 @@ namespace RealtimeCSG
 
         private struct TreePosition
         {
-            public TreePosition(HierarchyItem _item)
+            public TreePosition(HierarchyItem item)
             {
-                item  = _item;
-                index = 0;
+                this.item = item;
+                index     = 0;
             }
 
-            public HierarchyItem item;
+            public readonly HierarchyItem item;
             public int index;
         }
 
@@ -92,11 +87,11 @@ namespace RealtimeCSG
                             {
                                 if(node.ChildNodes.Length > 0)
                                 {
-                                    int next_index = i + 1;
+                                    int nextIndex = i + 1;
 
-                                    if(next_index < children.Length)
+                                    if(nextIndex < children.Length)
                                     {
-                                        parent.index = next_index;
+                                        parent.index = nextIndex;
                                         parents.Add(parent);
                                     }
 
@@ -113,7 +108,7 @@ namespace RealtimeCSG
 
                         if(node.PrevSiblingIndex != node.SiblingIndex)
                         {
-                            External.SetDirty(nodeID);
+                            External.setDirty(nodeID);
                             node.PrevSiblingIndex = node.SiblingIndex;
                         }
                     }
@@ -127,7 +122,7 @@ namespace RealtimeCSG
 
 #region CheckTransformChanged
 
-        internal const int BrushCheckChunk = 3000;
+        internal const int BRUSH_CHECK_CHUNK = 3000;
         internal static int BrushCheckPos = 0;
 
         public static void CheckTransformChanged(bool checkAllBrushes = false)
@@ -153,7 +148,7 @@ namespace RealtimeCSG
 
                 operation.PrevOperation = operation.OperationType;
 
-                External.SetOperationOperationType(
+                External.setOperationOperationType(
                     operation.operationNodeID,
                     operation.OperationType
                 );
@@ -215,7 +210,7 @@ namespace RealtimeCSG
                         brush.compareTransformation.localToWorldMatrix;
 
                     Matrix4x4 localToModelMatrix = brush.compareTransformation.brushToModelSpaceMatrix;
-                    External.SetBrushToModelSpace(brushNodeID, localToModelMatrix);
+                    External.setBrushToModelSpace(brushNodeID, localToModelMatrix);
 
                     if(brush.ControlMesh != null)
                     {
@@ -227,7 +222,7 @@ namespace RealtimeCSG
                 {
                     brush.prevOperation = brush.OperationType;
 
-                    External.SetBrushOperationType(
+                    External.setBrushOperationType(
                         brushNodeID,
                         brush.OperationType
                     );
@@ -518,13 +513,10 @@ namespace RealtimeCSG
 
         private static void InitializeHierarchy(ChildNodeData childData, Transform childTransform)
         {
-            Transform parentTransform;
-            CSGNode   parentNode;
-            FindParentNode(childTransform, out parentNode, out parentTransform);
+            FindParentNode(childTransform, out CSGNode parentNode, out Transform parentTransform);
 
             if(!parentNode)
             {
-                parentTransform  = childTransform.root;
                 childData.Model  = GetDefaultCSGModelForObject(childTransform);
                 childData.Parent = null;
             }
@@ -691,7 +683,7 @@ namespace RealtimeCSG
                         }
                         else
                         {
-                            // assume that if this operation already has the 
+                            // assume that if this operation already has the
                             // correct model, then it's children will have the same model
                             break;
                         }
@@ -719,7 +711,7 @@ namespace RealtimeCSG
                         }
                         else
                         {
-                            // assume that if this brush already has the 
+                            // assume that if this brush already has the
                             // correct model, then it's children will have the same model
                             break;
                         }
@@ -737,7 +729,7 @@ namespace RealtimeCSG
         public static void OnOperationTransformChanged(CSGOperation op)
         {
             // unfortunately this event is sent before it's destroyed, so we need to defer it.
-            OperationTransformChanged.Add(op);
+            operationTransformChanged.Add(op);
         }
 
 #endregion
@@ -747,7 +739,7 @@ namespace RealtimeCSG
         public static void OnBrushTransformChanged(CSGBrush brush)
         {
             // unfortunately this event is sent before it's destroyed, so we need to defer it.
-            BrushTransformChanged.Add(brush);
+            brushTransformChanged.Add(brush);
         }
 
 #endregion
@@ -788,13 +780,6 @@ namespace RealtimeCSG
         private static void SetCSGOperationHierarchy(CSGOperation op, CSGOperation parentOp, CSGModel parentModel)
         {
             SetNodeParent(op.ChildData, op.ParentData, parentOp, parentModel);
-/*
-            if (!operationCache.ChildData.Model)
-                return;
-
-            External.SetOperationHierarchy(op.operationNodeID,
-                                           operationCache.ChildData.modelNodeID,
-                                           operationCache.ChildData.parentNodeID);*/
         }
 
 #endregion
@@ -813,7 +798,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            // make sure the node has already been initialized, 
+            // make sure the node has already been initialized,
             // otherwise ignore it
             if(!op.IsRegistered)
             {
@@ -841,13 +826,6 @@ namespace RealtimeCSG
         private static void SetCSGBrushHierarchy(CSGBrush brush, CSGOperation parentOp, CSGModel parentModel)
         {
             SetNodeParent(brush.ChildData, brush.hierarchyItem, parentOp, parentModel);
-/*
-            if (!brushCache.childData.Model)
-                return;
-
-            External.SetBrushHierarchy(brush.brushNodeID,
-                                       brushCache.childData.modelNodeID,
-                                       brushCache.childData.parentNodeID);*/
         }
 
 #endregion
@@ -862,9 +840,7 @@ namespace RealtimeCSG
             }
 
             // NOTE: returns default model when it can't find parent model
-            CSGModel     parentModel;
-            CSGOperation parentOp;
-            FindParentOperationAndModel(brush.transform, out parentOp, out parentModel);
+            FindParentOperationAndModel(brush.transform, out CSGOperation parentOp, out CSGModel parentModel);
 
             if(!parentOp)
             {
@@ -901,22 +877,20 @@ namespace RealtimeCSG
                 return;
             }
 
-            // make sure the node has already been initialized, 
+            // make sure the node has already been initialized,
             // otherwise ignore it
             if(!brush.IsRegistered)
             {
                 return;
             }
 
-            if(RemovedBrushes.Contains(brush.brushNodeID))
+            if(removedBrushes.Contains(brush.brushNodeID))
             {
                 return;
             }
 
             // NOTE: returns default model when it can't find parent model
-            CSGModel     parentModel;
-            CSGOperation parentOp;
-            FindParentOperationAndModel(brush.transform, out parentOp, out parentModel);
+            FindParentOperationAndModel(brush.transform, out CSGOperation parentOp, out CSGModel parentModel);
 
             if(brush.ChildData.Parent == parentOp &&
                brush.ChildData.Model == parentModel)
@@ -934,8 +908,8 @@ namespace RealtimeCSG
 
 #endregion
 
-        internal static double hierarchyValidateTime = 0.0;
-        internal static double updateHierarchyTime = 0.0;
+        internal static double HierarchyValidateTime;
+        internal static double UpdateHierarchyTime;
 
         public static void OnHierarchyModified()
         {
@@ -944,15 +918,15 @@ namespace RealtimeCSG
                 return;
             }
 
-            HierarchyItem.CurrentLoopCount = HierarchyItem.CurrentLoopCount + 1;
+            HierarchyItem.CurrentLoopCount += 1;
 
             UpdateRegistration();
 
             double startTime = EditorApplication.timeSinceStartup;
 
-            if(OperationTransformChanged.Count > 0)
+            if(operationTransformChanged.Count > 0)
             {
-                foreach(CSGOperation item in OperationTransformChanged)
+                foreach(CSGOperation item in operationTransformChanged)
                 {
                     if(item)
                     {
@@ -960,12 +934,12 @@ namespace RealtimeCSG
                     }
                 }
 
-                OperationTransformChanged.Clear();
+                operationTransformChanged.Clear();
             }
 
-            if(BrushTransformChanged.Count > 0)
+            if(brushTransformChanged.Count > 0)
             {
-                foreach(CSGBrush item in BrushTransformChanged)
+                foreach(CSGBrush item in brushTransformChanged)
                 {
                     if(!item)
                     {
@@ -976,28 +950,28 @@ namespace RealtimeCSG
                     ValidateBrush(item); // to detect material changes when moving between models
                 }
 
-                BrushTransformChanged.Clear();
+                brushTransformChanged.Clear();
             }
 
-            hierarchyValidateTime = EditorApplication.timeSinceStartup - startTime;
+            HierarchyValidateTime = EditorApplication.timeSinceStartup - startTime;
 
             // remove all nodes that have been scheduled for removal
-            if(RemovedBrushes.Count > 0)
+            if(removedBrushes.Count > 0)
             {
-                External.DestroyNodes(RemovedBrushes.ToArray());
-                RemovedBrushes.Clear();
+                External.destroyNodes(removedBrushes.ToArray());
+                removedBrushes.Clear();
             }
 
-            if(RemovedOperations.Count > 0)
+            if(removedOperations.Count > 0)
             {
-                External.DestroyNodes(RemovedOperations.ToArray());
-                RemovedOperations.Clear();
+                External.destroyNodes(removedOperations.ToArray());
+                removedOperations.Clear();
             }
 
-            if(RemovedModels.Count > 0)
+            if(removedModels.Count > 0)
             {
-                External.DestroyNodes(RemovedModels.ToArray());
-                RemovedModels.Clear();
+                External.destroyNodes(removedModels.ToArray());
+                removedModels.Clear();
             }
 
             for(int i = Brushes.Count - 1; i >= 0; i--)
@@ -1086,7 +1060,7 @@ namespace RealtimeCSG
                 ParentNodeDataExtensions.UpdateNodePosition(item.hierarchyItem, parentData);
             }
 
-            if(External.SetChildNodes != null)
+            if(External.setChildNodes != null)
             {
                 for(int i = 0; i < Operations.Count; i++)
                 {
@@ -1104,7 +1078,7 @@ namespace RealtimeCSG
 
                     int[] childList = UpdateChildList(item.ParentData);
 
-                    External.SetChildNodes(item.operationNodeID, childList.Length, childList);
+                    External.setChildNodes(item.operationNodeID, childList.Length, childList);
                     item.ParentData.ChildrenModified = false;
                 }
 
@@ -1124,12 +1098,12 @@ namespace RealtimeCSG
 
                     int[] childList = UpdateChildList(item.parentData);
 
-                    External.SetChildNodes(item.modelNodeID, childList.Length, childList);
+                    External.setChildNodes(item.modelNodeID, childList.Length, childList);
                     item.parentData.ChildrenModified = false;
                 }
             }
 
-            updateHierarchyTime = EditorApplication.timeSinceStartup - startTime;
+            UpdateHierarchyTime = EditorApplication.timeSinceStartup - startTime;
         }
     }
 }

@@ -1,12 +1,14 @@
 ﻿//#define SHOW_GENERATED_MESHES
 
-using UnityEngine;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
-using UnityEditor;
+using System.IO;
 using RealtimeCSG;
 using RealtimeCSG.Components;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityFBXExporter;
 
 namespace InternalRealtimeCSG
 {
@@ -21,13 +23,12 @@ namespace InternalRealtimeCSG
             {
                 case ExportType.FBX:
                     typeName  = "FBX";
-                    extension = @"fbx";
+                    extension = "fbx";
 
                     break;
                 default:
-                    //case RealtimeCSG.Components.ExportType.UnityMesh:
                     typeName   = "Mesh";
-                    extension  = @"prefab";
+                    extension  = "prefab";
                     exportType = ExportType.UnityMesh;
 
                     break;
@@ -37,9 +38,7 @@ namespace InternalRealtimeCSG
 
             if(exportType != ExportType.UnityMesh)
             {
-                newPath = UnityFBXExporter.ExporterMenu.GetNewPath(
-                    model.gameObject, typeName, extension, model.exportPath
-                );
+                newPath = ExporterMenu.GetNewPath(model.gameObject, typeName, extension, model.exportPath);
 
                 if(string.IsNullOrEmpty(newPath))
                 {
@@ -65,7 +64,7 @@ namespace InternalRealtimeCSG
 
             if(!string.IsNullOrEmpty(model.exportPath))
             {
-                tempExportObject = new GameObject(System.IO.Path.GetFileNameWithoutExtension(model.exportPath));
+                tempExportObject = new GameObject(Path.GetFileNameWithoutExtension(model.exportPath));
 
                 if(string.IsNullOrEmpty(tempExportObject.name))
                 {
@@ -116,7 +115,7 @@ namespace InternalRealtimeCSG
                         continue;
                     }
 
-                    Refresh(instance, model, true, skipAssetDatabaseUpdate: true);
+                    Refresh(instance, model, true);
 
                     RenderSurfaceType surfaceType = GetSurfaceType(instance.MeshDescription, owner.Settings);
 
@@ -145,8 +144,6 @@ namespace InternalRealtimeCSG
 
                     if(!mesh.isReadable)
                     {
-                        //bounds.Extend(mesh.bounds.min);
-                        //bounds.Extend(mesh.bounds.max);
                     }
                     else
                     {
@@ -160,7 +157,7 @@ namespace InternalRealtimeCSG
 
                     GameObject subObj = Object.Instantiate(
                         instance.gameObject, MathConstants.zeroVector3, MathConstants.identityQuaternion
-                    ) as GameObject;
+                    );
 
                     subObj.hideFlags            = HideFlags.None;
                     subObj.transform.position   = owner.transform.position;
@@ -174,14 +171,14 @@ namespace InternalRealtimeCSG
 
                     if(surfaceType == RenderSurfaceType.Collider)
                     {
-                        subObj.name = "no-material Mesh (" + colliderCounter + ") COLLIDER";
+                        subObj.name = $"no-material Mesh ({colliderCounter}) COLLIDER";
                         colliderCounter++;
                     }
                     else
                     {
                         if(surfaceType == RenderSurfaceType.ShadowOnly)
                         {
-                            subObj.name = "shadow-only Mesh (" + shadowOnlyCounter + ")";
+                            subObj.name = $"shadow-only Mesh ({shadowOnlyCounter})";
                             shadowOnlyCounter++;
                             MeshRenderer meshRenderer = subObj.GetComponent<MeshRenderer>();
 
@@ -196,13 +193,12 @@ namespace InternalRealtimeCSG
 
                             if(!renderMaterial)
                             {
-                                renderMaterial = MaterialUtility.DefaultMaterial;
-                                subObj.name    = "missing-material Mesh (" + counter + ")";
+                                subObj.name = $"missing-material Mesh ({counter})";
                                 counter++;
                             }
                             else
                             {
-                                subObj.name = renderMaterial.name + " Mesh (" + counter + ")";
+                                subObj.name = $"{renderMaterial.name} Mesh ({counter})";
                             }
 
                             counter++;
@@ -249,7 +245,7 @@ namespace InternalRealtimeCSG
                     position.z = 0;
                 }
 
-                Vector3 center = bounds.Center;
+                Vector3 center;
 
                 switch(model.originType)
                 {
@@ -285,11 +281,9 @@ namespace InternalRealtimeCSG
                         continue;
                     }
 
-                    Mesh newMesh;
-
-                    if(!modifiedMeshes.TryGetValue(mesh, out newMesh))
+                    if(!modifiedMeshes.TryGetValue(mesh, out Mesh newMesh))
                     {
-                        newMesh = (Mesh)Object.Instantiate(mesh);
+                        newMesh = Object.Instantiate(mesh);
                         Vector3[] vertices = mesh.vertices;
 
                         for(int v = 0; v < vertices.Length; v++)
@@ -316,11 +310,9 @@ namespace InternalRealtimeCSG
                         continue;
                     }
 
-                    Mesh newMesh;
-
-                    if(!modifiedMeshes.TryGetValue(mesh, out newMesh))
+                    if(!modifiedMeshes.TryGetValue(mesh, out Mesh newMesh))
                     {
-                        newMesh = (Mesh)Object.Instantiate(mesh);
+                        newMesh = Object.Instantiate(mesh);
                         Vector3[] vertices = mesh.vertices;
 
                         for(int v = 0; v < vertices.Length; v++)
@@ -345,9 +337,8 @@ namespace InternalRealtimeCSG
                 {
                     case ExportType.FBX:
                     {
-                        if(!UnityFBXExporter.FBXExporter.ExportGameObjToFBX(tempExportObject, newPath, exportColliders))
+                        if(!FBXExporter.ExportGameObjToFBX(tempExportObject, newPath, exportColliders))
                         {
-                            //InternalCSGModelManager.ClearMeshInstances();
                             EditorUtility.DisplayDialog("Warning", "Failed to export the FBX file.", "Ok");
 
                             return;
@@ -376,9 +367,8 @@ namespace InternalRealtimeCSG
                         break;
                     }
                     default:
-                        //case RealtimeCSG.Components.ExportType.UnityMesh:
                     {
-                        prefabObj = tempExportObject; // AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(newPath);
+                        prefabObj       = tempExportObject;
                         modelGameObject = tempExportObject;
 
                         foreach(MeshFilter meshFilter in tempExportObject.GetComponentsInChildren<MeshFilter>())
@@ -411,9 +401,7 @@ namespace InternalRealtimeCSG
                             continue;
                         }
 
-                        int instanceId;
-
-                        if(!int.TryParse(nameSplit[1], out instanceId))
+                        if(!int.TryParse(nameSplit[1], out int instanceId))
                         {
                             continue;
                         }
@@ -499,8 +487,7 @@ namespace InternalRealtimeCSG
 
                 for(int i = 0; i < exported.hiddenComponents.Length; i++)
                 {
-                    exported.hiddenComponents[i].behaviour.hideFlags =
-                        exported.hiddenComponents[i].behaviour.hideFlags | ComponentHideFlags;
+                    exported.hiddenComponents[i].behaviour.hideFlags |= COMPONENT_HIDE_FLAGS;
 
                     exported.hiddenComponents[i].behaviour.enabled = false;
                 }

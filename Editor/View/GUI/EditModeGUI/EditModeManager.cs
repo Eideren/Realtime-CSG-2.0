@@ -199,7 +199,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            InternalCSGModelManager.skipCheckForChanges = true;
+            InternalCSGModelManager.SkipCheckForChanges = true;
 
             try
             {
@@ -207,7 +207,7 @@ namespace RealtimeCSG
             }
             finally
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
             }
 
             foreach(IEditMode tool in brushTools)

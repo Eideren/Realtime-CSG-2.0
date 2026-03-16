@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 
 namespace RealtimeCSG
 {
     internal sealed class UnityGridManager
     {
-        private static Type UnityAnnotationUtility;
-        private static PropertyInfo UnityShowGridProperty;
+        private static Type m_UnityAnnotationUtility;
+        private static PropertyInfo m_UnityShowGridProperty;
 
-        private static bool initialized = false;
-        private static bool reflectionSucceeded = false;
+        private static bool m_Initialized;
+        private static bool m_ReflectionSucceeded;
 
         private static void InitReflectedData()
         {
-            if(initialized)
+            if(m_Initialized)
             {
                 return;
             }
 
-            initialized         = true;
-            reflectionSucceeded = false;
+            m_Initialized         = true;
+            m_ReflectionSucceeded = false;
 
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Type> types      = new List<Type>();
@@ -37,25 +37,25 @@ namespace RealtimeCSG
                 }
             }
 
-            UnityAnnotationUtility = types.FirstOrDefault(t => t.FullName == "UnityEditor.AnnotationUtility");
+            m_UnityAnnotationUtility = types.FirstOrDefault(t => t.FullName == "UnityEditor.AnnotationUtility");
 
-            if(UnityAnnotationUtility != null)
+            if(m_UnityAnnotationUtility != null)
             {
-                UnityShowGridProperty = UnityAnnotationUtility.GetProperty(
+                m_UnityShowGridProperty = m_UnityAnnotationUtility.GetProperty(
                     "showGrid", BindingFlags.NonPublic | BindingFlags.Static
                 );
 
-                if(UnityShowGridProperty != null)
+                if(m_UnityShowGridProperty != null)
                 {
-                    UnityShowGridProperty.SetValue(UnityAnnotationUtility, false, null);
+                    m_UnityShowGridProperty.SetValue(m_UnityAnnotationUtility, false, null);
                 }
             }
             else
             {
-                UnityShowGridProperty = null;
+                m_UnityShowGridProperty = null;
             }
 
-            reflectionSucceeded = UnityShowGridProperty != null;
+            m_ReflectionSucceeded = m_UnityShowGridProperty != null;
         }
 
         internal static bool ShowGrid
@@ -64,9 +64,9 @@ namespace RealtimeCSG
             {
                 InitReflectedData();
 
-                if(reflectionSucceeded && UnityShowGridProperty != null)
+                if(m_ReflectionSucceeded && m_UnityShowGridProperty != null)
                 {
-                    return (bool)UnityShowGridProperty.GetValue(UnityAnnotationUtility, null);
+                    return (bool)m_UnityShowGridProperty.GetValue(m_UnityAnnotationUtility, null);
                 }
 
                 return true;
@@ -75,9 +75,9 @@ namespace RealtimeCSG
             {
                 InitReflectedData();
 
-                if(reflectionSucceeded && UnityShowGridProperty != null)
+                if(m_ReflectionSucceeded && m_UnityShowGridProperty != null)
                 {
-                    UnityShowGridProperty.SetValue(UnityAnnotationUtility, value, null);
+                    m_UnityShowGridProperty.SetValue(m_UnityAnnotationUtility, value, null);
                 }
             }
         }

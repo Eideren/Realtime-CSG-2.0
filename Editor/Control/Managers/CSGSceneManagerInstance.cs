@@ -1,6 +1,6 @@
-﻿#if UNITY_EDITOR
-using RealtimeCSG;
+﻿using RealtimeCSG;
 using RealtimeCSG.Components;
+using UnityEditor;
 using UnityEngine;
 
 namespace InternalRealtimeCSG
@@ -9,7 +9,7 @@ namespace InternalRealtimeCSG
     {
         public void OnCreated(GeneratedMeshes container)
         {
-            if(!container || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!container || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -19,7 +19,7 @@ namespace InternalRealtimeCSG
 
         public void OnCreated(GeneratedMeshInstance component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -29,7 +29,7 @@ namespace InternalRealtimeCSG
 
         public void OnCreated(CSGModel component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -39,7 +39,7 @@ namespace InternalRealtimeCSG
 
         public void OnCreated(CSGOperation component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -49,7 +49,7 @@ namespace InternalRealtimeCSG
 
         public void OnCreated(CSGBrush component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -59,17 +59,17 @@ namespace InternalRealtimeCSG
 
         public void OnDestroyed(GeneratedMeshes container)
         {
-            if(!container || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!container || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
 
-            MeshInstanceManager.OnDestroyed(container);
+            MeshInstanceManager.OnDestroyed();
         }
 
         public void OnDestroyed(CSGOperation component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -79,7 +79,7 @@ namespace InternalRealtimeCSG
 
         public void OnDestroyed(CSGModel component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -89,7 +89,7 @@ namespace InternalRealtimeCSG
 
         public void OnDestroyed(CSGBrush component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -99,7 +99,7 @@ namespace InternalRealtimeCSG
 
         public void OnDisabled(CSGOperation component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -109,7 +109,7 @@ namespace InternalRealtimeCSG
 
         public void OnDisabled(CSGModel component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -119,7 +119,7 @@ namespace InternalRealtimeCSG
 
         public void OnDisabled(CSGBrush component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -129,7 +129,7 @@ namespace InternalRealtimeCSG
 
         public void OnEnabled(CSGModel component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -139,7 +139,7 @@ namespace InternalRealtimeCSG
 
         public void OnEnabled(CSGOperation component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -149,7 +149,7 @@ namespace InternalRealtimeCSG
 
         public void OnEnabled(CSGBrush component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -159,7 +159,7 @@ namespace InternalRealtimeCSG
 
         public void OnValidate(CSGModel component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -169,7 +169,7 @@ namespace InternalRealtimeCSG
 
         public void OnValidate(CSGOperation component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -179,7 +179,7 @@ namespace InternalRealtimeCSG
 
         public void OnValidate(CSGBrush component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -189,7 +189,7 @@ namespace InternalRealtimeCSG
 
         public void EnsureInitialized(CSGModel component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -199,7 +199,7 @@ namespace InternalRealtimeCSG
 
         public void EnsureInitialized(CSGOperation component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -209,7 +209,7 @@ namespace InternalRealtimeCSG
 
         public void EnsureInitialized(CSGBrush component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -219,7 +219,7 @@ namespace InternalRealtimeCSG
 
         public void OnUpdate(CSGModel component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -229,7 +229,7 @@ namespace InternalRealtimeCSG
 
         public void OnPassthroughChanged(CSGOperation component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -239,7 +239,7 @@ namespace InternalRealtimeCSG
 
         public void OnTransformParentChanged(CSGOperation component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -249,7 +249,7 @@ namespace InternalRealtimeCSG
 
         public void OnTransformParentChanged(CSGBrush component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -259,7 +259,7 @@ namespace InternalRealtimeCSG
 
         public void OnTransformChildrenChanged(CSGModel component)
         {
-            if(!component || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(!component || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
@@ -269,14 +269,14 @@ namespace InternalRealtimeCSG
 
         public void DestroyExportedModel(CSGModelExported exportedModel, bool undoable = false)
         {
-            if(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            if(EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
 
-            if(undoable) // && exportedModel)
+            if(undoable)
             {
-                UnityEditor.Undo.RegisterCompleteObjectUndo(exportedModel, "Destroying model");
+                Undo.RegisterCompleteObjectUndo(exportedModel, "Destroying model");
             }
 
             if(exportedModel.hiddenComponents != null)
@@ -292,11 +292,11 @@ namespace InternalRealtimeCSG
 
                     if(undoable)
                     {
-                        UnityEditor.Undo.DestroyObjectImmediate(behaviour);
+                        Undo.DestroyObjectImmediate(behaviour);
                     }
                     else
                     {
-                        UnityEngine.Object.DestroyImmediate(behaviour);
+                        Object.DestroyImmediate(behaviour);
                     }
                 }
             }
@@ -305,14 +305,13 @@ namespace InternalRealtimeCSG
             {
                 if(undoable)
                 {
-                    UnityEditor.Undo.DestroyObjectImmediate(exportedModel.containedModel);
+                    Undo.DestroyObjectImmediate(exportedModel.containedModel);
                 }
                 else
                 {
-                    UnityEngine.Object.DestroyImmediate(exportedModel.containedModel);
+                    Object.DestroyImmediate(exportedModel.containedModel);
                 }
             }
         }
     }
 }
-#endif

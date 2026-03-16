@@ -10,7 +10,7 @@ namespace RealtimeCSG
 {
     internal sealed class UnityCompilerDefineManager
     {
-        private const string RealTimeCSGDefine = "RealtimeCSG";
+        private const string REAL_TIME_CSG_DEFINE = "RealtimeCSG";
 
         private static bool IsObsolete(Enum value)
         {
@@ -19,25 +19,25 @@ namespace RealtimeCSG
             ObsoleteAttribute[] attributes = (ObsoleteAttribute[])
                 fi.GetCustomAttributes(typeof(ObsoleteAttribute), false);
 
-            return attributes != null && attributes.Length > 0;
+            return attributes.Length > 0;
         }
 
         public static void UpdateUnityDefines()
         {
             List<string> requiredDefines = new List<string>();
 
-            requiredDefines.Add(RealTimeCSGDefine);
+            requiredDefines.Add(REAL_TIME_CSG_DEFINE);
 
-            string v                    = Foundation.Versioning.PluginVersion;
-            int    index                = v.IndexOfAny(new char[] { '_', '.' });
-            string release_version_part = v.Remove(index);
-            string lower_part           = v.Substring(index + 1);
-            string major_version_part   = lower_part.Remove(1);
-            string minor_version_part   = lower_part.Substring(1);
+            const string v                  = Foundation.Versioning.PluginVersion;
+            int          index              = v.IndexOfAny(new[] { '_', '.' });
+            string       releaseVersionPart = v.Remove(index);
+            string       lowerPart          = v.Substring(index + 1);
+            string       majorVersionPart   = lowerPart.Remove(1);
+            string       minorVersionPart   = lowerPart.Substring(1);
 
-            string release_version = RealTimeCSGDefine + "_" + release_version_part;
-            string major_version   = release_version + "_" + major_version_part;
-            string minor_version   = major_version + "_" + minor_version_part;
+            string release_version = REAL_TIME_CSG_DEFINE + "_" + releaseVersionPart;
+            string major_version   = release_version + "_" + majorVersionPart;
+            string minor_version   = major_version + "_" + minorVersionPart;
 
             requiredDefines.Add(release_version);
             requiredDefines.Add(major_version);
@@ -53,25 +53,21 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                if(targetGroup == BuildTargetGroup.Unknown
-#if UNITY_5_6_OR_NEWER
-                || targetGroup == (BuildTargetGroup)27
-#endif
-                  )
+                if(targetGroup == BuildTargetGroup.Unknown || targetGroup == (BuildTargetGroup)27)
                 {
                     continue;
                 }
 
-                string symbol_string =
+                string symbolString =
                     PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 
-                if(symbol_string == null)
+                if(symbolString == null)
                 {
                     continue;
                 }
 
                 bool     modified = false;
-                string[] symbols  = symbol_string.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] symbols  = symbolString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
                 for(int i = symbols.Length - 1; i >= 0; i--)
                 {
@@ -84,7 +80,7 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    if(symbols[i].StartsWith(RealTimeCSGDefine))
+                    if(symbols[i].StartsWith(REAL_TIME_CSG_DEFINE))
                     {
                         bool keepSymbol = false;
 
@@ -122,7 +118,7 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                StringBuilder stringBuilder = new System.Text.StringBuilder();
+                StringBuilder stringBuilder = new StringBuilder();
 
                 for(int i = 0; i < symbols.Length; i++)
                 {
@@ -136,7 +132,7 @@ namespace RealtimeCSG
 
                 string newSymbolString = stringBuilder.ToString();
 
-                if(newSymbolString != symbol_string)
+                if(newSymbolString != symbolString)
                 {
                     PlayerSettings.SetScriptingDefineSymbols(
                         NamedBuildTarget.FromBuildTargetGroup(targetGroup), newSymbolString

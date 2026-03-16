@@ -1313,7 +1313,7 @@ namespace RealtimeCSG
                 brushes, world_center_before, world_center_after, world_scale, activeSpaceMatrices
             );
 
-            InternalCSGModelManager.CheckSurfaceModifications(brushes, true);
+            InternalCSGModelManager.CheckSurfaceModifications(brushes);
 
             lastLineMeshGeneration--;
             UpdateTargetBounds();
@@ -1443,7 +1443,7 @@ namespace RealtimeCSG
                 brushes, world_center_before, world_center_after, world_scale, activeSpaceMatrices
             );
 
-            InternalCSGModelManager.CheckSurfaceModifications(brushes, true);
+            InternalCSGModelManager.CheckSurfaceModifications(brushes);
 
             lastLineMeshGeneration--;
             UpdateTargetBounds();

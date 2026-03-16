@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using InternalRealtimeCSG;
 using RealtimeCSG.Components;
@@ -18,12 +19,10 @@ namespace RealtimeCSG
 
         public static void ForceRebuild()
         {
-#if UNITY_EDITOR
             if(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
-#endif
 
             InternalCSGModelManager.ForceRebuildAll();
             InternalCSGModelManager.OnHierarchyModified();
@@ -62,7 +61,7 @@ namespace RealtimeCSG
 
             if(meshInstances == null)
             {
-                return new GameObject[0];
+                return Array.Empty<GameObject>();
             }
 
             List<GameObject> gameObjects = new List<GameObject>();

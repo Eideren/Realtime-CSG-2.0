@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using RealtimeCSG;
 
 namespace InternalRealtimeCSG
 {
@@ -31,15 +30,6 @@ namespace InternalRealtimeCSG
                     Vector3 newCenter = targetTransform.TransformPoint(originalCenter);
                     targetTransform.position += rotationCenter - newCenter;
                 }
-            }
-        }
-
-        public static void Translate(this TransformSelection selection, Vector3 translation)
-        {
-            for(int t = 0; t < selection.Transforms.Length; t++)
-            {
-                selection.Transforms[t].position =
-                    GridUtility.CleanPosition(selection.BackupPositions[t] + translation);
             }
         }
     }

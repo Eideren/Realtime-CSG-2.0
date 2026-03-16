@@ -1284,7 +1284,7 @@ namespace RealtimeCSG
             //var length = StairsDepth;
             //if (length == 0)
             {
-                InternalCSGModelManager.skipCheckForChanges = false;
+                InternalCSGModelManager.SkipCheckForChanges = false;
                 HideGenerateBrushes();
 
                 return false;

@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using RealtimeCSG.Components;
+using UnityEditor;
 
 namespace RealtimeCSG
 {
     internal sealed class UndoGroup : IDisposable
     {
         private CSGBrush[] _brushes;
-        private int _undoGroupIndex;
-
-        private static readonly HashSet<CSGBrush> uniqueBrushes = new HashSet<CSGBrush>();
-        private static readonly HashSet<CSGModel> uniqueModels = new HashSet<CSGModel>();
+        private readonly int _undoGroupIndex;
 
         public UndoGroup(SelectedBrushSurface[] selectedBrushSurfaces, string name, bool ignoreGroup = false)
         {
@@ -21,28 +18,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            uniqueBrushes.Clear();
-            uniqueModels.Clear();
-
-            for(int i = 0; i < selectedBrushSurfaces.Length; i++)
-            {
-                if(!selectedBrushSurfaces[i].brush)
-                {
-                    continue;
-                }
-
-                CSGBrush brush = selectedBrushSurfaces[i].brush;
-
-//				var surface_index = selectedBrushSurfaces[i].surfaceIndex;
-                if(uniqueBrushes.Add(brush))
-                {
-                    uniqueModels.Add(brush.ChildData.Model);
-                }
-            }
-
             _undoGroupIndex = -1;
-
-            _brushes = uniqueBrushes.ToArray();
 
             if(_brushes.Length > 0)
             {
@@ -66,11 +42,11 @@ namespace RealtimeCSG
             }
         }
 
-        private bool disposedValue = false;
+        private bool _disposedValue;
 
         public void Dispose(bool disposing)
         {
-            if(!disposedValue)
+            if(!_disposedValue)
             {
                 if(disposing)
                 {
@@ -110,8 +86,8 @@ namespace RealtimeCSG
                     }
                 }
 
-                _brushes      = null;
-                disposedValue = true;
+                _brushes       = null;
+                _disposedValue = true;
             }
         }
 
