@@ -2,8 +2,6 @@
 using UnityEditor;
 using RealtimeCSG.Components;
 using UnityEngine;
-using UnityEditor.SceneManagement;
-using System;
 using System.Collections.Generic;
 using Object = UnityEngine.Object;
 

@@ -1,5 +1,4 @@
-﻿using InternalRealtimeCSG;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace RealtimeCSG.Helpers

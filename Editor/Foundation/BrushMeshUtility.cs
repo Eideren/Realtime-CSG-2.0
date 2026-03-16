@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using Vector3 = UnityEngine.Vector3;
+﻿using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
 
 namespace RealtimeCSG.Foundation

@@ -1,4 +1,3 @@
-using System;
 using RealtimeCSG.Components;
 using UnityEditor;
 using UnityEditor.SceneManagement;

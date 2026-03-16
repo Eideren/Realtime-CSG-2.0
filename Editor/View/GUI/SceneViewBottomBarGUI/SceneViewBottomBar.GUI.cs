@@ -2,8 +2,6 @@
 using UnityEditor;
 using UnityEngine;
 using InternalRealtimeCSG;
-using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using RealtimeCSG.Components;

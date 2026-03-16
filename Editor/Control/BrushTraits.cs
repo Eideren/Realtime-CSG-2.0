@@ -1,7 +1,5 @@
-using System;
 using RealtimeCSG.Legacy;
 using RealtimeCSG.Components;
-using UnityEngine;
 
 namespace RealtimeCSG
 {

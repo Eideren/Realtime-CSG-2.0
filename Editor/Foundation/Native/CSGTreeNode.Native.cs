@@ -1,9 +1,5 @@
-﻿using InternalRealtimeCSG;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Runtime.InteropServices;
-using UnityEngine;
 
 namespace RealtimeCSG.Foundation
 {

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RealtimeCSG;
 using RealtimeCSG.Components;
 using RealtimeCSG.Legacy;
 using UnityEngine;
-using UnityEditor;
 
 namespace InternalRealtimeCSG
 {

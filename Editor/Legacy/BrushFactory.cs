@@ -1,6 +1,4 @@
-using InternalRealtimeCSG;
 using RealtimeCSG.Foundation;
-using System.Linq;
 using UnityEngine;
 
 namespace RealtimeCSG.Legacy

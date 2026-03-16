@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using InternalRealtimeCSG;
+﻿using UnityEngine;
 
 namespace RealtimeCSG
 {

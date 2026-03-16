@@ -1,6 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
-using InternalRealtimeCSG;
+﻿using UnityEngine;
 
 namespace RealtimeCSG
 {

@@ -1,6 +1,4 @@
-using RealtimeCSG.Components;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace RealtimeCSG

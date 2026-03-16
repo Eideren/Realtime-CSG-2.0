@@ -1,5 +1,4 @@
 ﻿#if UNITY_EDITOR
-using RealtimeCSG;
 using RealtimeCSG.Components;
 
 namespace InternalRealtimeCSG

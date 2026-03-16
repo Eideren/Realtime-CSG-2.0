@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using RealtimeCSG.Legacy;
+﻿using RealtimeCSG.Legacy;
 using RealtimeCSG.Components;
 using UnityEngine;
 

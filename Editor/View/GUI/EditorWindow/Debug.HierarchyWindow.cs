@@ -1,11 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
-using RealtimeCSG.Foundation;
-using RealtimeCSG.Components;
-
-namespace RealtimeCSG
+﻿namespace RealtimeCSG
 {
 #if TEST_ENABLED
 	sealed class CSGHierarchyView : EditorWindow

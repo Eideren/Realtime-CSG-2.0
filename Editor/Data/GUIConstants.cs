@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace RealtimeCSG
+﻿namespace RealtimeCSG
 {
     internal static class GUIConstants
     {

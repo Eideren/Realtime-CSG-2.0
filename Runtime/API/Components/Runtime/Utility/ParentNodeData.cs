@@ -1,7 +1,4 @@
 using System;
-using UnityEngine;
-using InternalRealtimeCSG;
-using UnityEngine.Rendering;
 
 namespace RealtimeCSG
 {

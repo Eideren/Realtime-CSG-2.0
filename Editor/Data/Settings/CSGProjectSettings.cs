@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using UnityEditorInternal;
 using System.IO;
 

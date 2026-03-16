@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using InternalRealtimeCSG;
-using UnityEngine.SceneManagement;
-using System;
 using RealtimeCSG.Components;
 
 namespace RealtimeCSG

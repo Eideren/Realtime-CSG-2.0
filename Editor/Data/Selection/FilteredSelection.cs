@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using InternalRealtimeCSG;
 using RealtimeCSG.Components;
 
 namespace RealtimeCSG

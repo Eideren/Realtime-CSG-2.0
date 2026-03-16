@@ -1,7 +1,4 @@
-﻿using System;
-using UnityEngine;
-using InternalRealtimeCSG;
-using UnityEngine.Rendering;
+﻿using UnityEngine;
 using RealtimeCSG.Legacy;
 
 namespace RealtimeCSG.Components

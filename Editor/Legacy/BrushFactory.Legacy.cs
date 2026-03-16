@@ -1,4 +1,3 @@
-using System;
 using InternalRealtimeCSG;
 using UnityEngine;
 using RealtimeCSG.Components;

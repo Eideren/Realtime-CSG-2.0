@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using InternalRealtimeCSG;
-using UnityEngine.Serialization;
 
 namespace RealtimeCSG.Components
 {

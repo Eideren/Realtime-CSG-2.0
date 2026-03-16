@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Matrix4x4 = UnityEngine.Matrix4x4;
 
 namespace RealtimeCSG.Foundation
 {

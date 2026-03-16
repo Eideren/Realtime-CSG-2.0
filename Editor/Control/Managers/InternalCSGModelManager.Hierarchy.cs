@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEditor;
-using InternalRealtimeCSG;
 using RealtimeCSG.Components;
 
 namespace RealtimeCSG

@@ -1,7 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System;
 using UnityEngine;
-using InternalRealtimeCSG;
 using System.Runtime.InteropServices;
 using RealtimeCSG.Legacy;
 using RealtimeCSG.Components;

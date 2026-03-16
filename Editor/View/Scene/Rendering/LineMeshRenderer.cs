@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
-using System;
 using InternalRealtimeCSG;
 using System.Linq;
 

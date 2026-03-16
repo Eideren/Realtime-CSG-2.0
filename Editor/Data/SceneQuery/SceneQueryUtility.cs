@@ -8,7 +8,6 @@ using RealtimeCSG;
 using RealtimeCSG.Legacy;
 using RealtimeCSG.Components;
 using Object = UnityEngine.Object;
-using RealtimeCSG.Foundation;
 
 namespace InternalRealtimeCSG
 {

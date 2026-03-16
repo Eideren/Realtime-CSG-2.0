@@ -9,7 +9,6 @@ Handles drawing information in the scene view, such as brush and model count.
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using System.Diagnostics;
 
 namespace RealtimeCSG
 {

@@ -1,9 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEditor;
 using InternalRealtimeCSG;
 using RealtimeCSG.Legacy;
-using System.Collections.Generic;
 
 namespace RealtimeCSG
 {

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.Serialization;
 using MeshQuery = RealtimeCSG.Foundation.MeshQuery;
 using GeneratedMeshDescription = RealtimeCSG.Foundation.GeneratedMeshDescription;
-using RealtimeCSG.Foundation;
 
 namespace InternalRealtimeCSG
 {

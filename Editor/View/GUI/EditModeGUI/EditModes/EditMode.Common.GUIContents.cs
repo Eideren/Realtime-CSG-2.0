@@ -1,10 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
-using InternalRealtimeCSG;
-using RealtimeCSG.Helpers;
+﻿using UnityEngine;
 using RealtimeCSG;
 
 namespace InternalRealtimeCSG

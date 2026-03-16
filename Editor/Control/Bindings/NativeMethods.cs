@@ -1,9 +1,7 @@
 ﻿#if UNITY_EDITOR
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RealtimeCSG.Foundation;
-using RealtimeCSG.Legacy;
 using RealtimeCSG.Components;
 
 namespace RealtimeCSG
