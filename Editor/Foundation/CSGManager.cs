@@ -2,7 +2,7 @@
 
 namespace RealtimeCSG.Foundation
 {
-    /// <summary>This class is manager class for all <see cref="RealtimeCSG.Foundation.CSGTreeNode"/>s.</summary>	
+    /// <summary>This class is manager class for all <see cref="RealtimeCSG.Foundation.CSGTreeNode"/>s.</summary>
     public sealed partial class CSGManager
     {
         /// <summary>Destroys all <see cref="RealtimeCSG.Foundation.CSGTreeNode"/>s and all <see cref="RealtimeCSG.Foundation.BrushMesh"/>es.</summary>
@@ -27,15 +27,10 @@ namespace RealtimeCSG.Foundation
         /// <summary>Destroy all <see cref="RealtimeCSG.Foundation.CSGTreeNode"/>s contained in <paramref name="nodes"/>.</summary>
         /// <param name="nodes">The <see cref="RealtimeCSG.Foundation.CSGTreeNode"/>s to destroy</param>
         /// <returns>True on success, false if there was a problem with destroying the <see cref="RealtimeCSG.Foundation.CSGTreeNode"/>s. See the log for more information.</returns>
-        /// <exception cref="System.ArgumentNullException">Thrown when the <paramref name="nodes"/> is null.</exception>  
+        /// <exception cref="System.ArgumentNullException">Thrown when the <paramref name="nodes"/> is null.</exception>
         public static bool Destroy(CSGTreeNode[] nodes)
         {
-            if(nodes == null)
-            {
-                throw new ArgumentNullException("nodes");
-            }
-
-            return DestroyNodes(nodes.Length, nodes);
+            return nodes == null ? throw new ArgumentNullException(nameof(nodes)) : DestroyNodes(nodes.Length, nodes);
         }
 
         /// <value>The number of <see cref="RealtimeCSG.Foundation.CSGTreeNode"/>s.</value>
@@ -90,11 +85,7 @@ namespace RealtimeCSG.Foundation
         public static string VersionName
         {
             get =>
-                string.Format(
-                    "v {0}{1}",
-                    Versioning.PluginVersion.Replace('_', '.'),
-                    HasBeenCompiledInDebugMode() ? " (C++ DEBUG)" : string.Empty
-                );
+                $"v {Versioning.PLUGIN_VERSION.Replace('_', '.')}{(HasBeenCompiledInDebugMode() ? " (C++ DEBUG)" : string.Empty)}";
         }
     }
 }

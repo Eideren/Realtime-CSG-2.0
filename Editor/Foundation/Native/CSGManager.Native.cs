@@ -5,48 +5,48 @@ namespace RealtimeCSG.Foundation
 {
     sealed partial class CSGManager
     {
-        internal const string NativePluginName = "RealtimeCSG[" + Versioning.PluginDLLVersion + "]";
+        internal const string NATIVE_PLUGIN_NAME = "RealtimeCSG[" + Versioning.PLUGIN_DLL_VERSION + "]";
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool HasBeenCompiledInDebugMode();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool ClearDirty(int nodeID);
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ClearAllNodes();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool UpdateAllTreeMeshes();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern void RebuildAll();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetNodeCount();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetBrushCount();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetBranchCount();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetTreeCount();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetBrushMeshCount();
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool GetAllTreeNodes(int nodeCount, IntPtr allNodeIDs);
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool GetAllTrees(int nodeCount, IntPtr allNodeIDs);
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool GetAllBrushMeshInstances(int nodeCount, IntPtr allNodeIDs);
 
-        [DllImport(NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool DestroyNodes(int nodeCount, IntPtr nodeIDs);
 
         private static bool DestroyNodes(int nodeCount, CSGTreeNode[] nodeIDs)
@@ -116,13 +116,6 @@ namespace RealtimeCSG.Foundation
             allInstancesIDsHandle.Free();
 
             return allInstances;
-        }
-
-        // Do not use. This method might be removed/renamed in the future
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public static bool ClearDirty(CSGTreeNode node)
-        {
-            return ClearDirty(node.NodeID);
         }
     }
 }

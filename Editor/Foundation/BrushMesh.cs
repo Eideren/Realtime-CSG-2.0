@@ -9,9 +9,9 @@ namespace RealtimeCSG.Foundation
     /// <summary>Flags that define how surfaces in a <see cref="RealtimeCSG.Foundation.BrushMesh"/> behave.</summary>
     /// <remarks><note>This enum is mirrored on the native side and cannot be modified.</note></remarks>
     /// <seealso cref="RealtimeCSG.Foundation.BrushMesh.Polygon"/>
-    /// <seealso cref="RealtimeCSG.Foundation.BrushMesh"/>	
+    /// <seealso cref="RealtimeCSG.Foundation.BrushMesh"/>
     [Serializable, Flags]
-    public enum SurfaceFlags : int
+    public enum SurfaceFlags
     {
         /// <summary>The surface has no flags set</summary>
         None = 0
@@ -108,7 +108,7 @@ namespace RealtimeCSG.Foundation
             public Int32 twinIndex;
         }
 
-        /// <value>The vertices of this <see cref="RealtimeCSG.Foundation.BrushMesh"/>.</value> 
+        /// <value>The vertices of this <see cref="RealtimeCSG.Foundation.BrushMesh"/>.</value>
         public Vector3[] vertices;
 
         /// <value>An array of <see cref="RealtimeCSG.Foundation.BrushMesh.HalfEdge"/> that define the edges of a <see cref="RealtimeCSG.Foundation.BrushMesh"/>.</value>

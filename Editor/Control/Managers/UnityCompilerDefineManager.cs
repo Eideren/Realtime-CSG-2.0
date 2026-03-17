@@ -28,7 +28,7 @@ namespace RealtimeCSG
 
             requiredDefines.Add(REAL_TIME_CSG_DEFINE);
 
-            const string v                  = Foundation.Versioning.PluginVersion;
+            const string v                  = Foundation.Versioning.PLUGIN_VERSION;
             int          index              = v.IndexOfAny(new[] { '_', '.' });
             string       releaseVersionPart = v.Remove(index);
             string       lowerPart          = v.Substring(index + 1);

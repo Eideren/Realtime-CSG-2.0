@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace RealtimeCSG.Foundation
 {
     /// <summary>A branch in a CSG tree, used to encapsulate other <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/>es and <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/>es and perform operations with them as a whole.</summary>
-    /// <remarks>A branch can be used to combine multiple branches and/or brushes, each with different <see cref="RealtimeCSG.Foundation.CSGOperationType"/>s, 
+    /// <remarks>A branch can be used to combine multiple branches and/or brushes, each with different <see cref="RealtimeCSG.Foundation.CSGOperationType"/>s,
     /// and perform a CSG operation with the shape that's defined by all those branches and brushes on other parts of the CSG tree.
     /// <note>This struct is a reference to node that exists on the native side, therefore its internal ID is not persistent.</note>
     /// <note>This struct can be converted into a <see cref="RealtimeCSG.Foundation.CSGTreeNode"/> and back again.</note>
@@ -20,15 +20,14 @@ namespace RealtimeCSG.Foundation
 
         /// <summary>Generates a branch on the native side and returns a <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/> struct that contains a reference to it.</summary>
         /// <param name="userID">A unique id to help identify this particular branch. For instance, this could be an InstanceID to a [UnityEngine.Object](https://docs.unity3d.com/ScriptReference/Object.html)</param>
+        /// <param name="operation"></param>
         /// <param name="children">The child nodes that are children of this branch. A branch may not have duplicate children, contain itself or contain a <see cref="RealtimeCSG.Foundation.CSGTree"/>.</param>
         /// <returns>A new <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/>. May be an invalid node if it failed to create it.</returns>
         public static CSGTreeBranch Create(
             int userID = 0, CSGOperationType operation = CSGOperationType.Additive, params CSGTreeNode[] children
         )
         {
-            int branchNodeID;
-
-            if(!GenerateBranch(userID, out branchNodeID))
+            if(!GenerateBranch(userID, out int branchNodeID))
             {
                 return new CSGTreeBranch { branchNodeID = 0 };
             }
@@ -57,9 +56,7 @@ namespace RealtimeCSG.Foundation
         /// <returns>A new <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/>. May be an invalid node if it failed to create it.</returns>
         public static CSGTreeBranch Create(int userID, params CSGTreeNode[] children)
         {
-            int branchNodeID;
-
-            if(!GenerateBranch(userID, out branchNodeID))
+            if(!GenerateBranch(userID, out int branchNodeID))
             {
                 return new CSGTreeBranch { branchNodeID = 0 };
             }
@@ -90,10 +87,10 @@ namespace RealtimeCSG.Foundation
 #region Node
 
         /// <value>Returns if the current <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/> is valid or not.</value>
-        /// <remarks><note>If <paramref name="Valid"/> is <b>false</b> that could mean that this node has been destroyed.</note></remarks>
+        /// <remarks><note>If <paramref/> is <b>false</b> that could mean that this node has been destroyed.</note></remarks>
         public bool Valid
         {
-            get => branchNodeID != CSGTreeNode.InvalidNodeID && CSGTreeNode.IsNodeIDValid(branchNodeID);
+            get => branchNodeID != CSGTreeNode.INVALID_NODE_ID && CSGTreeNode.IsNodeIDValid(branchNodeID);
         }
 
         /// <value>Gets the <see cref="RealtimeCSG.Foundation.CSGTreeBranch.NodeID"/> of the <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/>, which is a unique ID of this node.</value>
@@ -182,12 +179,7 @@ namespace RealtimeCSG.Foundation
         /// <returns><b>true</b> on success, <b>false</b> on failure</returns>
         public bool AddRange(CSGTreeNode[] array)
         {
-            if(array == null)
-            {
-                throw new ArgumentNullException("array");
-            }
-
-            return CSGTreeNode.InsertChildNodeRange(branchNodeID, Count, array);
+            return array == null ? throw new ArgumentNullException(nameof(array)) : CSGTreeNode.InsertChildNodeRange(branchNodeID, Count, array);
         }
 
         /// <summary>Inserts an element into the <see cref="RealtimeCSG.Foundation.CSGTreeNode"/> at the specified index.</summary>
@@ -205,12 +197,7 @@ namespace RealtimeCSG.Foundation
         /// <returns><b>true</b> on success, <b>false</b> on failure</returns>
         public bool InsertRange(int index, CSGTreeNode[] array)
         {
-            if(array == null)
-            {
-                throw new ArgumentNullException("array");
-            }
-
-            return CSGTreeNode.InsertChildNodeRange(branchNodeID, index, array);
+            return array == null ? throw new ArgumentNullException(nameof(array)) : CSGTreeNode.InsertChildNodeRange(branchNodeID, index, array);
         }
 
         /// <summary>Removes a specific <see cref="RealtimeCSG.Foundation.CSGTreeNode"/> from the <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/>.</summary>
@@ -278,6 +265,6 @@ namespace RealtimeCSG.Foundation
 
 #endregion
 
-        internal Int32 branchNodeID;
+        internal int branchNodeID;
     }
 }

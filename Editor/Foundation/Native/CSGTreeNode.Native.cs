@@ -5,70 +5,70 @@ namespace RealtimeCSG.Foundation
 {
     partial struct CSGTreeNode
     {
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool ClearDirty(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool IsNodeDirty(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool SetDirty(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern CSGNodeType GetTypeOfNode(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool IsNodeIDValid(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetUserIDOfNode(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetParentOfNode(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetTreeOfNode(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool SetChildNodes(int nodeID, int childCount, IntPtr childrenNodeIDs);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetChildNodeCount(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool GetChildNodes(int nodeID, int childCount, IntPtr children, int arrayIndex);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool RemoveChildNode(int nodeID, int childNodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool AddChildNode(int nodeID, int childNodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool ClearChildNodes(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetChildNodeAtIndex(int nodeID, int index);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool DestroyNode(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool DestroyNodes(int nodeCount, IntPtr nodeIDs);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool RemoveChildNodeAt(int nodeID, int index);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool InsertChildNode(int nodeID, int index, int childNodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int IndexOfChildNode(int nodeID, int childNodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool RemoveChildNodeRange(int nodeID, int index, int count);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool InsertChildNodeRange(int nodeID, int index, int count, IntPtr nodes);
 
         internal static bool SetChildNodes(int nodeID, CSGTreeNode[] children)
@@ -108,7 +108,7 @@ namespace RealtimeCSG.Foundation
         {
             if(children == null)
             {
-                throw new ArgumentNullException("children");
+                throw new ArgumentNullException(nameof(children));
             }
 
             int childCount = GetChildNodeCount(nodeID);
@@ -121,10 +121,8 @@ namespace RealtimeCSG.Foundation
             if(children.Length + arrayIndex < childCount)
             {
                 throw new ArgumentException(
-                    string.Format(
-                        "The array does not have enough elements, its length is {0} and needs at least {1}"
-                      , children.Length, childCount
-                    ), "children"
+                    $"The array does not have enough elements, its length is {children.Length} and needs at least {childCount}"
+                  , nameof(children)
                 );
             }
 

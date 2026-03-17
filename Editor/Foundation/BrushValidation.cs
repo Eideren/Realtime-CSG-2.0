@@ -158,18 +158,13 @@ namespace RealtimeCSG.Foundation
         {
             const float kMinSize = 0.0001f;
 
-            if(Mathf.Abs(max.x - min.x) < kMinSize ||
-               Mathf.Abs(max.y - min.y) < kMinSize ||
-               Mathf.Abs(max.z - min.z) < kMinSize ||
-               float.IsInfinity(min.x) || float.IsInfinity(min.y) || float.IsInfinity(min.z) ||
-               float.IsInfinity(max.x) || float.IsInfinity(max.y) || float.IsInfinity(max.z) ||
-               float.IsNaN(min.x) || float.IsNaN(min.y) || float.IsNaN(min.z) ||
-               float.IsNaN(max.x) || float.IsNaN(max.y) || float.IsNaN(max.z))
-            {
-                return false;
-            }
-
-            return true;
+            return !(Mathf.Abs(max.x - min.x) < kMinSize) &&
+                !(Mathf.Abs(max.y - min.y) < kMinSize) &&
+                !(Mathf.Abs(max.z - min.z) < kMinSize) &&
+                !float.IsInfinity(min.x) && !float.IsInfinity(min.y) && !float.IsInfinity(min.z) &&
+                !float.IsInfinity(max.x) && !float.IsInfinity(max.y) && !float.IsInfinity(max.z) &&
+                !float.IsNaN(min.x) && !float.IsNaN(min.y) && !float.IsNaN(min.z) &&
+                !float.IsNaN(max.x) && !float.IsNaN(max.y) && !float.IsNaN(max.z);
         }
     }
 }

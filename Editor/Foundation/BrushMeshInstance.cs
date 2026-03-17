@@ -16,7 +16,7 @@ namespace RealtimeCSG.Foundation
         /// <value>Is the current <see cref="RealtimeCSG.Foundation.BrushMeshInstance"/> in a correct state</value>
         public bool Valid
         {
-            get => brushMeshID != InvalidInstanceID && IsBrushMeshIDValid(brushMeshID);
+            get => brushMeshID != INVALID_INSTANCE_ID && IsBrushMeshIDValid(brushMeshID);
         }
 
         /// <value>Returns the unique id of this <see cref="RealtimeCSG.Foundation.BrushMesh"/></value>
@@ -33,6 +33,7 @@ namespace RealtimeCSG.Foundation
 
         /// <summary>Create a <see cref="RealtimeCSG.Foundation.BrushMeshInstance"/> from a given <see cref="RealtimeCSG.Foundation.BrushMesh"/></summary>
         /// <param name="brushMesh">The <see cref="RealtimeCSG.Foundation.BrushMesh"/> to create an instance with</param>
+        /// <param name="userID"></param>
         /// <returns>A newly created <see cref="RealtimeCSG.Foundation.BrushMeshInstance"/> on success, or an invalid <see cref="RealtimeCSG.Foundation.BrushMeshInstance"/> on failure.</returns>
         public static BrushMeshInstance Create(BrushMesh brushMesh, int userID = 0)
         {
@@ -43,7 +44,7 @@ namespace RealtimeCSG.Foundation
         public void Destroy()
         {
             int prevBrushMeshID = brushMeshID;
-            brushMeshID = InvalidInstanceID;
+            brushMeshID = INVALID_INSTANCE_ID;
             DestroyBrushMesh(prevBrushMeshID);
         }
 
@@ -57,8 +58,8 @@ namespace RealtimeCSG.Foundation
 
         /// <value>An invalid instance</value>
         public static readonly BrushMeshInstance InvalidInstance =
-            new BrushMeshInstance { brushMeshID = InvalidInstanceID };
+            new BrushMeshInstance { brushMeshID = INVALID_INSTANCE_ID };
 
-        internal const int InvalidInstanceID = 0;
+        internal const int INVALID_INSTANCE_ID = 0;
     }
 }

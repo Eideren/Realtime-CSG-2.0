@@ -7,16 +7,16 @@ namespace RealtimeCSG.Foundation
 {
     partial struct CSGTree
     {
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool GenerateTree(int userID, out int generatedTreeNodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetNumberOfBrushesInTree(int nodeID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool DoesTreeContainBrush(int nodeID, int brushID);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool GenerateMeshDescriptions(
             int treeNodeID,
             int meshTypeCount,
@@ -25,7 +25,7 @@ namespace RealtimeCSG.Foundation
             [Out] out int meshDescriptionCount
         );
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool GetMeshDescriptions(
             int treeNodeID,
             int meshDescriptionCount,
@@ -40,7 +40,7 @@ namespace RealtimeCSG.Foundation
         {
             if(meshTypes == null)
             {
-                throw new ArgumentNullException("meshTypes");
+                throw new ArgumentNullException(nameof(meshTypes));
             }
 
             if(meshTypes.Length == 0)
@@ -48,13 +48,11 @@ namespace RealtimeCSG.Foundation
                 return null;
             }
 
-            int meshDescriptionCount;
-
             GCHandle nativeMeshTypeHandle = GCHandle.Alloc(meshTypes, GCHandleType.Pinned);
             IntPtr   nativeMeshTypePtr    = nativeMeshTypeHandle.AddrOfPinnedObject();
 
             bool result = GenerateMeshDescriptions(
-                treeNodeID, meshTypes.Length, nativeMeshTypePtr, vertexChannelMask, out meshDescriptionCount
+                treeNodeID, meshTypes.Length, nativeMeshTypePtr, vertexChannelMask, out int meshDescriptionCount
             );
 
             nativeMeshTypeHandle.Free();
@@ -82,7 +80,7 @@ namespace RealtimeCSG.Foundation
             return meshDescriptions;
         }
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool GetGeneratedMesh(
             int treeNodeID,
             int meshIndex,
@@ -104,10 +102,7 @@ namespace RealtimeCSG.Foundation
                meshDescription.indexCount <= 0)
             {
                 Debug.LogWarning(
-                    string.Format(
-                        "{0} called with a {1} that isn't valid", typeof(CSGTree).Name
-                      , typeof(GeneratedMeshDescription).Name
-                    )
+                    $"{nameof(CSGTree)} called with a {nameof(GeneratedMeshDescription)} that isn't valid"
                 );
 
                 return null;
@@ -162,22 +157,19 @@ namespace RealtimeCSG.Foundation
                 uv0Ptr    = uv0Handle.AddrOfPinnedObject();
             }
 
-            Vector3 boundsCenter = Vector3.zero;
-            Vector3 boundsSize   = Vector3.zero;
-
             bool result = GetGeneratedMesh(
-                (int)treeNodeID,
-                (int)meshIndex,
-                (int)subMeshIndex,
-                (int)indexCount,
+                treeNodeID,
+                meshIndex,
+                subMeshIndex,
+                indexCount,
                 indicesPtr,
-                (int)vertexCount,
+                vertexCount,
                 positionPtr,
                 tangentPtr,
                 normalPtr,
                 uv0Ptr,
-                out boundsCenter,
-                out boundsSize
+                out Vector3 boundsCenter,
+                out Vector3 boundsSize
             );
 
             if(generatedMesh.uv0 != null)
@@ -206,20 +198,6 @@ namespace RealtimeCSG.Foundation
             generatedMesh.bounds = new Bounds(boundsCenter, boundsSize);
 
             return generatedMesh;
-        }
-
-        // Do not use. This method might be removed/renamed in the future
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public int CountOfBrushesInTree
-        {
-            get => GetNumberOfBrushesInTree(treeNodeID);
-        }
-
-        // Do not use. This method might be removed/renamed in the future
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool IsInTree(CSGTreeBrush brush)
-        {
-            return DoesTreeContainBrush(treeNodeID, brush.NodeID);
         }
     }
 }

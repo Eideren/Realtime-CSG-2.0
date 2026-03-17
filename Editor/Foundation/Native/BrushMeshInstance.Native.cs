@@ -6,7 +6,7 @@ namespace RealtimeCSG.Foundation
 {
     partial struct BrushMeshInstance
     {
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern int CreateBrushMesh(
             int userID,
             int vertexCount, [In] IntPtr vertices,
@@ -80,10 +80,10 @@ namespace RealtimeCSG.Foundation
             return result;
         }
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetBrushMeshUserID(int brushMeshIndex);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool UpdateBrushMesh(
             int brushMeshIndex,
             int vertexCount, [In] IntPtr vertices,
@@ -126,10 +126,7 @@ namespace RealtimeCSG.Foundation
             return result;
         }
 
-        private static bool UpdateBrushMesh(
-            int brushMeshIndex,
-            BrushMesh brushMesh
-        )
+        private static bool UpdateBrushMesh(int brushMeshIndex, BrushMesh brushMesh)
         {
             if(brushMeshIndex == 0 ||
                brushMesh.vertices == null ||
@@ -165,10 +162,10 @@ namespace RealtimeCSG.Foundation
             return result;
         }
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool DestroyBrushMesh(int brushMeshIndex);
 
-        [DllImport(CSGManager.NativePluginName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool IsBrushMeshIDValid(int brushMeshIndex);
     }
 }

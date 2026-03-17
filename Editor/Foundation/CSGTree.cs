@@ -22,9 +22,7 @@ namespace RealtimeCSG.Foundation
         /// <returns>A new <see cref="RealtimeCSG.Foundation.CSGTree"/>. May be an invalid node if it failed to create it.</returns>
         public static CSGTree Create(int userID, params CSGTreeNode[] children)
         {
-            int treeNodeID;
-
-            if(!GenerateTree(userID, out treeNodeID))
+            if(!GenerateTree(userID, out int treeNodeID))
             {
                 return new CSGTree { treeNodeID = 0 };
             }
@@ -55,10 +53,10 @@ namespace RealtimeCSG.Foundation
 #region Node
 
         /// <value>Returns if the current <see cref="RealtimeCSG.Foundation.CSGTree"/> is valid or not.</value>
-        /// <remarks><note>If <paramref name="Valid"/> is <b>false</b> that could mean that this node has been destroyed.</note></remarks>
+        /// <remarks><note>If <paramref/> is <b>false</b> that could mean that this node has been destroyed.</note></remarks>
         public bool Valid
         {
-            get => treeNodeID != CSGTreeNode.InvalidNodeID && CSGTreeNode.IsNodeIDValid(treeNodeID);
+            get => treeNodeID != CSGTreeNode.INVALID_NODE_ID && CSGTreeNode.IsNodeIDValid(treeNodeID);
         }
 
         /// <value>Gets the <see cref="RealtimeCSG.Foundation.CSGTree.NodeID"/> of the <see cref="RealtimeCSG.Foundation.CSGTree"/>, which is a unique ID of this node.</value>
@@ -133,7 +131,7 @@ namespace RealtimeCSG.Foundation
         {
             if(array == null)
             {
-                throw new ArgumentNullException("array");
+                throw new ArgumentNullException(nameof(array));
             }
 
             return CSGTreeNode.InsertChildNodeRange(treeNodeID, Count, array);
@@ -156,7 +154,7 @@ namespace RealtimeCSG.Foundation
         {
             if(array == null)
             {
-                throw new ArgumentNullException("array");
+                throw new ArgumentNullException(nameof(array));
             }
 
             return CSGTreeNode.InsertChildNodeRange(treeNodeID, index, array);
@@ -237,12 +235,9 @@ namespace RealtimeCSG.Foundation
             MeshQuery[] meshQuery, VertexChannelFlags vertexChannelMask = VertexChannelFlags.All
         )
         {
-            if(meshQuery == null)
-            {
-                throw new ArgumentNullException("meshQuery");
-            }
-
-            return GetMeshDescriptions(treeNodeID, meshQuery, vertexChannelMask);
+            return meshQuery == null
+                ? throw new ArgumentNullException(nameof(meshQuery))
+                : GetMeshDescriptions(treeNodeID, meshQuery, vertexChannelMask);
         }
 
         /// <summary>Creates and returns a <see cref="RealtimeCSG.Foundation.GeneratedMeshContents"/> for a given <see cref="RealtimeCSG.Foundation.GeneratedMeshDescription"/> created by <see cref="RealtimeCSG.Foundation.CSGTree.GetMeshDescriptions"/></summary>
@@ -255,6 +250,6 @@ namespace RealtimeCSG.Foundation
             return GetGeneratedMesh(treeNodeID, meshDescription);
         }
 
-        internal Int32 treeNodeID;
+        internal int treeNodeID;
     }
 }

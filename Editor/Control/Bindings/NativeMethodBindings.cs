@@ -62,7 +62,7 @@ namespace RealtimeCSG
 
     internal static class NativeMethodBindings
     {
-        private const string NATIVE_PLUGIN_NAME = CSGManager.NativePluginName;
+        private const string NATIVE_PLUGIN_NAME = CSGManager.NATIVE_PLUGIN_NAME;
 
 #region Functionality to allow C# methods to be called from C++
 

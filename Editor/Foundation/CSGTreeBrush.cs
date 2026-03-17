@@ -48,9 +48,7 @@ namespace RealtimeCSG.Foundation
           , CSGOperationType operation = CSGOperationType.Additive, CSGTreeBrushFlags flags = CSGTreeBrushFlags.Default
         )
         {
-            int brushNodeID;
-
-            if(GenerateBrush(userID, out brushNodeID))
+            if(GenerateBrush(userID, out int brushNodeID))
             {
                 if(localTransformation != default)
                 {
@@ -113,10 +111,10 @@ namespace RealtimeCSG.Foundation
 #region Node
 
         /// <value>Returns if the current <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/> is valid or not.</value>
-        /// <remarks><note>If <paramref name="Valid"/> is <b>false</b> that could mean that this node has been destroyed.</note></remarks>
+        /// <remarks><note>If <paramref/> is <b>false</b> that could mean that this node has been destroyed.</note></remarks>
         public bool Valid
         {
-            get => brushNodeID != CSGTreeNode.InvalidNodeID && CSGTreeNode.IsNodeIDValid(brushNodeID);
+            get => brushNodeID != CSGTreeNode.INVALID_NODE_ID && CSGTreeNode.IsNodeIDValid(brushNodeID);
         }
 
         /// <value>Gets the <see cref="RealtimeCSG.Foundation.CSGTreeBrush.NodeID"/> of the <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/>, which is a unique ID of this node.</value>
@@ -210,6 +208,6 @@ namespace RealtimeCSG.Foundation
 
 #endregion
 
-        internal Int32 brushNodeID;
+        internal int brushNodeID;
     }
 }
