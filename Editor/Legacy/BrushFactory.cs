@@ -52,10 +52,10 @@ namespace RealtimeCSG.Legacy
         {
             SurfaceLayers layers;
 
-            bool renderable     = !((texGenFlags & TexGenFlags.NoRender) == TexGenFlags.NoRender);
-            bool receiveShadows = !((texGenFlags & TexGenFlags.NoReceiveShadows) == TexGenFlags.NoReceiveShadows);
-            bool castShadows    = !((texGenFlags & TexGenFlags.NoCastShadows) == TexGenFlags.NoCastShadows);
-            bool collidable     = !((texGenFlags & TexGenFlags.NoCollision) == TexGenFlags.NoCollision);
+            bool renderable     = (texGenFlags & TexGenFlags.NoRender) != TexGenFlags.NoRender;
+            bool receiveShadows = (texGenFlags & TexGenFlags.NoReceiveShadows) != TexGenFlags.NoReceiveShadows;
+            bool castShadows    = (texGenFlags & TexGenFlags.NoCastShadows) != TexGenFlags.NoCastShadows;
+            bool collidable     = (texGenFlags & TexGenFlags.NoCollision) != TexGenFlags.NoCollision;
 
             layers.layerUsage = (renderable ? LayerUsageFlags.Renderable : LayerUsageFlags.None) |
                 (receiveShadows ? LayerUsageFlags.ReceiveShadows : LayerUsageFlags.None) |
@@ -77,16 +77,11 @@ namespace RealtimeCSG.Legacy
         /// <returns>A <see cref="RealtimeCSG.Foundation.BrushMesh"/> on success, null on failure</returns>
         public static BrushMesh CreateCube(Vector3 size, Material material = null)
         {
-            ControlMesh controlMesh;
-            Shape       shape;
-            Vector3     halfSize = size * 0.5f;
+            Vector3 halfSize = size * 0.5f;
 
-            if(!CreateCubeControlMesh(out controlMesh, out shape, halfSize, -halfSize, material))
-            {
-                return null;
-            }
-
-            return GenerateFromControlMesh(controlMesh, shape);
+            return !CreateCubeControlMesh(out ControlMesh controlMesh, out Shape shape, halfSize, -halfSize, material)
+                ? null
+                : GenerateFromControlMesh(controlMesh, shape);
         }
     }
 }
