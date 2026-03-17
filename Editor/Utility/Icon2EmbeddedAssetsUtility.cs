@@ -3,10 +3,10 @@
 // Contact:            Twitter @nukeandbeans, Discord Nuke#3681
 // License:
 // Date/Time:          01-27-2022 @ 7:06 PM
-// 
+//
 // Description:
 // General utility window used to generate Editor/Scripts/Data/Generated/Icons/EmbeddedAssets.cs
-// 
+//
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 using System;
@@ -39,10 +39,10 @@ namespace RealtimeCSG.Utilities
 
         private GUIContent _convertContent;
 
-        private Texture2D[] foundT2Ds;
+        private Texture2D[] _foundT2Ds;
 
-        private bool assetsLoaded = false;
-        private Vector2 scrollPos;
+        private bool _assetsLoaded;
+        private Vector2 _scrollPos;
 
         private void OnGUI()
         {
@@ -57,39 +57,36 @@ namespace RealtimeCSG.Utilities
 
                 if(GUILayout.Button("Find Icons"))
                 {
-                    foundT2Ds = null;
+                    _foundT2Ds = null;
 
-                    foundT2Ds = new Texture2D[] {};
+                    _foundT2Ds = new Texture2D[] {};
 
-                    foundT2Ds = Resources.LoadAll<Texture2D>("RealtimeCSG/Icons");
+                    _foundT2Ds = Resources.LoadAll<Texture2D>($"{nameof(RealtimeCSG)}/Icons");
                 }
             }
 
-            if(foundT2Ds != null)
+            if(_foundT2Ds != null)
             {
                 using(new GUILayout.HorizontalScope("GameViewBackground"))
                 {
-                    using(GUILayout.ScrollViewScope sv = new GUILayout.ScrollViewScope(scrollPos, false, true))
+                    using(GUILayout.ScrollViewScope sv = new GUILayout.ScrollViewScope(_scrollPos, false, true))
                     {
-                        scrollPos = sv.scrollPosition;
+                        _scrollPos = sv.scrollPosition;
 
-                        if(foundT2Ds.Length > 1)
+                        if(_foundT2Ds.Length > 1)
                         {
-                            foreach(Texture2D t in foundT2Ds)
+                            foreach(Texture2D t in _foundT2Ds)
                             {
                                 using(new GUILayout.HorizontalScope())
                                 {
                                     GUILayout.Label(t.name);
                                     GUILayout.FlexibleSpace();
 
-                                    GUILayout.Label(
-                                        string.Format("{0}x{1} \t {2}", t.width, t.height, t.format)
-                                      , GUILayout.Width(110)
-                                    );
+                                    GUILayout.Label($"{t.width}x{t.height} \t {t.format}", GUILayout.Width(110));
                                 }
                             }
 
-                            assetsLoaded = true;
+                            _assetsLoaded = true;
                         }
                     }
 
@@ -99,7 +96,7 @@ namespace RealtimeCSG.Utilities
                     {
                         GUILayout.FlexibleSpace();
 
-                        if(!assetsLoaded)
+                        if(!_assetsLoaded)
                         {
                             GUI.enabled = false;
                         }
@@ -108,14 +105,13 @@ namespace RealtimeCSG.Utilities
                         {
                             AssetDatabase.StartAssetEditing();
 
-                            string[] folders = AssetDatabase.FindAssets("t:Script TexGenState");
+                            string[] folders    = AssetDatabase.FindAssets("t:Script TexGenState");
                             string   rcsgFolder = Path.GetDirectoryName(AssetDatabase.GUIDToAssetPath(folders[0]));
-                            string   path = string.Format("{0}\\Generated\\Icons\\{1}.cs", rcsgFolder, SCRIPT_NAME);
+                            string   path       = $@"{rcsgFolder}\Generated\Icons\{SCRIPT_NAME}.cs";
 
                             File.WriteAllText(
-                                string.Format(
-                                    "{0}\\{1}", Application.dataPath.Replace("/", "\\").Replace("Assets", ""), path
-                                ), ConstructScript(foundT2Ds)
+                                $@"{Application.dataPath.Replace("/", "\\").Replace("Assets", "")}\{path}"
+                              , ConstructScript(_foundT2Ds)
                             );
 
                             AssetDatabase.ImportAsset(path);
@@ -147,7 +143,7 @@ namespace RealtimeCSG.Utilities
                 i++;
             }
 
-            sb.Append(string.Format("{0}\n", content));
+            sb.Append($"{content}\n");
         }
 
         private string ConstructScript(Texture2D[] textures)
@@ -156,7 +152,7 @@ namespace RealtimeCSG.Utilities
 
             sb.AppendLine("/*******************************************************");
             sb.AppendLine("* !!!!!! GENERATED, DO NOT MANUALLY EDIT !!!!!!");
-            sb.AppendLine(string.Format("* Last updated on: {0:D}", DateTime.Now));
+            sb.AppendLine($"* Last updated on: {DateTime.Now:D}");
             sb.AppendLine("*");
             sb.AppendLine("* Contains embedded versions of all the icons used by RealtimeCSG,");
             sb.AppendLine("* which are automatically loaded as-needed.");
@@ -167,9 +163,9 @@ namespace RealtimeCSG.Utilities
             sb.AppendLine("using UnityEditor;");
             sb.AppendLine("using UnityEngine;");
             sb.AppendLine();
-            sb.AppendLine(string.Format("namespace {0}", NAMESPACE));
+            sb.AppendLine($"namespace {NAMESPACE}");
             sb.AppendLine("{");
-            ScriptAppend(ref sb, string.Format("public static class {0}", SCRIPT_NAME), 1);
+            ScriptAppend(ref sb, $"public static class {SCRIPT_NAME}", 1);
             ScriptAppend(ref sb, "{", 1);
 
             ScriptAppend(ref sb, "public static bool TryFindIcon( string name, out Texture2D icon )", 2);
@@ -185,7 +181,7 @@ namespace RealtimeCSG.Utilities
 
             foreach(Texture2D t in textures)
             {
-                ScriptAppend(ref sb, string.Format("{{ \"{0}\", {1} }},", t.name, TexNameProperty(t.name)), 3);
+                ScriptAppend(ref sb, $"{{ \"{t.name}\", {TexNameProperty(t.name)} }},", 3);
             }
 
             ScriptAppend(ref sb, "};", 2);
@@ -199,38 +195,33 @@ namespace RealtimeCSG.Utilities
 
                     ScriptAppend(
                         ref sb
-                      , string.Format(
-                            "private const string {0} = @\"{1}\";", t.name
-                          , Convert.ToBase64String(t.GetRawTextureData())
-                        ), 2
+                      , $"private const string {t.name} = @\"{Convert.ToBase64String(t.GetRawTextureData())}\";", 2
                     );
 
-                    ScriptAppend(ref sb, string.Format("private static Texture2D {0};", tnameLower0), 2);
-                    ScriptAppend(ref sb, string.Format("private static Texture2D {0}", tname), 2);
+                    ScriptAppend(ref sb, $"private static Texture2D {tnameLower0};", 2);
+                    ScriptAppend(ref sb, $"private static Texture2D {tname}", 2);
                     ScriptAppend(ref sb, "{", 2);
                     ScriptAppend(ref sb, "get", 3);
                     ScriptAppend(ref sb, "{", 3);
-                    ScriptAppend(ref sb, string.Format("if( {0} == null )", tnameLower0), 4);
+                    ScriptAppend(ref sb, $"if( {tnameLower0} == null )", 4);
                     ScriptAppend(ref sb, "{", 4);
 
                     ScriptAppend(
                         ref sb
-                      , string.Format(
-                            "{0} = new Texture2D( {1},{2}, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear  );"
-                          , tnameLower0, t.width, t.height
-                        ), 5
+                      , $"{tnameLower0} = new Texture2D( {t.width},{t.height}, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear  );"
+                      , 5
                     );
 
                     ScriptAppend(
                         ref sb
-                      , string.Format("{0}.LoadRawTextureData( Convert.FromBase64String( {1} ) );", tnameLower0, t.name)
+                      , $"{tnameLower0}.LoadRawTextureData( Convert.FromBase64String( {t.name} ) );"
                       , 5
                     );
 
-                    ScriptAppend(ref sb, string.Format("{0}.Apply();", tnameLower0), 5);
+                    ScriptAppend(ref sb, $"{tnameLower0}.Apply();", 5);
                     sb.AppendLine();
                     ScriptAppend(ref sb, "}}", 4);
-                    ScriptAppend(ref sb, string.Format("return {0};", tnameLower0), 4);
+                    ScriptAppend(ref sb, $"return {tnameLower0};", 4);
                     ScriptAppend(ref sb, "}}", 3);
                     ScriptAppend(ref sb, "}}", 2);
                     sb.AppendLine();
