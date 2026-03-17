@@ -6,20 +6,20 @@ namespace RealtimeCSG
 {
     internal sealed partial class GeneratorFreeDrawGUI
     {
-        private static void FreeDrawSettingsGUI(GeneratorFreeDraw generator, bool isSceneGUI)
+        private static void FreeDrawSettingsGUI(GeneratorFreeDraw generator)
         {
             DistanceUnit distanceUnit = CSGSettings.DistanceUnit;
             DistanceUnit nextUnit     = Units.CycleToNextUnit(distanceUnit);
             GUIContent   unitText     = Units.GetUnitGUIContent(distanceUnit);
 
-            GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
             {
                 {
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        GUILayout.Label(HeightContent, width65);
+                        GUILayout.Label(heightContent, width65);
 
                         float height = generator.HaveHeight
                             ? generator.Height
@@ -52,19 +52,19 @@ namespace RealtimeCSG
                             CSGSettings.DistanceUnit = distanceUnit;
                             CSGSettings.UpdateSnapSettings();
                             CSGSettings.Save();
-                            CSG_EditorGUIUtility.RepaintAll();
+                            CSGEditorGUIUtility.RepaintAll();
                         }
                     }
 
                     GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(HeightTooltip);
+                    TooltipUtility.SetToolTip(heightTooltip);
                 }
 
                 {
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        GUILayout.Label(CurveSidesContent, width65);
+                        GUILayout.Label(curveSidesContent, width65);
                         uint subdivisions = generator.CurveSides;
                         EditorGUI.BeginChangeCheck();
 
@@ -79,11 +79,11 @@ namespace RealtimeCSG
                     }
 
                     GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(CurveSidesTooltip);
+                    TooltipUtility.SetToolTip(curveSidesTooltip);
                 }
 
                 {
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
                         EditorGUI.BeginDisabledGroup(!generator.HaveSelectedEdgesOrVertices);
@@ -93,7 +93,7 @@ namespace RealtimeCSG
                             EditorGUI.BeginChangeCheck();
 
                             {
-                                GUILayout.Label(EdgeTypeContent, width65);
+                                GUILayout.Label(edgeTypeContent, width65);
                                 EditorGUI.showMixedValue = !tangentState.HasValue;
 
                                 tangentState = (HandleConstraints)EditorGUILayout.EnumPopup(
@@ -113,7 +113,7 @@ namespace RealtimeCSG
                     }
 
                     GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(EdgeTypeTooltip);
+                    TooltipUtility.SetToolTip(edgeTypeTooltip);
                 }
 
                 EditorGUILayout.Space();
@@ -121,35 +121,15 @@ namespace RealtimeCSG
                 EditorGUI.BeginDisabledGroup(!generator.HaveSelectedEdges);
 
                 {
-                    if(GUILayout.Button(SplitSelectedContent))
+                    if(GUILayout.Button(splitSelectedContent))
                     {
                         generator.SplitSelectedEdge();
                     }
 
-                    TooltipUtility.SetToolTip(SplitSelectedTooltip);
+                    TooltipUtility.SetToolTip(splitSelectedTooltip);
                 }
 
                 EditorGUI.EndDisabledGroup();
-
-                /*
-                GUILayout.BeginHorizontal(GUIStyleUtility.ContentEmpty);
-                {
-                    if (isSceneGUI)
-                        GUILayout.Label(AlphaContent, width75);
-                    else
-                        EditorGUILayout.PrefixLabel(AlphaContent);
-                    var alpha = generator.Alpha;
-                    EditorGUI.BeginChangeCheck();
-                    {
-                        alpha = EditorGUILayout.Slider(alpha, -1.0f, 3.0f);
-                    }
-                    if (EditorGUI.EndChangeCheck() && generator.Alpha != alpha)
-                    {
-                        generator.Alpha = alpha;
-                    }
-                }
-                GUILayout.EndHorizontal();
-                */
             }
 
             GUILayout.EndVertical();
@@ -157,37 +137,12 @@ namespace RealtimeCSG
 
         private static void OnGUIContents(GeneratorFreeDraw generator, bool isSceneGUI)
         {
-            //GUILayout.BeginVertical(GUIStyleUtility.ContentEmpty);
-            //{
-//				bool enabled = generator.HaveBrushes;
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             {
-                /*
-                EditorGUI.BeginDisabledGroup(!enabled);
-                {
-                    GUILayout.BeginHorizontal(GUIStyleUtility.ContentEmpty);
-                    {
-                        GUILayout.BeginVertical(isSceneGUI ? GUI.skin.box : GUIStyle.none);
-                        {
-                            bool mixedValues = !enabled;
-                            CSGOperationType operation = generator.CurrentCSGOperationType;
-                            EditorGUI.BeginChangeCheck();
-                            operation = CSG_EditorGUIUtility.ChooseOperation(operation, mixedValues);
-                            if (EditorGUI.EndChangeCheck())
-                            {
-                                generator.CurrentCSGOperationType = operation;
-                            }
-                        }
-                        GUILayout.EndVertical();
-                    }
-                    GUILayout.EndHorizontal();
-                }
-                EditorGUI.EndDisabledGroup();
-                */
                 if(isSceneGUI)
                 {
-                    FreeDrawSettingsGUI(generator, isSceneGUI);
+                    FreeDrawSettingsGUI(generator);
                 }
             }
 
@@ -197,34 +152,13 @@ namespace RealtimeCSG
             {
                 GUILayout.Space(5);
 
-                FreeDrawSettingsGUI(generator, isSceneGUI);
-
-                //GUILayout.Space(10);
-            } /*else
-            {
-                GUILayout.Space(10);
-            }*/
-            /*
-            EditorGUI.BeginDisabledGroup(!generator.CanCommit);
-            {
-                GUILayout.BeginHorizontal(GUIStyleUtility.ContentEmpty);
-                {
-                    if (GUILayout.Button(CommitContent)) { generator.DoCommit(); }
-                    TooltipUtility.SetToolTip(CommitTooltip);
-                    if (GUILayout.Button(CancelContent)) { generator.DoCancel(); }
-                    TooltipUtility.SetToolTip(CancelTooltip);
-                }
-                GUILayout.EndHorizontal();
+                FreeDrawSettingsGUI(generator);
             }
-            EditorGUI.EndDisabledGroup();
-            */
-            //}
-            //GUILayout.EndVertical();
         }
 
         public static bool OnShowGUI(GeneratorFreeDraw generator, bool isSceneGUI)
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             OnGUIContents(generator, isSceneGUI);
 
             return true;

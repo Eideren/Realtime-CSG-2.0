@@ -5,35 +5,35 @@ namespace RealtimeCSG.Helpers
 {
     public class CSGBounds
     {
-        internal static Vector3[] sidePoints = new Vector3[6];
-        internal static float[] sidePointSizes = new float[6];
-        internal static float[] sideSizes = new float[6];
-        internal static Color[] sideColors = new Color[12];
-        internal static bool[] sideBackfaced = new bool[6];
-        internal static int[] sideControlIDs = new int[6];
+        internal static readonly Vector3[] sidePoints = new Vector3[6];
+        internal static readonly float[] sidePointSizes = new float[6];
+        internal static readonly float[] sideSizes = new float[6];
+        internal static readonly Color[] sideColors = new Color[12];
+        internal static readonly bool[] sideBackfaced = new bool[6];
+        internal static readonly int[] sideControlIDs = new int[6];
 
-        internal static Vector3[] edgePoints = new Vector3[12];
-        internal static float[] edgePointSizes = new float[12];
-        internal static float[] edgeSizes = new float[12];
-        internal static Color[] edgeColors = new Color[24];
-        internal static int[] edgeControlIDs = new int[12];
+        internal static readonly Vector3[] edgePoints = new Vector3[12];
+        internal static readonly float[] edgePointSizes = new float[12];
+        internal static readonly float[] edgeSizes = new float[12];
+        internal static readonly Color[] edgeColors = new Color[24];
+        internal static readonly int[] edgeControlIDs = new int[12];
 
-        internal static Vector3[] cornerPoints = new Vector3[8];
+        internal static readonly Vector3[] cornerPoints = new Vector3[8];
 
-        internal static int prevNearestControl = 0;
-        internal static AABB originalBounds = new AABB();
-        internal static readonly int BoundsHash = "Bounds".GetHashCode();
+        internal static int PrevNearestControl = 0;
+        internal static AABB OriginalBounds;
+        internal static readonly int boundsHash = "Bounds".GetHashCode();
 
         internal static AABB Do(Camera camera, AABB bounds, Quaternion worldToLocalRotation, bool showEdgePoints = true)
         {
             for(int i = 0; i < sideControlIDs.Length; i++)
             {
-                sideControlIDs[i] = GUIUtility.GetControlID(BoundsHash, FocusType.Passive);
+                sideControlIDs[i] = GUIUtility.GetControlID(boundsHash, FocusType.Passive);
             }
 
             for(int i = 0; i < edgeControlIDs.Length; i++)
             {
-                edgeControlIDs[i] = GUIUtility.GetControlID(BoundsHash, FocusType.Passive);
+                edgeControlIDs[i] = GUIUtility.GetControlID(boundsHash, FocusType.Passive);
             }
 
             UpdateColors(camera, bounds, worldToLocalRotation, showEdgePoints);
@@ -44,15 +44,11 @@ namespace RealtimeCSG.Helpers
             {
                 case EventType.Repaint:
                 {
-                    Render(camera, bounds, worldToLocalRotation, showEdgePoints);
+                    Render(camera, worldToLocalRotation, showEdgePoints);
 
                     break;
                 }
             }
-
-            //var isStatic = (!Tools.hidden && EditorApplication.isPlaying && ContainsStatic(Selection.gameObjects));
-
-            //var prevDisabled = CSGHandles.disabled;
 
             Quaternion localToWorldRotation = Quaternion.Inverse(worldToLocalRotation);
             Matrix4x4  localToWorld         = Matrix4x4.TRS(Vector3.zero, localToWorldRotation, Vector3.one);
@@ -60,8 +56,8 @@ namespace RealtimeCSG.Helpers
             Matrix4x4 origMatrix = Handles.matrix;
             Handles.matrix = localToWorld;
 
-            CSGHandles.InitFunction init     = delegate { originalBounds = bounds; };
-            CSGHandles.InitFunction shutdown = delegate { originalBounds = bounds; };
+            CSGHandles.InitFunction init     = delegate { OriginalBounds = bounds; };
+            CSGHandles.InitFunction shutdown = delegate { OriginalBounds = bounds; };
 
             SnapMode activeSnappingMode = CSGSettings.ActiveSnappingMode;
 
@@ -82,8 +78,8 @@ namespace RealtimeCSG.Helpers
 
                 if(EditorGUI.EndChangeCheck())
                 {
-                    Vector3 originalPoint = BoundsUtilities.GetBoundsSidePoint(originalBounds, i);
-                    bounds = originalBounds;
+                    Vector3 originalPoint = BoundsUtilities.GetBoundsSidePoint(OriginalBounds, i);
+                    bounds = OriginalBounds;
 
                     float delta = Vector3.Dot(normal, position - originalPoint);
 
@@ -136,8 +132,8 @@ namespace RealtimeCSG.Helpers
 
                     if(EditorGUI.EndChangeCheck())
                     {
-                        Vector3 originalPoint = BoundsUtilities.GetBoundsEdgePoint(originalBounds, i);
-                        bounds = originalBounds;
+                        Vector3 originalPoint = BoundsUtilities.GetBoundsEdgePoint(OriginalBounds, i);
+                        bounds = OriginalBounds;
 
                         Vector3    delta = position - originalPoint;
                         CubeSide[] sides = BoundsUtilities.AABBEdgeCubeSides[i];
@@ -169,31 +165,23 @@ namespace RealtimeCSG.Helpers
 
             if(bounds.MinX > bounds.MaxX)
             {
-                float t = bounds.MinX;
-                bounds.MinX = bounds.MaxX;
-                bounds.MaxX = t;
+                (bounds.MinX, bounds.MaxX) = (bounds.MaxX, bounds.MinX);
             }
 
             if(bounds.MinY > bounds.MaxY)
             {
-                float t = bounds.MinY;
-                bounds.MinY = bounds.MaxY;
-                bounds.MaxY = t;
+                (bounds.MinY, bounds.MaxY) = (bounds.MaxY, bounds.MinY);
             }
 
             if(bounds.MinZ > bounds.MaxZ)
             {
-                float t = bounds.MinZ;
-                bounds.MinZ = bounds.MaxZ;
-                bounds.MaxZ = t;
+                (bounds.MinZ, bounds.MaxZ) = (bounds.MaxZ, bounds.MinZ);
             }
 
             return bounds;
         }
 
-        internal static void UpdateColors(
-            Camera camera, AABB bounds, Quaternion worldToLocalRotation, bool showEdgePoints
-        )
+        internal static void UpdateColors(Camera camera, AABB bounds, Quaternion worldToLocalRotation, bool showEdgePoints)
         {
             if(!camera)
             {
@@ -210,7 +198,7 @@ namespace RealtimeCSG.Helpers
             Matrix4x4 localToWorld       = Matrix4x4.TRS(Vector3.zero, localToWorldRotation, Vector3.one);
 
             PaintUtility.DrawDottedLines(
-                localToWorld, cornerPoints, BoundsUtilities.AABBLineIndices, boundOutlinesColor, 4.0f
+                localToWorld, cornerPoints, BoundsUtilities.AABBLineIndices, boundOutlinesColor
             );
 
             PaintUtility.DrawLines(
@@ -305,23 +293,21 @@ namespace RealtimeCSG.Helpers
                     Color color1 = ColorSettings.MeshEdgeOutline;
                     Color color2 = ColorSettings.PointInnerStateColor[(int)state];
 
-                    bool disabled1 = false;
-
-                    switch(BoundsUtilities.AABBEdgeAxis[i][0])
+                    bool disabled1 = BoundsUtilities.AABBEdgeAxis[i][0] switch
                     {
-                        case PrincipleAxis.X: disabled1 = CSGSettings.LockAxisX; break;
-                        case PrincipleAxis.Y: disabled1 = CSGSettings.LockAxisY; break;
-                        case PrincipleAxis.Z: disabled1 = CSGSettings.LockAxisZ; break;
-                    }
+                        PrincipleAxis.X => CSGSettings.LockAxisX
+                      , PrincipleAxis.Y => CSGSettings.LockAxisY
+                      , PrincipleAxis.Z => CSGSettings.LockAxisZ
+                      , _               => false
+                    };
 
-                    bool disabled2 = false;
-
-                    switch(BoundsUtilities.AABBEdgeAxis[i][1])
+                    bool disabled2 = BoundsUtilities.AABBEdgeAxis[i][1] switch
                     {
-                        case PrincipleAxis.X: disabled2 = CSGSettings.LockAxisX; break;
-                        case PrincipleAxis.Y: disabled2 = CSGSettings.LockAxisY; break;
-                        case PrincipleAxis.Z: disabled2 = CSGSettings.LockAxisZ; break;
-                    }
+                        PrincipleAxis.X => CSGSettings.LockAxisX
+                      , PrincipleAxis.Y => CSGSettings.LockAxisY
+                      , PrincipleAxis.Z => CSGSettings.LockAxisZ
+                      , _               => false
+                    };
 
                     if(disabled1 && disabled2)
                     {
@@ -366,7 +352,7 @@ namespace RealtimeCSG.Helpers
             }
         }
 
-        internal static void Render(Camera camera, AABB bounds, Quaternion worldToLocalRotation, bool showEdgePoints)
+        internal static void Render(Camera camera, Quaternion worldToLocalRotation, bool showEdgePoints)
         {
             if(!camera)
             {
@@ -376,7 +362,6 @@ namespace RealtimeCSG.Helpers
             Quaternion localToWorldRotation = Quaternion.Inverse(worldToLocalRotation);
             Matrix4x4  localToWorld         = Matrix4x4.TRS(Vector3.zero, localToWorldRotation, Vector3.one);
 
-            //PaintUtility.DrawDoubleDots(localToWorld, cornerPoints, cornerSizes, cornerColors, cornerPoints.Length);
             PaintUtility.DrawDoubleDots(
                 camera, localToWorld, sidePoints, sidePointSizes, sideColors, sidePoints.Length
             );

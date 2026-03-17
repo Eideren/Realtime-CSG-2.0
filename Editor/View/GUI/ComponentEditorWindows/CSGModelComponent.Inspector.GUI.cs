@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using InternalRealtimeCSG;
+using RealtimeCSG.Components;
+using RealtimeCSG.Foundation;
 using UnityEditor;
 using UnityEngine;
-using InternalRealtimeCSG;
-using RealtimeCSG.Foundation;
-using RealtimeCSG.Components;
 using Object = UnityEngine.Object;
 
 namespace RealtimeCSG
@@ -15,30 +15,30 @@ namespace RealtimeCSG
     {
         private class MeshData
         {
-            public int VertexCount;
-            public int TriangleCount;
-            public long GeometryHashValue;
-            public long SurfaceHashValue;
-            public Mesh Mesh;
+            public int vertexCount;
+            public int triangleCount;
+            public long geometryHashValue;
+            public long surfaceHashValue;
+            public Mesh mesh;
         }
 
 #region Workarounds
 
-        private static Type _probesType;
-        private static object _probesInstance;
-        private static MethodInfo _probesInitializeMethod;
-        private static MethodInfo _probesOnGUIMethod;
-        private static MethodInfo _sceneViewIsUsingDeferredRenderingPath;
-        private static bool _haveReflected = false;
+        private static Type m_ProbesType;
+        private static object m_ProbesInstance;
+        private static MethodInfo m_ProbesInitializeMethod;
+        private static MethodInfo m_ProbesOnGUIMethod;
+        private static MethodInfo m_SceneViewIsUsingDeferredRenderingPath;
+        private static bool m_HaveReflected;
 
         private static void InitReflection() // le *sigh*
         {
-            if(_haveReflected)
+            if(m_HaveReflected)
             {
                 return;
             }
 
-            _haveReflected = true;
+            m_HaveReflected = true;
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Type> types      = new List<Type>();
 
@@ -53,10 +53,10 @@ namespace RealtimeCSG
                 }
             }
 
-            _probesType     = types.FirstOrDefault(t => t.FullName == "UnityEditor.RendererEditorBase+Probes");
-            _probesInstance = Activator.CreateInstance(_probesType);
+            m_ProbesType     = types.FirstOrDefault(t => t.FullName == "UnityEditor.RendererEditorBase+Probes");
+            m_ProbesInstance = Activator.CreateInstance(m_ProbesType!);
 
-            MethodInfo[] methods = _probesType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo[] methods = m_ProbesType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
 
             for(int i = 0; i < methods.Length; i++)
             {
@@ -65,16 +65,17 @@ namespace RealtimeCSG
                 {
                     if(methods[i].GetParameters().Length == 1)
                     {
-                        _probesInitializeMethod = methods[i];
+                        m_ProbesInitializeMethod = methods[i];
                     }
                 }
-                else
-                    //internal void OnGUI(UnityEngine.Object[] selection, Renderer renderer, bool useMiniStyle)
-                if(methods[i].Name == "OnGUI")
+                else //internal void OnGUI(UnityEngine.Object[] selection, Renderer renderer, bool useMiniStyle)
                 {
-                    if(methods[i].GetParameters().Length == 3)
+                    if(methods[i].Name == "OnGUI")
                     {
-                        _probesOnGUIMethod = methods[i];
+                        if(methods[i].GetParameters().Length == 3)
+                        {
+                            m_ProbesOnGUIMethod = methods[i];
+                        }
                     }
                 }
             }
@@ -87,7 +88,7 @@ namespace RealtimeCSG
             {
                 if(methods[i].Name == "IsUsingDeferredRenderingPath")
                 {
-                    _sceneViewIsUsingDeferredRenderingPath = methods[i];
+                    m_SceneViewIsUsingDeferredRenderingPath = methods[i];
                 }
             }
         }
@@ -118,83 +119,75 @@ namespace RealtimeCSG
         {
             Camera mainCamera = GetMainCamera();
 
-            if(mainCamera != null)
-            {
-                return mainCamera.renderingPath;
-            }
-
-            return RenderingPath.UsePlayerSettings;
+            return mainCamera != null ? mainCamera.renderingPath : RenderingPath.UsePlayerSettings;
         }
 
         internal static bool IsUsingDeferredRenderingPath()
         {
-            if(_sceneViewIsUsingDeferredRenderingPath != null)
+            if(m_SceneViewIsUsingDeferredRenderingPath != null)
             {
-                object ret = _sceneViewIsUsingDeferredRenderingPath.Invoke(null, null);
+                object ret = m_SceneViewIsUsingDeferredRenderingPath.Invoke(null, null);
 
                 return (bool)ret;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
 #endregion
 
-        private static bool _probesInitialized = false;
-        private static UnityEngine.Object[] _probesTargets = null;
-        private static SerializedObject _probesSerializedObject;
+        private static bool m_ProbesInitialized;
+        private static Object[] m_ProbesTargets;
+        private static SerializedObject m_ProbesSerializedObject;
 
         private static void UpdateTargets(CSGModel[] models)
         {
-            _probesInitialized      = false;
-            _probesTargets          = null;
-            _probesSerializedObject = null;
+            m_ProbesInitialized      = false;
+            m_ProbesTargets          = null;
+            m_ProbesSerializedObject = null;
 
             if(models.Length == 0)
             {
                 return;
             }
 
-            _probesTargets = MeshInstanceManager.FindRenderers(models);
+            m_ProbesTargets = MeshInstanceManager.FindRenderers(models);
 
-            if(_probesTargets.Length == 0 || _probesTargets == null)
+            if(m_ProbesTargets.Length == 0 || m_ProbesTargets == null)
             {
                 return;
             }
 
-            _probesSerializedObject = new SerializedObject(_probesTargets);
+            m_ProbesSerializedObject = new SerializedObject(m_ProbesTargets);
 
             InitReflection();
 
-            if(_probesInstance != null &&
-               _probesInitializeMethod != null &&
-               _probesOnGUIMethod != null)
+            if(m_ProbesInstance != null &&
+               m_ProbesInitializeMethod != null &&
+               m_ProbesOnGUIMethod != null)
             {
-                if(_probesTargets.Length > 0)
+                if(m_ProbesTargets.Length > 0)
                 {
-                    _probesInitializeMethod.Invoke(_probesInstance, new object[] { _probesSerializedObject });
-                    _probesInitialized = true;
+                    m_ProbesInitializeMethod.Invoke(m_ProbesInstance, new object[] { m_ProbesSerializedObject });
+                    m_ProbesInitialized = true;
                 }
             }
         }
 
-        private static GUIStyle popupStyle;
+        private static GUIStyle m_PopupStyle;
 
-        private static Material dummyMaterial;
-        private static bool localStyles = false;
+        private static Material m_DummyMaterial;
+        private static bool m_LocalStyles;
 
-        public static void OnInspectorGUI(UnityEngine.Object[] targets)
+        public static void OnInspectorGUI(Object[] targets)
         {
             InitReflection();
 
-            if(!localStyles)
+            if(!m_LocalStyles)
             {
-                popupStyle = new GUIStyle(EditorStyles.popup);
-                //popupStyle.padding.top += 2;
-                popupStyle.margin.top += 2;
-                localStyles           =  true;
+                m_PopupStyle            =  new GUIStyle(EditorStyles.popup);
+                m_PopupStyle.margin.top += 2;
+                m_LocalStyles           =  true;
             }
 
             bool updateMeshes = false;
@@ -222,24 +215,15 @@ namespace RealtimeCSG
             float? PackMargin = models[0].packMargin;
 
             StaticEditorFlags StaticFlags = GameObjectUtility.GetStaticEditorFlags(models[0].gameObject);
-#if UNITY_2019_2_OR_NEWER
             bool? GenerateLightMaps = (StaticFlags & StaticEditorFlags.ContributeGI) == StaticEditorFlags.ContributeGI;
-#else
-            bool? GenerateLightMaps =
- (StaticFlags & StaticEditorFlags.LightmapStatic) == StaticEditorFlags.LightmapStatic;
-#endif
-            ModelSettingsFlags Settings       = models[0].Settings;
+            ModelSettingsFlags Settings = models[0].Settings;
             VertexChannelFlags VertexChannels = models[0].VertexChannels;
-#if UNITY_2017_3_OR_NEWER
             MeshColliderCookingOptions CookingOptions = models[0].MeshColliderCookingOptions;
-#endif
             ExportType? ExportType = models[0].exportType;
             OriginType? OriginType = models[0].originType;
-#if UNITY_2019_2_OR_NEWER
             ReceiveGI? MeshReceiveGI = models[0].ReceiveGI;
-#endif
+
             bool? ExportColliders = models[0].exportColliders;
-//			bool?	VertexChannelColor		= (vertexChannels & VertexChannelFlags.Color) == VertexChannelFlags.Color;
             bool? VertexChannelTangent = (VertexChannels & VertexChannelFlags.Tangent) == VertexChannelFlags.Tangent;
             bool? VertexChannelNormal = (VertexChannels & VertexChannelFlags.Normal) == VertexChannelFlags.Normal;
             bool? VertexChannelUV0 = (VertexChannels & VertexChannelFlags.UV0) == VertexChannelFlags.UV0;
@@ -258,7 +242,6 @@ namespace RealtimeCSG
             bool? TwoSidedShadows =
                 (Settings & ModelSettingsFlags.TwoSidedShadows) == ModelSettingsFlags.TwoSidedShadows;
 
-//			bool?	ReceiveShadows			= !((settings & ModelSettingsFlags.DoNotReceiveShadows) == ModelSettingsFlags.DoNotReceiveShadows);
             bool? AutoRebuildUVs = (Settings & ModelSettingsFlags.AutoRebuildUVs) == ModelSettingsFlags.AutoRebuildUVs;
             bool? PreserveUVs    = (Settings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs;
 
@@ -266,7 +249,7 @@ namespace RealtimeCSG
              == ModelSettingsFlags.StitchLightmapSeams;
 
             bool? IgnoreNormals = (Settings & ModelSettingsFlags.IgnoreNormals) == ModelSettingsFlags.IgnoreNormals;
-#if UNITY_2017_3_OR_NEWER
+
             bool? CookForFasterSimulation = (CookingOptions & MeshColliderCookingOptions.CookForFasterSimulation)
              == MeshColliderCookingOptions.CookForFasterSimulation;
 
@@ -275,14 +258,13 @@ namespace RealtimeCSG
 
             bool? WeldColocatedVertices = (CookingOptions & MeshColliderCookingOptions.WeldColocatedVertices)
              == MeshColliderCookingOptions.WeldColocatedVertices;
-#endif
+
             int?   MinimumChartSize  = models[0].minimumChartSize;
             float? AutoUVMaxDistance = models[0].autoUVMaxDistance;
             float? AutoUVMaxAngle    = models[0].autoUVMaxAngle;
 
-            float? ScaleInLightmap     = models[0].scaleInLightmap;
-            bool?  ShowGeneratedMeshes = models[0].ShowGeneratedMeshes;
-//			ShadowCastingMode? ShadowCastingMode = (ShadowCastingMode)(settings & ModelSettingsFlags.ShadowCastingModeFlags);
+            float?          ScaleInLightmap             = models[0].scaleInLightmap;
+            bool?           ShowGeneratedMeshes         = models[0].ShowGeneratedMeshes;
             PhysicsMaterial defaultPhysicsMaterial      = models[0].DefaultPhysicsMaterial;
             bool            defaultPhysicsMaterialMixed = false;
 
@@ -290,29 +272,23 @@ namespace RealtimeCSG
             {
                 Settings       = models[i].Settings;
                 VertexChannels = models[i].VertexChannels;
-#if UNITY_2017_3_OR_NEWER
                 CookingOptions = models[i].MeshColliderCookingOptions;
-#endif
+
                 StaticEditorFlags currStaticFlags = GameObjectUtility.GetStaticEditorFlags(models[i].gameObject);
-#if UNITY_2019_2_OR_NEWER
+
                 bool currGenerateLightMaps =
                     (currStaticFlags & StaticEditorFlags.ContributeGI) == StaticEditorFlags.ContributeGI;
-#else
-                var currGenerateLightMaps =
- (currStaticFlags & StaticEditorFlags.LightmapStatic) == StaticEditorFlags.LightmapStatic;
-#endif
+
                 ExportType currExportType = models[i].exportType;
                 OriginType currOriginType = models[i].originType;
-#if UNITY_2019_2_OR_NEWER
-                ReceiveGI currReceiveGI = models[i].ReceiveGI;
-#endif
+                ReceiveGI  currReceiveGI  = models[i].ReceiveGI;
+
                 bool  currExportColliders = models[i].exportColliders;
                 float currAngleError      = models[i].angleError;
                 float currAreaError       = models[i].areaError;
                 float currHardAngle       = models[i].hardAngle;
                 float currPackMargin      = models[i].packMargin;
 
-//				bool	currVertexChannelColor		= (vertexChannels & VertexChannelFlags.Color) == VertexChannelFlags.Color;
                 bool currVertexChannelTangent =
                     (VertexChannels & VertexChannelFlags.Tangent) == VertexChannelFlags.Tangent;
 
@@ -338,7 +314,6 @@ namespace RealtimeCSG
                 bool currTwoSidedShadows = (Settings & ModelSettingsFlags.TwoSidedShadows)
                  == ModelSettingsFlags.TwoSidedShadows;
 
-//				bool	currReceiveShadows			= !((settings & ModelSettingsFlags.DoNotReceiveShadows) == ModelSettingsFlags.DoNotReceiveShadows);
                 bool currAutoRebuildUVs =
                     (Settings & ModelSettingsFlags.AutoRebuildUVs) == ModelSettingsFlags.AutoRebuildUVs;
 
@@ -346,7 +321,7 @@ namespace RealtimeCSG
 
                 bool currStitchLightmapSeams = (Settings & ModelSettingsFlags.StitchLightmapSeams)
                  == ModelSettingsFlags.StitchLightmapSeams;
-#if UNITY_2017_3_OR_NEWER
+
                 bool currCookForFasterSimulation = (CookingOptions & MeshColliderCookingOptions.CookForFasterSimulation)
                  == MeshColliderCookingOptions.CookForFasterSimulation;
 
@@ -355,16 +330,14 @@ namespace RealtimeCSG
 
                 bool currWeldColocatedVertices = (CookingOptions & MeshColliderCookingOptions.WeldColocatedVertices)
                  == MeshColliderCookingOptions.WeldColocatedVertices;
-#endif
+
                 int             currMinimumChartSize       = models[i].minimumChartSize;
                 float           currAutoUVMaxDistance      = models[i].autoUVMaxDistance;
                 float           currAutoUVMaxAngle         = models[i].autoUVMaxAngle;
                 bool            currShowGeneratedMeshes    = models[i].ShowGeneratedMeshes;
                 float           currScaleInLightmap        = models[i].scaleInLightmap;
                 PhysicsMaterial currdefaultPhysicsMaterial = models[i].DefaultPhysicsMaterial;
-//				ShadowCastingMode currShadowCastingMode = (ShadowCastingMode)(settings & ModelSettingsFlags.ShadowCastingModeFlags);
 
-//				if (VertexChannelColor		.HasValue && VertexChannelColor		.Value != currVertexChannelColor	) VertexChannelColor = null;
                 if(VertexChannelTangent.HasValue && VertexChannelTangent.Value != currVertexChannelTangent)
                 {
                     VertexChannelTangent = null;
@@ -389,12 +362,12 @@ namespace RealtimeCSG
                 {
                     OriginType = null;
                 }
-#if UNITY_2019_2_OR_NEWER
+
                 if(MeshReceiveGI.HasValue && MeshReceiveGI.Value != currReceiveGI)
                 {
                     MeshReceiveGI = null;
                 }
-#endif
+
                 if(ExportColliders.HasValue && ExportColliders.Value != currExportColliders)
                 {
                     ExportColliders = null;
@@ -435,8 +408,6 @@ namespace RealtimeCSG
                     TwoSidedShadows = null;
                 }
 
-                //				if (ReceiveShadows			.HasValue && ReceiveShadows			.Value != currReceiveShadows		) ReceiveShadows = null;
-//				if (ShadowCastingMode		.HasValue && ShadowCastingMode		.Value != currShadowCastingMode		) ShadowCastingMode = null;
                 if(AutoRebuildUVs.HasValue && AutoRebuildUVs.Value != currAutoRebuildUVs)
                 {
                     AutoRebuildUVs = null;
@@ -452,7 +423,6 @@ namespace RealtimeCSG
                     StitchLightmapSeams = null;
                 }
 
-#if UNITY_2017_3_OR_NEWER
                 if(CookForFasterSimulation.HasValue && CookForFasterSimulation.Value != currCookForFasterSimulation)
                 {
                     CookForFasterSimulation = null;
@@ -467,7 +437,6 @@ namespace RealtimeCSG
                 {
                     WeldColocatedVertices = null;
                 }
-#endif
 
                 if(ScaleInLightmap.HasValue && ScaleInLightmap.Value != currScaleInLightmap)
                 {
@@ -549,12 +518,12 @@ namespace RealtimeCSG
                     EditorGUI.indentLevel++;
 
                     {
-                        bool inverted_world = InvertedWorld.HasValue ? InvertedWorld.Value : false;
+                        bool invertedWorld = InvertedWorld.HasValue && InvertedWorld.Value;
                         EditorGUI.BeginChangeCheck();
 
                         {
                             EditorGUI.showMixedValue = !InvertedWorld.HasValue;
-                            inverted_world           = EditorGUILayout.Toggle(InvertedWorldContent, inverted_world);
+                            invertedWorld            = EditorGUILayout.Toggle(invertedWorldContent, invertedWorld);
                         }
 
                         if(EditorGUI.EndChangeCheck())
@@ -563,7 +532,7 @@ namespace RealtimeCSG
                             {
                                 CSGModel model = models[i];
 
-                                if(inverted_world)
+                                if(invertedWorld)
                                 {
                                     model.Settings |= ModelSettingsFlags.InvertedWorld;
                                 }
@@ -573,8 +542,7 @@ namespace RealtimeCSG
                                 }
                             }
 
-                            GUI.changed   = true;
-                            InvertedWorld = inverted_world;
+                            GUI.changed = true;
                         }
                     }
 
@@ -595,7 +563,7 @@ namespace RealtimeCSG
 
                 {
                     EditorGUI.BeginChangeCheck();
-                    exportVisible = EditorGUILayout.Foldout(exportVisible, ExportLabel);
+                    exportVisible = EditorGUILayout.Foldout(exportVisible, exportLabel);
 
                     if(EditorGUI.EndChangeCheck())
                     {
@@ -615,7 +583,7 @@ namespace RealtimeCSG
                                     EditorGUI.showMixedValue = !OriginType.HasValue;
 
                                     OriginType = (OriginType)EditorGUILayout.EnumPopup(
-                                        ExportOriginLabel, OriginType ?? Components.OriginType.ModelCenter, popupStyle
+                                        exportOriginLabel, OriginType ?? Components.OriginType.ModelCenter, m_PopupStyle
                                     );
 
                                     EditorGUI.showMixedValue = false;
@@ -642,7 +610,7 @@ namespace RealtimeCSG
                                     EditorGUI.showMixedValue = !OriginType.HasValue;
 
                                     exportColliderToggle = EditorGUILayout.Toggle(
-                                        ExportColliderLabel, exportColliderToggle
+                                        exportColliderLabel, exportColliderToggle
                                     );
 
                                     EditorGUI.showMixedValue = false;
@@ -667,7 +635,7 @@ namespace RealtimeCSG
                                 EditorGUI.BeginDisabledGroup(!ExportType.HasValue);
 
                                 {
-                                    if(EditModeCommonGUI.IndentableButton(ExportToButtonLabel) && ExportType.HasValue)
+                                    if(EditModeCommonGUI.IndentableButton(exportToButtonLabel) && ExportType.HasValue)
                                     {
                                         MeshInstanceManager.Export(
                                             models[0], ExportType.Value, ExportColliders ?? true
@@ -682,7 +650,7 @@ namespace RealtimeCSG
                                     EditorGUI.showMixedValue = !ExportType.HasValue;
 
                                     ExportType = (ExportType)EditorGUILayout.EnumPopup(
-                                        ExportType ?? RealtimeCSG.Components.ExportType.FBX, popupStyle
+                                        ExportType ?? Components.ExportType.FBX, m_PopupStyle
                                     );
 
                                     EditorGUI.showMixedValue = false;
@@ -726,12 +694,12 @@ namespace RealtimeCSG
                     EditorGUI.indentLevel++;
 
                     {
-                        bool collider_value = NoCollider.HasValue ? NoCollider.Value : false;
+                        bool colliderValue = NoCollider.HasValue && NoCollider.Value;
                         EditorGUI.BeginChangeCheck();
 
                         {
                             EditorGUI.showMixedValue = !NoCollider.HasValue;
-                            collider_value = !EditorGUILayout.Toggle(GenerateColliderContent, !collider_value);
+                            colliderValue            = !EditorGUILayout.Toggle(generateColliderContent, !colliderValue);
                         }
 
                         if(EditorGUI.EndChangeCheck())
@@ -740,7 +708,7 @@ namespace RealtimeCSG
                             {
                                 CSGModel model = models[i];
 
-                                if(collider_value)
+                                if(colliderValue)
                                 {
                                     model.Settings |= ModelSettingsFlags.NoCollider;
                                 }
@@ -751,24 +719,24 @@ namespace RealtimeCSG
                             }
 
                             GUI.changed  = true;
-                            NoCollider   = collider_value;
+                            NoCollider   = colliderValue;
                             updateMeshes = true;
                         }
                     }
 
-                    bool have_no_collider = NoCollider.HasValue && NoCollider.Value;
-                    EditorGUI.BeginDisabledGroup(have_no_collider);
+                    bool haveNoCollider = NoCollider.HasValue && NoCollider.Value;
+                    EditorGUI.BeginDisabledGroup(haveNoCollider);
 
                     {
-                        bool trigger_value_mixed = have_no_collider ? true : !IsTrigger.HasValue;
-                        bool trigger_value       = IsTrigger.HasValue ? IsTrigger.Value : false;
+                        bool triggerValueMixed = haveNoCollider || !IsTrigger.HasValue;
+                        bool triggerValue      = IsTrigger.HasValue && IsTrigger.Value;
 
                         {
                             EditorGUI.BeginChangeCheck();
 
                             {
-                                EditorGUI.showMixedValue = trigger_value_mixed;
-                                trigger_value            = EditorGUILayout.Toggle(ModelIsTriggerContent, trigger_value);
+                                EditorGUI.showMixedValue = triggerValueMixed;
+                                triggerValue             = EditorGUILayout.Toggle(modelIsTriggerContent, triggerValue);
                             }
 
                             if(EditorGUI.EndChangeCheck())
@@ -777,7 +745,7 @@ namespace RealtimeCSG
                                 {
                                     CSGModel model = models[i];
 
-                                    if(trigger_value)
+                                    if(triggerValue)
                                     {
                                         model.Settings |= ModelSettingsFlags.IsTrigger;
                                     }
@@ -788,38 +756,35 @@ namespace RealtimeCSG
                                 }
 
                                 GUI.changed  = true;
-                                IsTrigger    = trigger_value;
                                 updateMeshes = true;
                             }
                         }
 
-                        bool set_convex_value_mixed = have_no_collider ? true : !SetToConvex.HasValue;
-
-                        bool set_convex_value =
-                            have_no_collider ? false : SetToConvex.HasValue ? SetToConvex.Value : false;
+                        bool setConvexValueMixed = haveNoCollider || !SetToConvex.HasValue;
+                        bool setConvexValue      = !haveNoCollider && (SetToConvex.HasValue && SetToConvex.Value);
 
                         {
                             EditorGUI.BeginChangeCheck();
 
                             {
-                                EditorGUI.showMixedValue = set_convex_value_mixed;
+                                EditorGUI.showMixedValue = setConvexValueMixed;
                                 Color prevColor = GUI.color;
 
-                                if(!set_convex_value && trigger_value)
+                                if(!setConvexValue && triggerValue)
                                 {
                                     Color color = new Color(1, 0.25f, 0.25f);
                                     GUI.color = color;
                                 }
 
-                                set_convex_value = EditorGUILayout.Toggle(ColliderSetToConvexContent, set_convex_value);
-                                GUI.color        = prevColor;
+                                setConvexValue = EditorGUILayout.Toggle(colliderSetToConvexContent, setConvexValue);
+                                GUI.color      = prevColor;
                             }
 
                             if(EditorGUI.EndChangeCheck())
                             {
                                 for(int i = 0; i < models.Length; i++)
                                 {
-                                    if(set_convex_value)
+                                    if(setConvexValue)
                                     {
                                         models[i].Settings |= ModelSettingsFlags.SetColliderConvex;
                                     }
@@ -830,7 +795,6 @@ namespace RealtimeCSG
                                 }
 
                                 GUI.changed  = true;
-                                SetToConvex  = set_convex_value;
                                 updateMeshes = true;
                             }
                         }
@@ -841,7 +805,7 @@ namespace RealtimeCSG
                             {
                                 EditorGUI.showMixedValue = defaultPhysicsMaterialMixed;
                                 GUILayout.BeginHorizontal();
-                                EditorGUILayout.PrefixLabel(DefaultPhysicsMaterialContent);
+                                EditorGUILayout.PrefixLabel(defaultPhysicsMaterialContent);
 
                                 defaultPhysicsMaterial = EditorGUILayout.ObjectField(
                                     defaultPhysicsMaterial, typeof(PhysicsMaterial), true
@@ -862,13 +826,12 @@ namespace RealtimeCSG
                                     models[i].DefaultPhysicsMaterial = defaultPhysicsMaterial;
                                 }
 
-                                GUI.changed = true;
-                                //MeshInstanceManager.Clear();
+                                GUI.changed  = true;
                                 updateMeshes = true;
                             }
                         }
 
-                        if(!have_no_collider && !set_convex_value && trigger_value)
+                        if(!haveNoCollider && !setConvexValue && triggerValue)
                         {
                             Color prevColor = GUI.color;
                             Color color     = new Color(1, 0.25f, 0.25f);
@@ -882,12 +845,12 @@ namespace RealtimeCSG
                     EditorGUI.EndDisabledGroup();
 
                     {
-                        bool autoRigidbody = AutoGenerateRigidBody.HasValue ? AutoGenerateRigidBody.Value : false;
+                        bool autoRigidbody = AutoGenerateRigidBody.HasValue && AutoGenerateRigidBody.Value;
                         EditorGUI.BeginChangeCheck();
 
                         {
                             EditorGUI.showMixedValue = !AutoGenerateRigidBody.HasValue;
-                            autoRigidbody = !EditorGUILayout.Toggle(ColliderAutoRigidBodyContent, !autoRigidbody);
+                            autoRigidbody = !EditorGUILayout.Toggle(colliderAutoRigidBodyContent, !autoRigidbody);
                         }
 
                         if(EditorGUI.EndChangeCheck())
@@ -904,8 +867,7 @@ namespace RealtimeCSG
                                 }
                             }
 
-                            GUI.changed           = true;
-                            AutoGenerateRigidBody = autoRigidbody;
+                            GUI.changed = true;
                         }
                     }
 
@@ -933,22 +895,17 @@ namespace RealtimeCSG
 
                 if(renderingVisible)
                 {
-                    //ShadowCastingMode shadowcastingValue = ShadowCastingMode.HasValue ? ShadowCastingMode.Value : UnityEngine.Rendering.ShadowCastingMode.On;
-                    //var castOnlyShadow = (shadowcastingValue == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly);
                     EditorGUI.indentLevel++;
 
-                    //EditorGUI.BeginDisabledGroup(castOnlyShadow);
                     {
-                        bool donotrender_value = //castOnlyShadow ? true :
-                            DoNotRender.HasValue ? DoNotRender.Value : false;
+                        bool donotrenderValue = DoNotRender.HasValue && DoNotRender.Value;
 
                         EditorGUI.BeginChangeCheck();
 
                         {
-                            EditorGUI.showMixedValue = //castOnlyShadow ? true :
-                                !DoNotRender.HasValue;
+                            EditorGUI.showMixedValue = !DoNotRender.HasValue;
 
-                            donotrender_value = EditorGUILayout.Toggle(DoNotRenderContent, donotrender_value);
+                            donotrenderValue = EditorGUILayout.Toggle(doNotRenderContent, donotrenderValue);
                         }
 
                         if(EditorGUI.EndChangeCheck())
@@ -957,7 +914,7 @@ namespace RealtimeCSG
                             {
                                 CSGModel model = models[i];
 
-                                if(donotrender_value)
+                                if(donotrenderValue)
                                 {
                                     model.Settings |= ModelSettingsFlags.DoNotRender;
                                 }
@@ -968,25 +925,21 @@ namespace RealtimeCSG
                             }
 
                             GUI.changed  = true;
-                            DoNotRender  = donotrender_value;
+                            DoNotRender  = donotrenderValue;
                             updateMeshes = true;
                         }
                     }
 
                     //EditorGUI.EndDisabledGroup();
                     {
-                        bool two_sided_shadows_value = //castOnlyShadow ? true :
-                            TwoSidedShadows.HasValue ? TwoSidedShadows.Value : false;
+                        bool twoSidedShadowsValue = TwoSidedShadows.HasValue && TwoSidedShadows.Value;
 
                         EditorGUI.BeginChangeCheck();
 
                         {
-                            EditorGUI.showMixedValue = //castOnlyShadow ? true :
-                                !TwoSidedShadows.HasValue;
+                            EditorGUI.showMixedValue = !TwoSidedShadows.HasValue;
 
-                            two_sided_shadows_value = EditorGUILayout.Toggle(
-                                TwoSidedShadowsContent, two_sided_shadows_value
-                            );
+                            twoSidedShadowsValue = EditorGUILayout.Toggle(twoSidedShadowsContent, twoSidedShadowsValue);
                         }
 
                         if(EditorGUI.EndChangeCheck())
@@ -995,7 +948,7 @@ namespace RealtimeCSG
                             {
                                 CSGModel model = models[i];
 
-                                if(two_sided_shadows_value)
+                                if(twoSidedShadowsValue)
                                 {
                                     model.Settings |= ModelSettingsFlags.TwoSidedShadows;
                                 }
@@ -1005,90 +958,39 @@ namespace RealtimeCSG
                                 }
                             }
 
-                            GUI.changed     = true;
-                            TwoSidedShadows = two_sided_shadows_value;
-                            updateMeshes    = true;
+                            GUI.changed  = true;
+                            updateMeshes = true;
                         }
                     }
 
                     GUILayout.Space(10);
-                    /*
-                    EditorGUI.BeginDisabledGroup(DoNotRender.HasValue && DoNotRender.Value);
-                    {
-                        EditorGUI.BeginChangeCheck();
-                        {
-                            EditorGUI.showMixedValue = !ShadowCastingMode.HasValue;
-                            shadowcastingValue = (ShadowCastingMode)EditorGUILayout.EnumPopup(CastShadows, shadowcastingValue);
-                        }
-                        if (EditorGUI.EndChangeCheck())
-                        {
-                            for (int i = 0; i < models.Length; i++)
-                            {
-                                settings = models[i].Settings;
-                                settings &= ~ModelSettingsFlags.ShadowCastingModeFlags;
-                                settings |= (ModelSettingsFlags)(((int)shadowcastingValue) & (int)ModelSettingsFlags.ShadowCastingModeFlags);
-                                models[i].Settings = settings;
-                            }
-                            GUI.changed = true;
-                            ShadowCastingMode = shadowcastingValue;
-                            updateMeshes = true;
-                        }
 
-                        var isUsingDeferredRenderingPath = false;//IsUsingDeferredRenderingPath();
-                        EditorGUI.BeginDisabledGroup(castOnlyShadow || isUsingDeferredRenderingPath);
-                        {
-                            var receiveshadowsValue = !castOnlyShadow && (isUsingDeferredRenderingPath || (ReceiveShadows ?? false));
-                            EditorGUI.BeginChangeCheck();
-                            {
-                                EditorGUI.showMixedValue = (castOnlyShadow || !ReceiveShadows.HasValue) && !isUsingDeferredRenderingPath;
-                                receiveshadowsValue = EditorGUILayout.Toggle(CSGModelComponentInspectorGUI.ReceiveShadowsContent, receiveshadowsValue || isUsingDeferredRenderingPath);
-                            }
-                            if (EditorGUI.EndChangeCheck())
-                            {
-                                for (int i = 0; i < models.Length; i++)
-                                {
-                                    if (receiveshadowsValue) models[i].Settings &= ~ModelSettingsFlags.DoNotReceiveShadows;
-                                    else                     models[i].Settings |=  ModelSettingsFlags.DoNotReceiveShadows;
-                                }
-                                GUI.changed = true;
-                                ReceiveShadows = receiveshadowsValue;
-                            }
-                        }
-                        EditorGUI.EndDisabledGroup();
-                    }
-                    EditorGUI.EndDisabledGroup();*/
-
-                    //EditorGUI.BeginDisabledGroup(castOnlyShadow);
                     EditorGUI.showMixedValue = false;
                     UpdateTargets(models);
 
-                    if(_probesInstance != null &&
-                       _probesOnGUIMethod != null &&
-                       _probesTargets != null &&
-                       _probesSerializedObject != null &&
-                       _probesInitialized)
+                    if(m_ProbesInstance != null &&
+                       m_ProbesOnGUIMethod != null &&
+                       m_ProbesTargets != null &&
+                       m_ProbesSerializedObject != null &&
+                       m_ProbesInitialized)
                     {
                         GUILayout.Space(10);
 
                         try
                         {
-#if UNITY_5_6_OR_NEWER
-                            _probesSerializedObject.UpdateIfRequiredOrScript();
-#else
-                            _probesSerializedObject.UpdateIfDirtyOrScript();
-#endif
-                            _probesOnGUIMethod.Invoke(
-                                _probesInstance, new object[] { _probesTargets, (Renderer)_probesTargets[0], false }
+                            m_ProbesSerializedObject.UpdateIfRequiredOrScript();
+
+                            m_ProbesOnGUIMethod.Invoke(
+                                m_ProbesInstance, new object[] { m_ProbesTargets, (Renderer)m_ProbesTargets[0], false }
                             );
 
-                            _probesSerializedObject.ApplyModifiedProperties();
+                            m_ProbesSerializedObject.ApplyModifiedProperties();
                         }
                         catch
                         {
                         }
                     }
 
-                    //EditorGUI.EndDisabledGroup();
                     EditorGUI.indentLevel--;
                 }
             }
@@ -1114,7 +1016,7 @@ namespace RealtimeCSG
                 if(UVSettingsVisible)
                 {
                     EditorGUI.indentLevel++;
-#if UNITY_2019_2_OR_NEWER
+
                     {
                         EditorGUI.BeginChangeCheck();
 
@@ -1122,7 +1024,7 @@ namespace RealtimeCSG
                             EditorGUI.showMixedValue = !MeshReceiveGI.HasValue;
 
                             MeshReceiveGI = (ReceiveGI)EditorGUILayout.EnumPopup(
-                                ReceiveGIContent, MeshReceiveGI ?? ReceiveGI.LightProbes, popupStyle
+                                receiveGIContent, MeshReceiveGI ?? ReceiveGI.LightProbes, m_PopupStyle
                             );
                         }
 
@@ -1138,7 +1040,7 @@ namespace RealtimeCSG
                             updateMeshes = true;
                         }
                     }
-#endif
+
                     {
                         if(DoNotRender.HasValue && DoNotRender.Value)
                         {
@@ -1154,12 +1056,10 @@ namespace RealtimeCSG
                              || (GenerateLightMaps.HasValue && !GenerateLightMaps.Value);
 
                             GUIContent enableOrDisableButtonText = !GenerateLightMaps.HasValue
-                                ?
-                                EnableLightmapsForAllContent
-                                :
-                                !GenerateLightMaps.Value
-                                    ? EnableLightmapsContent
-                                    : DisableLightmapsContent;
+                                ? enableLightmapsForAllContent
+                                : !GenerateLightMaps.Value
+                                    ? enableLightmapsContent
+                                    : disableLightmapsContent;
 
                             if(EditModeCommonGUI.IndentableButton(enableOrDisableButtonText))
                             {
@@ -1169,7 +1069,7 @@ namespace RealtimeCSG
                                         GameObjectUtility.GetStaticEditorFlags(models[i].gameObject);
 
                                     StaticEditorFlags newStaticFlags;
-#if UNITY_2019_2_OR_NEWER
+
                                     if(enable)
                                     {
                                         newStaticFlags = oldStaticFlags | StaticEditorFlags.ContributeGI;
@@ -1178,12 +1078,7 @@ namespace RealtimeCSG
                                     {
                                         newStaticFlags = oldStaticFlags & ~StaticEditorFlags.ContributeGI;
                                     }
-#else
-                                    if (enable)
-                                        newStaticFlags = oldStaticFlags | StaticEditorFlags.LightmapStatic;
-                                    else
-                                        newStaticFlags = oldStaticFlags & ~StaticEditorFlags.LightmapStatic;
-#endif
+
                                     if(oldStaticFlags != newStaticFlags)
                                     {
                                         GameObjectUtility.SetStaticEditorFlags(models[i].gameObject, newStaticFlags);
@@ -1215,7 +1110,7 @@ namespace RealtimeCSG
                                             EditorGUI.showMixedValue = !AngleError.HasValue;
 
                                             angleError = EditorGUILayout.Slider(
-                                                AngleErrorContent, angleError, CSGModel.MinAngleError
+                                                angleErrorContent, angleError, CSGModel.MinAngleError
                                               , CSGModel.MaxAngleError
                                             );
                                         }
@@ -1241,7 +1136,7 @@ namespace RealtimeCSG
                                             EditorGUI.showMixedValue = !AreaError.HasValue;
 
                                             areaError = EditorGUILayout.Slider(
-                                                AreaErrorContent, areaError, CSGModel.MinAreaError
+                                                areaErrorContent, areaError, CSGModel.MinAreaError
                                               , CSGModel.MaxAreaError
                                             );
                                         }
@@ -1265,7 +1160,7 @@ namespace RealtimeCSG
 
                                         {
                                             EditorGUI.showMixedValue = !HardAngle.HasValue;
-                                            hardAngle = EditorGUILayout.Slider(HardAngleContent, hardAngle, 0, 360);
+                                            hardAngle = EditorGUILayout.Slider(hardAngleContent, hardAngle, 0, 360);
                                         }
 
                                         if(EditorGUI.EndChangeCheck())
@@ -1289,7 +1184,7 @@ namespace RealtimeCSG
                                             EditorGUI.showMixedValue = !PackMargin.HasValue;
 
                                             packMargin = EditorGUILayout.FloatField(
-                                                PackMarginContent, (int)(packMargin * 1024.0f) / 1024.0f
+                                                packMarginContent, (int)(packMargin * 1024.0f) / 1024.0f
                                             );
                                         }
 
@@ -1314,7 +1209,7 @@ namespace RealtimeCSG
                                        !HardAngle.HasValue || HardAngle.Value != uvGenerationSettings.hardAngle ||
                                        !PackMargin.HasValue || PackMargin.Value != uvGenerationSettings.packMargin)
                                     {
-                                        if(EditModeCommonGUI.IndentableButton(ResetContent))
+                                        if(EditModeCommonGUI.IndentableButton(resetContent))
                                         {
                                             for(int i = 0; i < models.Length; i++)
                                             {
@@ -1337,7 +1232,7 @@ namespace RealtimeCSG
 
                                     {
                                         EditorGUI.showMixedValue = !AutoRebuildUVs.HasValue;
-                                        autoRebuildUvs = EditorGUILayout.Toggle(AutoRebuildUVsContent, autoRebuildUvs);
+                                        autoRebuildUvs = EditorGUILayout.Toggle(autoRebuildUVsContent, autoRebuildUvs);
                                     }
 
                                     if(EditorGUI.EndChangeCheck())
@@ -1356,8 +1251,7 @@ namespace RealtimeCSG
                                             MeshInstanceManager.Refresh(models[i], onlyFastRefreshes: false);
                                         }
 
-                                        GUI.changed    = true;
-                                        AutoRebuildUVs = autoRebuildUvs;
+                                        GUI.changed = true;
                                     }
                                 }
 
@@ -1374,7 +1268,7 @@ namespace RealtimeCSG
 
                                         {
                                             EditorGUI.showMixedValue = !PreserveUVs.HasValue;
-                                            preserveUVs = EditorGUILayout.Toggle(PreserveUVsContent, preserveUVs);
+                                            preserveUVs = EditorGUILayout.Toggle(preserveUVsContent, preserveUVs);
                                         }
 
                                         if(EditorGUI.EndChangeCheck())
@@ -1413,7 +1307,7 @@ namespace RealtimeCSG
                                                 EditorGUI.showMixedValue = !AutoUVMaxDistance.HasValue;
 
                                                 autoUVMaxDistance = EditorGUILayout.FloatField(
-                                                    AutoUVMaxDistanceContent, autoUVMaxDistance
+                                                    autoUVMaxDistanceContent, autoUVMaxDistance
                                                 );
 
                                                 if(autoUVMaxDistance < 0.0f)
@@ -1443,7 +1337,7 @@ namespace RealtimeCSG
                                                 EditorGUI.showMixedValue = !AutoUVMaxAngle.HasValue;
 
                                                 autoUVMaxAngle = EditorGUILayout.Slider(
-                                                    AutoUVMaxAngleContent, autoUVMaxAngle, 0, 180
+                                                    autoUVMaxAngleContent, autoUVMaxAngle, 0, 180
                                                 );
                                             }
 
@@ -1469,7 +1363,7 @@ namespace RealtimeCSG
 
                                         {
                                             EditorGUI.showMixedValue = !IgnoreNormals.HasValue;
-                                            ignoreNormals = EditorGUILayout.Toggle(IgnoreNormalsContent, ignoreNormals);
+                                            ignoreNormals = EditorGUILayout.Toggle(ignoreNormalsContent, ignoreNormals);
                                         }
 
                                         if(EditorGUI.EndChangeCheck())
@@ -1501,8 +1395,8 @@ namespace RealtimeCSG
                                             EditorGUI.showMixedValue = !MinimumChartSize.HasValue;
 
                                             minimumChartSize = EditorGUILayout.IntPopup(
-                                                MinimumChartSizeContent, minimumChartSize, MinimumChartSizeStrings
-                                              , MinimumChartSizeValues
+                                                minimumChartSizeContent, minimumChartSize, minimumChartSizeStrings
+                                              , minimumChartSizeValues
                                             );
                                         }
 
@@ -1534,7 +1428,7 @@ namespace RealtimeCSG
                                             EditorGUI.showMixedValue = !ScaleInLightmap.HasValue;
 
                                             scaleInLightmap = EditorGUILayout.FloatField(
-                                                ScaleInLightmapContent, scaleInLightmap
+                                                scaleInLightmapContent, scaleInLightmap
                                             );
                                         }
 
@@ -1546,13 +1440,11 @@ namespace RealtimeCSG
                                                 MeshInstanceManager.Refresh(models[i], onlyFastRefreshes: false);
                                             }
 
-                                            GUI.changed     = true;
-                                            ScaleInLightmap = scaleInLightmap;
-                                            updateMeshes    = true;
+                                            GUI.changed  = true;
+                                            updateMeshes = true;
                                         }
                                     }
 
-#if UNITY_2017_2_OR_NEWER
                                     {
                                         bool stitchLightmapSeams = StitchLightmapSeams ?? false;
                                         EditorGUI.BeginChangeCheck();
@@ -1561,7 +1453,7 @@ namespace RealtimeCSG
                                             EditorGUI.showMixedValue = !StitchLightmapSeams.HasValue;
 
                                             stitchLightmapSeams = EditorGUILayout.Toggle(
-                                                StitchLightmapSeamsContent, stitchLightmapSeams
+                                                stitchLightmapSeamsContent, stitchLightmapSeams
                                             );
                                         }
 
@@ -1581,17 +1473,13 @@ namespace RealtimeCSG
                                                 MeshInstanceManager.Refresh(models[i], onlyFastRefreshes: false);
                                             }
 
-                                            GUI.changed         = true;
-                                            StitchLightmapSeams = stitchLightmapSeams;
-                                            updateMeshes        = true;
+                                            GUI.changed  = true;
+                                            updateMeshes = true;
                                         }
                                     }
-#endif
                                 }
 
-                                EditorGUI.indentLevel--;
-                                EditorGUI.indentLevel--;
-
+                                EditorGUI.indentLevel -= 2;
                                 EditorGUI.indentLevel++;
                             }
                         }
@@ -1631,7 +1519,7 @@ namespace RealtimeCSG
                             EditorGUI.showMixedValue = !ShowGeneratedMeshes.HasValue;
 
                             showGeneratedMeshes = EditorGUILayout.Toggle(
-                                ShowGeneratedMeshesContent, showGeneratedMeshes
+                                showGeneratedMeshesContent, showGeneratedMeshes
                             );
                         }
 
@@ -1650,11 +1538,10 @@ namespace RealtimeCSG
                             EditorApplication.DirtyHierarchyWindowSorting();
                         }
 
-#if UNITY_2017_3_OR_NEWER
                         GUILayout.Space(10);
 
                         EditorGUI.BeginDisabledGroup(NoCollider ?? true);
-                        EditorGUILayout.LabelField(MeshColliderCookingContent);
+                        EditorGUILayout.LabelField(meshColliderCookingContent);
                         EditorGUI.indentLevel++;
 
                         {
@@ -1667,19 +1554,19 @@ namespace RealtimeCSG
                                 EditorGUI.showMixedValue = !VertexChannelTangent.HasValue;
 
                                 cookForFasterSimulation = EditorGUILayout.Toggle(
-                                    CookForFasterSimulationContent, cookForFasterSimulation
+                                    cookForFasterSimulationContent, cookForFasterSimulation
                                 );
 
                                 EditorGUI.showMixedValue = !VertexChannelNormal.HasValue;
 
                                 enableMeshCleaning = EditorGUILayout.Toggle(
-                                    EnableMeshCleaningContent, enableMeshCleaning
+                                    enableMeshCleaningContent, enableMeshCleaning
                                 );
 
                                 EditorGUI.showMixedValue = !VertexChannelUV0.HasValue;
 
                                 weldColocatedVertices = EditorGUILayout.Toggle(
-                                    WeldColocatedVerticesContent, weldColocatedVertices
+                                    weldColocatedVerticesContent, weldColocatedVertices
                                 );
                             }
 
@@ -1719,7 +1606,7 @@ namespace RealtimeCSG
 
                         EditorGUI.EndDisabledGroup();
                         EditorGUI.indentLevel--;
-#endif
+
                         GUILayout.Space(10);
 
                         EditorGUILayout.LabelField("Used Vertex Channels");
@@ -1745,32 +1632,28 @@ namespace RealtimeCSG
                                     GUI.color = prevColor;
                                 }
 
-                                //						var vertex_channel_color	= VertexChannelColor ?? false;
-                                bool vertex_channel_tangent = VertexChannelTangent ?? false;
-                                bool vertex_channel_normal  = VertexChannelNormal ?? false;
-                                bool vertex_channel_UV0     = VertexChannelUV0 ?? false;
+                                bool vertexChannelTangent = VertexChannelTangent ?? false;
+                                bool vertexChannelNormal  = VertexChannelNormal ?? false;
+                                bool vertexChannelUV0     = VertexChannelUV0 ?? false;
                                 EditorGUI.BeginChangeCheck();
 
                                 {
-                                    //							EditorGUI.showMixedValue = !VertexChannelColor.HasValue;
-                                    //							vertex_channel_color = EditorGUILayout.Toggle(VertexChannelColorContent, vertex_channel_color);
-
                                     EditorGUI.showMixedValue = !VertexChannelTangent.HasValue;
 
-                                    vertex_channel_tangent = EditorGUILayout.Toggle(
-                                        VertexChannelTangentContent, vertex_channel_tangent
+                                    vertexChannelTangent = EditorGUILayout.Toggle(
+                                        vertexChannelTangentContent, vertexChannelTangent
                                     );
 
                                     EditorGUI.showMixedValue = !VertexChannelNormal.HasValue;
 
-                                    vertex_channel_normal = EditorGUILayout.Toggle(
-                                        VertexChannelNormalContent, vertex_channel_normal
+                                    vertexChannelNormal = EditorGUILayout.Toggle(
+                                        vertexChannelNormalContent, vertexChannelNormal
                                     );
 
                                     EditorGUI.showMixedValue = !VertexChannelUV0.HasValue;
 
-                                    vertex_channel_UV0 = EditorGUILayout.Toggle(
-                                        VertexChannelUV1Content, vertex_channel_UV0
+                                    vertexChannelUV0 = EditorGUILayout.Toggle(
+                                        vertexChannelUV1Content, vertexChannelUV0
                                     );
                                 }
 
@@ -1780,23 +1663,20 @@ namespace RealtimeCSG
                                     {
                                         VertexChannelFlags vertexChannel = models[i].VertexChannels;
 
-                                        vertexChannel &= ~( //VertexChannelFlags.Color |
-                                            VertexChannelFlags.Tangent |
-                                            VertexChannelFlags.Normal |
-                                            VertexChannelFlags.UV0);
+                                        vertexChannel &= ~(VertexChannelFlags.Tangent | VertexChannelFlags.Normal
+                                          | VertexChannelFlags.UV0);
 
-                                        //if (vertex_channel_color)	vertexChannel |= VertexChannelFlags.Color;
-                                        if(vertex_channel_tangent)
+                                        if(vertexChannelTangent)
                                         {
                                             vertexChannel |= VertexChannelFlags.Tangent;
                                         }
 
-                                        if(vertex_channel_normal)
+                                        if(vertexChannelNormal)
                                         {
                                             vertexChannel |= VertexChannelFlags.Normal;
                                         }
 
-                                        if(vertex_channel_UV0)
+                                        if(vertexChannelUV0)
                                         {
                                             vertexChannel |= VertexChannelFlags.UV0;
                                         }
@@ -1892,33 +1772,31 @@ namespace RealtimeCSG
 
                                     if(!instance.RenderMaterial)
                                     {
-                                        if(!dummyMaterial)
+                                        if(!m_DummyMaterial)
                                         {
-                                            dummyMaterial = new Material(MaterialUtility.FloorMaterial);
+                                            m_DummyMaterial = new Material(MaterialUtility.FloorMaterial);
                                         }
 
-                                        instance.RenderMaterial = dummyMaterial;
+                                        instance.RenderMaterial = m_DummyMaterial;
                                     }
                                 }
 
-                                List<MeshData> meshes;
-
-                                if(!materialMeshes.TryGetValue(instance.RenderMaterial, out meshes))
+                                if(!materialMeshes.TryGetValue(instance.RenderMaterial, out List<MeshData> meshes))
                                 {
                                     meshes                                  = new List<MeshData>();
                                     materialMeshes[instance.RenderMaterial] = meshes;
                                 }
 
                                 MeshData meshData = new MeshData();
-                                meshData.Mesh              = mesh;
-                                meshData.VertexCount       = mesh.vertexCount;
-                                meshData.TriangleCount     = mesh.triangles.Length / 3;
-                                meshData.GeometryHashValue = instance.MeshDescription.geometryHashValue;
-                                meshData.SurfaceHashValue  = instance.MeshDescription.surfaceHashValue;
+                                meshData.mesh              = mesh;
+                                meshData.vertexCount       = mesh.vertexCount;
+                                meshData.triangleCount     = mesh.triangles.Length / 3;
+                                meshData.geometryHashValue = instance.MeshDescription.geometryHashValue;
+                                meshData.surfaceHashValue  = instance.MeshDescription.surfaceHashValue;
                                 meshes.Add(meshData);
 
-                                totalVertices  += meshData.VertexCount;
-                                totalTriangles += meshData.TriangleCount;
+                                totalVertices  += meshData.vertexCount;
+                                totalTriangles += meshData.triangleCount;
                                 totalMeshes++;
                             }
 
@@ -1927,8 +1805,7 @@ namespace RealtimeCSG
                             EditorGUILayout.LabelField("total:");
 
                             EditorGUILayout.LabelField(
-                                "vertices: " + totalVertices + "  triangles: " + totalTriangles + "  materials: "
-                              + materialMeshes.Count + "  meshes: " + totalMeshes
+                                $"vertices: {totalVertices}  triangles: {totalTriangles}  materials: {materialMeshes.Count}  meshes: {totalMeshes}"
                             );
 
                             GUILayout.Space(10);
@@ -1939,7 +1816,7 @@ namespace RealtimeCSG
                                 Material       material = item.Key;
                                 List<MeshData> meshes   = item.Value;
 
-                                if(material == dummyMaterial)
+                                if(material == m_DummyMaterial)
                                 {
                                     material = null;
                                 }
@@ -1958,19 +1835,14 @@ namespace RealtimeCSG
                                     {
                                         for(int i = 0; i < meshes.Count; i++)
                                         {
-                                            EditorGUILayout.ObjectField(meshes[i].Mesh, typeof(Mesh), true);
+                                            EditorGUILayout.ObjectField(meshes[i].mesh, typeof(Mesh), true);
+
+                                            EditorGUILayout.LabelField($"geometryHash {meshes[i].geometryHashValue:X}");
+
+                                            EditorGUILayout.LabelField($"surfaceHash {meshes[i].surfaceHashValue:X}");
 
                                             EditorGUILayout.LabelField(
-                                                "geometryHash " + meshes[i].GeometryHashValue.ToString("X")
-                                            );
-
-                                            EditorGUILayout.LabelField(
-                                                "surfaceHash " + meshes[i].SurfaceHashValue.ToString("X")
-                                            );
-
-                                            EditorGUILayout.LabelField(
-                                                "vertices " + meshes[i].VertexCount + "  triangles "
-                                              + meshes[i].TriangleCount
+                                                $"vertices {meshes[i].vertexCount}  triangles {meshes[i].triangleCount}"
                                             );
                                         }
                                     }

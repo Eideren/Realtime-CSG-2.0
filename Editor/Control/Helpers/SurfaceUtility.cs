@@ -987,7 +987,7 @@ namespace RealtimeCSG
                 }
 
                 Vector3 brushLocalNormal =
-                    brush.hierarchyItem.Transform.InverseTransformVector(rotationCircle.RotateSurfaceNormal);
+                    brush.hierarchyItem.Transform.InverseTransformVector(rotationCircle.rotateSurfaceNormal);
 
                 Shape shape = brush.Shape;
 
@@ -1001,8 +1001,8 @@ namespace RealtimeCSG
                         int texGenIndex = shape.Surfaces[surfaceIndex].TexGenIndex;
 
                         RotateTextureCoordAroundWorldPoint(
-                            brush, surfaceIndex, rotationCircle.RotateCenterPoint,
-                            rotationCircle.RotateCurrentSnappedAngle
+                            brush, surfaceIndex, rotationCircle.rotateCenterPoint,
+                            rotationCircle.rotateCurrentSnappedAngle
                         );
 
                         shape.TexGens[texGenIndex].RotationAngle %= 360.0f;

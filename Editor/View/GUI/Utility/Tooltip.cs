@@ -2,31 +2,31 @@
 {
     internal class ToolTip
     {
-        public ToolTip(string _title, string _contents)
+        public ToolTip(string title, string contents)
         {
-            title    = _title;
-            contents = _contents;
+            this.title    = title;
+            this.contents = contents;
         }
 
-        public ToolTip(string _title, string _contents, KeyEvent _key)
+        public ToolTip(string title, string contents, KeyEvent key)
         {
-            title    = _title;
-            contents = _contents;
-            key      = _key;
+            this.title    = title;
+            this.contents = contents;
+            this.key      = key;
         }
 
-        public string title;
-        public string contents;
-        public KeyEvent key;
+        public readonly string title;
+        public readonly string contents;
+        public readonly KeyEvent key;
 
         public string TitleString()
         {
-            return string.Format("<size=13><color=white><b>{0}</b></color></size>", title);
+            return $"<size=13><color=white><b>{title}</b></color></size>";
         }
 
         public string ContentsString()
         {
-            return string.Format("<size=12><color=white>{0}</color></size>", contents);
+            return $"<size=12><color=white>{contents}</color></size>";
         }
 
         public string KeyString()
@@ -36,7 +36,7 @@
                 return string.Empty;
             }
 
-            return string.Format("<color=white><size=11><b>hotkey:</b> <i>{0}</i></size></color>", key.ToString());
+            return $"<color=white><size=11><b>hotkey:</b> <i>{key}</i></size></color>";
         }
 
         public override string ToString()

@@ -1,10 +1,11 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System;
-using System.Globalization;
+﻿using System;
 using System.Collections.Generic;
-using RealtimeCSG.Legacy;
+using System.Globalization;
 using InternalRealtimeCSG;
+using RealtimeCSG.Helpers;
+using RealtimeCSG.Legacy;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
@@ -12,101 +13,69 @@ namespace RealtimeCSG
     {
 #region Materials
 
-        private static Material customDotMaterial;
+        private static Material m_CustomDotMaterial;
 
         public static Material CustomDotMaterial
         {
             get
             {
-                if(!customDotMaterial)
+                if(!m_CustomDotMaterial)
                 {
-                    customDotMaterial = MaterialUtility.GenerateEditorMaterial("customDot");
+                    m_CustomDotMaterial = MaterialUtility.GenerateEditorMaterial("customDot");
                 }
 
-                return customDotMaterial;
+                return m_CustomDotMaterial;
             }
         }
 
-        private static Material customWireMaterial;
+        private static Material m_CustomWireMaterial;
 
         private static Material CustomWireMaterial
         {
             get
             {
-                if(!customWireMaterial)
+                if(!m_CustomWireMaterial)
                 {
-                    customWireMaterial = MaterialUtility.GenerateEditorMaterial("customWire");
+                    m_CustomWireMaterial = MaterialUtility.GenerateEditorMaterial("customWire");
                 }
 
-                return customWireMaterial;
+                return m_CustomWireMaterial;
             }
         }
 
-        /*
-        private static Material noZTestGenericLineMaterial;
-        //static int thicknessID = -1;
-        private static Material NoZTestGenericLineMaterial
-        {
-            get
-            {
-                if (!noZTestGenericLineMaterial)
-                {
-                    noZTestGenericLineMaterial = MaterialUtility.GenerateEditorMaterial("NoZTestGenericLine");
-                    //thicknessID = Shader.PropertyToID("thickness");
-                }
-                return noZTestGenericLineMaterial;
-            }
-        }
-
-        private static Material customThickWireMaterial;
-        //static int thicknessID = -1;
-        private static Material CustomThickWireMaterial
-        {
-            get
-            {
-                if (!customThickWireMaterial)
-                {
-                    customThickWireMaterial = MaterialUtility.GenerateEditorMaterial("customThickWire");
-                    //thicknessID = Shader.PropertyToID("thickness");
-                }
-                return customThickWireMaterial;
-            }
-        }
-        */
-
-        private static Material customSurfaceNoDepthMaterial;
+        private static Material m_CustomSurfaceNoDepthMaterial;
 
         public static Material CustomSurfaceNoDepthMaterial
         {
             get
             {
-                if(!customSurfaceNoDepthMaterial)
+                if(!m_CustomSurfaceNoDepthMaterial)
                 {
-                    customSurfaceNoDepthMaterial = MaterialUtility.GenerateEditorMaterial("customNoDepthSurface");
+                    m_CustomSurfaceNoDepthMaterial = MaterialUtility.GenerateEditorMaterial("customNoDepthSurface");
                 }
 
-                return customSurfaceNoDepthMaterial;
+                return m_CustomSurfaceNoDepthMaterial;
             }
         }
 
-        private static Material customWireDottedMaterial;
+        private static Material m_CustomWireDottedMaterial;
 
         private static Material CustomWireDottedMaterial
         {
             get
             {
-                if(!customWireDottedMaterial)
+                if(!m_CustomWireDottedMaterial)
                 {
-                    customWireDottedMaterial = MaterialUtility.GenerateEditorMaterial("customWireDotted");
+                    m_CustomWireDottedMaterial = MaterialUtility.GenerateEditorMaterial("customWireDotted");
                 }
 
-                return customWireDottedMaterial;
+                return m_CustomWireDottedMaterial;
             }
         }
 
 #endregion
 
-        private static PointMeshManager pointMeshManager = new PointMeshManager();
+        private static readonly PointMeshManager pointMeshManager = new PointMeshManager();
 
         public static void DrawDoubleDots(Camera camera, Vector3[] positions, float[] sizes, Color[] colors, int points)
         {
@@ -126,57 +95,6 @@ namespace RealtimeCSG
             pointMeshManager.DrawPoints(camera, positions, sizes, colors);
             pointMeshManager.End();
             pointMeshManager.Render(CustomDotMaterial, CustomSurfaceNoDepthMaterial);
-
-            /*
-            var right	= camera.transform.right;
-            var up		= camera.transform.up;
-
-            var p0	= (  right + up);
-            var p1	= (  right - up);
-            var p2	= (- right - up);
-            var p3	= (- right + up);
-
-            if (material && material.SetPass(0))
-            {
-                GL.Begin(GL.QUADS);
-                for (int p = 0, d = 0; p < points; p++, d+=2)
-                {
-                    var position	= positions[p];
-                    var size		= sizes[p];
-
-                    GL.Color(colors[d + 1]);
-                    {
-                        GL.Vertex(position + (p0 * size));
-                        GL.Vertex(position + (p1 * size));
-                        GL.Vertex(position + (p2 * size));
-                        GL.Vertex(position + (p3 * size));
-                    }
-                }
-                GL.End();
-            }
-
-            if (material && material.SetPass(0))
-            {
-                GL.Begin(GL.LINES);
-                for (int p = 0, d = 0; p < points; p++, d+=2)
-                {
-                    var position	= positions[p];
-                    var size		= sizes[p];
-                    var dp0			= position + (p0 * size);
-                    var dp1			= position + (p1 * size);
-                    var dp2			= position + (p2 * size);
-                    var dp3			= position + (p3 * size);
-
-                    GL.Color(colors[d + 0]);
-                    {
-                        GL.Vertex(dp0); GL.Vertex(dp1);
-                        GL.Vertex(dp1); GL.Vertex(dp2);
-                        GL.Vertex(dp2); GL.Vertex(dp3);
-                        GL.Vertex(dp3); GL.Vertex(dp0);
-                    }
-                }
-                GL.End();
-            }*/
         }
 
         public static void DrawDoubleDots(
@@ -216,12 +134,10 @@ namespace RealtimeCSG
 
                     GL.Color(colors[d + 1]);
 
-                    {
-                        GL.Vertex(position + p0 * size);
-                        GL.Vertex(position + p1 * size);
-                        GL.Vertex(position + p2 * size);
-                        GL.Vertex(position + p3 * size);
-                    }
+                    GL.Vertex(position + p0 * size);
+                    GL.Vertex(position + p1 * size);
+                    GL.Vertex(position + p2 * size);
+                    GL.Vertex(position + p3 * size);
                 }
 
                 GL.End();
@@ -244,16 +160,14 @@ namespace RealtimeCSG
 
                     GL.Color(colors[d + 0]);
 
-                    {
-                        GL.Vertex(dp0);
-                        GL.Vertex(dp1);
-                        GL.Vertex(dp1);
-                        GL.Vertex(dp2);
-                        GL.Vertex(dp2);
-                        GL.Vertex(dp3);
-                        GL.Vertex(dp3);
-                        GL.Vertex(dp0);
-                    }
+                    GL.Vertex(dp0);
+                    GL.Vertex(dp1);
+                    GL.Vertex(dp1);
+                    GL.Vertex(dp2);
+                    GL.Vertex(dp2);
+                    GL.Vertex(dp3);
+                    GL.Vertex(dp3);
+                    GL.Vertex(dp0);
                 }
 
                 GL.End();
@@ -287,13 +201,11 @@ namespace RealtimeCSG
             {
                 GL.Begin(GL.QUADS);
 
-                {
-                    GL.Color(c);
-                    GL.Vertex(p0);
-                    GL.Vertex(p1);
-                    GL.Vertex(p2);
-                    GL.Vertex(p3);
-                }
+                GL.Color(c);
+                GL.Vertex(p0);
+                GL.Vertex(p1);
+                GL.Vertex(p2);
+                GL.Vertex(p3);
 
                 GL.End();
             }
@@ -304,23 +216,21 @@ namespace RealtimeCSG
             {
                 GL.Begin(GL.LINES);
 
-                {
-                    GL.Color(Color.black);
-                    GL.Vertex(p0);
-                    GL.Vertex(p1);
-                    GL.Vertex(p1);
-                    GL.Vertex(p2);
-                    GL.Vertex(p2);
-                    GL.Vertex(p3);
-                    GL.Vertex(p3);
-                    GL.Vertex(p0);
-                }
+                GL.Color(Color.black);
+                GL.Vertex(p0);
+                GL.Vertex(p1);
+                GL.Vertex(p1);
+                GL.Vertex(p2);
+                GL.Vertex(p2);
+                GL.Vertex(p3);
+                GL.Vertex(p3);
+                GL.Vertex(p0);
 
                 GL.End();
             }
         }
 
-        public static void DiamondDotCap(int controlID, Vector3 position, Quaternion rotation, float size)
+        public static void DiamondDotCap(Vector3 position, float size)
         {
             if(Event.current.type != EventType.Repaint)
             {
@@ -347,13 +257,11 @@ namespace RealtimeCSG
             {
                 GL.Begin(GL.QUADS);
 
-                {
-                    GL.Color(c);
-                    GL.Vertex(p0);
-                    GL.Vertex(p1);
-                    GL.Vertex(p2);
-                    GL.Vertex(p3);
-                }
+                GL.Color(c);
+                GL.Vertex(p0);
+                GL.Vertex(p1);
+                GL.Vertex(p2);
+                GL.Vertex(p3);
 
                 GL.End();
             }
@@ -380,23 +288,23 @@ namespace RealtimeCSG
             }
         }
 
-        private static Vector2[] circlePoints = null;
+        private static Vector2[] m_CirclePoints;
 
         private static void SetupCirclePoints()
         {
             const int steps = 16;
-            circlePoints = new Vector2[steps];
+            m_CirclePoints = new Vector2[steps];
 
             for(int i = 0; i < steps; i++)
             {
-                circlePoints[i] = new Vector2(
-                    (float)Mathf.Cos(i / (float)steps * Mathf.PI * 2),
-                    (float)Mathf.Sin(i / (float)steps * Mathf.PI * 2)
+                m_CirclePoints[i] = new Vector2(
+                    Mathf.Cos(i / (float)steps * Mathf.PI * 2),
+                    Mathf.Sin(i / (float)steps * Mathf.PI * 2)
                 );
             }
         }
 
-        public static void CircleDotCap(int controlID, Vector3 position, Quaternion rotation, float size)
+        public static void CircleDotCap(Vector3 position, float size)
         {
             if(Event.current.type != EventType.Repaint)
             {
@@ -415,16 +323,16 @@ namespace RealtimeCSG
             Vector3 right = camera.transform.right;
             Vector3 up    = camera.transform.up;
 
-            if(circlePoints == null)
+            if(m_CirclePoints == null)
             {
                 SetupCirclePoints();
             }
 
-            Vector3[] points = new Vector3[circlePoints.Length];
+            Vector3[] points = new Vector3[m_CirclePoints.Length];
 
-            for(int i = 0; i < circlePoints.Length; i++)
+            for(int i = 0; i < m_CirclePoints.Length; i++)
             {
-                Vector2 circle = circlePoints[i];
+                Vector2 circle = m_CirclePoints[i];
                 points[i] = position + (right * circle.x + up * circle.y) * size;
             }
 
@@ -460,16 +368,16 @@ namespace RealtimeCSG
             Vector3 right = camera.transform.right;
             Vector3 up    = camera.transform.up;
 
-            if(circlePoints == null)
+            if(m_CirclePoints == null)
             {
                 SetupCirclePoints();
             }
 
-            Vector3[] points = new Vector3[circlePoints.Length];
+            Vector3[] points = new Vector3[m_CirclePoints.Length];
 
-            for(int i = 0; i < circlePoints.Length; i++)
+            for(int i = 0; i < m_CirclePoints.Length; i++)
             {
-                Vector2 circle = circlePoints[i];
+                Vector2 circle = m_CirclePoints[i];
                 points[i] = position + (right * circle.x + up * circle.y) * size;
             }
 
@@ -484,15 +392,13 @@ namespace RealtimeCSG
             {
                 GL.Begin(GL.TRIANGLES);
 
-                {
-                    GL.Color(c);
+                GL.Color(c);
 
-                    for(int i = 1; i < points.Length - 1; i++)
-                    {
-                        GL.Vertex(points[0]);
-                        GL.Vertex(points[i]);
-                        GL.Vertex(points[i + 1]);
-                    }
+                for(int i = 1; i < points.Length - 1; i++)
+                {
+                    GL.Vertex(points[0]);
+                    GL.Vertex(points[i]);
+                    GL.Vertex(points[i + 1]);
                 }
 
                 GL.End();
@@ -504,18 +410,16 @@ namespace RealtimeCSG
             {
                 GL.Begin(GL.LINES);
 
+                GL.Color(Color.black);
+                GL.Vertex(points[0]);
+
+                for(int i = 1; i < points.Length; i++)
                 {
-                    GL.Color(Color.black);
-                    GL.Vertex(points[0]);
-
-                    for(int i = 1; i < points.Length; i++)
-                    {
-                        GL.Vertex(points[i]);
-                        GL.Vertex(points[i]);
-                    }
-
-                    GL.Vertex(points[0]);
+                    GL.Vertex(points[i]);
+                    GL.Vertex(points[i]);
                 }
+
+                GL.Vertex(points[0]);
 
                 GL.End();
             }
@@ -612,8 +516,6 @@ namespace RealtimeCSG
                 thickness *= EditorGUIUtility.pixelsPerPoint;
                 thickness *= 100;
 
-                //var cameraPosition = matrix.inverse.MultiplyPoint(camera.transform.position);
-
                 Vector3 thickness0 = new Vector3(thickness, -1, 0);
                 Vector3 thickness1 = new Vector3(thickness, 1, 0);
                 Vector3 thickness2 = new Vector3(thickness, 1, 0);
@@ -626,8 +528,6 @@ namespace RealtimeCSG
 
                 pt0 = matrix.MultiplyPoint(pt0);
                 pt1 = matrix.MultiplyPoint(pt1);
-                //var diff = pt1 - pt0;
-                //GL.MultiTexCoord(1, diff);
 
                 GL.MultiTexCoord(0, pt0);
                 GL.MultiTexCoord(1, thickness0);
@@ -641,28 +541,7 @@ namespace RealtimeCSG
                 GL.MultiTexCoord(0, pt1);
                 GL.MultiTexCoord(1, thickness3);
                 GL.Vertex(pt0);
-                /*
-                var	t = Vector3.Dot((cameraPosition - pt0), diff) / Vector3.Dot(diff, diff);
-                if (t > 0.0f && t < 1.0f)
-                {
-                    var pt2 = pt0 + (t * diff);
-                    GL.MultiTexCoord(0, thickness0); GL.Vertex(pt0pt0);
-                    GL.MultiTexCoord(0, thickness1); GL.Vertex(pt0);
-                    GL.MultiTexCoord(0, thickness2); GL.Vertex(pt2);
-                    GL.MultiTexCoord(0, thickness3); GL.Vertex(pt2);
 
-                    GL.MultiTexCoord(0, thickness0); GL.Vertex(pt2);
-                    GL.MultiTexCoord(0, thickness1); GL.Vertex(pt2);
-                    GL.MultiTexCoord(0, thickness2); GL.Vertex(pt1);
-                    GL.MultiTexCoord(0, thickness3); GL.Vertex(pt1);
-                } else
-                {
-                    GL.MultiTexCoord(0, thickness0); GL.Vertex(pt0);
-                    GL.MultiTexCoord(0, thickness1); GL.Vertex(pt0);
-                    GL.MultiTexCoord(0, thickness2); GL.Vertex(pt1);
-                    GL.MultiTexCoord(0, thickness3); GL.Vertex(pt1);
-                }
-                */
                 GL.End();
                 GL.PopMatrix();
             }
@@ -692,27 +571,8 @@ namespace RealtimeCSG
 
         public static void DrawDottedLine(Vector3 from, Vector3 to, Color c, float dotSize = 4.0f)
         {
-            //Handles.matrix = matrix;
             Handles.color = c;
-            //GL.Color(c);
             Handles.DrawDottedLine(from, to, dotSize);
-            /*
-            if (Event.current.type != EventType.Repaint)
-            {
-                return;
-            }
-
-            var material = CustomWireDottedMaterial;
-            if (material && material.SetPass(0))
-            {
-                GL.Begin(GL.LINES);
-                GL.Color(c);
-                GL.MultiTexCoord2(1, dotSize, 0);
-                GL.MultiTexCoord(0, from); GL.Vertex(to);
-                GL.MultiTexCoord(0, to); GL.Vertex(from);
-                GL.End();
-            }
-            CustomWireMaterial.SetPass(0);*/
         }
 
         public static void DrawDottedLine(Matrix4x4 matrix, Vector3 from, Vector3 to, Color c, float dotSize = 4.0f)
@@ -735,72 +595,13 @@ namespace RealtimeCSG
             Handles.DrawDottedLines(lines, dotSize);
             Handles.color  = prevColor;
             Handles.matrix = origMatrix;
-            /*
-            if (Event.current.type != EventType.Repaint)
-            {
-                return;
-            }
-
-            if ((lines.Length & 1) == 1)
-            {
-                Debug.LogWarning("Uneven number of vertices in line array!");
-            }
-
-            var material = CustomWireDottedMaterial;
-            if (material && material.SetPass(0))
-            {
-                GL.Begin(GL.LINES);
-                GL.Color(c);
-                GL.MultiTexCoord2(1, dotSize, 0);
-                for (int i = 0; i < lines.Length; i += 2)
-                {
-                    var pt0 = lines[i + 0];
-                    var pt1 = lines[i + 1];
-                    GL.MultiTexCoord(0, pt1); GL.Vertex(pt0);
-                    GL.MultiTexCoord(0, pt0); GL.Vertex(pt1);
-                }
-                GL.End();
-            }
-            CustomWireMaterial.SetPass(0);
-            */
         }
 
         public static void DrawDottedLines(Matrix4x4 matrix, Vector3[] lines, Color c, float dotSize = 4.0f)
         {
             Handles.matrix = matrix;
             Handles.color  = c;
-            //GL.MultMatrix(matrix);
-            //GL.Color(c);
             Handles.DrawDottedLines(lines, dotSize);
-            /*
-            if (Event.current.type != EventType.Repaint)
-            {
-                return;
-            }
-
-            if ((lines.Length & 1) == 1)
-            {
-                Debug.LogWarning("Uneven number of vertices in line array!");
-            }
-
-            var material = CustomWireDottedMaterial;
-            if (material && material.SetPass(0))
-            {
-                GL.PushMatrix();
-                GL.MultMatrix(matrix);
-                GL.Begin(GL.LINES);
-                GL.Color(c);
-                GL.MultiTexCoord2(1, dotSize, 0);
-                for (int i = 0; i < lines.Length; i += 2)
-                {
-                    var pt0 = lines[i + 0];
-                    var pt1 = lines[i + 1];
-                    GL.MultiTexCoord(0, pt1); GL.Vertex(pt0);
-                    GL.MultiTexCoord(0, pt0); GL.Vertex(pt1);
-                }
-                GL.End();
-                GL.PopMatrix();
-            }*/
         }
 
         public static void DrawDottedLines(
@@ -867,7 +668,7 @@ namespace RealtimeCSG
                 GL.Begin(GL.LINES);
                 GL.Color(color);
 
-                for(int i = 0, c = 0; i < indices.Length; i += 2, c++)
+                for(int i = 0; i < indices.Length; i += 2)
                 {
                     int     i0  = indices[i + 0];
                     int     i1  = indices[i + 1];
@@ -904,7 +705,7 @@ namespace RealtimeCSG
                 GL.Begin(GL.LINES);
                 GL.Color(color);
 
-                for(int i = 0, c = 0; i < indices.Length; i += 2, c++)
+                for(int i = 0; i < indices.Length; i += 2)
                 {
                     int     i0  = indices[i + 0];
                     int     i1  = indices[i + 1];
@@ -1112,7 +913,7 @@ namespace RealtimeCSG
                 Color prevColor = Handles.color;
                 Handles.color = color;
 
-                for(int i = 0, c = 0; i < indices.Length; i += 2, c++)
+                for(int i = 0; i < indices.Length; i += 2)
                 {
                     int     i0  = indices[i + 0];
                     int     i1  = indices[i + 1];
@@ -1139,7 +940,7 @@ namespace RealtimeCSG
                 GL.Begin(GL.LINES);
                 GL.Color(color);
 
-                for(int i = 0, c = 0; i < indices.Length; i += 2, c++)
+                for(int i = 0; i < indices.Length; i += 2)
                 {
                     int     i0  = indices[i + 0];
                     int     i1  = indices[i + 1];
@@ -1153,7 +954,7 @@ namespace RealtimeCSG
             }
         }
 
-        public static void DrawLines(Camera camera, Vector3[] vertices, int[] indices, float thickness, Color[] colors)
+        public static void DrawLines(Vector3[] vertices, int[] indices, float thickness, Color[] colors)
         {
             if(Event.current.type != EventType.Repaint)
             {
@@ -1184,8 +985,6 @@ namespace RealtimeCSG
                 thickness *= EditorGUIUtility.pixelsPerPoint;
                 thickness *= 100;
 
-                //var cameraPosition = camera.transform.position;
-
                 Vector3 thickness0 = new Vector3(thickness, -1, 0);
                 Vector3 thickness1 = new Vector3(thickness, 1, 0);
                 Vector3 thickness2 = new Vector3(thickness, 1, 0);
@@ -1208,9 +1007,6 @@ namespace RealtimeCSG
 
                     Vector3 pt0 = vertices[i0];
                     Vector3 pt1 = vertices[i1];
-                    //var diff	= pt1 - pt0;
-
-                    //GL.MultiTexCoord(1, diff);
 
                     GL.MultiTexCoord(0, pt0);
                     GL.MultiTexCoord(1, thickness0);
@@ -1224,27 +1020,6 @@ namespace RealtimeCSG
                     GL.MultiTexCoord(0, pt1);
                     GL.MultiTexCoord(1, thickness3);
                     GL.Vertex(pt0);
-                    /*
-                    var	t = Vector3.Dot((cameraPosition - pt0), diff) / Vector3.Dot(diff, diff);
-                    if (t > 0.0f && t < 1.0f)
-                    {
-                        var pt2 = pt0 + (t * diff);
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt2);
-
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt1);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt1);
-                    } else
-                    {
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt1);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt1);
-                    }*/
                 }
 
                 GL.End();
@@ -1404,8 +1179,6 @@ namespace RealtimeCSG
                 thickness *= EditorGUIUtility.pixelsPerPoint;
                 thickness *= 100;
 
-                //var cameraPosition = matrix.inverse.MultiplyPoint(camera.transform.position);
-
                 Vector3 thickness0 = new Vector3(thickness, -1, 0);
                 Vector3 thickness1 = new Vector3(thickness, 1, 0);
                 Vector3 thickness2 = new Vector3(thickness, 1, 0);
@@ -1422,10 +1195,8 @@ namespace RealtimeCSG
                     int     i1  = indices[i + 1];
                     Vector3 pt0 = vertices[i0];
                     Vector3 pt1 = vertices[i1];
-                    //var diff	= pt1 - pt0;
 
                     GL.Color(colors[c]);
-                    //GL.MultiTexCoord(1, diff);
 
                     GL.MultiTexCoord(0, pt0);
                     GL.MultiTexCoord(1, thickness0);
@@ -1439,27 +1210,6 @@ namespace RealtimeCSG
                     GL.MultiTexCoord(0, pt1);
                     GL.MultiTexCoord(1, thickness3);
                     GL.Vertex(pt0);
-                    /*
-                    var	t = Vector3.Dot((cameraPosition - pt0), diff) / Vector3.Dot(diff, diff);
-                    if (t > 0.0f && t < 1.0f)
-                    {
-                        var pt2 = pt0 + (t * diff);
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt2);
-
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt1);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt1);
-                    } else
-                    {
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt1);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt1);
-                    }*/
                 }
 
                 GL.End();
@@ -1491,8 +1241,6 @@ namespace RealtimeCSG
                 thickness *= EditorGUIUtility.pixelsPerPoint;
                 thickness *= 100;
 
-                //var cameraPosition = camera.transform.position;
-
                 Vector3 thickness0 = new Vector3(thickness, -1, 0);
                 Vector3 thickness1 = new Vector3(thickness, 1, 0);
                 Vector3 thickness2 = new Vector3(thickness, 1, 0);
@@ -1505,8 +1253,6 @@ namespace RealtimeCSG
                 {
                     Vector3 pt0 = vertices[i + 0];
                     Vector3 pt1 = vertices[i + 1];
-                    //var diff	= pt1 - pt0;
-                    //GL.MultiTexCoord(1, diff);
 
                     GL.MultiTexCoord(0, pt0);
                     GL.MultiTexCoord(1, thickness0);
@@ -1520,35 +1266,14 @@ namespace RealtimeCSG
                     GL.MultiTexCoord(0, pt1);
                     GL.MultiTexCoord(1, thickness3);
                     GL.Vertex(pt0);
-                    /*
-                    var	t = Vector3.Dot((cameraPosition - pt0), diff) / Vector3.Dot(diff, diff);
-                    if (t > 0.0f && t < 1.0f)
-                    {
-                        var pt2 = pt0 + (t * diff);
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt2);
-
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt2);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt1);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt1);
-                    } else
-                    {
-                        GL.MultiTexCoord(0, thickness0); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness1); GL.Vertex(pt0);
-                        GL.MultiTexCoord(0, thickness2); GL.Vertex(pt1);
-                        GL.MultiTexCoord(0, thickness3); GL.Vertex(pt1);
-                    }*/
                 }
 
                 GL.End();
             }
         }
 
-        private const float kHandleSize = 80.0f;
-        private const float kMinScreenDist = 0.0001f;
+        private const float K_HANDLE_SIZE = 80.0f;
+        private const float K_MIN_SCREEN_DIST = 0.0001f;
 
         private static void GetHandleSizes(
             Camera cam, Matrix4x4 matrix, Vector3[] positions, float[] sizes, float thickness
@@ -1563,17 +1288,14 @@ namespace RealtimeCSG
             Vector3   invForward = invMatrix.MultiplyVector(forward);
             Matrix4x4 clipmatrix = cam.projectionMatrix * cam.worldToCameraMatrix;
 
-            //_ScreenParams.x
             float width = cam.pixelRect.width * 0.5f;
-            //_ScreenParams.y
-//			float height = cam.pixelRect.height * 0.5f;
 
             float m00 = clipmatrix.m00, m30 = clipmatrix.m30;
             float m01 = clipmatrix.m01, m31 = clipmatrix.m31;
             float m02 = clipmatrix.m02, m32 = clipmatrix.m32;
             float m03 = clipmatrix.m03, m33 = clipmatrix.m33;
 
-            float pixelsPerPoint = thickness * kHandleSize * EditorGUIUtility.pixelsPerPoint;
+            float pixelsPerPoint = thickness * K_HANDLE_SIZE * EditorGUIUtility.pixelsPerPoint;
 
             for(int i = 0; i < positions.Length; i++)
             {
@@ -1584,15 +1306,15 @@ namespace RealtimeCSG
                 float w1 = m30 * p1.x + m31 * p1.y + m32 * p1.z + m33;
                 float w2 = m30 * p2.x + m31 * p2.y + m32 * p2.z + m33;
 
-                float inv_w1 = Mathf.Abs(w1) <= 1.0e-7f ? 0 : 1.0f / w1;
-                float inv_w2 = Mathf.Abs(w2) <= 1.0e-7f ? 0 : 1.0f / w2;
+                float invW1 = Mathf.Abs(w1) <= 1.0e-7f ? 0 : 1.0f / w1;
+                float invW2 = Mathf.Abs(w2) <= 1.0e-7f ? 0 : 1.0f / w2;
 
-                float p1x = m00 * p1.x + m01 * p1.y + m02 * p1.z + m03;
-                float p2x = m00 * p2.x + m01 * p2.y + m02 * p2.z + m03;
+                float p1X = m00 * p1.x + m01 * p1.y + m02 * p1.z + m03;
+                float p2X = m00 * p2.x + m01 * p2.y + m02 * p2.z + m03;
 
-                float x = (p1x * inv_w1 - p2x * inv_w2) * width;
+                float x = (p1X * invW1 - p2X * invW2) * width;
 
-                sizes[i] = pixelsPerPoint / Mathf.Max(kMinScreenDist, Mathf.Sqrt(x * x));
+                sizes[i] = pixelsPerPoint / Mathf.Max(K_MIN_SCREEN_DIST, Mathf.Sqrt(x * x));
             }
         }
 
@@ -1632,7 +1354,7 @@ namespace RealtimeCSG
                 GL.Begin(GL.QUADS);
                 GL.Color(color);
 
-                for(int i = 0, c = 0; i < indices.Length; i += 2, c++)
+                for(int i = 0; i < indices.Length; i += 2)
                 {
                     int     i0  = indices[i + 0];
                     int     i1  = indices[i + 1];
@@ -1690,7 +1412,7 @@ namespace RealtimeCSG
                 GL.Begin(GL.QUADS);
                 GL.Color(color);
 
-                for(int i = 0, c = 0; i < indices.Length; i += 2, c++)
+                for(int i = 0; i < indices.Length; i += 2)
                 {
                     int     i0  = indices[i + 0];
                     int     i1  = indices[i + 1];
@@ -1941,45 +1663,7 @@ namespace RealtimeCSG
         {
             Handles.matrix = matrix;
             Handles.color  = c;
-            //GL.MultMatrix(matrix);
-            //GL.Color(c);
             Handles.DrawDottedLines(vertices, indices, dotSize);
-            /*
-            if (Event.current.type != EventType.Repaint)
-            {
-                return;
-            }
-
-            if (lineCount == 0)
-            {
-                return;
-            }
-
-            if (indices.Length < lineCount * 2)
-            {
-                Debug.LogWarning("indices.Length < lineCount * 2");
-                return;
-            }
-
-            var material = CustomWireDottedMaterial;
-            if (material && material.SetPass(0))
-            {
-                GL.PushMatrix();
-                GL.MultMatrix(matrix);
-                GL.Begin(GL.LINES);
-                GL.Color(c);
-                GL.MultiTexCoord2(1, dotSize, 0);
-                var indexCount = lineCount * 2;
-                for (int i = 0; i < indexCount; i += 2)
-                {
-                    var pt0 = vertices[indices[i + 0]];
-                    var pt1 = vertices[indices[i + 1]];
-                    GL.MultiTexCoord(0, pt1); GL.Vertex(pt0);
-                    GL.MultiTexCoord(0, pt0); GL.Vertex(pt1);
-                }
-                GL.End();
-                GL.PopMatrix();
-            }*/
         }
 
         public static void DrawWorldText(Camera camera, Vector3 center, GUIContent content, GUIStyle style = null)
@@ -1998,7 +1682,7 @@ namespace RealtimeCSG
 
             if(style == null)
             {
-                style = CSG_GUIStyleUtility.sceneTextLabel;
+                style = CsgguiStyleUtility.SceneTextLabel;
             }
 
             Vector2 calcSize = style.CalcSize(content);
@@ -2028,7 +1712,7 @@ namespace RealtimeCSG
 
             if(style == null)
             {
-                style = CSG_GUIStyleUtility.sceneTextLabel;
+                style = CsgguiStyleUtility.SceneTextLabel;
             }
 
             Vector2 calcSize = style.CalcSize(content);
@@ -2061,8 +1745,6 @@ namespace RealtimeCSG
                 return;
             }
 
-            //EditorGUIUtility.ScreenToGUIPoint(screenPoint); // broken
-
             Matrix4x4 prevMatrix = Handles.matrix;
             Handles.matrix = Matrix4x4.identity;
 
@@ -2081,7 +1763,7 @@ namespace RealtimeCSG
             Handles.matrix = prevMatrix;
         }
 
-        private const float hatch_distance = 0.06f;
+        private const float HATCH_DISTANCE = 0.06f;
 
         private static int GetHatchCountForRadius(Vector3 center, float radius)
         {
@@ -2089,55 +1771,53 @@ namespace RealtimeCSG
             Handles.matrix = Matrix4x4.identity;
 
             float handleSize    = HandleUtility.GetHandleSize(center);
-            int   hatch_count   = 0;
+            int   hatchCount    = 0;
             float circumference = (float)(2 * Math.PI * radius);
 
             if(circumference > handleSize * 2.0f)
             {
-                int possible_steps_of_hatch_distance = Mathf.FloorToInt(circumference / (handleSize * hatch_distance));
+                int possibleStepsOfHatchDistance = Mathf.FloorToInt(circumference / (handleSize * HATCH_DISTANCE));
 
-                if(possible_steps_of_hatch_distance > 0.0f)
+                if(possibleStepsOfHatchDistance > 0.0f)
                 {
-                    hatch_count = possible_steps_of_hatch_distance;
+                    hatchCount = possibleStepsOfHatchDistance;
 
-                    if(hatch_count >= 360)
+                    if(hatchCount >= 360)
                     {
-                        hatch_count = 360;
+                        hatchCount = 360;
                     }
-                    else if(hatch_count >= 72)
+                    else if(hatchCount >= 72)
                     {
-                        hatch_count = 72;
+                        hatchCount = 72;
                     }
-                    else if(hatch_count >= 24)
+                    else if(hatchCount >= 24)
                     {
-                        hatch_count = 24;
+                        hatchCount = 24;
                     }
-                    else if(hatch_count >= 8)
+                    else if(hatchCount >= 8)
                     {
-                        hatch_count = 8;
+                        hatchCount = 8;
                     }
-                    else if(hatch_count >= 4)
+                    else if(hatchCount >= 4)
                     {
-                        hatch_count = 4;
+                        hatchCount = 4;
                     }
                     else
                     {
-                        hatch_count = 0;
+                        hatchCount = 0;
                     }
                 }
             }
 
             Handles.matrix = prevMatrix;
 
-            return hatch_count;
+            return hatchCount;
         }
 
         public static void DrawRotateCirclePie(
-                Vector3 center, Vector3 normal, Vector3 tangent, float radius,
-                float originalAngle, float startAngle, float endAngle,
-                Color color
-            )
-            //Color innerColor, Color outerColor)
+            Vector3 center, Vector3 normal, Vector3 tangent, float radius, float startAngle, float endAngle,
+            Color color
+        )
         {
             Matrix4x4 originalMatrix = Handles.matrix;
             Handles.matrix = MathConstants.identityMatrix;
@@ -2146,7 +1826,7 @@ namespace RealtimeCSG
             innerColor.a *= 0.75f;
             Color outerColor = color;
 
-            int     hatch_count   = GetHatchCountForRadius(center, radius);
+            int     hatchCount    = GetHatchCountForRadius(center, radius);
             Vector3 innerDistance = tangent * radius;
             Vector3 outerDistance = tangent * (radius * 1.25f);
             float   deltaAngle    = endAngle - startAngle;
@@ -2182,15 +1862,15 @@ namespace RealtimeCSG
 
                 float step;
 
-                if(hatch_count > 0)
+                if(hatchCount > 0)
                 {
-                    if(hatch_count < 2)
+                    if(hatchCount < 2)
                     {
                         step = 360.0f;
                     }
                     else
                     {
-                        step = 360.0f / hatch_count;
+                        step = 360.0f / hatchCount;
                     }
                 }
                 else
@@ -2274,7 +1954,7 @@ namespace RealtimeCSG
         {
             if(Event.current.type == EventType.Repaint)
             {
-                float handleSize = CSG_HandleUtility.GetHandleSize(center);
+                float handleSize = CSGHandleUtility.GetHandleSize(center);
 
                 Color originalColor = Handles.color;
 
@@ -2295,41 +1975,39 @@ namespace RealtimeCSG
 
             SnapMode activeSnappingMode = CSGSettings.ActiveSnappingMode;
 
-            return Helpers.CSGHandles.PositionHandle(camera, center, rotation, activeSnappingMode);
+            return CSGHandles.PositionHandle(camera, center, rotation, activeSnappingMode);
         }
 
         public static Vector3 HandlePosition(
             Camera camera, Vector3 center, Quaternion rotation, Vector3[] snapVertices = null
-          , Helpers.CSGHandles.InitFunction initFunction = null, Helpers.CSGHandles.InitFunction shutdownFunction = null
+          , CSGHandles.InitFunction initFunction = null, CSGHandles.InitFunction shutdownFunction = null
         )
         {
             SnapMode activeSnappingMode = CSGSettings.ActiveSnappingMode;
 
-            return Helpers.CSGHandles.PositionHandle(
+            return CSGHandles.PositionHandle(
                 camera, center, rotation, activeSnappingMode, snapVertices, initFunction, shutdownFunction
             );
         }
 
         public static Vector3 HandleScale(
-            Vector3 scale, Vector3 center, Quaternion rotation, Helpers.CSGHandles.InitFunction initFunction = null
-          , Helpers.CSGHandles.InitFunction shutdownFunction = null
+            Vector3 scale, Vector3 center, Quaternion rotation, CSGHandles.InitFunction initFunction = null
+          , CSGHandles.InitFunction shutdownFunction = null
         )
         {
             bool doSnapping = CSGSettings.ScaleSnapping;
 
-            return Helpers.CSGHandles.ScaleHandle(scale, center, rotation, doSnapping, initFunction, shutdownFunction);
+            return CSGHandles.ScaleHandle(scale, center, rotation, doSnapping, initFunction, shutdownFunction);
         }
 
         public static Quaternion HandleRotation(
-            Camera camera, Vector3 center, Quaternion rotation, Helpers.CSGHandles.InitFunction initFunction = null
-          , Helpers.CSGHandles.InitFunction shutdownFunction = null
+            Camera camera, Vector3 center, Quaternion rotation, CSGHandles.InitFunction initFunction = null
+          , CSGHandles.InitFunction shutdownFunction = null
         )
         {
             bool doSnapping = CSGSettings.RotationSnapping;
 
-            return Helpers.CSGHandles.DoRotationHandle(
-                camera, rotation, center, doSnapping, initFunction, shutdownFunction
-            );
+            return CSGHandles.DoRotationHandle(camera, rotation, center, doSnapping, initFunction, shutdownFunction);
         }
 
         public static void DrawProjectedPivot(Camera camera, Vector3 center, Color color)
@@ -2339,7 +2017,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            float handleSize = CSG_HandleUtility.GetHandleSize(center);
+            float handleSize = CSGHandleUtility.GetHandleSize(center);
 
             Color originalColor = Handles.color;
 
@@ -2373,7 +2051,6 @@ namespace RealtimeCSG
         public static void DrawRotateCircle(
             Camera camera, Vector3 center, Vector3 normal, Vector3 tangent, float radius,
             float originalAngle, float startAngle, float endAngle,
-            //Color colorOuter, Color colorHatch,
             Color color,
             string axisName = null,
             bool centerText = false
@@ -2384,22 +2061,21 @@ namespace RealtimeCSG
 
             Color colorOuter = color;
             colorOuter.a *= 0.8f;
-            Color colorHatch = color;
             Color innerColor = color;
             innerColor.a *= 0.3f;
 
             float   angleOffset   = startAngle - originalAngle;
-            int     hatch_count   = GetHatchCountForRadius(center, radius);
+            int     hatchCount    = GetHatchCountForRadius(center, radius);
             Vector3 innerDistance = tangent * radius;
             Vector3 outerDistance = tangent * (radius * 1.25f);
 
-            if(hatch_count > 0.0f)
+            if(hatchCount > 0.0f)
             {
                 float handleSize = HandleUtility.GetHandleSize(center);
 
                 float maxSize = radius * 0.3f;
 
-                Vector3[] tickDistance = new Vector3[]
+                Vector3[] tickDistance =
                 {
                     outerDistance + tangent * Mathf.Min(
                         Mathf.Min(handleSize * 0.05f, handleSize * radius * 0.075f), maxSize
@@ -2419,7 +2095,7 @@ namespace RealtimeCSG
                     Mathf.Min(handleSize, handleSize * radius * 0.5f), maxSize
                 );
 
-                int step = 360 / hatch_count;
+                int step = 360 / hatchCount;
 
                 Color halfColorOuter = colorOuter;
                 halfColorOuter.a *= 0.5f;
@@ -2441,38 +2117,28 @@ namespace RealtimeCSG
                     Vector3 vectorI2 =
                         center + Quaternion.AngleAxis(a + angleOffset - step * 0.5f, normal) * innerDistance;
 
-                    int tick_type;
+                    int tickType;
 
                     if(a % 90 == 0)
                     {
-                        tick_type = 3;
+                        tickType = 3;
                     }
                     else if(a % 45 == 0)
                     {
-                        tick_type = 2;
+                        tickType = 2;
                     }
                     else if(a % 5 == 0)
                     {
-                        tick_type = 1;
+                        tickType = 1;
                     }
                     else
                     {
-                        tick_type = 0;
+                        tickType = 0;
                     }
 
-                    Vector3 vectora = center + Quaternion.AngleAxis(a + angleOffset, normal) * tickDistance[tick_type];
-                    /*
-                    Handles.color = colorOuter;
-                    Handles.DrawAAPolyLine(vectorO0, vectorO2);
-                    Handles.DrawAAPolyLine(vectorO2, vectorO1);
-                    Handles.DrawAAPolyLine(vectorI0, vectorI2);
-                    Handles.DrawAAPolyLine(vectorI2, vectorI1);
-                    */
-                    //Handles.color = halfColorOuter;
-                    //Handles.DrawAAPolyLine(vectorI1, vectorO1);
-                    //Handles.DrawAAPolyLine(vectorI2, vectorO2);
+                    Vector3 vectora = center + Quaternion.AngleAxis(a + angleOffset, normal) * tickDistance[tickType];
 
-                    Handles.color = colorHatch;
+                    Handles.color = color;
                     Handles.DrawAAPolyLine(vectora, vectorO1);
                     DrawLine(vectorO0, vectorO2, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
                     DrawLine(vectorO2, vectorO1, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
@@ -2480,7 +2146,7 @@ namespace RealtimeCSG
                     DrawLine(vectorI0, vectorI2, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
                     DrawLine(vectorI2, vectorI1, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
 
-                    DrawLine(vectora, vectorO1, GUIConstants.OLD_THIN_LINE_SCALE, colorHatch);
+                    DrawLine(vectora, vectorO1, GUIConstants.OLD_THIN_LINE_SCALE, color);
 
                     vertices.Add(vectorI2);
                     vertices.Add(vectorI0);
@@ -2492,9 +2158,9 @@ namespace RealtimeCSG
                     vertices.Add(vectorO2);
                     vertices.Add(vectorO1);
 
-                    if(tick_type >= 2)
+                    if(tickType >= 2)
                     {
-                        if((tick_type == 3 && hatch_count > 24) || hatch_count > 72)
+                        if((tickType == 3 && hatchCount > 24) || hatchCount > 72)
                         {
                             DrawWorldText(
                                 camera, center + Quaternion.AngleAxis(a + angleOffset, normal) * labelDistance,
@@ -2513,9 +2179,9 @@ namespace RealtimeCSG
                 Handles.color = colorOuter;
                 Handles.DrawAAPolyLine(startI1, startO1);
 
-                float snap_step = Mathf.Max(3.0f, CSGSettings.SnapRotation);
+                float snapStep = Mathf.Max(3.0f, CSGSettings.SnapRotation);
 
-                for(float a = snap_step; a <= 180; a += snap_step)
+                for(float a = snapStep; a <= 180; a += snapStep)
                 {
                     Vector3 vectorI1 = center + Quaternion.AngleAxis(angleOffset + a, normal) * innerDistance;
                     Vector3 vectorO1 = center + Quaternion.AngleAxis(angleOffset + a, normal) * outerDistance;
@@ -2534,9 +2200,8 @@ namespace RealtimeCSG
                         DrawWorldText(
                             camera, center,
                             string.Format(
-                                CultureInfo.InvariantCulture, "{0}: Δ{1}",
-                                axisName,
-                                Units.ToRoundedAngleString(endAngle - startAngle)
+                                CultureInfo.InvariantCulture, "{0}: Δ{1}", axisName
+                              , Units.ToRoundedAngleString(endAngle - startAngle)
                             )
                         );
                     }
@@ -2559,12 +2224,6 @@ namespace RealtimeCSG
                     );
 
                     {
-                        /*
-                        DrawWorldText(center + (Quaternion.AngleAxis(endAngle, normal) * (innerDistance * 0.75f)),
-                                      string.Format(CultureInfo.InvariantCulture, "Δ{0}\n{1}",
-                                      Units.ToRoundedAngleString(endAngle - startAngle),
-                                      Units.ToRoundedAngleString(originalAngle + endAngle - startAngle)));
-                        /*/
                         if(!string.IsNullOrEmpty(axisName))
                         {
                             DrawWorldText(
@@ -2586,7 +2245,6 @@ namespace RealtimeCSG
                                 )
                             );
                         }
-                        //*/
                     }
                 }
 
@@ -2642,13 +2300,11 @@ namespace RealtimeCSG
             {
                 return;
             }
-#if UNITY_5_6_OR_NEWER
+
             Handles.ConeHandleCap(
                 -1, position + direction * size, Quaternion.LookRotation(direction), size * .2f, EventType.Repaint
             );
-#else
-			Handles.ConeCap (-1, position + direction * size, Quaternion.LookRotation (direction), size * .2f);
-#endif
+
             Handles.DrawLine(position, position + direction * size * .9f);
         }
 
@@ -2657,10 +2313,10 @@ namespace RealtimeCSG
             Matrix4x4 prevMatrix = Handles.matrix;
             Handles.matrix = Matrix4x4.identity;
 
-            float line_distance = HandleUtility.DistanceToLine(position, position + direction * size);
-            float cap_distance  = HandleUtility.DistanceToCircle(position + direction * size, size * .2f);
-            HandleUtility.AddControl(controlID, line_distance);
-            HandleUtility.AddControl(controlID, cap_distance);
+            float lineDistance = HandleUtility.DistanceToLine(position, position + direction * size);
+            float capDistance  = HandleUtility.DistanceToCircle(position + direction * size, size * .2f);
+            HandleUtility.AddControl(controlID, lineDistance);
+            HandleUtility.AddControl(controlID, capDistance);
 
             Handles.matrix = prevMatrix;
         }
@@ -2686,17 +2342,7 @@ namespace RealtimeCSG
 
             Vector3 lineA5 = lineA3 + normal * handleSize * 0.0625f;
             Vector3 lineB5 = lineB3 + normal * handleSize * 0.0625f;
-            /*
-            var lineA1	= vertexA - (normal * handleSize * 0.5f);
-            var lineB1	= vertexB - (normal * handleSize * 0.5f);
 
-            var lineA2	= vertexA + (normal * handleSize * 0.5f);
-            var lineB2	= vertexB + (normal * handleSize * 0.5f);
-
-            Handles.color = Color.black;
-            Handles.DrawAAPolyLine(3.0f, lineA1, lineA2);
-            Handles.DrawAAPolyLine(3.0f, lineB1, lineB2);
-            */
             Handles.color = color;
             Handles.DrawAAPolyLine(3.0f, lineA3, lineB3);
             Handles.DrawAAConvexPolygon(vertexA, lineA4, lineA5);
@@ -2711,8 +2357,6 @@ namespace RealtimeCSG
                 return;
             }
 
-            //EditorGUIUtility.ScreenToGUIPoint(screenPoint); // broken		
-
             Matrix4x4 prevMatrix = Handles.matrix;
             Handles.matrix = Matrix4x4.identity;
 
@@ -2724,7 +2368,7 @@ namespace RealtimeCSG
 
             if(style == null)
             {
-                style = CSG_GUIStyleUtility.sceneTextLabel;
+                style = CsgguiStyleUtility.SceneTextLabel;
             }
 
             Vector2 calcSize = style.CalcSize(content);
@@ -2771,39 +2415,29 @@ namespace RealtimeCSG
             Handles.DrawAAPolyLine(3.0f, vertexA, lineA2);
             Handles.DrawAAPolyLine(3.0f, vertexB, lineB2);
 
-            //if (length > (handleSizeA + (handleSize * 0.125f) + handleSizeB))
-            {
-                Vector3 lineA3 = lineA1 + tangent * handleSizeA;
-                Vector3 lineB3 = lineB1 - tangent * handleSizeB;
+            Vector3 lineA3 = lineA1 + tangent * handleSizeA;
+            Vector3 lineB3 = lineB1 - tangent * handleSizeB;
 
-                Vector3 lineA4 = lineA3 - normal * (handleSizeA * 0.5f);
-                Vector3 lineB4 = lineB3 - normal * (handleSizeB * 0.5f);
+            Vector3 lineA4 = lineA3 - normal * (handleSizeA * 0.5f);
+            Vector3 lineB4 = lineB3 - normal * (handleSizeB * 0.5f);
 
-                Vector3 lineA5 = lineA3 + normal * (handleSizeA * 0.5f);
-                Vector3 lineB5 = lineB3 + normal * (handleSizeB * 0.5f);
+            Vector3 lineA5 = lineA3 + normal * (handleSizeA * 0.5f);
+            Vector3 lineB5 = lineB3 + normal * (handleSizeB * 0.5f);
 
-                Handles.DrawAAPolyLine(7.0f, lineA3, lineB3);
+            Handles.DrawAAPolyLine(7.0f, lineA3, lineB3);
 
-                Handles.color = color;
-                Handles.DrawAAConvexPolygon(lineA1, lineA4, lineA5);
-                Handles.DrawAAConvexPolygon(lineB1, lineB4, lineB5);
+            Handles.color = color;
+            Handles.DrawAAConvexPolygon(lineA1, lineA4, lineA5);
+            Handles.DrawAAConvexPolygon(lineB1, lineB4, lineB5);
 
-                Handles.color = Color.black;
-                Handles.DrawAAPolyLine(2.0f, lineA1, lineA4, lineA5);
-                Handles.DrawAAPolyLine(2.0f, lineB1, lineB4, lineB5);
+            Handles.color = Color.black;
+            Handles.DrawAAPolyLine(2.0f, lineA1, lineA4, lineA5);
+            Handles.DrawAAPolyLine(2.0f, lineB1, lineB4, lineB5);
 
-                Handles.color = color;
-                Handles.DrawAAPolyLine(5.0f, lineA3, lineB3);
-            } /* else
-            {
-                Handles.DrawAAPolyLine(7.0f, lineA1, lineB1);
+            Handles.color = color;
+            Handles.DrawAAPolyLine(5.0f, lineA3, lineB3);
 
-                Handles.color = color;
-                Handles.DrawAAPolyLine(5.0f, lineA1, lineB1);
-            }*/
-
-            Vector3 center = (lineB1 + lineA1) * 0.5f;
-
+            Vector3 center      = (lineB1 + lineA1) * 0.5f;
             Vector3 screenPoint = camera.WorldToScreenPoint(center);
 
             if(screenPoint.z < 0)
@@ -2813,8 +2447,6 @@ namespace RealtimeCSG
                 return;
             }
 
-            //EditorGUIUtility.ScreenToGUIPoint(screenPoint); // broken		
-
             Vector2    center2D = HandleUtility.WorldToGUIPoint(center);
             Vector2    offset   = HandleUtility.WorldToGUIPoint(center + normal);
             Vector2    offset2D = (offset - center2D).normalized;
@@ -2823,7 +2455,7 @@ namespace RealtimeCSG
 
             if(style == null)
             {
-                style = CSG_GUIStyleUtility.sceneTextLabel;
+                style = CsgguiStyleUtility.SceneTextLabel;
             }
 
             Vector2 calcSize = style.CalcSize(content);
@@ -2857,24 +2489,15 @@ namespace RealtimeCSG
             Vector3 sideNormalA = BoundsUtilities.AABBSideNormal[sideIndexA];
             Vector3 sideNormalB = BoundsUtilities.AABBSideNormal[sideIndexB];
 
-            Vector3 edge_point = GeometryUtility.ProjectPointOnInfiniteLine(
+            Vector3 edgePoint = GeometryUtility.ProjectPointOnInfiniteLine(
                 cameraPosition, vertexA, (vertexB - vertexA).normalized
             );
 
-            Vector3 orientation = matrix.MultiplyVector((edge_point - cameraPosition).normalized);
+            Vector3 orientation = matrix.MultiplyVector((edgePoint - cameraPosition).normalized);
             float   dotA        = Mathf.Abs(Vector3.Dot(orientation, matrix.MultiplyVector(sideNormalA)));
             float   dotB        = Mathf.Abs(Vector3.Dot(orientation, matrix.MultiplyVector(sideNormalB)));
 
-            Vector3 sideNormal;
-
-            if(dotA < dotB)
-            {
-                sideNormal = sideNormalA;
-            }
-            else
-            {
-                sideNormal = sideNormalB;
-            }
+            Vector3 sideNormal = dotA < dotB ? sideNormalA : sideNormalB;
 
             vertexA    = matrix.MultiplyPoint(vertexA);
             vertexB    = matrix.MultiplyPoint(vertexB);
@@ -2897,24 +2520,15 @@ namespace RealtimeCSG
             Vector3 sideNormalA = BoundsUtilities.AABBSideNormal[sideIndexA];
             Vector3 sideNormalB = BoundsUtilities.AABBSideNormal[sideIndexB];
 
-            Vector3 edge_point = GeometryUtility.ProjectPointOnInfiniteLine(
+            Vector3 edgePoint = GeometryUtility.ProjectPointOnInfiniteLine(
                 cameraPosition, vertexA, (vertexB - vertexA).normalized
             );
 
-            Vector3 orientation = (edge_point - cameraPosition).normalized;
+            Vector3 orientation = (edgePoint - cameraPosition).normalized;
             float   dotA        = Mathf.Abs(Vector3.Dot(orientation, rotation * sideNormalA));
             float   dotB        = Mathf.Abs(Vector3.Dot(orientation, rotation * sideNormalB));
 
-            Vector3 sideNormal;
-
-            if(dotA < dotB)
-            {
-                sideNormal = sideNormalA;
-            }
-            else
-            {
-                sideNormal = sideNormalB;
-            }
+            Vector3 sideNormal = dotA < dotB ? sideNormalA : sideNormalB;
 
             vertexA    = rotation * vertexA;
             vertexB    = rotation * vertexB;
@@ -2958,13 +2572,13 @@ namespace RealtimeCSG
 
                 if(backfaced[side1] != backfaced[side2])
                 {
-                    Vector3 A = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][0]];
-                    Vector3 B = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][1]];
+                    Vector3 a = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][0]];
+                    Vector3 b = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][1]];
 
-                    if((A - B).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                    if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
                     {
-                        Vector3 C    = (A + B) * 0.5f;
-                        float   dist = cameraPosition.x - C.x;
+                        Vector3 c    = (a + b) * 0.5f;
+                        float   dist = cameraPosition.x - c.x;
 
                         if(xAxis == -1 || dist < prevXAxisDist)
                         {
@@ -2985,13 +2599,13 @@ namespace RealtimeCSG
 
                 if(backfaced[side1] != backfaced[side2])
                 {
-                    Vector3 A = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][0]];
-                    Vector3 B = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][1]];
+                    Vector3 a = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][0]];
+                    Vector3 b = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][1]];
 
-                    if((A - B).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                    if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
                     {
-                        Vector3 C    = (A + B) * 0.5f;
-                        float   dist = cameraPosition.z - C.z;
+                        Vector3 c    = (a + b) * 0.5f;
+                        float   dist = cameraPosition.z - c.z;
 
                         if(zAxis == -1 || dist < prevZAxisDist)
                         {
@@ -3027,13 +2641,13 @@ namespace RealtimeCSG
 
                     if(backfaced[side1] != backfaced[side2])
                     {
-                        Vector3 A = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][0]];
-                        Vector3 B = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][1]];
+                        Vector3 a = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][0]];
+                        Vector3 b = vertices[BoundsUtilities.AABBEdgeIndices[edgeIndex][1]];
 
-                        if((A - B).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                        if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
                         {
-                            Vector3 C    = (A + B) * 0.5f;
-                            float   dist = cameraPosition.y - C.y;
+                            Vector3 c    = (a + b) * 0.5f;
+                            float   dist = cameraPosition.y - c.y;
 
                             if(yAxis == -1 || dist < prevYAxisDist)
                             {
@@ -3075,13 +2689,13 @@ namespace RealtimeCSG
                         if(((xAIndex == xA || xAIndex == xB) && (zBIndex == zA || zBIndex == zB)) ||
                            ((xBIndex == xA || xBIndex == xB) && (zAIndex == zA || zAIndex == zB)))
                         {
-                            Vector3 A = vertices[aIndex];
-                            Vector3 B = vertices[bIndex];
+                            Vector3 a = vertices[aIndex];
+                            Vector3 b = vertices[bIndex];
 
-                            if((A - B).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                            if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
                             {
-                                Vector3 C    = (A + B) * 0.5f;
-                                float   dist = cameraPosition.y - C.y;
+                                Vector3 c    = (a + b) * 0.5f;
+                                float   dist = cameraPosition.y - c.y;
 
                                 if(yAxis == -1 || dist < prevYAxisDist)
                                 {
@@ -3114,13 +2728,13 @@ namespace RealtimeCSG
                             if(aIndex == xA || aIndex == zA || bIndex == zB || bIndex == xB ||
                                aIndex == xB || aIndex == zB || bIndex == zA || bIndex == xA)
                             {
-                                Vector3 A = vertices[aIndex];
-                                Vector3 B = vertices[bIndex];
+                                Vector3 a = vertices[aIndex];
+                                Vector3 b = vertices[bIndex];
 
-                                if((A - B).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                                if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
                                 {
-                                    Vector3 C    = (A + B) * 0.5f;
-                                    float   dist = cameraPosition.y - C.y;
+                                    Vector3 c    = (a + b) * 0.5f;
+                                    float   dist = cameraPosition.y - c.y;
 
                                     if(yAxis == -1 || dist < prevYAxisDist)
                                     {
@@ -3252,81 +2866,79 @@ namespace RealtimeCSG
             Vector3 cameraDirection = invRotation * camera.transform.forward;
             GetActiveEdges(cameraPosition, cameraDirection, ortho, vertices, ref xAxis, ref yAxis, ref zAxis);
 
-            float handleSize = 0;
-
-            float   closest_distance = float.PositiveInfinity;
+            float   closestDistance = float.PositiveInfinity;
             float   distance;
             Vector3 vertex;
             Vector3 closestPointToCamera = Vector3.zero;
 
-            if( //showAxisX && 
+            if( //showAxisX &&
                xAxis >= 0)
             {
                 vertex   = rotation * vertices[BoundsUtilities.AABBEdgeIndices[xAxis][0]];
                 distance = (vertex - camera.transform.position).magnitude;
 
-                if(closest_distance == float.PositiveInfinity ||
-                   distance < closest_distance)
+                if(closestDistance == float.PositiveInfinity ||
+                   distance < closestDistance)
                 {
-                    closest_distance     = distance;
+                    closestDistance      = distance;
                     closestPointToCamera = vertex;
                 }
 
                 vertex   = rotation * vertices[BoundsUtilities.AABBEdgeIndices[xAxis][1]];
                 distance = (vertex - camera.transform.position).magnitude;
 
-                if(closest_distance == float.PositiveInfinity ||
-                   distance < closest_distance)
+                if(closestDistance == float.PositiveInfinity ||
+                   distance < closestDistance)
                 {
-                    closest_distance     = distance;
+                    closestDistance      = distance;
                     closestPointToCamera = vertex;
                 }
             }
 
-            if( //showAxisY && 
+            if( //showAxisY &&
                yAxis >= 0)
             {
                 vertex   = rotation * vertices[BoundsUtilities.AABBEdgeIndices[yAxis][0]];
                 distance = (vertex - camera.transform.position).magnitude;
 
-                if(closest_distance == float.PositiveInfinity ||
-                   distance < closest_distance)
+                if(closestDistance == float.PositiveInfinity ||
+                   distance < closestDistance)
                 {
-                    closest_distance     = distance;
+                    closestDistance      = distance;
                     closestPointToCamera = vertex;
                 }
 
                 vertex   = rotation * vertices[BoundsUtilities.AABBEdgeIndices[yAxis][1]];
                 distance = (vertex - camera.transform.position).magnitude;
 
-                if(closest_distance == float.PositiveInfinity ||
-                   distance < closest_distance)
+                if(closestDistance == float.PositiveInfinity ||
+                   distance < closestDistance)
                 {
-                    closest_distance     = distance;
+                    closestDistance      = distance;
                     closestPointToCamera = vertex;
                 }
             }
 
-            if( //showAxisZ && 
+            if( //showAxisZ &&
                zAxis >= 0)
             {
                 vertex   = rotation * vertices[BoundsUtilities.AABBEdgeIndices[zAxis][0]];
                 distance = (vertex - camera.transform.position).magnitude;
 
-                if(closest_distance == float.PositiveInfinity ||
-                   distance < closest_distance)
+                if(closestDistance == float.PositiveInfinity ||
+                   distance < closestDistance)
                 {
-                    closest_distance     = distance;
+                    closestDistance      = distance;
                     closestPointToCamera = vertex;
                 }
 
                 vertex   = rotation * vertices[BoundsUtilities.AABBEdgeIndices[zAxis][1]];
                 distance = (vertex - camera.transform.position).magnitude;
 
-                if(closest_distance == float.PositiveInfinity ||
-                   distance < closest_distance)
+                if(closestDistance == float.PositiveInfinity ||
+                   distance < closestDistance)
                 {
-                    closest_distance     = distance;
+                    closestDistance      = distance;
                     closestPointToCamera = vertex;
                 }
             }
@@ -3334,7 +2946,7 @@ namespace RealtimeCSG
             Matrix4x4 prevMatrix = Handles.matrix;
             Handles.matrix = Matrix4x4.identity;
 
-            handleSize = HandleUtility.GetHandleSize(closestPointToCamera);
+            float handleSize = HandleUtility.GetHandleSize(closestPointToCamera);
 
             if(showAxisX && xAxis >= 0)
             {
@@ -3362,8 +2974,8 @@ namespace RealtimeCSG
             if(rect.width >= 0 || rect.height >= 0)
             {
                 Handles.BeginGUI();
-                CSG_GUIStyleUtility.InitStyles();
-                CSG_GUIStyleUtility.selectionRectStyle.Draw(rect, GUIContent.none, false, false, false, false);
+                CsgguiStyleUtility.InitStyles();
+                CsgguiStyleUtility.SelectionRectStyle.Draw(rect, GUIContent.none, false, false, false, false);
                 Handles.EndGUI();
             }
 

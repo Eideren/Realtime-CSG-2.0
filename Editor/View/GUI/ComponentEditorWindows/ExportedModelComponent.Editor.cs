@@ -21,7 +21,7 @@ namespace RealtimeCSG
             {
                 GUILayout.Label(
                     "A hidden CSG model, and all it's brushes and operations, is contained by this object. This will automatically be removed at build time."
-                  , CSG_GUIStyleUtility.wrapLabel
+                  , CsgguiStyleUtility.WrapLabel
                 );
 
                 GUILayout.Space(10);
@@ -37,9 +37,9 @@ namespace RealtimeCSG
                         List<Object>   selection    = new List<Object>();
                         HashSet<Scene> updateScenes = new HashSet<Scene>();
 
-                        foreach(Object target in targets)
+                        foreach(Object o in targets)
                         {
-                            CSGModelExported exportedModel = target as CSGModelExported;
+                            CSGModelExported exportedModel = o as CSGModelExported;
 
                             if(!exportedModel)
                             {
@@ -63,15 +63,15 @@ namespace RealtimeCSG
                                 exportedModel.containedModel.gameObject.SetActive(true);
                                 exportedModel.containedModel.gameObject.hideFlags = HideFlags.None;
                                 EditorUtility.SetDirty(exportedModel.containedModel);
-                                Undo.DestroyObjectImmediate(exportedModel);
                             }
                             else
                             {
                                 MeshInstanceManager.ReverseExport(exportedModel);
                                 selection.Add(exportedModel.gameObject);
                                 EditorUtility.SetDirty(exportedModel);
-                                Undo.DestroyObjectImmediate(exportedModel);
                             }
+
+                            Undo.DestroyObjectImmediate(exportedModel);
                         }
 
                         Selection.objects = selection.ToArray();
@@ -79,7 +79,6 @@ namespace RealtimeCSG
                         InternalCSGModelManager.SkipCheckForChanges = true;
 
                         BrushOutlineManager.ClearOutlines();
-                        //CSGModelManager.Refresh(forceHierarchyUpdate: true);
                         InternalCSGModelManager.ForceRebuildAll();
 
                         foreach(Scene scene in updateScenes)
@@ -104,9 +103,9 @@ namespace RealtimeCSG
                 Undo.SetCurrentGroupName("Removed hidden CSG model");
                 Undo.RecordObject(this, "Removed hidden CSG model");
 
-                foreach(Object target in targets)
+                foreach(Object o in targets)
                 {
-                    CSGModelExported exportedModel = target as CSGModelExported;
+                    CSGModelExported exportedModel = o as CSGModelExported;
 
                     if(!exportedModel)
                     {

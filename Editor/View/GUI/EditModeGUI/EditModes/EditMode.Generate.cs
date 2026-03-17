@@ -1,10 +1,10 @@
 ﻿using System;
-using UnityEditor;
-using UnityEngine;
 using System.Linq;
+using RealtimeCSG.Components;
 using RealtimeCSG.Foundation;
 using RealtimeCSG.Legacy;
-using RealtimeCSG.Components;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
@@ -15,10 +15,7 @@ namespace RealtimeCSG
       , Box
       , Sphere
       , Cylinder
-       ,
-
-//		SpiralStairs,
-        LinearStairs
+      , LinearStairs
       , Last = LinearStairs
     }
 
@@ -34,8 +31,8 @@ namespace RealtimeCSG
             get => true;
         }
 
-        public static event Action ShapeCommitted = null;
-        public static event Action ShapeCancelled = null;
+        public static event Action ShapeCommitted;
+        public static event Action ShapeCancelled;
 
         public ShapeMode BuilderMode
         {
@@ -47,7 +44,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                builderMode                = value;
+                builderMode = value;
+
                 CSGSettings.ShapeBuildMode = builderMode;
                 CSGSettings.Save();
                 ResetTool();
@@ -80,11 +78,7 @@ namespace RealtimeCSG
                     case ShapeMode.LinearStairs:
                     {
                         return linearStairsGenerator;
-                    } /*
-                    case ShapeMode.SpiralStairs:
-                    {
-                        return spiralStairsGenerator;
-                    }*/
+                    }
                 }
             }
         }
@@ -107,7 +101,7 @@ namespace RealtimeCSG
             }
         }
 
-        [SerializeField] private CSGBrush[] brushes = new CSGBrush[0];
+        [SerializeField] private CSGBrush[] brushes = Array.Empty<CSGBrush>();
 
         [SerializeField] private ShapeMode builderMode = ShapeMode.FreeDraw;
 
@@ -118,18 +112,18 @@ namespace RealtimeCSG
         [SerializeField] private GeneratorSphere sphereGenerator;
         [SerializeField] private GeneratorBox boxGenerator;
 
-        [NonSerialized] private bool isEnabled = false;
-        [NonSerialized] private bool hideTool = false;
+        [NonSerialized] private bool _isEnabled;
+        [NonSerialized] private bool _hideTool;
 
         public void SetTargets(FilteredSelection filteredSelection)
         {
-            hideTool = filteredSelection.nodeTargets.Length > 0;
-            brushes  = filteredSelection.GetAllContainedBrushes().ToArray();
-            lastLineMeshGeneration--;
+            _hideTool = filteredSelection.nodeTargets.Length > 0;
+            brushes   = filteredSelection.GetAllContainedBrushes().ToArray();
+            _lastLineMeshGeneration--;
 
-            if(isEnabled)
+            if(_isEnabled)
             {
-                Tools.hidden = hideTool;
+                Tools.hidden = _hideTool;
             }
         }
 
@@ -141,8 +135,8 @@ namespace RealtimeCSG
 
         public void OnEnableTool()
         {
-            isEnabled    = true;
-            Tools.hidden = hideTool;
+            _isEnabled   = true;
+            Tools.hidden = _hideTool;
             ResetTool();
         }
 
@@ -159,7 +153,7 @@ namespace RealtimeCSG
                 }
             }
 
-            isEnabled    = false;
+            _isEnabled   = false;
             Tools.hidden = false;
             ResetTool();
         }
@@ -275,13 +269,13 @@ namespace RealtimeCSG
 
         private void OnDestroy()
         {
-            zTestLineMeshManager.Destroy();
-            noZTestLineMeshManager.Destroy();
+            _zTestLineMeshManager.Destroy();
+            _noZTestLineMeshManager.Destroy();
         }
 
-        private LineMeshManager zTestLineMeshManager = new LineMeshManager();
-        private LineMeshManager noZTestLineMeshManager = new LineMeshManager();
-        private int lastLineMeshGeneration = -1;
+        private readonly LineMeshManager _zTestLineMeshManager = new LineMeshManager();
+        private readonly LineMeshManager _noZTestLineMeshManager = new LineMeshManager();
+        private int _lastLineMeshGeneration = -1;
 
         public void HandleEvents(SceneView sceneView, Rect sceneRect)
         {
@@ -296,28 +290,10 @@ namespace RealtimeCSG
             {
                 case EventType.ValidateCommand:
                 {
-                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        break;
-                    }
-
-                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        break;
-                    }
-
-                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        break;
-                    }
-
-                    if(!EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed()
+                    || !EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed()
+                    || !EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed()
+                    || !EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -328,8 +304,6 @@ namespace RealtimeCSG
                     {
                         Event.current.Use();
                         HandleUtility.Repaint();
-
-                        break;
                     }
 
                     break;
@@ -337,28 +311,10 @@ namespace RealtimeCSG
 
                 case EventType.KeyDown:
                 {
-                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        break;
-                    }
-
-                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        break;
-                    }
-
-                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        break;
-                    }
-
-                    if(!EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed()
+                    || !EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed()
+                    || !EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed()
+                    || !EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -369,8 +325,6 @@ namespace RealtimeCSG
                     {
                         Event.current.Use();
                         HandleUtility.Repaint();
-
-                        break;
                     }
 
                     break;
@@ -414,8 +368,6 @@ namespace RealtimeCSG
                     {
                         Event.current.Use();
                         HandleUtility.Repaint();
-
-                        break;
                     }
 
                     break;
@@ -423,9 +375,9 @@ namespace RealtimeCSG
 
                 case EventType.Repaint:
                 {
-                    if(lastLineMeshGeneration != InternalCSGModelManager.MeshGeneration)
+                    if(_lastLineMeshGeneration != InternalCSGModelManager.MeshGeneration)
                     {
-                        lastLineMeshGeneration = InternalCSGModelManager.MeshGeneration;
+                        _lastLineMeshGeneration = InternalCSGModelManager.MeshGeneration;
 
                         Matrix4x4[] brushTransformation = new Matrix4x4[brushes.Length];
                         int[]       brushNodeIDs        = new int[brushes.Length];
@@ -451,7 +403,7 @@ namespace RealtimeCSG
                         }
 
                         CSGRenderer.DrawSelectedBrushes(
-                            zTestLineMeshManager, noZTestLineMeshManager, brushNodeIDs, brushTransformation,
+                            _zTestLineMeshManager, _noZTestLineMeshManager, brushNodeIDs, brushTransformation,
                             ColorSettings.SelectedOutlines, GUIConstants.LINE_SCALE
                         );
                     }
@@ -459,9 +411,9 @@ namespace RealtimeCSG
                     MaterialUtility.LineAlphaMultiplier     = 1.0f;
                     MaterialUtility.LineDashMultiplier      = 2.0f;
                     MaterialUtility.LineThicknessMultiplier = 2.0f;
-                    noZTestLineMeshManager.Render(MaterialUtility.NoZTestGenericLine);
+                    _noZTestLineMeshManager.Render(MaterialUtility.NoZTestGenericLine);
                     MaterialUtility.LineThicknessMultiplier = 1.0f;
-                    zTestLineMeshManager.Render(MaterialUtility.ZTestGenericLine);
+                    _zTestLineMeshManager.Render(MaterialUtility.ZTestGenericLine);
 
                     break;
                 }
@@ -475,12 +427,12 @@ namespace RealtimeCSG
 
         public Rect GetLastSceneGUIRect()
         {
-            return EditModeGenerateGUI.GetLastSceneGUIRect(this);
+            return EditModeGenerateGUI.GetLastSceneGUIRect();
         }
 
         public bool OnSceneGUI(Rect windowRect)
         {
-            return EditModeGenerateGUI.OnSceneGUI(windowRect, this);
+            return EditModeGenerateGUI.OnSceneGUI(this);
         }
 
         public void GenerateFromPolygon(

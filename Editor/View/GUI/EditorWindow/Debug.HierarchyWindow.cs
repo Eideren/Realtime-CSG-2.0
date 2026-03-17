@@ -1,365 +1,438 @@
-﻿namespace RealtimeCSG
+﻿#if TEST_ENABLED
+using System.Collections.Generic;
+using System.Linq;
+using RealtimeCSG.Components;
+using RealtimeCSG.Foundation;
+using UnityEditor;
+using UnityEngine;
+
+namespace RealtimeCSG
 {
-#if TEST_ENABLED
-	sealed class CSGHierarchyView : EditorWindow
-	{
-		CSGHierarchyView()
-		{
-			windows.Add(this);
-		}
+    internal sealed class CSGHierarchyView : EditorWindow
+    {
+        private CSGHierarchyView()
+        {
+            windows.Add(this);
+        }
 
-		void Awake()
-		{
-			Selection.selectionChanged -= OnSelectionChanged;
-			Selection.selectionChanged += OnSelectionChanged;
-		}
+        private void Awake()
+        {
+            Selection.selectionChanged -= OnSelectionChanged;
+            Selection.selectionChanged += OnSelectionChanged;
+        }
 
-		void OnSelectionChanged()
-		{
-			this.Repaint();
-		}
+        private void OnSelectionChanged()
+        {
+            Repaint();
+        }
 
-		void OnDestroy()
-		{
-			windows.Remove(this);
-		}
+        private void OnDestroy()
+        {
+            windows.Remove(this);
+        }
 
-		Dictionary<int, bool> openNodes = new Dictionary<int, bool>();
-		static List<CSGHierarchyView> windows = new List<CSGHierarchyView>();
+        private Dictionary<int, bool> _openNodes = new Dictionary<int, bool>();
+        private static readonly List<CSGHierarchyView> windows = new List<CSGHierarchyView>();
 
-		public static void RepaintAll()
-		{
-			foreach (var window in windows)
-			{
-				if (window)
-					window.Repaint();
-			}
-		}
+        [MenuItem("Window/CSG Hierarchy")]
+        private static void Create()
+        {
+            m_Window = (CSGHierarchyView)GetWindow(typeof(CSGHierarchyView), false, "CSG Hierarchy");
+            m_Window.autoRepaintOnSceneChange = true;
+        }
 
-		[MenuItem("Window/CSG Hierarchy")]
-		static void Create()
-		{
-			window = (CSGHierarchyView)EditorWindow.GetWindow(typeof(CSGHierarchyView), false, "CSG Hierarchy");
-			window.autoRepaintOnSceneChange = true;
-		}
+        private static CSGHierarchyView m_Window;
 
-		static CSGHierarchyView window;
+        private class Styles
+        {
+            public GUIStyle emptyItem;
+            public GUIStyle emptySelected;
+            public GUIStyle foldOut;
+            public GUIStyle foldOutSelected;
+        }
 
-		class Styles
-		{
-			public GUIStyle emptyItem;
-			public GUIStyle emptySelected;
-			public GUIStyle foldOut;
-			public GUIStyle foldOutSelected;
-		};
+        private static Styles m_Styles;
 
-		static Styles styles;
+        private static void UpdateStyles()
+        {
+            m_Styles           = new Styles();
+            m_Styles.emptyItem = new GUIStyle(EditorStyles.foldout);
 
-		static void UpdateStyles()
-		{
-			styles = new Styles();
-			styles.emptyItem = new GUIStyle(EditorStyles.foldout);
+            m_Styles.emptyItem.active.background  = null;
+            m_Styles.emptyItem.hover.background   = null;
+            m_Styles.emptyItem.normal.background  = null;
+            m_Styles.emptyItem.focused.background = null;
 
-			styles.emptyItem.active.background = null;
-			styles.emptyItem.hover.background = null;
-			styles.emptyItem.normal.background = null;
-			styles.emptyItem.focused.background = null;
+            m_Styles.emptyItem.onActive.background  = null;
+            m_Styles.emptyItem.onHover.background   = null;
+            m_Styles.emptyItem.onNormal.background  = null;
+            m_Styles.emptyItem.onFocused.background = null;
 
-			styles.emptyItem.onActive.background = null;
-			styles.emptyItem.onHover.background = null;
-			styles.emptyItem.onNormal.background = null;
-			styles.emptyItem.onFocused.background = null;
+            m_Styles.emptySelected          = new GUIStyle(m_Styles.emptyItem);
+            m_Styles.emptySelected.normal   = m_Styles.emptySelected.active;
+            m_Styles.emptySelected.onNormal = m_Styles.emptySelected.onActive;
 
-			styles.emptySelected = new GUIStyle(styles.emptyItem);
-			styles.emptySelected.normal = styles.emptySelected.active;
-			styles.emptySelected.onNormal = styles.emptySelected.onActive;
+            m_Styles.foldOut          = new GUIStyle(EditorStyles.foldout);
+            m_Styles.foldOut.active   = m_Styles.foldOut.normal;
+            m_Styles.foldOut.onActive = m_Styles.foldOut.onNormal;
 
-			styles.foldOut = new GUIStyle(EditorStyles.foldout);
-			styles.foldOut.active = styles.foldOut.normal;
-			styles.foldOut.onActive = styles.foldOut.onNormal;
+            m_Styles.foldOutSelected          = new GUIStyle(EditorStyles.foldout);
+            m_Styles.foldOutSelected.normal   = m_Styles.foldOutSelected.active;
+            m_Styles.foldOutSelected.onNormal = m_Styles.foldOutSelected.onActive;
 
-			styles.foldOutSelected = new GUIStyle(EditorStyles.foldout);
-			styles.foldOutSelected.normal = styles.foldOutSelected.active;
-			styles.foldOutSelected.onNormal = styles.foldOutSelected.onActive;
+            m_Styles.emptyItem.active   = m_Styles.emptyItem.normal;
+            m_Styles.emptyItem.onActive = m_Styles.emptyItem.onNormal;
+        }
 
-			styles.emptyItem.active = styles.emptyItem.normal;
-			styles.emptyItem.onActive = styles.emptyItem.onNormal;
-		}
+        private const int SCROLL_WIDTH = 20;
+        private const int ITEM_INDENT = 20;
+        private const int ICON_WIDTH = 20;
+        private const int PADDING = 2;
+        private static Vector2 m_ScrollPos;
 
-		const int kScrollWidth = 20;
-		const int kItemIndent = 20;
-		const int kIconWidth = 20;
-		const int kPadding = 2;
-		static Vector2 m_ScrollPos;
+        private sealed class StackItem
+        {
+            public StackItem(CSGTreeNode[] children, float xpos = 0)
+            {
+                this.children = children;
+                index         = 0;
+                count         = this.children.Length;
+                this.xpos     = xpos;
+            }
 
-		sealed class StackItem
-		{
-			public StackItem(CSGTreeNode[] _children, float _xpos = 0) { children = _children; index = 0; count =
- children.Length; xpos = _xpos; }
-			public int index;
-			public int count;
-			public float xpos;
-			public CSGTreeNode[] children;
-		}
-		static List<StackItem>  itemStack = new List<StackItem>();
+            public int index;
+            public readonly int count;
+            public readonly float xpos;
+            public readonly CSGTreeNode[] children;
+        }
 
-		static int GetVisibleItems(Dictionary<int, CSGTreeNode[]> sceneHierarchies, ref Dictionary<int, bool> openNodes)
-		{
-			if (sceneHierarchies == null || sceneHierarchies.Count == 0)
-				return 0;
+        private static readonly List<StackItem> itemStack = new List<StackItem>();
 
-			int totalCount = 0;
-			foreach (var item in sceneHierarchies)
-			{
-				totalCount += 1; // scene foldout itself
-				itemStack.Clear();
-				totalCount += GetVisibleItems(item.Value, ref openNodes);
-			}
-			return totalCount;
-		}
+        // TODO: cache item heights
+        private static int GetVisibleItems(CSGTreeNode[] hierarchyItems, ref Dictionary<int, bool> openNodes)
+        {
+            if(hierarchyItems == null)
+            {
+                return 0;
+            }
 
-		// TODO: cache item heights
-		static int GetVisibleItems(CSGTreeNode[] hierarchyItems, ref Dictionary<int, bool> openNodes)
-		{
-			if (hierarchyItems == null)
-				return 0;
+            int totalCount = hierarchyItems.Length;
+            itemStack.Add(new StackItem(hierarchyItems));
 
-			int totalCount = hierarchyItems.Length;
-			itemStack.Add(new StackItem(hierarchyItems));
+            ContinueOnNextStackItem:
 
-			ContinueOnNextStackItem:
-			if (itemStack.Count == 0)
-				return totalCount;
+            if(itemStack.Count == 0)
+            {
+                return totalCount;
+            }
 
-			var currentStackItem = itemStack[itemStack.Count - 1];
-			var children = currentStackItem.children;
+            StackItem     currentStackItem = itemStack[itemStack.Count - 1];
+            CSGTreeNode[] children         = currentStackItem.children;
 
-			while (currentStackItem.index < currentStackItem.count)
-			{
-				int i = currentStackItem.index;
-				currentStackItem.index++;
+            while(currentStackItem.index < currentStackItem.count)
+            {
+                int i = currentStackItem.index;
+                currentStackItem.index++;
 
-				var nodeID = children[i].NodeID;
-				bool isOpen;
-				if (!openNodes.TryGetValue(nodeID, out isOpen))
-				{
-					isOpen = true;
-					openNodes[nodeID] = true;
-				}
-				if (isOpen)
-				{
-					var childCount = children[i].Count;
-					if (childCount > 0)
-					{
-						totalCount += childCount;
-						itemStack.Add(new StackItem(children[i].ChildrenToArray()));
-						goto ContinueOnNextStackItem;
-					}
-				}
-			}
-			itemStack.RemoveAt(itemStack.Count - 1);
-			goto ContinueOnNextStackItem;
-		}
+                int nodeID = children[i].NodeID;
 
-		static void AddFoldOuts(ref Rect itemRect, ref Rect visibleArea, CSGTreeNode[] hierarchyItems, HashSet<int> selectedInstanceIDs, ref Dictionary<int, bool> openNodes)
-		{
-			if (hierarchyItems == null || hierarchyItems.Length == 0)
-				return;
+                if(!openNodes.TryGetValue(nodeID, out bool isOpen))
+                {
+                    isOpen            = true;
+                    openNodes[nodeID] = true;
+                }
 
-			var defaultColor = GUI.color;
-			AddFoldOuts(ref itemRect, ref visibleArea, hierarchyItems, selectedInstanceIDs, defaultColor, ref openNodes);
-			GUI.color = defaultColor;
-		}
+                if(isOpen)
+                {
+                    int childCount = children[i].Count;
 
-		static string NameForCoreNode(CSGTreeNode coreNode)
-		{
-			var userID = coreNode.UserID;
-			var nodeID = coreNode.NodeID;
-			var obj = (userID != 0) ? EditorUtility.InstanceIDToObject(userID) : null;
-			if (obj == null)
-				return string.Format("<unknown> [{0}:{1}]", (nodeID-1), userID);
-			return obj.name + string.Format(" [{0}:{1}]", (nodeID-1), userID);
-		}
+                    if(childCount > 0)
+                    {
+                        totalCount += childCount;
+                        itemStack.Add(new StackItem(children[i].ChildrenToArray()));
 
-		static void AddFoldOuts(ref Rect itemRect, ref Rect visibleArea, CSGTreeNode[] hierarchyItems, HashSet<int> selectedInstanceIDs, Color defaultColor, ref Dictionary<int, bool> openNodes)
-		{
-			if (hierarchyItems == null)
-				return;
-			itemStack.Add(new StackItem(hierarchyItems, itemRect.x));
+                        goto ContinueOnNextStackItem;
+                    }
+                }
+            }
 
-			ContinueOnNextStackItem:
-			if (itemStack.Count == 0)
-				return;
+            itemStack.RemoveAt(itemStack.Count - 1);
 
-			float kItemHeight = EditorGUIUtility.singleLineHeight;
+            goto ContinueOnNextStackItem;
+        }
 
-			var currentStackItem = itemStack[itemStack.Count - 1];
-			var children = currentStackItem.children;
-			itemRect.x = currentStackItem.xpos;
-			while (currentStackItem.index < currentStackItem.count)
-			{
-				int i = currentStackItem.index;
-				currentStackItem.index++;
-				if (itemRect.y > visibleArea.yMax)
-					return;
+        private static void AddFoldOuts(
+            ref Rect itemRect, ref Rect visibleArea, CSGTreeNode[] hierarchyItems, HashSet<int> selectedInstanceIDs
+          , ref Dictionary<int, bool> openNodes
+        )
+        {
+            if(hierarchyItems == null || hierarchyItems.Length == 0)
+            {
+                return;
+            }
 
-				var nodeID = children[i].NodeID;
-				var userID = children[i].UserID;
-				var childCount = children[i].Count;
-				if (itemRect.y > visibleArea.yMin)
-				{
-					var name = NameForCoreNode(children[i]);
-					var selected = selectedInstanceIDs.Contains(userID);
-					var style = (childCount > 0) ? 
-										(selected ? styles.foldOutSelected : styles.foldOut) : 
-										(selected ? styles.emptySelected : styles.emptyItem);
+            Color defaultColor = GUI.color;
 
-					EditorGUI.BeginChangeCheck();
+            AddFoldOuts(
+                ref itemRect, ref visibleArea, hierarchyItems, selectedInstanceIDs, defaultColor, ref openNodes
+            );
 
-					bool isOpen;
-					if (!openNodes.TryGetValue(nodeID, out isOpen))
-						openNodes[nodeID] = false;
+            GUI.color = defaultColor;
+        }
 
-					openNodes[nodeID] = EditorGUI.Foldout(itemRect, isOpen, name, true, style);
-					if (EditorGUI.EndChangeCheck())
-					{
-						var obj = EditorUtility.InstanceIDToObject(userID);
-						if (!(obj is GameObject))
-						{
-							var mono = (obj as MonoBehaviour);
-							if (mono)
-								userID = mono.gameObject.GetInstanceID();
-						}
-						Selection.instanceIDs = new[] { userID };
-					}
-				}
-				itemRect.y += kItemHeight;
+        private static string NameForCoreNode(CSGTreeNode coreNode)
+        {
+            int    userID = coreNode.UserID;
+            int    nodeID = coreNode.NodeID;
+            Object obj    = userID != 0 ? EditorUtility.InstanceIDToObject(userID) : null;
 
-				if (openNodes[nodeID])
-				{
-					if (childCount > 0)
-					{
-						itemStack.Add(new StackItem(children[i].ChildrenToArray(), itemRect.x + kItemIndent));
-						goto ContinueOnNextStackItem;
-					}
-				}
-			}
-			itemStack.RemoveAt(itemStack.Count - 1);
-			goto ContinueOnNextStackItem;
-		}
+            if(obj == null)
+            {
+                return $"<unknown> [{(nodeID - 1)}:{userID}]";
+            }
 
+            return $"{obj.name} [{(nodeID - 1)}:{userID}]";
+        }
 
-		void OnGUI()
-		{
-			if (styles == null)
-				UpdateStyles();
+        private static void AddFoldOuts(
+            ref Rect itemRect, ref Rect visibleArea, CSGTreeNode[] hierarchyItems, HashSet<int> selectedInstanceIDs
+          , Color defaultColor, ref Dictionary<int, bool> openNodes
+        )
+        {
+            if(hierarchyItems == null)
+            {
+                return;
+            }
 
-			var selectedInstanceIDs = new HashSet<int>();
-			foreach(var instanceID in Selection.instanceIDs)
-			{
-				var obj = EditorUtility.InstanceIDToObject(instanceID);
-				var go = obj as GameObject;
-				if (go != null)
-				{
-					foreach(var no in go.GetComponents<CSGNode>())
-					{
-						var instanceID_ = no.GetInstanceID();
-						selectedInstanceIDs.Add(instanceID_);
-					}
-				}
-			}
+            itemStack.Add(new StackItem(hierarchyItems, itemRect.x));
 
+            ContinueOnNextStackItem:
 
-			float kItemHeight = EditorGUIUtility.singleLineHeight;
-			
-			var allNodes = CSGManager.AllTreeNodes;
-			var allRootNodeList = new List<CSGTreeNode>();
-			for (int i = 0; i < allNodes.Length;i++)
-			{
-				if (allNodes[i].Type != CSGNodeType.Tree && 
-					(allNodes[i].Tree .Valid || allNodes[i].Parent.Valid))
-					continue;
-				
-				allRootNodeList.Add(allNodes[i]);
-			}
+            if(itemStack.Count == 0)
+            {
+                return;
+            }
 
-			var allRootNodes = allRootNodeList.ToArray();
+            float kItemHeight = EditorGUIUtility.singleLineHeight;
 
-			var totalCount = GetVisibleItems(allRootNodes, ref openNodes);
+            StackItem     currentStackItem = itemStack[itemStack.Count - 1];
+            CSGTreeNode[] children         = currentStackItem.children;
+            itemRect.x = currentStackItem.xpos;
 
-			var itemArea = position;
-			itemArea.x = 0;
-			itemArea.y = 0;
-			itemArea.height -= 200;
+            while(currentStackItem.index < currentStackItem.count)
+            {
+                int i = currentStackItem.index;
+                currentStackItem.index++;
 
-			var totalRect = position;
-			totalRect.x = 0;
-			totalRect.y = 0;
-			totalRect.width = position.width - kScrollWidth;
-			totalRect.height = (totalCount * kItemHeight) + (2 * kPadding);
+                if(itemRect.y > visibleArea.yMax)
+                {
+                    return;
+                }
 
-			var itemRect = position;
-			itemRect.x = 0;
-			itemRect.y = kPadding;
-			itemRect.height = kItemHeight;
+                int nodeID     = children[i].NodeID;
+                int userID     = children[i].UserID;
+                int childCount = children[i].Count;
 
-			m_ScrollPos = GUI.BeginScrollView(itemArea, m_ScrollPos, totalRect);
-			{
-				Rect visibleArea = itemArea;
-				visibleArea.x += m_ScrollPos.x;
-				visibleArea.y += m_ScrollPos.y;
-				
-				AddFoldOuts(ref itemRect, ref visibleArea, allRootNodes, selectedInstanceIDs, ref openNodes);
-			}
-			GUI.EndScrollView();
-			if (selectedInstanceIDs.Count == 1)
-			{
-				var obj = EditorUtility.InstanceIDToObject(selectedInstanceIDs.First()) as CSGNode;
-				if (obj)
-				{ 
-					var brush = obj as CSGBrush;
-					var operation = obj as CSGOperation;
-					var model = obj as CSGModel;
-					int nodeID = CSGNode.InvalidNodeID;
-					if (brush) nodeID = brush.brushNodeID;
-					if (operation) nodeID = operation.operationNodeID;
-					if (model) nodeID = model.modelNodeID;
+                if(itemRect.y > visibleArea.yMin)
+                {
+                    string name     = NameForCoreNode(children[i]);
+                    bool   selected = selectedInstanceIDs.Contains(userID);
 
-					if (nodeID != CSGNode.InvalidNodeID)
-					{
-						var labelArea = itemArea;
-						labelArea.x = 0;
-						labelArea.y = labelArea.height;
-						labelArea.height = kItemHeight;
-						CSGTreeNode node = new CSGTreeNode { nodeID = nodeID };
-						GUI.Label(labelArea, "NodeID: " + nodeID); labelArea.y += kItemHeight;
-						GUI.Label(labelArea, "UserID: " + node.UserID); labelArea.y += kItemHeight;
-						GUI.Label(labelArea, "Valid: " + node.Valid); labelArea.y += kItemHeight;
-						GUI.Label(labelArea, "NodeType: " + node.Type); labelArea.y += kItemHeight;
-						GUI.Label(labelArea, "ChildCount: " + node.Count); labelArea.y += kItemHeight;
-						var nodeType = node.Type;
-						if (nodeType != CSGNodeType.Tree)
-						{ 
-							GUI.Label(labelArea, "Parent: " + node.Parent.NodeID + " valid " + node.Parent.Valid); labelArea.y
- += kItemHeight;
-							GUI.Label(labelArea, "Model: " + node.Tree.NodeID + " valid " + node.Tree.Valid); labelArea.y
- += kItemHeight;
+                    GUIStyle style = (childCount > 0)
+                        ? (selected ? m_Styles.foldOutSelected : m_Styles.foldOut)
+                        : (selected ? m_Styles.emptySelected : m_Styles.emptyItem);
 
-							if (nodeType == CSGNodeType.Brush)
-							{
-								CSGOperationType op = ((CSGTreeBrush)node).Operation;
-								GUI.Label(labelArea, "Operation: " + op.ToString()); labelArea.y += kItemHeight;
-							} else 
-							if (nodeType == CSGNodeType.Branch)
-							{
-								CSGOperationType op = ((CSGTreeBranch)node).Operation;
-								GUI.Label(labelArea, "Operation: " + op.ToString()); labelArea.y += kItemHeight;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-#endif
+                    EditorGUI.BeginChangeCheck();
+
+                    bool isOpen;
+
+                    if(!openNodes.TryGetValue(nodeID, out isOpen))
+                    {
+                        openNodes[nodeID] = false;
+                    }
+
+                    openNodes[nodeID] = EditorGUI.Foldout(itemRect, isOpen, name, true, style);
+
+                    if(EditorGUI.EndChangeCheck())
+                    {
+                        Object obj = EditorUtility.InstanceIDToObject(userID);
+
+                        if(!(obj is GameObject))
+                        {
+                            MonoBehaviour mono = (obj as MonoBehaviour);
+
+                            if(mono)
+                            {
+                                userID = mono.gameObject.GetInstanceID();
+                            }
+                        }
+
+                        Selection.instanceIDs = new[] { userID };
+                    }
+                }
+
+                itemRect.y += kItemHeight;
+
+                if(openNodes[nodeID])
+                {
+                    if(childCount > 0)
+                    {
+                        itemStack.Add(new StackItem(children[i].ChildrenToArray(), itemRect.x + ITEM_INDENT));
+
+                        goto ContinueOnNextStackItem;
+                    }
+                }
+            }
+
+            itemStack.RemoveAt(itemStack.Count - 1);
+
+            goto ContinueOnNextStackItem;
+        }
+
+        private void OnGUI()
+        {
+            if(m_Styles == null)
+            {
+                UpdateStyles();
+            }
+
+            HashSet<int> selectedInstanceIDs = new HashSet<int>();
+
+            foreach(int instanceID in Selection.instanceIDs)
+            {
+                Object     obj = EditorUtility.InstanceIDToObject(instanceID);
+                GameObject go  = obj as GameObject;
+
+                if(go != null)
+                {
+                    foreach(CSGNode no in go.GetComponents<CSGNode>())
+                    {
+                        int id = no.GetInstanceID();
+                        selectedInstanceIDs.Add(id);
+                    }
+                }
+            }
+
+            float kItemHeight = EditorGUIUtility.singleLineHeight;
+
+            CSGTreeNode[]     allNodes        = CSGManager.AllTreeNodes;
+            List<CSGTreeNode> allRootNodeList = new List<CSGTreeNode>();
+
+            for(int i = 0; i < allNodes.Length; i++)
+            {
+                if(allNodes[i].Type != CSGNodeType.Tree &&
+                   (allNodes[i].Tree.Valid || allNodes[i].Parent.Valid))
+                {
+                    continue;
+                }
+
+                allRootNodeList.Add(allNodes[i]);
+            }
+
+            CSGTreeNode[] allRootNodes = allRootNodeList.ToArray();
+
+            int totalCount = GetVisibleItems(allRootNodes, ref _openNodes);
+
+            Rect itemArea = position;
+            itemArea.x      =  0;
+            itemArea.y      =  0;
+            itemArea.height -= 200;
+
+            Rect totalRect = position;
+            totalRect.x      = 0;
+            totalRect.y      = 0;
+            totalRect.width  = position.width - SCROLL_WIDTH;
+            totalRect.height = (totalCount * kItemHeight) + (2 * PADDING);
+
+            Rect itemRect = position;
+            itemRect.x      = 0;
+            itemRect.y      = PADDING;
+            itemRect.height = kItemHeight;
+
+            m_ScrollPos = GUI.BeginScrollView(itemArea, m_ScrollPos, totalRect);
+
+            {
+                Rect visibleArea = itemArea;
+                visibleArea.x += m_ScrollPos.x;
+                visibleArea.y += m_ScrollPos.y;
+
+                AddFoldOuts(ref itemRect, ref visibleArea, allRootNodes, selectedInstanceIDs, ref _openNodes);
+            }
+
+            GUI.EndScrollView();
+
+            if(selectedInstanceIDs.Count == 1)
+            {
+                CSGNode obj = EditorUtility.InstanceIDToObject(selectedInstanceIDs.First()) as CSGNode;
+
+                if(obj)
+                {
+                    CSGBrush     brush     = obj as CSGBrush;
+                    CSGOperation operation = obj as CSGOperation;
+                    CSGModel     model     = obj as CSGModel;
+                    int          nodeID    = CSGNode.InvalidNodeID;
+
+                    if(brush)
+                    {
+                        nodeID = brush.brushNodeID;
+                    }
+
+                    if(operation)
+                    {
+                        nodeID = operation.operationNodeID;
+                    }
+
+                    if(model)
+                    {
+                        nodeID = model.modelNodeID;
+                    }
+
+                    if(nodeID != CSGNode.InvalidNodeID)
+                    {
+                        Rect labelArea = itemArea;
+                        labelArea.x      = 0;
+                        labelArea.y      = labelArea.height;
+                        labelArea.height = kItemHeight;
+                        CSGTreeNode node = new CSGTreeNode { nodeID = nodeID };
+                        GUI.Label(labelArea, $"NodeID: {nodeID}");
+                        labelArea.y += kItemHeight;
+                        GUI.Label(labelArea, $"UserID: {node.UserID}");
+                        labelArea.y += kItemHeight;
+                        GUI.Label(labelArea, $"Valid: {node.Valid}");
+                        labelArea.y += kItemHeight;
+                        GUI.Label(labelArea, $"NodeType: {node.Type}");
+                        labelArea.y += kItemHeight;
+                        GUI.Label(labelArea, $"ChildCount: {node.Count}");
+                        labelArea.y += kItemHeight;
+                        CSGNodeType nodeType = node.Type;
+
+                        if(nodeType != CSGNodeType.Tree)
+                        {
+                            GUI.Label(labelArea, $"Parent: {node.Parent.NodeID} valid {node.Parent.Valid}");
+
+                            labelArea.y += kItemHeight;
+
+                            GUI.Label(labelArea, $"Model: {node.Tree.NodeID} valid {node.Tree.Valid}");
+
+                            labelArea.y += kItemHeight;
+
+                            if(nodeType == CSGNodeType.Brush)
+                            {
+                                CSGOperationType op = ((CSGTreeBrush)node).Operation;
+                                GUI.Label(labelArea, $"Operation: {op}");
+                                labelArea.y += kItemHeight;
+                            }
+                            else if(nodeType == CSGNodeType.Branch)
+                            {
+                                CSGOperationType op = ((CSGTreeBranch)node).Operation;
+                                GUI.Label(labelArea, $"Operation: {op}");
+                                labelArea.y += kItemHeight;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+#endif

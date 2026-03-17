@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RealtimeCSG;
 using RealtimeCSG.Components;
 
@@ -6,14 +7,14 @@ namespace InternalRealtimeCSG
 {
     internal class BrushOutlineManager
     {
-        private static readonly Dictionary<int, GeometryWireframe> OutlineCache =
+        private static readonly Dictionary<int, GeometryWireframe> outlineCache =
             new Dictionary<int, GeometryWireframe>();
 
 #region ClearOutlines
 
         public static void ClearOutlines()
         {
-            OutlineCache.Clear();
+            outlineCache.Clear();
         }
 
 #endregion
@@ -23,15 +24,14 @@ namespace InternalRealtimeCSG
         public static void ForceUpdateOutlines(int brushNodeId)
         {
             ulong externalOutlineGeneration = InternalCSGModelManager.External.getBrushOutlineGeneration(brushNodeId);
-            GeometryWireframe outline = new GeometryWireframe();
 
-            if(!InternalCSGModelManager.External.getBrushOutline(brushNodeId, out outline))
+            if(!InternalCSGModelManager.External.getBrushOutline(brushNodeId, out GeometryWireframe outline))
             {
                 return;
             }
 
             outline.outlineGeneration = externalOutlineGeneration;
-            OutlineCache[brushNodeId] = outline;
+            outlineCache[brushNodeId] = outline;
         }
 
 #endregion
@@ -47,28 +47,25 @@ namespace InternalRealtimeCSG
 
             ulong externalOutlineGeneration = InternalCSGModelManager.External.getBrushOutlineGeneration(brushNodeId);
 
-            GeometryWireframe outline;
-
-            if(!OutlineCache.TryGetValue(brushNodeId, out outline))
+            if(!outlineCache.TryGetValue(brushNodeId, out GeometryWireframe outline))
             {
-                externalOutlineGeneration = externalOutlineGeneration - 1;
+                externalOutlineGeneration -= 1;
             }
 
-            if(outline != null &&
-               externalOutlineGeneration == outline.outlineGeneration)
+            if(outline != null && externalOutlineGeneration == outline.outlineGeneration)
             {
                 return outline;
             }
-
-            outline = new GeometryWireframe();
 
             if(!InternalCSGModelManager.External.getBrushOutline(brushNodeId, out outline))
             {
                 return null;
             }
 
+            outline = new GeometryWireframe();
+
             outline.outlineGeneration = externalOutlineGeneration;
-            OutlineCache[brushNodeId] = outline;
+            outlineCache[brushNodeId] = outline;
 
             return outline;
         }
@@ -91,11 +88,9 @@ namespace InternalRealtimeCSG
                 ulong externalOutlineGeneration =
                     InternalCSGModelManager.External.getBrushOutlineGeneration(brushNodeId);
 
-                GeometryWireframe outline;
-
-                if(!OutlineCache.TryGetValue(brushNodeId, out outline))
+                if(!outlineCache.TryGetValue(brushNodeId, out GeometryWireframe outline))
                 {
-                    externalOutlineGeneration = externalOutlineGeneration - 1;
+                    externalOutlineGeneration -= 1;
                 }
 
                 if(outline == null ||
@@ -108,7 +103,7 @@ namespace InternalRealtimeCSG
                     else
                     {
                         outline.outlineGeneration = externalOutlineGeneration;
-                        OutlineCache[brushNodeId] = outline;
+                        outlineCache[brushNodeId] = outline;
                     }
                 }
 
@@ -126,7 +121,7 @@ namespace InternalRealtimeCSG
         {
             if(selectedSurfaces == null || selectedSurfaces.Length == 0)
             {
-                return new GeometryWireframe[0];
+                return Array.Empty<GeometryWireframe>();
             }
 
             GeometryWireframe[] wireframes = new GeometryWireframe[selectedSurfaces.Length];
@@ -145,12 +140,10 @@ namespace InternalRealtimeCSG
                 int brushNodeId  = brush.brushNodeID;
                 int surfaceIndex = selectedSurfaces[i].surfaceIndex;
 
-                GeometryWireframe outline;
-
                 if(!InternalCSGModelManager.External.getSurfaceOutline(
                        brushNodeId,
                        surfaceIndex,
-                       out outline
+                       out GeometryWireframe outline
                    ))
                 {
                     outline = null;

@@ -1,18 +1,18 @@
 ﻿using System;
-using UnityEditor;
-using UnityEngine;
 using InternalRealtimeCSG;
 using RealtimeCSG.Legacy;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
     [Serializable]
     internal sealed class GeneratorBoxSettings : IShapeSettings
     {
-        public Vector3[] backupVertices = new Vector3[0];
-        public Vector3[] vertices = new Vector3[0];
-        public int[] vertexIDs = new int[0];
-        public bool[] onGeometryVertices = new bool[0];
+        public Vector3[] backupVertices = Array.Empty<Vector3>();
+        public Vector3[] vertices = Array.Empty<Vector3>();
+        public int[] vertexIDs = Array.Empty<int>();
+        public bool[] onGeometryVertices = Array.Empty<bool>();
 
         public void AddPoint(Vector3 position)
         {
@@ -21,8 +21,8 @@ namespace RealtimeCSG
 
         public void Reset()
         {
-            backupVertices = new Vector3[0];
-            vertices       = new Vector3[0];
+            backupVertices = Array.Empty<Vector3>();
+            vertices       = Array.Empty<Vector3>();
         }
 
         public void CopyBackupVertices()
@@ -46,21 +46,21 @@ namespace RealtimeCSG
                 return vertices;
             }
 
-            Vector3 corner0          = vertices[0];
-            Vector3 corner1          = vertices.Length == 2 ? vertices[1] : worldPosition;
-            Vector3 delta            = corner1 - corner0;
-            Vector3 projected_width  = Vector3.Project(delta, gridTangent);
-            Vector3 projected_length = Vector3.Project(delta, gridBinormal);
+            Vector3 corner0         = vertices[0];
+            Vector3 corner1         = vertices.Length == 2 ? vertices[1] : worldPosition;
+            Vector3 delta           = corner1 - corner0;
+            Vector3 projectedWidth  = Vector3.Project(delta, gridTangent);
+            Vector3 projectedLength = Vector3.Project(delta, gridBinormal);
 
-            isValid = projected_width.magnitude > MathConstants.EqualityEpsilon &&
-                projected_length.magnitude > MathConstants.EqualityEpsilon;
+            isValid = projectedWidth.magnitude > MathConstants.EqualityEpsilon &&
+                projectedLength.magnitude > MathConstants.EqualityEpsilon;
 
-            return new Vector3[]
+            return new[]
             {
                 GeometryUtility.ProjectPointOnPlane(buildPlane, corner0)
-              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projected_length)
-              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projected_width + projected_length)
-              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projected_width)
+              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedLength)
+              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedWidth + projectedLength)
+              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedWidth)
             };
         }
 
@@ -76,18 +76,18 @@ namespace RealtimeCSG
 
             if(vertices != null && vertices.Length == 2)
             {
-                Vector3 center           = vertices[0];
-                Vector3 corner           = vertices[1];
-                Vector3 delta            = corner - center;
-                Vector3 projected_width  = Vector3.Project(delta, gridTangent);
-                Vector3 projected_length = Vector3.Project(delta, gridBinormal);
+                Vector3 center          = vertices[0];
+                Vector3 corner          = vertices[1];
+                Vector3 delta           = corner - center;
+                Vector3 projectedWidth  = Vector3.Project(delta, gridTangent);
+                Vector3 projectedLength = Vector3.Project(delta, gridBinormal);
 
                 Vector3 min = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
                 Vector3 max = new Vector3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
 
                 Vector3 point0 = rotation * center;
-                Vector3 point1 = rotation * (center + projected_width);
-                Vector3 point2 = rotation * (center + projected_length);
+                Vector3 point1 = rotation * (center + projectedWidth);
+                Vector3 point2 = rotation * (center + projectedLength);
                 Vector3 point3 = rotation * corner;
 
                 min.x = Mathf.Min(min.x, point0.x);

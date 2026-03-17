@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using RealtimeCSG.Foundation;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace RealtimeCSG
 {
-    internal static class CSG_EditorGUIUtility
+    internal static class CSGEditorGUIUtility
     {
         public static bool PassThroughButton(bool passThrough, bool mixedValues)
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
 
-            CSG_Skin rcsgSkin = CSG_GUIStyleUtility.Skin;
+            CSGSkin rcsgSkin = CsgguiStyleUtility.Skin;
             Color    oldColor = GUI.color;
             GUI.color = Color.white;
 
@@ -26,12 +27,12 @@ namespace RealtimeCSG
                 if(!mixedValues && GUI.enabled && passThrough)
                 {
                     content = rcsgSkin.passThroughOn;
-                    style   = CSG_GUIStyleUtility.selectedIconLabelStyle;
+                    style   = CsgguiStyleUtility.SelectedIconLabelStyle;
                 }
                 else
                 {
                     content = rcsgSkin.passThrough;
-                    style   = CSG_GUIStyleUtility.unselectedIconLabelStyle;
+                    style   = CsgguiStyleUtility.UnselectedIconLabelStyle;
                 }
 
                 if(GUILayout.Button(content, style))
@@ -39,7 +40,7 @@ namespace RealtimeCSG
                     pressed = true;
                 }
 
-                TooltipUtility.SetToolTip(CSG_GUIStyleUtility.passThroughTooltip);
+                TooltipUtility.SetToolTip(CsgguiStyleUtility.passThroughTooltip);
             }
 
             GUILayout.EndVertical();
@@ -49,13 +50,11 @@ namespace RealtimeCSG
             return pressed;
         }
 
-        public static Foundation.CSGOperationType ChooseOperation(
-            Foundation.CSGOperationType operation, bool mixedValues
-        )
+        public static CSGOperationType ChooseOperation(CSGOperationType operation, bool mixedValues)
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
 
-            CSG_Skin rcsgSkin = CSG_GUIStyleUtility.Skin;
+            CSGSkin rcsgSkin = CsgguiStyleUtility.Skin;
 
             if(rcsgSkin == null)
             {
@@ -69,21 +68,23 @@ namespace RealtimeCSG
 
             try
             {
-                GUIContent content;
-                GUIStyle   style;
-                bool       have_selection = !mixedValues && GUI.enabled;
+                bool haveSelection = !mixedValues && GUI.enabled;
 
-                for(int i = 0; i < CSG_GUIStyleUtility.operationTypeCount; i++)
+                for(int i = 0; i < CsgguiStyleUtility.OPERATION_TYPE_COUNT; i++)
                 {
-                    if(!have_selection || (int)operation != i)
+                    GUIContent content;
+
+                    GUIStyle style;
+
+                    if(!haveSelection || (int)operation != i)
                     {
                         content = rcsgSkin.operationNames[i];
-                        style   = CSG_GUIStyleUtility.unselectedIconLabelStyle;
+                        style   = CsgguiStyleUtility.UnselectedIconLabelStyle;
                     }
                     else
                     {
                         content = rcsgSkin.operationNamesOn[i];
-                        style   = CSG_GUIStyleUtility.selectedIconLabelStyle;
+                        style   = CsgguiStyleUtility.SelectedIconLabelStyle;
                     }
 
                     if(content == null || style == null)
@@ -93,11 +94,11 @@ namespace RealtimeCSG
 
                     if(GUILayout.Button(content, style))
                     {
-                        operation   = (Foundation.CSGOperationType)i;
+                        operation   = (CSGOperationType)i;
                         GUI.changed = true;
                     }
 
-                    TooltipUtility.SetToolTip(CSG_GUIStyleUtility.operationTooltip[i]);
+                    TooltipUtility.SetToolTip(CsgguiStyleUtility.operationTooltip[i]);
                 }
             }
             finally
@@ -122,8 +123,7 @@ namespace RealtimeCSG
 
             Rect position = new Rect();
 
-            if(rects == null ||
-               rects.Length != contents.Length)
+            if(rects == null || rects.Length != contents.Length)
             {
                 rects = new Rect[contents.Length];
             }
@@ -152,7 +152,7 @@ namespace RealtimeCSG
                 float      countValue     = Mathf.Clamp(screenWidth / minButtonWidth, 1, contents.Length);
                 xCount = Mathf.FloorToInt(countValue);
 
-                float realButtonWidth = (float)(screenWidth / xCount);
+                float realButtonWidth = screenWidth / xCount;
 
                 if(xCount == contents.Length)
                 {
@@ -208,8 +208,7 @@ namespace RealtimeCSG
                 areaWidth = EditorGUIUtility.currentViewWidth;
             }
 
-            int xCount;
-            CalcSize(ref rects, out bounds, out xCount, contents, yOffset, areaWidth);
+            CalcSize(ref rects, out bounds, out int xCount, contents, yOffset, areaWidth);
 
             GUIStyle leftStyle   = EditorStyles.miniButtonLeft;
             GUIStyle middleStyle = EditorStyles.miniButtonMid;
@@ -226,7 +225,7 @@ namespace RealtimeCSG
                 {
                     GUIStyle style = x > 0 ? x < last ? middleStyle : rightStyle : x < last ? leftStyle : singleStyle;
 
-                    if(GUI.Toggle(rects[count], selected == count, contents[count], style)) //, buttonWidthLayout))
+                    if(GUI.Toggle(rects[count], selected == count, contents[count], style))
                     {
                         if(selected != count)
                         {
@@ -252,21 +251,20 @@ namespace RealtimeCSG
             return selected;
         }
 
-        internal const int materialSmallSize = 48;
-        internal const int materialLargeSize = 100;
+        internal const int MATERIAL_SMALL_SIZE = 48;
+        internal const int MATERIAL_LARGE_SIZE = 100;
 
         [NonSerialized]
-        private static MaterialEditor materialEditor = null;
+        private static MaterialEditor m_MaterialEditor;
 
-        private static readonly GUILayoutOption materialSmallWidth = GUILayout.Width(materialSmallSize);
-        private static readonly GUILayoutOption materialSmallHeight = GUILayout.Height(materialSmallSize);
-        private static readonly GUILayoutOption materialLargeWidth = GUILayout.Width(materialLargeSize);
-        private static readonly GUILayoutOption materialLargeHeight = GUILayout.Height(materialLargeSize);
+        private static readonly GUILayoutOption materialSmallWidth = GUILayout.Width(MATERIAL_SMALL_SIZE);
+        private static readonly GUILayoutOption materialSmallHeight = GUILayout.Height(MATERIAL_SMALL_SIZE);
+        private static readonly GUILayoutOption materialLargeWidth = GUILayout.Width(MATERIAL_LARGE_SIZE);
+        private static readonly GUILayoutOption materialLargeHeight = GUILayout.Height(MATERIAL_LARGE_SIZE);
 
         private static Material GetDragMaterial()
         {
-            if(DragAndDrop.objectReferences != null &&
-               DragAndDrop.objectReferences.Length > 0)
+            if(DragAndDrop.objectReferences != null && DragAndDrop.objectReferences.Length > 0)
             {
                 List<Material> dragMaterials = new List<Material>();
 
@@ -299,31 +297,27 @@ namespace RealtimeCSG
             GUILayoutOption width  = small ? materialSmallWidth : materialLargeWidth;
             GUILayoutOption height = small ? materialSmallHeight : materialLargeHeight;
 
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.emptyMaterialStyle, width, height);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.EmptyMaterialStyle, width, height);
 
             {
-                //if (!materialEditor || prevMaterial != material)
-                {
-                    Editor editor = materialEditor as Editor;
-                    Editor.CreateCachedEditor(material, typeof(MaterialEditor), ref editor);
-                    materialEditor = editor as MaterialEditor;
-                    //prevMaterial = material; 
-                }
+                Editor editor = m_MaterialEditor;
+                Editor.CreateCachedEditor(material, typeof(MaterialEditor), ref editor);
+                m_MaterialEditor = editor as MaterialEditor;
 
-                if(materialEditor)
+                if(m_MaterialEditor)
                 {
                     Rect rect = GUILayoutUtility.GetRect(
-                        small ? materialSmallSize : materialLargeSize,
-                        small ? materialSmallSize : materialLargeSize
+                        small ? MATERIAL_SMALL_SIZE : MATERIAL_LARGE_SIZE,
+                        small ? MATERIAL_SMALL_SIZE : MATERIAL_LARGE_SIZE
                     );
 
                     EditorGUI.showMixedValue = showMixedValue;
-                    materialEditor.OnPreviewGUI(rect, GUIStyle.none);
+                    m_MaterialEditor.OnPreviewGUI(rect, GUIStyle.none);
                     EditorGUI.showMixedValue = false;
                 }
                 else
                 {
-                    GUILayout.Box(new GUIContent(), CSG_GUIStyleUtility.emptyMaterialStyle, width, height);
+                    GUILayout.Box(new GUIContent(), CsgguiStyleUtility.EmptyMaterialStyle, width, height);
                 }
             }
 
@@ -343,11 +337,11 @@ namespace RealtimeCSG
 
                 if(Event.current.type == EventType.DragPerform)
                 {
-                    Material new_material = GetDragMaterial();
+                    Material newMaterial = GetDragMaterial();
 
-                    if(new_material != null)
+                    if(newMaterial != null)
                     {
-                        material    = new_material;
+                        material    = newMaterial;
                         GUI.changed = true;
                         Event.current.Use();
 
@@ -364,51 +358,14 @@ namespace RealtimeCSG
             SceneView.RepaintAll();
         }
 
-        private static readonly GUIContent VectorXContent = new GUIContent("X");
-        private static readonly GUIContent VectorYContent = new GUIContent("Y");
-        private static readonly GUIContent VectorZContent = new GUIContent("Z");
+        private static readonly GUIContent vectorXContent = new GUIContent("X");
+        private static readonly GUIContent vectorYContent = new GUIContent("Y");
+        private static readonly GUIContent vectorZContent = new GUIContent("Z");
 
-        private static readonly float Width22Value = 22;
-        private static readonly GUILayoutOption Width22 = GUILayout.Width(Width22Value);
+        private const float WIDTH_22_VALUE = 22;
+        private static readonly GUILayoutOption width22 = GUILayout.Width(WIDTH_22_VALUE);
 
-        public static float DistanceField(GUIContent label, float value, GUILayoutOption[] options = null)
-        {
-            bool         modified     = false;
-            DistanceUnit distanceUnit = CSGSettings.DistanceUnit;
-            DistanceUnit nextUnit     = Units.CycleToNextUnit(distanceUnit);
-            GUIContent   unitText     = Units.GetUnitGUIContent(distanceUnit);
-
-            float realValue = value;
-            EditorGUI.BeginChangeCheck();
-
-            {
-                value = Units.DistanceUnitToUnity(
-                    distanceUnit
-                  , EditorGUILayout.DoubleField(label, Units.UnityToDistanceUnit(distanceUnit, value), options)
-                );
-            }
-
-            if(EditorGUI.EndChangeCheck())
-            {
-                realValue = value; // don't want to introduce math errors unless we actually modify something
-                modified  = true;
-            }
-
-            if(GUILayout.Button(unitText, EditorStyles.miniLabel, Width22))
-            {
-                distanceUnit             = nextUnit;
-                CSGSettings.DistanceUnit = distanceUnit;
-                CSGSettings.UpdateSnapSettings();
-                CSGSettings.Save();
-                RepaintAll();
-            }
-
-            GUI.changed = modified;
-
-            return realValue;
-        }
-
-        private static GUIContent angleUnitLabel = new GUIContent("°");
+        private static readonly GUIContent angleUnitLabel = new GUIContent("°");
 
         public static Vector3 EulerDegreeField(Vector3 value, GUILayoutOption[] options = null)
         {
@@ -420,85 +377,49 @@ namespace RealtimeCSG
             EditorGUIUtility.labelWidth = vectorLabelWidth;
             GUILayout.BeginHorizontal();
 
+            EditorGUI.BeginChangeCheck();
+
             {
-                EditorGUI.BeginChangeCheck();
-
-                {
-                    value.x = EditorGUILayout.FloatField(VectorXContent, value.x, options);
-                }
-
-                if(EditorGUI.EndChangeCheck())
-                {
-                    realValue.x = value.x; // don't want to introduce math errors unless we actually modify something
-                    modified    = true;
-                }
-
-                EditorGUI.BeginChangeCheck();
-
-                {
-                    value.y = EditorGUILayout.FloatField(VectorYContent, value.y, options);
-                }
-
-                if(EditorGUI.EndChangeCheck())
-                {
-                    realValue.y = value.y; // don't want to introduce math errors unless we actually modify something
-                    modified    = true;
-                }
-
-                EditorGUI.BeginChangeCheck();
-
-                {
-                    value.z = EditorGUILayout.FloatField(VectorZContent, value.z, options);
-                }
-
-                if(EditorGUI.EndChangeCheck())
-                {
-                    realValue.z = value.z; // don't want to introduce math errors unless we actually modify something
-                    modified    = true;
-                }
-
-                GUILayout.Label(angleUnitLabel, EditorStyles.miniLabel, Width22);
+                value.x = EditorGUILayout.FloatField(vectorXContent, value.x, options);
             }
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                realValue.x = value.x; // don't want to introduce math errors unless we actually modify something
+                modified    = true;
+            }
+
+            EditorGUI.BeginChangeCheck();
+
+            {
+                value.y = EditorGUILayout.FloatField(vectorYContent, value.y, options);
+            }
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                realValue.y = value.y; // don't want to introduce math errors unless we actually modify something
+                modified    = true;
+            }
+
+            EditorGUI.BeginChangeCheck();
+
+            {
+                value.z = EditorGUILayout.FloatField(vectorZContent, value.z, options);
+            }
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                realValue.z = value.z; // don't want to introduce math errors unless we actually modify something
+                modified    = true;
+            }
+
+            GUILayout.Label(angleUnitLabel, EditorStyles.miniLabel, width22);
 
             GUILayout.EndHorizontal();
             EditorGUIUtility.labelWidth = originalLabelWidth;
             GUI.changed                 = modified;
 
             return realValue;
-        }
-
-        public static float DegreeField(GUIContent label, float value, GUILayoutOption[] options = null)
-        {
-            bool modified = false;
-
-            float realValue = value;
-            EditorGUI.BeginChangeCheck();
-
-            {
-                GUILayout.BeginHorizontal();
-
-                {
-                    value = EditorGUILayout.FloatField(label, value, options);
-                    GUILayout.Label(angleUnitLabel, EditorStyles.miniLabel, Width22);
-                }
-
-                GUILayout.EndHorizontal();
-            }
-
-            if(EditorGUI.EndChangeCheck())
-            {
-                realValue = value; // don't want to introduce math errors unless we actually modify something
-                modified  = true;
-            }
-
-            GUI.changed = modified;
-
-            return realValue;
-        }
-
-        public static float DegreeField(float value, GUILayoutOption[] options = null)
-        {
-            return DegreeField(GUIContent.none, value, options);
         }
 
         public static Vector3 DistanceVector3Field(Vector3 value, bool multiLine, GUILayoutOption[] options = null)
@@ -515,7 +436,7 @@ namespace RealtimeCSG
             const float minWidth         = 65;
             const float vectorLabelWidth = 12;
 
-            float allWidth = 12 * 3 + Width22Value * 3 + minWidth * 3;
+            const float allWidth = 12 * 3 + WIDTH_22_VALUE * 3 + minWidth * 3;
 
             Vector3 realValue = value;
             multiLine = multiLine || allWidth >= areaWidth;
@@ -536,7 +457,7 @@ namespace RealtimeCSG
                     value.x = Units.DistanceUnitToUnity(
                         distanceUnit
                       , EditorGUILayout.DoubleField(
-                            VectorXContent, Units.UnityToDistanceUnit(distanceUnit, value.x), options
+                            vectorXContent, Units.UnityToDistanceUnit(distanceUnit, value.x), options
                         )
                     );
                 }
@@ -550,7 +471,7 @@ namespace RealtimeCSG
                 if(multiLine)
                 {
                     clickedUnitButton =
-                        GUILayout.Button(unitText, EditorStyles.miniLabel, Width22) || clickedUnitButton;
+                        GUILayout.Button(unitText, EditorStyles.miniLabel, width22) || clickedUnitButton;
                 }
 
                 if(multiLine)
@@ -565,7 +486,7 @@ namespace RealtimeCSG
                     value.y = Units.DistanceUnitToUnity(
                         distanceUnit
                       , EditorGUILayout.DoubleField(
-                            VectorYContent, Units.UnityToDistanceUnit(distanceUnit, value.y), options
+                            vectorYContent, Units.UnityToDistanceUnit(distanceUnit, value.y), options
                         )
                     );
                 }
@@ -579,7 +500,7 @@ namespace RealtimeCSG
                 if(multiLine)
                 {
                     clickedUnitButton =
-                        GUILayout.Button(unitText, EditorStyles.miniLabel, Width22) || clickedUnitButton;
+                        GUILayout.Button(unitText, EditorStyles.miniLabel, width22) || clickedUnitButton;
                 }
 
                 if(multiLine)
@@ -594,7 +515,7 @@ namespace RealtimeCSG
                     value.z = Units.DistanceUnitToUnity(
                         distanceUnit
                       , EditorGUILayout.DoubleField(
-                            VectorZContent, Units.UnityToDistanceUnit(distanceUnit, value.z), options
+                            vectorZContent, Units.UnityToDistanceUnit(distanceUnit, value.z), options
                         )
                     );
                 }
@@ -605,7 +526,7 @@ namespace RealtimeCSG
                     modified    = true;
                 }
 
-                clickedUnitButton = GUILayout.Button(unitText, EditorStyles.miniLabel, Width22) || clickedUnitButton;
+                clickedUnitButton = GUILayout.Button(unitText, EditorStyles.miniLabel, width22) || clickedUnitButton;
             }
 
             GUILayout.EndHorizontal();

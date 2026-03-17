@@ -1,21 +1,21 @@
 ﻿using System;
+using RealtimeCSG.Legacy;
 using UnityEditor;
 using UnityEngine;
-using RealtimeCSG.Legacy;
 
 namespace RealtimeCSG
 {
     [Serializable]
     internal sealed class GeneratorSpiralStairsSettings : IShapeSettings
     {
-        public const float kMinStepDepth = 0.1f;
-        public const float kMinStepHeight = 0.1f;
-        public const int kMaxSteps = 300;
+        public const float MIN_STEP_DEPTH = 0.1f;
+        public const float MIN_STEP_HEIGHT = 0.1f;
+        public const int MAX_STEPS = 300;
 
-        public AABB bounds = new AABB();
-        public Vector3[] vertices = new Vector3[0];
-        public int[] vertexIDs = new int[0];
-        public bool[] onGeometryVertices = new bool[0];
+        public AABB bounds;
+        public Vector3[] vertices = Array.Empty<Vector3>();
+        public int[] vertexIDs = Array.Empty<int>();
+        public bool[] onGeometryVertices = Array.Empty<bool>();
 
         [SerializeField] private float stepDepth;
 
@@ -29,7 +29,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                stepDepth                          = value;
+                stepDepth = value;
+
                 CSGSettings.LinearStairsStepLength = value;
                 CSGSettings.Save();
             }
@@ -47,7 +48,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                stepHeight                         = value;
+                stepHeight = value;
+
                 CSGSettings.LinearStairsStepHeight = value;
                 CSGSettings.Save();
             }
@@ -65,7 +67,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                stairsWidth                       = value;
+                stairsWidth = value;
+
                 CSGSettings.LinearStairsStepWidth = value;
                 CSGSettings.Save();
             }
@@ -75,7 +78,7 @@ namespace RealtimeCSG
 
         public int TotalSteps
         {
-            get => Mathf.Clamp(totalSteps, 1, kMaxSteps);
+            get => Mathf.Clamp(totalSteps, 1, MAX_STEPS);
             private set
             {
                 if(totalSteps == value)
@@ -83,7 +86,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                totalSteps                         = Mathf.Clamp(value, 1, kMaxSteps);
+                totalSteps = Mathf.Clamp(value, 1, MAX_STEPS);
+
                 CSGSettings.LinearStairsTotalSteps = value;
                 CSGSettings.Save();
             }
@@ -101,7 +105,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                stairsDepth                    = value;
+                stairsDepth = value;
+
                 CSGSettings.LinearStairsLength = value;
                 CSGSettings.Save();
             }
@@ -119,7 +124,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                stairsHeight                   = value;
+                stairsHeight = value;
+
                 CSGSettings.LinearStairsHeight = value;
                 CSGSettings.Save();
             }
@@ -137,7 +143,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                extraDepth                           = value;
+                extraDepth = value;
+
                 CSGSettings.LinearStairsLengthOffset = value;
                 CSGSettings.Save();
             }
@@ -155,7 +162,8 @@ namespace RealtimeCSG
                     return;
                 }
 
-                extraHeight                          = value;
+                extraHeight = value;
+
                 CSGSettings.LinearStairsHeightOffset = value;
                 CSGSettings.Save();
             }
@@ -334,25 +342,25 @@ namespace RealtimeCSG
             float totalStepHeight  = stairsHeight - extraHeight;
             float totalStepLength  = stairsDepth - extraDepth;
             float totalHeightSteps = Mathf.Max(1, totalStepHeight / stepHeight);
-            stepDepth = Mathf.Max(kMinStepDepth, totalStepLength / totalHeightSteps);
+            stepDepth = Mathf.Max(MIN_STEP_DEPTH, totalStepLength / totalHeightSteps);
             CalcTotalSteps();
         }
 
         public void SetExtraDepth(float newLengthOffset)
         {
             CalcTotalSteps();
-            float minTotalStepLength = totalSteps * kMinStepDepth;
+            float minTotalStepLength = totalSteps * MIN_STEP_DEPTH;
             extraDepth = Mathf.Min(stairsDepth - minTotalStepLength, Mathf.Max(0, newLengthOffset));
             float totalStepHeight  = stairsHeight - extraHeight;
             float totalStepLength  = stairsDepth - extraDepth;
             float totalHeightSteps = Mathf.Max(1, totalStepHeight / stepHeight);
-            stepDepth = Mathf.Max(kMinStepDepth, totalStepLength / totalHeightSteps);
+            stepDepth = Mathf.Max(MIN_STEP_DEPTH, totalStepLength / totalHeightSteps);
         }
 
         public void SetStepDepth(float newStepDepth)
         {
             extraDepth = stairsDepth - totalSteps * stepDepth;
-            stepDepth  = Mathf.Max(kMinStepDepth, newStepDepth);
+            stepDepth  = Mathf.Max(MIN_STEP_DEPTH, newStepDepth);
             float totalDepth = stepDepth * totalSteps + extraDepth;
             AABB  newBounds  = bounds;
 
@@ -371,7 +379,7 @@ namespace RealtimeCSG
 
         public void SetStepHeight(float newStepHeight)
         {
-            stepHeight = Mathf.Max(kMinStepHeight, newStepHeight);
+            stepHeight = Mathf.Max(MIN_STEP_HEIGHT, newStepHeight);
             CalcTotalSteps();
         }
 
@@ -443,18 +451,14 @@ namespace RealtimeCSG
             extraDepth   = CSGSettings.LinearStairsLengthOffset;
             extraHeight  = CSGSettings.LinearStairsHeightOffset;
 
-            vertices    = new Vector3[0];
+            vertices    = Array.Empty<Vector3>();
             extraDepth  = 0;
             extraHeight = 0;
             bounds.Reset();
         }
 
-        public Vector3[] GetVertices(
-            CSGPlane buildPlane, Vector3 worldPosition, Vector3 gridTangent, Vector3 gridBinormal, out bool isValid
-        )
+        public Vector3[] GetVertices()
         {
-            isValid = true;
-
             return vertices;
         }
 
@@ -470,7 +474,7 @@ namespace RealtimeCSG
         {
             for(int i = 0; i < vertices.Length; i++)
             {
-                vertices[i] = vertices[i] + offset;
+                vertices[i] += offset;
             }
         }
 
@@ -481,15 +485,15 @@ namespace RealtimeCSG
 
         public AABB CalculateBounds(Quaternion rotation, Vector3 gridTangent, Vector3 gridBinormal)
         {
-            AABB bounds = new AABB();
-            bounds.Reset();
+            AABB aabb = new AABB();
+            aabb.Reset();
 
             for(int i = 0; i < vertices.Length; i++)
             {
-                bounds.Extend(rotation * vertices[i]);
+                aabb.Extend(rotation * vertices[i]);
             }
 
-            return bounds;
+            return aabb;
         }
     }
 }

@@ -1,48 +1,44 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+using InternalRealtimeCSG;
+using RealtimeCSG.Components;
+using RealtimeCSG.Foundation;
 using UnityEditor;
 using UnityEngine;
-using InternalRealtimeCSG;
-using System.Collections.Generic;
-using System.Text;
-using RealtimeCSG.Components;
 using UnityEngine.SceneManagement;
 
 namespace RealtimeCSG
 {
     internal sealed partial class SceneViewBottomBarGUI
     {
-        private static int BottomBarEditorOverlayHash = "BottomBarEditorOverlay".GetHashCode();
-        private static int BottomBarGUIHash = "BottomBarGUI".GetHashCode();
+        private static readonly int bottomBarEditorOverlayHash = "BottomBarEditorOverlay".GetHashCode();
+        private static readonly int bottomBarGUIHash = "BottomBarGUI".GetHashCode();
 
         public static void ShowGUI(SceneView sceneView, bool haveOffset = true)
         {
             InitStyles();
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
 
             if(sceneView != null)
             {
-#if UNITY_2018_3_OR_NEWER
-                float height = sceneView.rootVisualElement.contentRect.height; //Screen.height;
-                float width  = sceneView.rootVisualElement.contentRect.width;  //Screen.width;
-#else
-                float height = sceneView.position.height;
-                float width = sceneView.position.width;
-#endif
+                float height = sceneView.rootVisualElement.contentRect.height;
+                float width  = sceneView.rootVisualElement.contentRect.width;
 
                 Rect bottomBarRect;
 
                 if(haveOffset)
                 {
                     bottomBarRect = new Rect(
-                        0, height - (CSG_GUIStyleUtility.BottomToolBarHeight + 18),
-                        width, CSG_GUIStyleUtility.BottomToolBarHeight
+                        0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 18),
+                        width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT
                     );
                 }
                 else
                 {
                     bottomBarRect = new Rect(
-                        0, height - (CSG_GUIStyleUtility.BottomToolBarHeight + 1), width
-                      , CSG_GUIStyleUtility.BottomToolBarHeight
+                        0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 1), width
+                      , CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT
                     );
                 }
 
@@ -54,13 +50,13 @@ namespace RealtimeCSG
 
                     if(Event.current.type == EventType.Repaint)
                     {
-                        CSG_GUIStyleUtility.BottomToolBarStyle.Draw(bottomBarRect, false, false, false, false);
+                        CsgguiStyleUtility.BottomToolBarStyle.Draw(bottomBarRect, false, false, false, false);
                     }
 
                     OnBottomBarGUI(sceneView, bottomBarRect);
                     GUI.changed = prevGUIChanged || GUI.changed;
 
-                    int       controlID = GUIUtility.GetControlID(BottomBarGUIHash, FocusType.Keyboard, bottomBarRect);
+                    int       controlID = GUIUtility.GetControlID(bottomBarGUIHash, FocusType.Keyboard, bottomBarRect);
                     EventType type      = Event.current.GetTypeForControl(controlID);
 
                     switch(type)
@@ -115,8 +111,6 @@ namespace RealtimeCSG
                             break;
                         }
                     }
-
-                    //TooltipUtility.HandleAreaOffset(new Vector2(-bottomBarRect.xMin, -bottomBarRect.yMin));
                 }
                 finally
                 {
@@ -125,13 +119,10 @@ namespace RealtimeCSG
             }
         }
 
-        private static Rect currentRect = new Rect();
+        private static Rect m_CurrentRect;
 
         private static void OnBottomBarGUI(SceneView sceneView, Rect barSize)
         {
-            //if (Event.current.type == EventType.Layout)
-            //	return;
-
             SnapMode           snapMode          = CSGSettings.SnapMode;
             bool               uniformGrid       = CSGSettings.UniformGrid;
             Vector3            moveSnapVector    = CSGSettings.SnapVector;
@@ -144,15 +135,11 @@ namespace RealtimeCSG
             DistanceUnit       distanceUnit      = CSGSettings.DistanceUnit;
             HelperSurfaceFlags helperSurfaces    = CSGSettings.VisibleHelperSurfaces;
             bool               showWireframe     = CSGSettings.IsWireframeShown(sceneView);
-            CSG_Skin           skin              = CSG_GUIStyleUtility.Skin;
+            CSGSkin           skin              = CsgguiStyleUtility.Skin;
             bool               updateSurfaces    = false;
             bool               wireframeModified = false;
 
-#if UNITY_2018_3_OR_NEWER
             float viewWidth = sceneView.rootVisualElement.contentRect.width;
-#else
-            var viewWidth = sceneView.position.width;
-#endif
 
             float layoutHeight = barSize.height;
             float layoutX      = 6.0f;
@@ -161,26 +148,21 @@ namespace RealtimeCSG
             GUI.changed = false;
 
             {
-                currentRect.width  =  27;
-                currentRect.y      =  0;
-                currentRect.height =  layoutHeight - currentRect.y;
-                currentRect.y      += barSize.y;
-                currentRect.x      =  layoutX;
-                layoutX            += currentRect.width;
+                m_CurrentRect.width  =  27;
+                m_CurrentRect.y      =  0;
+                m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                m_CurrentRect.y      += barSize.y;
+                m_CurrentRect.x      =  layoutX;
+                layoutX              += m_CurrentRect.width;
 
 #region "Grid" button
 
-                if(showGrid)
-                {
-                    showGrid = GUI.Toggle(currentRect, showGrid, skin.gridIconOn, EditorStyles.toolbarButton);
-                }
-                else
-                {
-                    showGrid = GUI.Toggle(currentRect, showGrid, skin.gridIcon, EditorStyles.toolbarButton);
-                }
+                showGrid = GUI.Toggle(
+                    m_CurrentRect, showGrid, showGrid ? skin.gridIconOn : skin.gridIcon, EditorStyles.toolbarButton
+                );
 
                 //(x:6.00, y:0.00, width:27.00, height:18.00)
-                TooltipUtility.SetToolTip(showGridTooltip, currentRect);
+                TooltipUtility.SetToolTip(showGridTooltip, m_CurrentRect);
 
 #endregion
 
@@ -199,24 +181,17 @@ namespace RealtimeCSG
 
 #region "X" lock button
 
-                currentRect.width  =  17;
-                currentRect.y      =  0;
-                currentRect.height =  layoutHeight - currentRect.y;
-                currentRect.y      += barSize.y;
-                currentRect.x      =  layoutX;
-                layoutX            += currentRect.width;
+                m_CurrentRect.width  =  17;
+                m_CurrentRect.y      =  0;
+                m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                m_CurrentRect.y      += barSize.y;
+                m_CurrentRect.x      =  layoutX;
+                layoutX              += m_CurrentRect.width;
 
-                lockAxisX = !GUI.Toggle(currentRect, !lockAxisX, xLabel, skin.xToolbarButton);
+                lockAxisX = !GUI.Toggle(m_CurrentRect, !lockAxisX, xLabel, skin.xToolbarButton);
 
                 //(x:39.00, y:0.00, width:17.00, height:18.00)
-                if(lockAxisX)
-                {
-                    TooltipUtility.SetToolTip(xTooltipOn, currentRect);
-                }
-                else
-                {
-                    TooltipUtility.SetToolTip(xTooltipOff, currentRect);
-                }
+                TooltipUtility.SetToolTip(lockAxisX ? xTooltipOn : xTooltipOff, m_CurrentRect);
 
                 GUI.backgroundColor = prevBackgroundColor;
 
@@ -224,25 +199,18 @@ namespace RealtimeCSG
 
 #region "Y" lock button
 
-                currentRect.x =  layoutX;
-                layoutX       += currentRect.width;
+                m_CurrentRect.x =  layoutX;
+                layoutX         += m_CurrentRect.width;
 
                 if(lockAxisY)
                 {
                     GUI.backgroundColor = lockedBackgroundColor;
                 }
 
-                lockAxisY = !GUI.Toggle(currentRect, !lockAxisY, yLabel, skin.yToolbarButton);
+                lockAxisY = !GUI.Toggle(m_CurrentRect, !lockAxisY, yLabel, skin.yToolbarButton);
 
                 //(x:56.00, y:0.00, width:17.00, height:18.00)
-                if(lockAxisY)
-                {
-                    TooltipUtility.SetToolTip(yTooltipOn, currentRect);
-                }
-                else
-                {
-                    TooltipUtility.SetToolTip(yTooltipOff, currentRect);
-                }
+                TooltipUtility.SetToolTip(lockAxisY ? yTooltipOn : yTooltipOff, m_CurrentRect);
 
                 GUI.backgroundColor = prevBackgroundColor;
 
@@ -250,25 +218,18 @@ namespace RealtimeCSG
 
 #region "Z" lock button
 
-                currentRect.x =  layoutX;
-                layoutX       += currentRect.width;
+                m_CurrentRect.x =  layoutX;
+                layoutX         += m_CurrentRect.width;
 
                 if(lockAxisZ)
                 {
                     GUI.backgroundColor = lockedBackgroundColor;
                 }
 
-                lockAxisZ = !GUI.Toggle(currentRect, !lockAxisZ, zLabel, skin.zToolbarButton);
+                lockAxisZ = !GUI.Toggle(m_CurrentRect, !lockAxisZ, zLabel, skin.zToolbarButton);
 
                 //(x:56.00, y:0.00, width:17.00, height:18.00)
-                if(lockAxisZ)
-                {
-                    TooltipUtility.SetToolTip(zTooltipOn, currentRect);
-                }
-                else
-                {
-                    TooltipUtility.SetToolTip(zTooltipOff, currentRect);
-                }
+                TooltipUtility.SetToolTip(lockAxisZ ? zTooltipOn : zTooltipOff, m_CurrentRect);
 
                 GUI.backgroundColor = prevBackgroundColor;
 
@@ -287,19 +248,19 @@ namespace RealtimeCSG
             GUI.changed = false;
 
             {
-                currentRect.width  =  27;
-                currentRect.y      =  0;
-                currentRect.height =  layoutHeight - currentRect.y;
-                currentRect.y      += barSize.y;
-                currentRect.x      =  layoutX;
-                layoutX            += currentRect.width;
+                m_CurrentRect.width  =  27;
+                m_CurrentRect.y      =  0;
+                m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                m_CurrentRect.y      += barSize.y;
+                m_CurrentRect.x      =  layoutX;
+                layoutX              += m_CurrentRect.width;
 
                 switch(snapMode)
                 {
                     case SnapMode.GridSnapping:
                     {
                         bool newValue = GUI.Toggle(
-                            currentRect, snapMode == SnapMode.GridSnapping, CSG_GUIStyleUtility.Skin.gridSnapIconOn
+                            m_CurrentRect, true, CsgguiStyleUtility.Skin.gridSnapIconOn
                           , EditorStyles.toolbarButton
                         );
 
@@ -309,14 +270,14 @@ namespace RealtimeCSG
                         }
 
                         //(x:97.00, y:0.00, width:27.00, height:18.00)
-                        TooltipUtility.SetToolTip(gridSnapModeTooltip, currentRect);
+                        TooltipUtility.SetToolTip(gridSnapModeTooltip, m_CurrentRect);
 
                         break;
                     }
                     case SnapMode.RelativeSnapping:
                     {
                         bool newValue = GUI.Toggle(
-                            currentRect, snapMode == SnapMode.RelativeSnapping, CSG_GUIStyleUtility.Skin.relSnapIconOn
+                            m_CurrentRect, true, CsgguiStyleUtility.Skin.relSnapIconOn
                           , EditorStyles.toolbarButton
                         );
 
@@ -326,7 +287,7 @@ namespace RealtimeCSG
                         }
 
                         //(x:97.00, y:0.00, width:27.00, height:18.00)
-                        TooltipUtility.SetToolTip(relativeSnapModeTooltip, currentRect);
+                        TooltipUtility.SetToolTip(relativeSnapModeTooltip, m_CurrentRect);
 
                         break;
                     }
@@ -334,7 +295,7 @@ namespace RealtimeCSG
                     case SnapMode.None:
                     {
                         bool newValue = GUI.Toggle(
-                            currentRect, snapMode != SnapMode.None, CSG_GUIStyleUtility.Skin.noSnapIconOn
+                            m_CurrentRect, snapMode != SnapMode.None, CsgguiStyleUtility.Skin.noSnapIconOn
                           , EditorStyles.toolbarButton
                         );
 
@@ -344,7 +305,7 @@ namespace RealtimeCSG
                         }
 
                         //(x:97.00, y:0.00, width:27.00, height:18.00)
-                        TooltipUtility.SetToolTip(noSnappingModeTooltip, currentRect);
+                        TooltipUtility.SetToolTip(noSnappingModeTooltip, m_CurrentRect);
 
                         break;
                     }
@@ -365,32 +326,30 @@ namespace RealtimeCSG
                     {
                         if(viewWidth >= 865)
                         {
-                            currentRect.width  =  44;
-                            currentRect.y      =  1;
-                            currentRect.height =  layoutHeight - currentRect.y;
-                            currentRect.y      += barSize.y;
-                            currentRect.x      =  layoutX;
-                            layoutX            += currentRect.width;
+                            m_CurrentRect.width  =  44;
+                            m_CurrentRect.y      =  1;
+                            m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                            m_CurrentRect.y      += barSize.y;
+                            m_CurrentRect.x      =  layoutX;
+                            layoutX              += m_CurrentRect.width;
 
-                            uniformGrid = GUI.Toggle(currentRect, uniformGrid, positionLargeLabel, miniTextStyle);
+                            uniformGrid = GUI.Toggle(m_CurrentRect, uniformGrid, positionLargeLabel, m_MiniTextStyle);
                             //(x:128.00, y:2.00, width:44.00, height:16.00)
-
-                            TooltipUtility.SetToolTip(positionTooltip, currentRect);
                         }
                         else
                         {
-                            currentRect.width  =  22;
-                            currentRect.y      =  1;
-                            currentRect.height =  layoutHeight - currentRect.y;
-                            currentRect.y      += barSize.y;
-                            currentRect.x      =  layoutX;
-                            layoutX            += currentRect.width;
+                            m_CurrentRect.width  =  22;
+                            m_CurrentRect.y      =  1;
+                            m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                            m_CurrentRect.y      += barSize.y;
+                            m_CurrentRect.x      =  layoutX;
+                            layoutX              += m_CurrentRect.width;
 
-                            uniformGrid = GUI.Toggle(currentRect, uniformGrid, positionSmallLabel, miniTextStyle);
+                            uniformGrid = GUI.Toggle(m_CurrentRect, uniformGrid, positionSmallLabel, m_MiniTextStyle);
                             //(x:127.00, y:2.00, width:22.00, height:16.00)
-
-                            TooltipUtility.SetToolTip(positionTooltip, currentRect);
                         }
+
+                        TooltipUtility.SetToolTip(positionTooltip, m_CurrentRect);
                     }
 
 #endregion
@@ -407,20 +366,20 @@ namespace RealtimeCSG
                         GUI.changed = false;
 
                         {
-                            currentRect.width  =  70;
-                            currentRect.y      =  3;
-                            currentRect.height =  layoutHeight - (currentRect.y - 1);
-                            currentRect.y      += barSize.y;
-                            currentRect.x      =  layoutX;
-                            layoutX            += currentRect.width;
+                            m_CurrentRect.width  =  70;
+                            m_CurrentRect.y      =  3;
+                            m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y - 1);
+                            m_CurrentRect.y      += barSize.y;
+                            m_CurrentRect.x      =  layoutX;
+                            layoutX              += m_CurrentRect.width;
 
                             moveSnapVector.x = Units.DistanceUnitToUnity(
                                 distanceUnit
                               , EditorGUI.DoubleField(
-                                    currentRect, Units.UnityToDistanceUnit(distanceUnit, moveSnapVector.x)
-                                  , textInputStyle
+                                    m_CurrentRect, Units.UnityToDistanceUnit(distanceUnit, moveSnapVector.x)
+                                  , m_TextInputStyle
                                 )
-                            ); //, MinSnapWidth, MaxSnapWidth));
+                            );
                             //(x:176.00, y:3.00, width:70.00, height:16.00)
                         }
 
@@ -438,47 +397,47 @@ namespace RealtimeCSG
                         GUI.changed = false;
 
                         {
-                            currentRect.width  =  70;
-                            currentRect.y      =  3;
-                            currentRect.height =  layoutHeight - (currentRect.y - 1);
-                            currentRect.y      += barSize.y;
-                            currentRect.x      =  layoutX;
-                            layoutX            += currentRect.width;
+                            m_CurrentRect.width  =  70;
+                            m_CurrentRect.y      =  3;
+                            m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y - 1);
+                            m_CurrentRect.y      += barSize.y;
+                            m_CurrentRect.x      =  layoutX;
+                            layoutX              += m_CurrentRect.width;
                             layoutX++;
 
                             moveSnapVector.x = Units.DistanceUnitToUnity(
                                 distanceUnit
                               , EditorGUI.DoubleField(
-                                    currentRect, Units.UnityToDistanceUnit(distanceUnit, moveSnapVector.x)
-                                  , textInputStyle
+                                    m_CurrentRect, Units.UnityToDistanceUnit(distanceUnit, moveSnapVector.x)
+                                  , m_TextInputStyle
                                 )
-                            ); //, MinSnapWidth, MaxSnapWidth));
+                            );
                             //(x:175.00, y:3.00, width:70.00, height:16.00)
 
-                            currentRect.x =  layoutX;
-                            layoutX       += currentRect.width;
+                            m_CurrentRect.x =  layoutX;
+                            layoutX         += m_CurrentRect.width;
                             layoutX++;
 
                             // NOTE: moveSnapVector.y and moveSnapVector.z have accidentally been reversed relatively to unity's coordinate system, so we swap them here
                             moveSnapVector.z = Units.DistanceUnitToUnity(
                                 distanceUnit
                               , EditorGUI.DoubleField(
-                                    currentRect, Units.UnityToDistanceUnit(distanceUnit, moveSnapVector.z)
-                                  , textInputStyle
+                                    m_CurrentRect, Units.UnityToDistanceUnit(distanceUnit, moveSnapVector.z)
+                                  , m_TextInputStyle
                                 )
-                            ); //, MinSnapWidth, MaxSnapWidth));
+                            );
                             //(x:247.00, y:3.00, width:70.00, height:16.00)
 
-                            currentRect.x =  layoutX;
-                            layoutX       += currentRect.width;
+                            m_CurrentRect.x =  layoutX;
+                            layoutX         += m_CurrentRect.width;
 
                             moveSnapVector.y = Units.DistanceUnitToUnity(
                                 distanceUnit
                               , EditorGUI.DoubleField(
-                                    currentRect, Units.UnityToDistanceUnit(distanceUnit, moveSnapVector.y)
-                                  , textInputStyle
+                                    m_CurrentRect, Units.UnityToDistanceUnit(distanceUnit, moveSnapVector.y)
+                                  , m_TextInputStyle
                                 )
-                            ); //, MinSnapWidth, MaxSnapWidth));
+                            );
                             //(x:319.00, y:3.00, width:70.00, height:16.00)
                         }
 
@@ -494,14 +453,15 @@ namespace RealtimeCSG
                     DistanceUnit nextUnit = Units.CycleToNextUnit(distanceUnit);
                     GUIContent   unitText = Units.GetUnitGUIContent(distanceUnit);
 
-                    currentRect.width  =  22;
-                    currentRect.y      =  2;
-                    currentRect.height =  layoutHeight - currentRect.y;
-                    currentRect.y      += barSize.y;
-                    currentRect.x      =  layoutX;
-                    layoutX            += currentRect.width;
+                    m_CurrentRect.width  =  22;
+                    m_CurrentRect.y      =  2;
+                    m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                    m_CurrentRect.y      += barSize.y;
+                    m_CurrentRect.x      =  layoutX;
+                    layoutX              += m_CurrentRect.width;
 
-                    if(GUI.Button(currentRect, unitText, miniTextStyle)) //(x:393.00, y:2.00, width:13.00, height:16.00)
+                    //(x:393.00, y:2.00, width:13.00, height:16.00)
+                    if(GUI.Button(m_CurrentRect, unitText, m_MiniTextStyle))
                     {
                         distanceUnit = nextUnit;
                         modified     = true;
@@ -515,37 +475,37 @@ namespace RealtimeCSG
 
                     if(viewWidth >= 700)
                     {
-                        currentRect.width  =  19;
-                        currentRect.y      =  2;
-                        currentRect.height =  layoutHeight - (currentRect.y + 1);
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  19;
+                        m_CurrentRect.y      =  2;
+                        m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        if(GUI.Button(currentRect, positionPlusLabel, EditorStyles.miniButtonLeft))
+                        if(GUI.Button(m_CurrentRect, positionPlusLabel, EditorStyles.miniButtonLeft))
                         {
                             GridUtility.DoubleGridSize();
                             moveSnapVector = CSGSettings.SnapVector;
                         }
 
                         //(x:410.00, y:2.00, width:19.00, height:15.00)
-                        TooltipUtility.SetToolTip(positionPlusTooltip, currentRect);
+                        TooltipUtility.SetToolTip(positionPlusTooltip, m_CurrentRect);
 
-                        currentRect.width  =  17;
-                        currentRect.y      =  2;
-                        currentRect.height =  layoutHeight - (currentRect.y + 1);
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  17;
+                        m_CurrentRect.y      =  2;
+                        m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        if(GUI.Button(currentRect, positionMinusLabel, EditorStyles.miniButtonRight))
+                        if(GUI.Button(m_CurrentRect, positionMinusLabel, EditorStyles.miniButtonRight))
                         {
                             GridUtility.HalfGridSize();
                             moveSnapVector = CSGSettings.SnapVector;
                         }
 
                         //(x:429.00, y:2.00, width:17.00, height:15.00)
-                        TooltipUtility.SetToolTip(positionMinnusTooltip, currentRect);
+                        TooltipUtility.SetToolTip(positionMinnusTooltip, m_CurrentRect);
                     }
 
 #endregion
@@ -558,30 +518,30 @@ namespace RealtimeCSG
                     {
                         if(viewWidth >= 865)
                         {
-                            currentRect.width  =  31;
-                            currentRect.y      =  1;
-                            currentRect.height =  layoutHeight - currentRect.y;
-                            currentRect.y      += barSize.y;
-                            currentRect.x      =  layoutX;
-                            layoutX            += currentRect.width;
+                            m_CurrentRect.width  =  31;
+                            m_CurrentRect.y      =  1;
+                            m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                            m_CurrentRect.y      += barSize.y;
+                            m_CurrentRect.x      =  layoutX;
+                            layoutX              += m_CurrentRect.width;
 
-                            GUI.Label(currentRect, angleLargeLabel, miniTextStyle);
+                            GUI.Label(m_CurrentRect, angleLargeLabel, m_MiniTextStyle);
                             //(x:450.00, y:2.00, width:31.00, height:16.00)
                         }
                         else
                         {
-                            currentRect.width  =  22;
-                            currentRect.y      =  1;
-                            currentRect.height =  layoutHeight - currentRect.y;
-                            currentRect.y      += barSize.y;
-                            currentRect.x      =  layoutX;
-                            layoutX            += currentRect.width;
+                            m_CurrentRect.width  =  22;
+                            m_CurrentRect.y      =  1;
+                            m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                            m_CurrentRect.y      += barSize.y;
+                            m_CurrentRect.x      =  layoutX;
+                            layoutX              += m_CurrentRect.width;
 
-                            GUI.Label(currentRect, angleSmallLabel, miniTextStyle);
+                            GUI.Label(m_CurrentRect, angleSmallLabel, m_MiniTextStyle);
                             //(x:355.00, y:2.00, width:22.00, height:16.00)
                         }
 
-                        TooltipUtility.SetToolTip(angleTooltip, currentRect);
+                        TooltipUtility.SetToolTip(angleTooltip, m_CurrentRect);
                     }
 
 #endregion
@@ -593,21 +553,19 @@ namespace RealtimeCSG
                     GUI.changed = false;
 
                     {
-                        currentRect.width  =  70;
-                        currentRect.y      =  3;
-                        currentRect.height =  layoutHeight - (currentRect.y - 1);
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  70;
+                        m_CurrentRect.y      =  3;
+                        m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y - 1);
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        rotationSnap = EditorGUI.FloatField(
-                            currentRect, rotationSnap, textInputStyle
-                        ); //, MinSnapWidth, MaxSnapWidth);
+                        rotationSnap = EditorGUI.FloatField(m_CurrentRect, rotationSnap, m_TextInputStyle);
 
                         //(x:486.00, y:3.00, width:70.00, height:16.00)
                         if(viewWidth <= 750)
                         {
-                            TooltipUtility.SetToolTip(angleTooltip, currentRect);
+                            TooltipUtility.SetToolTip(angleTooltip, m_CurrentRect);
                         }
                     }
 
@@ -621,14 +579,14 @@ namespace RealtimeCSG
 
                     if(viewWidth >= 370)
                     {
-                        currentRect.width  =  14;
-                        currentRect.y      =  1;
-                        currentRect.height =  layoutHeight - currentRect.y;
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  14;
+                        m_CurrentRect.y      =  1;
+                        m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        GUI.Label(currentRect, angleUnitLabel, miniTextStyle);
+                        GUI.Label(m_CurrentRect, angleUnitLabel, m_MiniTextStyle);
                     }
 
 #endregion
@@ -639,37 +597,37 @@ namespace RealtimeCSG
 
                     if(viewWidth >= 700)
                     {
-                        currentRect.width  =  19;
-                        currentRect.y      =  1;
-                        currentRect.height =  layoutHeight - (currentRect.y + 1);
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  19;
+                        m_CurrentRect.y      =  1;
+                        m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        if(GUI.Button(currentRect, anglePlusLabel, EditorStyles.miniButtonLeft))
+                        if(GUI.Button(m_CurrentRect, anglePlusLabel, EditorStyles.miniButtonLeft))
                         {
                             rotationSnap *= 2.0f;
                             modified     =  true;
                         }
 
                         //(x:573.00, y:2.00, width:19.00, height:15.00)
-                        TooltipUtility.SetToolTip(anglePlusTooltip, currentRect);
+                        TooltipUtility.SetToolTip(anglePlusTooltip, m_CurrentRect);
 
-                        currentRect.width  =  17;
-                        currentRect.y      =  1;
-                        currentRect.height =  layoutHeight - (currentRect.y + 1);
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  17;
+                        m_CurrentRect.y      =  1;
+                        m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        if(GUI.Button(currentRect, angleMinusLabel, EditorStyles.miniButtonRight))
+                        if(GUI.Button(m_CurrentRect, angleMinusLabel, EditorStyles.miniButtonRight))
                         {
                             rotationSnap /= 2.0f;
                             modified     =  true;
                         }
 
                         //(x:592.00, y:2.00, width:17.00, height:15.00)
-                        TooltipUtility.SetToolTip(angleMinnusTooltip, currentRect);
+                        TooltipUtility.SetToolTip(angleMinnusTooltip, m_CurrentRect);
                     }
 
 #endregion
@@ -682,30 +640,30 @@ namespace RealtimeCSG
                     {
                         if(viewWidth >= 865)
                         {
-                            currentRect.width  =  31;
-                            currentRect.y      =  1;
-                            currentRect.height =  layoutHeight - currentRect.y;
-                            currentRect.y      += barSize.y;
-                            currentRect.x      =  layoutX;
-                            layoutX            += currentRect.width;
+                            m_CurrentRect.width  =  31;
+                            m_CurrentRect.y      =  1;
+                            m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                            m_CurrentRect.y      += barSize.y;
+                            m_CurrentRect.x      =  layoutX;
+                            layoutX              += m_CurrentRect.width;
 
-                            GUI.Label(currentRect, scaleLargeLabel, miniTextStyle);
+                            GUI.Label(m_CurrentRect, scaleLargeLabel, m_MiniTextStyle);
                             //(x:613.00, y:2.00, width:31.00, height:16.00)
                         }
                         else
                         {
-                            currentRect.width  =  19;
-                            currentRect.y      =  1;
-                            currentRect.height =  layoutHeight - currentRect.y;
-                            currentRect.y      += barSize.y;
-                            currentRect.x      =  layoutX;
-                            layoutX            += currentRect.width;
+                            m_CurrentRect.width  =  19;
+                            m_CurrentRect.y      =  1;
+                            m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                            m_CurrentRect.y      += barSize.y;
+                            m_CurrentRect.x      =  layoutX;
+                            layoutX              += m_CurrentRect.width;
 
-                            GUI.Label(currentRect, scaleSmallLabel, miniTextStyle);
+                            GUI.Label(m_CurrentRect, scaleSmallLabel, m_MiniTextStyle);
                             //(x:495.00, y:2.00, width:19.00, height:16.00)
                         }
 
-                        TooltipUtility.SetToolTip(scaleTooltip, currentRect);
+                        TooltipUtility.SetToolTip(scaleTooltip, m_CurrentRect);
                     }
 
 #endregion
@@ -717,21 +675,19 @@ namespace RealtimeCSG
                     GUI.changed = false;
 
                     {
-                        currentRect.width  =  70;
-                        currentRect.y      =  3;
-                        currentRect.height =  layoutHeight - (currentRect.y - 1);
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  70;
+                        m_CurrentRect.y      =  3;
+                        m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y - 1);
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        scaleSnap = EditorGUI.FloatField(
-                            currentRect, scaleSnap, textInputStyle
-                        ); //, MinSnapWidth, MaxSnapWidth);
+                        scaleSnap = EditorGUI.FloatField(m_CurrentRect, scaleSnap, m_TextInputStyle);
 
                         //(x:648.00, y:3.00, width:70.00, height:16.00)
                         if(viewWidth <= 750)
                         {
-                            TooltipUtility.SetToolTip(scaleTooltip, currentRect);
+                            TooltipUtility.SetToolTip(scaleTooltip, m_CurrentRect);
                         }
                     }
 
@@ -745,14 +701,14 @@ namespace RealtimeCSG
 
                     if(viewWidth >= 370)
                     {
-                        currentRect.width  =  15;
-                        currentRect.y      =  1;
-                        currentRect.height =  layoutHeight - currentRect.y;
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  15;
+                        m_CurrentRect.y      =  1;
+                        m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        GUI.Label(currentRect, scaleUnitLabel, miniTextStyle);
+                        GUI.Label(m_CurrentRect, scaleUnitLabel, m_MiniTextStyle);
                         //(x:722.00, y:2.00, width:15.00, height:16.00)
                     }
 
@@ -764,37 +720,37 @@ namespace RealtimeCSG
 
                     if(viewWidth >= 700)
                     {
-                        currentRect.width  =  19;
-                        currentRect.y      =  2;
-                        currentRect.height =  layoutHeight - (currentRect.y + 1);
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  19;
+                        m_CurrentRect.y      =  2;
+                        m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        if(GUI.Button(currentRect, scalePlusLabel, EditorStyles.miniButtonLeft))
+                        if(GUI.Button(m_CurrentRect, scalePlusLabel, EditorStyles.miniButtonLeft))
                         {
                             scaleSnap *= 10.0f;
                             modified  =  true;
                         }
 
                         //(x:741.00, y:2.00, width:19.00, height:15.00)
-                        TooltipUtility.SetToolTip(scalePlusTooltip, currentRect);
+                        TooltipUtility.SetToolTip(scalePlusTooltip, m_CurrentRect);
 
-                        currentRect.width  =  17;
-                        currentRect.y      =  2;
-                        currentRect.height =  layoutHeight - (currentRect.y + 1);
-                        currentRect.y      += barSize.y;
-                        currentRect.x      =  layoutX;
-                        layoutX            += currentRect.width;
+                        m_CurrentRect.width  =  17;
+                        m_CurrentRect.y      =  2;
+                        m_CurrentRect.height =  layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y      += barSize.y;
+                        m_CurrentRect.x      =  layoutX;
+                        layoutX              += m_CurrentRect.width;
 
-                        if(GUI.Button(currentRect, scaleMinusLabel, EditorStyles.miniButtonRight))
+                        if(GUI.Button(m_CurrentRect, scaleMinusLabel, EditorStyles.miniButtonRight))
                         {
                             scaleSnap /= 10.0f;
                             modified  =  true;
                         }
 
                         //(x:760.00, y:2.00, width:17.00, height:15.00)
-                        TooltipUtility.SetToolTip(scaleMinnusTooltip, currentRect);
+                        TooltipUtility.SetToolTip(scaleMinnusTooltip, m_CurrentRect);
                     }
 
 #endregion
@@ -807,18 +763,18 @@ namespace RealtimeCSG
 
 #region "Rebuild"
 
-            currentRect.width  =  27;
-            currentRect.y      =  0;
-            currentRect.height =  layoutHeight - currentRect.y;
-            currentRect.y      += barSize.y;
-            layoutX            -= currentRect.width;
-            currentRect.x      =  layoutX;
+            m_CurrentRect.width  =  27;
+            m_CurrentRect.y      =  0;
+            m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+            m_CurrentRect.y      += barSize.y;
+            layoutX              -= m_CurrentRect.width;
+            m_CurrentRect.x      =  layoutX;
 
-            if(GUI.Button(currentRect, CSG_GUIStyleUtility.Skin.rebuildIcon, EditorStyles.toolbarButton))
+            if(GUI.Button(m_CurrentRect, CsgguiStyleUtility.Skin.rebuildIcon, EditorStyles.toolbarButton))
             {
                 Debug.Log("Starting complete rebuild");
 
-                StringBuilder text = new System.Text.StringBuilder();
+                StringBuilder text = new StringBuilder();
 
                 MaterialUtility.ResetMaterialTypeLookup();
 
@@ -834,19 +790,19 @@ namespace RealtimeCSG
                 double startTime = EditorApplication.timeSinceStartup;
                 InternalCSGModelManager.ForceRebuildAll();
                 InternalCSGModelManager.OnHierarchyModified();
-                double hierarchy_update_endTime = EditorApplication.timeSinceStartup;
+                double hierarchyUpdateEndTime = EditorApplication.timeSinceStartup;
 
                 text.AppendFormat(
                     CultureInfo.InvariantCulture, "Full hierarchy rebuild in {0:F} ms. "
-                  , (hierarchy_update_endTime - startTime) * 1000
+                  , (hierarchyUpdateEndTime - startTime) * 1000
                 );
 
                 NativeMethodBindings.RebuildAll();
-                double csg_endTime = EditorApplication.timeSinceStartup;
+                double csgEndTime = EditorApplication.timeSinceStartup;
 
                 text.AppendFormat(
                     CultureInfo.InvariantCulture, "Full CSG rebuild done in {0:F} ms. "
-                  , (csg_endTime - hierarchy_update_endTime) * 1000
+                  , (csgEndTime - hierarchyUpdateEndTime) * 1000
                 );
 
                 InternalCSGModelManager.RemoveForcedUpdates(); // we already did this in rebuild all
@@ -857,20 +813,13 @@ namespace RealtimeCSG
                 CSGSettings.Save();
                 InternalCSGModelManager.SkipCheckForChanges = false;
 
-                HashSet<Scene> scenes = new HashSet<UnityEngine.SceneManagement.Scene>();
-
-                foreach(CSGModel model in InternalCSGModelManager.Models)
-                {
-                    scenes.Add(model.gameObject.scene);
-                }
-
-                text.AppendFormat(CultureInfo.InvariantCulture, "{0} brushes. ", Foundation.CSGManager.TreeBrushCount);
+                text.AppendFormat(CultureInfo.InvariantCulture, "{0} brushes. ", CSGManager.TreeBrushCount);
 
                 Debug.Log(text.ToString());
             }
 
             //(x:1442.00, y:0.00, width:27.00, height:18.00)
-            TooltipUtility.SetToolTip(rebuildTooltip, currentRect);
+            TooltipUtility.SetToolTip(rebuildTooltip, m_CurrentRect);
 
 #endregion
 
@@ -889,18 +838,18 @@ namespace RealtimeCSG
                     prevLayoutX += 8;  // extra space
                     prevLayoutX += 26; // width of "Show wireframe" button
 
-                    currentRect.width = Mathf.Max(20, Mathf.Min(165, viewWidth - prevLayoutX - currentRect.width));
+                    m_CurrentRect.width = Mathf.Max(20, Mathf.Min(165, viewWidth - prevLayoutX - m_CurrentRect.width));
 
-                    currentRect.y      =  0;
-                    currentRect.height =  layoutHeight - currentRect.y;
-                    currentRect.y      += barSize.y;
-                    layoutX            -= currentRect.width;
-                    currentRect.x      =  layoutX;
+                    m_CurrentRect.y      =  0;
+                    m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+                    m_CurrentRect.y      += barSize.y;
+                    layoutX              -= m_CurrentRect.width;
+                    m_CurrentRect.x      =  layoutX;
 
-                    SurfaceVisibilityPopup.Button(sceneView, currentRect);
+                    SurfaceVisibilityPopup.Button(sceneView, m_CurrentRect);
 
                     //(x:1267.00, y:2.00, width:165.00, height:16.00)
-                    TooltipUtility.SetToolTip(helperSurfacesTooltip, currentRect);
+                    TooltipUtility.SetToolTip(helperSurfacesTooltip, m_CurrentRect);
                 }
 
                 if(GUI.changed)
@@ -914,30 +863,23 @@ namespace RealtimeCSG
 
 #region "Show wireframe" button
 
-            GUI.changed        =  false;
-            currentRect.width  =  26;
-            currentRect.y      =  0;
-            currentRect.height =  layoutHeight - currentRect.y;
-            currentRect.y      += barSize.y;
-            layoutX            -= currentRect.width;
-            currentRect.x      =  layoutX;
+            GUI.changed          =  false;
+            m_CurrentRect.width  =  26;
+            m_CurrentRect.y      =  0;
+            m_CurrentRect.height =  layoutHeight - m_CurrentRect.y;
+            m_CurrentRect.y      += barSize.y;
+            layoutX              -= m_CurrentRect.width;
+            m_CurrentRect.x      =  layoutX;
 
-            if(showWireframe)
-            {
-                showWireframe = GUI.Toggle(
-                    currentRect, showWireframe, CSG_GUIStyleUtility.Skin.wireframe, EditorStyles.toolbarButton
-                );
-                //(x:1237.00, y:0.00, width:26.00, height:18.00)
-            }
-            else
-            {
-                showWireframe = GUI.Toggle(
-                    currentRect, showWireframe, CSG_GUIStyleUtility.Skin.wireframeOn, EditorStyles.toolbarButton
-                );
-                //(x:1237.00, y:0.00, width:26.00, height:18.00)
-            }
+            //(x:1237.00, y:0.00, width:26.00, height:18.00)
+            showWireframe = GUI.Toggle(
+                m_CurrentRect, showWireframe
+              , showWireframe ? CsgguiStyleUtility.Skin.wireframe : CsgguiStyleUtility.Skin.wireframeOn
+              , EditorStyles.toolbarButton
+            );
 
-            TooltipUtility.SetToolTip(showWireframeTooltip, currentRect);
+            //(x:1237.00, y:0.00, width:26.00, height:18.00)
+            TooltipUtility.SetToolTip(showWireframeTooltip, m_CurrentRect);
 
             if(GUI.changed)
             {
@@ -950,7 +892,7 @@ namespace RealtimeCSG
 #region Capture mouse clicks in empty space
 
             Vector2 mousePoint = Event.current.mousePosition;
-            int     controlID  = GUIUtility.GetControlID(BottomBarEditorOverlayHash, FocusType.Passive, barSize);
+            int     controlID  = GUIUtility.GetControlID(bottomBarEditorOverlayHash, FocusType.Passive, barSize);
 
             switch(Event.current.GetTypeForControl(controlID))
             {
@@ -1016,12 +958,11 @@ namespace RealtimeCSG
 
             scaleSnap = Mathf.Max(MathConstants.MinimumScale, scaleSnap);
 
-            CSGSettings.SnapMode     = snapMode;
-            CSGSettings.SnapVector   = moveSnapVector;
-            CSGSettings.SnapRotation = rotationSnap;
-            CSGSettings.SnapScale    = scaleSnap;
-            CSGSettings.UniformGrid  = uniformGrid;
-//			RealtimeCSG.Settings.SnapVertex					= vertexSnap;
+            CSGSettings.SnapMode              = snapMode;
+            CSGSettings.SnapVector            = moveSnapVector;
+            CSGSettings.SnapRotation          = rotationSnap;
+            CSGSettings.SnapScale             = scaleSnap;
+            CSGSettings.UniformGrid           = uniformGrid;
             CSGSettings.GridVisible           = showGrid;
             CSGSettings.LockAxisX             = lockAxisX;
             CSGSettings.LockAxisY             = lockAxisY;
@@ -1044,7 +985,7 @@ namespace RealtimeCSG
                 GUI.changed = true;
                 CSGSettings.UpdateSnapSettings();
                 CSGSettings.Save();
-                CSG_EditorGUIUtility.RepaintAll();
+                CSGEditorGUIUtility.RepaintAll();
             }
 
 #endregion

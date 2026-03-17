@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using InternalRealtimeCSG;
+﻿using System.Collections.Generic;
 using System.Linq;
+using InternalRealtimeCSG;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
@@ -9,29 +9,29 @@ namespace RealtimeCSG
     {
         private sealed class PointMesh
         {
-            public const int MaxVertexCount = 65000 - 4;
-            public const int MaxPointIndexCount = MaxVertexCount / 4 * 6;
-            public const int MaxLineIndexCount = MaxVertexCount / 4 * 8;
+            public const int MAX_VERTEX_COUNT = 65000 - 4;
+            public const int MAX_POINT_INDEX_COUNT = MAX_VERTEX_COUNT / 4 * 6;
+            public const int MAX_LINE_INDEX_COUNT = MAX_VERTEX_COUNT / 4 * 8;
 
             public int VertexCount
             {
                 get => vertexCount;
             }
 
-            public Vector3[] vertices = new Vector3[MaxVertexCount];
+            public readonly Vector3[] vertices = new Vector3[MAX_VERTEX_COUNT];
 
-            public int[] pointIndices = new int [MaxPointIndexCount];
-            public Color[] pointColors = new Color [MaxVertexCount];
+            public readonly int[] pointIndices = new int [MAX_POINT_INDEX_COUNT];
+            public readonly Color[] pointColors = new Color [MAX_VERTEX_COUNT];
 
-            public int[] lineIndices = new int [MaxLineIndexCount];
-            public Color[] lineColors = new Color [MaxVertexCount];
+            public readonly int[] lineIndices = new int [MAX_LINE_INDEX_COUNT];
+            public readonly Color[] lineColors = new Color [MAX_VERTEX_COUNT];
 
-            public int vertexCount = 0;
-            public int pointIndexCount = 0;
-            public int lineIndexCount = 0;
+            public int vertexCount;
+            public int pointIndexCount;
+            public int lineIndexCount;
 
-            private Mesh pointMesh;
-            private Mesh lineMesh;
+            private Mesh _pointMesh;
+            private Mesh _lineMesh;
 
             public void Clear()
             {
@@ -44,39 +44,39 @@ namespace RealtimeCSG
             {
                 if(vertexCount == 0)
                 {
-                    if(pointMesh != null && pointMesh.vertexCount != 0)
+                    if(_pointMesh != null && _pointMesh.vertexCount != 0)
                     {
-                        pointMesh.Clear(true);
+                        _pointMesh.Clear(true);
                     }
 
-                    if(lineMesh != null && lineMesh.vertexCount != 0)
+                    if(_lineMesh != null && _lineMesh.vertexCount != 0)
                     {
-                        lineMesh.Clear(true);
+                        _lineMesh.Clear(true);
                     }
 
                     return;
                 }
 
-                if(pointMesh != null)
+                if(_pointMesh != null)
                 {
-                    pointMesh.Clear(true);
+                    _pointMesh.Clear(true);
                 }
                 else
                 {
-                    pointMesh           = new Mesh();
-                    pointMesh.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
-                    pointMesh.MarkDynamic();
+                    _pointMesh           = new Mesh();
+                    _pointMesh.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
+                    _pointMesh.MarkDynamic();
                 }
 
-                if(lineMesh != null)
+                if(_lineMesh != null)
                 {
-                    lineMesh.Clear(true);
+                    _lineMesh.Clear(true);
                 }
                 else
                 {
-                    lineMesh           = new Mesh();
-                    lineMesh.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
-                    lineMesh.MarkDynamic();
+                    _lineMesh           = new Mesh();
+                    _lineMesh.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
+                    _lineMesh.MarkDynamic();
                 }
 
                 Vector3[] newVertices;
@@ -85,7 +85,7 @@ namespace RealtimeCSG
                 int[]     newPointIndices;
                 int[]     newLineIndices;
 
-                if(vertexCount == MaxVertexCount)
+                if(vertexCount == MAX_VERTEX_COUNT)
                 {
                     newVertices     = vertices;
                     newPointColors  = pointColors;
@@ -104,20 +104,20 @@ namespace RealtimeCSG
 
                 if(pointIndexCount > 0)
                 {
-                    pointMesh.vertices = newVertices;
-                    pointMesh.colors   = newPointColors;
-                    pointMesh.SetIndices(newPointIndices, MeshTopology.Triangles, 0, false);
-                    pointMesh.RecalculateBounds();
-                    pointMesh.UploadMeshData(false);
+                    _pointMesh.vertices = newVertices;
+                    _pointMesh.colors   = newPointColors;
+                    _pointMesh.SetIndices(newPointIndices, MeshTopology.Triangles, 0, false);
+                    _pointMesh.RecalculateBounds();
+                    _pointMesh.UploadMeshData(false);
                 }
 
                 if(lineIndexCount > 0)
                 {
-                    lineMesh.vertices = newVertices;
-                    lineMesh.colors   = newLineColors;
-                    lineMesh.SetIndices(newLineIndices, MeshTopology.Lines, 0, false);
-                    lineMesh.RecalculateBounds();
-                    lineMesh.UploadMeshData(false);
+                    _lineMesh.vertices = newVertices;
+                    _lineMesh.colors   = newLineColors;
+                    _lineMesh.SetIndices(newLineIndices, MeshTopology.Lines, 0, false);
+                    _lineMesh.RecalculateBounds();
+                    _lineMesh.UploadMeshData(false);
                 }
             }
 
@@ -129,7 +129,7 @@ namespace RealtimeCSG
                     return;
                 }
 
-                Graphics.DrawMeshNow(pointMesh, MathConstants.identityMatrix);
+                Graphics.DrawMeshNow(_pointMesh, MathConstants.identityMatrix);
             }
 
             public void DrawLines()
@@ -140,41 +140,41 @@ namespace RealtimeCSG
                     return;
                 }
 
-                Graphics.DrawMeshNow(lineMesh, MathConstants.identityMatrix);
+                Graphics.DrawMeshNow(_lineMesh, MathConstants.identityMatrix);
             }
 
             internal void Destroy()
             {
-                if(pointMesh)
+                if(_pointMesh)
                 {
-                    UnityEngine.Object.DestroyImmediate(pointMesh);
+                    Object.DestroyImmediate(_pointMesh);
                 }
 
-                if(lineMesh)
+                if(_lineMesh)
                 {
-                    UnityEngine.Object.DestroyImmediate(lineMesh);
+                    Object.DestroyImmediate(_lineMesh);
                 }
 
-                pointMesh = null;
-                lineMesh  = null;
+                _pointMesh = null;
+                _lineMesh  = null;
             }
         }
 
         public void Begin()
         {
-            currentPointMesh = 0;
+            _currentPointMesh = 0;
 
-            for(int i = 0; i < pointMeshes.Count; i++)
+            for(int i = 0; i < _pointMeshes.Count; i++)
             {
-                pointMeshes[i].Clear();
+                _pointMeshes[i].Clear();
             }
         }
 
         public void End()
         {
-            for(int i = 0; i <= currentPointMesh; i++)
+            for(int i = 0; i <= _currentPointMesh; i++)
             {
-                pointMeshes[i].CommitMesh();
+                _pointMeshes[i].CommitMesh();
             }
         }
 
@@ -182,27 +182,27 @@ namespace RealtimeCSG
         {
             if(pointMaterial.SetPass(0))
             {
-                for(int i = 0; i <= currentPointMesh; i++)
+                for(int i = 0; i <= _currentPointMesh; i++)
                 {
-                    pointMeshes[i].DrawPoints();
+                    _pointMeshes[i].DrawPoints();
                 }
             }
 
             if(lineMaterial.SetPass(0))
             {
-                for(int i = 0; i <= currentPointMesh; i++)
+                for(int i = 0; i <= _currentPointMesh; i++)
                 {
-                    pointMeshes[i].DrawLines();
+                    _pointMeshes[i].DrawLines();
                 }
             }
         }
 
-        private List<PointMesh> pointMeshes = new List<PointMesh>();
-        private int currentPointMesh = 0;
+        private readonly List<PointMesh> _pointMeshes = new List<PointMesh>();
+        private int _currentPointMesh;
 
         public PointMeshManager()
         {
-            pointMeshes.Add(new PointMesh());
+            _pointMeshes.Add(new PointMesh());
         }
 
         public void DrawPoint(Camera camera, Vector3 position, float size, Color innerColor, Color outerColor)
@@ -215,19 +215,19 @@ namespace RealtimeCSG
             Vector3 p2 = -right - up;
             Vector3 p3 = -right + up;
 
-            PointMesh pointMesh      = pointMeshes[currentPointMesh];
+            PointMesh pointMesh      = _pointMeshes[_currentPointMesh];
             int       dstVertexCount = pointMesh.vertexCount;
 
-            if(dstVertexCount + 4 >= PointMesh.MaxVertexCount)
+            if(dstVertexCount + 4 >= PointMesh.MAX_VERTEX_COUNT)
             {
-                currentPointMesh++;
+                _currentPointMesh++;
 
-                if(currentPointMesh >= pointMeshes.Count)
+                if(_currentPointMesh >= _pointMeshes.Count)
                 {
-                    pointMeshes.Add(new PointMesh());
+                    _pointMeshes.Add(new PointMesh());
                 }
 
-                pointMesh      = pointMeshes[currentPointMesh];
+                pointMesh      = _pointMeshes[_currentPointMesh];
                 dstVertexCount = pointMesh.vertexCount;
             }
 
@@ -306,8 +306,8 @@ namespace RealtimeCSG
             Vector3 p2 = -right - up;
             Vector3 p3 = -right + up;
 
-            int       pointMeshIndex     = currentPointMesh;
-            PointMesh pointMesh          = pointMeshes[currentPointMesh];
+            int       pointMeshIndex     = _currentPointMesh;
+            PointMesh pointMesh          = _pointMeshes[_currentPointMesh];
             Vector3[] dstVertices        = pointMesh.vertices;
             Color[]   dstLineColors      = pointMesh.lineColors;
             Color[]   dstPointColors     = pointMesh.pointColors;
@@ -321,20 +321,20 @@ namespace RealtimeCSG
             {
                 int index = dstVertexCount;
 
-                if(dstVertexCount + 4 >= PointMesh.MaxVertexCount)
+                if(dstVertexCount + 4 >= PointMesh.MAX_VERTEX_COUNT)
                 {
                     pointMesh.vertexCount     = dstVertexCount;
                     pointMesh.pointIndexCount = dstPointIndexCount;
                     pointMesh.lineIndexCount  = dstLineIndexCount;
 
-                    currentPointMesh++;
+                    _currentPointMesh++;
 
-                    if(currentPointMesh >= pointMeshes.Count)
+                    if(_currentPointMesh >= _pointMeshes.Count)
                     {
-                        pointMeshes.Add(new PointMesh());
+                        _pointMeshes.Add(new PointMesh());
                     }
 
-                    pointMesh = pointMeshes[currentPointMesh];
+                    pointMesh = _pointMeshes[_currentPointMesh];
                     pointMesh.Clear();
 
                     dstVertices        = pointMesh.vertices;
@@ -407,17 +407,17 @@ namespace RealtimeCSG
             pointMesh.vertexCount     = dstVertexCount;
             pointMesh.pointIndexCount = dstPointIndexCount;
             pointMesh.lineIndexCount  = dstLineIndexCount;
-            currentPointMesh          = pointMeshIndex;
+            _currentPointMesh         = pointMeshIndex;
         }
 
         internal void Destroy()
         {
-            for(int i = 0; i < pointMeshes.Count; i++)
+            for(int i = 0; i < _pointMeshes.Count; i++)
             {
-                pointMeshes[i].Destroy();
+                _pointMeshes[i].Destroy();
             }
 
-            pointMeshes.Clear();
+            _pointMeshes.Clear();
         }
     }
 }

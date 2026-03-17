@@ -5,11 +5,11 @@ namespace RealtimeCSG.Helpers
 {
     public class CSGFreeRotate
     {
-        private static Vector2 s_CurrentMousePosition;
-        internal const float kPickDistance = 5.0f;
+        private static Vector2 m_CurrentMousePosition;
+        internal const float PICK_DISTANCE = 5.0f;
 
         public static Quaternion Do(
-            Camera camera, int id, Quaternion rotation, Vector3 position, float size, bool snapping
+            Camera camera, int id, Quaternion rotation, Vector3 position, float size
           , CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction
         )
         {
@@ -23,14 +23,14 @@ namespace RealtimeCSG.Helpers
                 case EventType.Layout:
                 {
                     Handles.matrix = Matrix4x4.identity;
-                    HandleUtility.AddControl(id, HandleUtility.DistanceToCircle(worldPosition, size) + kPickDistance);
+                    HandleUtility.AddControl(id, HandleUtility.DistanceToCircle(worldPosition, size) + PICK_DISTANCE);
                     Handles.matrix = origMatrix;
 
                     break;
                 }
                 case EventType.MouseDown:
                 {
-                    if(CSGHandles.disabled)
+                    if(CSGHandles.Disabled)
                     {
                         break;
                     }
@@ -43,9 +43,8 @@ namespace RealtimeCSG.Helpers
                             initFunction();
                         }
 
-                        GUIUtility.hotControl = GUIUtility.keyboardControl = id; // Grab mouse focus
-                        //Tools.LockHandlePosition();
-                        s_CurrentMousePosition = evt.mousePosition;
+                        GUIUtility.hotControl  = GUIUtility.keyboardControl = id; // Grab mouse focus
+                        m_CurrentMousePosition = evt.mousePosition;
                         evt.Use();
                         EditorGUIUtility.SetWantsMouseJumping(1);
                     }
@@ -56,7 +55,7 @@ namespace RealtimeCSG.Helpers
                 {
                     if(GUIUtility.hotControl == id)
                     {
-                        s_CurrentMousePosition += evt.delta;
+                        m_CurrentMousePosition += evt.delta;
 
                         Vector3 rotDir =
                             camera.transform.TransformDirection(new Vector3(-evt.delta.y, -evt.delta.x, 0));
@@ -73,7 +72,6 @@ namespace RealtimeCSG.Helpers
                 {
                     if(GUIUtility.hotControl == id && (evt.button == 0 || evt.button == 2))
                     {
-                        //Tools.UnlockHandlePosition();
                         GUIUtility.hotControl = 0;
                         evt.Use();
 
@@ -92,7 +90,6 @@ namespace RealtimeCSG.Helpers
                     if(evt.keyCode == KeyCode.Escape && GUIUtility.hotControl == id)
                     {
                         // We do not use the event nor clear hotcontrol to ensure auto revert value kicks in from native side
-                        //Tools.UnlockHandlePosition();
                         EditorGUIUtility.SetWantsMouseJumping(0);
                     }
 
@@ -106,7 +103,7 @@ namespace RealtimeCSG.Helpers
                     {
                         Handles.color = Handles.selectedColor;
                     }
-                    else if(CSGHandles.disabled)
+                    else if(CSGHandles.Disabled)
                     {
                         Handles.color = Color.Lerp(originalColor, Handles.secondaryColor, 0.75f);
                     }

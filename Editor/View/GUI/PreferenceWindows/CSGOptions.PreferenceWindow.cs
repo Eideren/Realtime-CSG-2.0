@@ -7,71 +7,56 @@ namespace RealtimeCSG
 {
     internal class CSGOptionsPreferenceWindow
     {
-#if !UNITY_2018_4_OR_NEWER && !UNITY_2019_1_OR_NEWER
-        [PreferenceItem("CSG Options")]
-#endif
         public static void PreferenceWindow()
         {
             EditorGUI.BeginChangeCheck();
 
+            CSGSettings.ShowTooltips = EditorGUILayout.ToggleLeft("Show Tool-Tips", CSGSettings.ShowTooltips);
+
+            CSGSettings.SnapNonCSGObjects = EditorGUILayout.ToggleLeft(
+                "Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects
+            );
+
+            CSGSettings.AutoRigidbody = EditorGUILayout.ToggleLeft(
+                "Disable auto add rigidbodies", CSGSettings.AutoRigidbody
+            );
+
+            CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft(
+                "Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs
+            );
+
+            EditorGUILayout.Space();
+            CSGSettings.MaxCircleSides = EditorGUILayout.IntField("Max Circle Sides", CSGSettings.MaxCircleSides);
+
+            CSGSettings.MaxSphereSplits = EditorGUILayout.IntField("Max Sphere Splits", CSGSettings.MaxSphereSplits);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("Surfaces", EditorStyles.boldLabel);
+
+            bool beforeToggleWorldSpaceTexture = (CSGSettings.DefaultTexGenFlags & TexGenFlags.WorldSpaceTexture)
+             != TexGenFlags.WorldSpaceTexture;
+
+            bool afterToggleWorldSpaceTexture = EditorGUILayout.ToggleLeft(
+                "Lock Texture To Object (Default)", beforeToggleWorldSpaceTexture
+            );
+
+            if(afterToggleWorldSpaceTexture != beforeToggleWorldSpaceTexture)
             {
-#if !UNITY_2018_4_OR_NEWER && !UNITY_2019_1_OR_NEWER
-                CSGProjectSettings.Instance.SaveMeshesInSceneFiles =
- EditorGUILayout.ToggleLeft("Save Meshes In Scene Files", CSGProjectSettings.Instance.SaveMeshesInSceneFiles);
-                EditorGUILayout.Separator();
-#endif
-                CSGSettings.ShowTooltips = EditorGUILayout.ToggleLeft("Show Tool-Tips", CSGSettings.ShowTooltips);
-
-                CSGSettings.SnapNonCSGObjects = EditorGUILayout.ToggleLeft(
-                    "Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects
-                );
-
-                CSGSettings.AutoRigidbody = EditorGUILayout.ToggleLeft(
-                    "Disable auto add rigidbodies", CSGSettings.AutoRigidbody
-                );
-
-                CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft(
-                    "Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs
-                );
-
-                EditorGUILayout.Space();
-                CSGSettings.MaxCircleSides = EditorGUILayout.IntField("Max Circle Sides", CSGSettings.MaxCircleSides);
-
-                CSGSettings.MaxSphereSplits = EditorGUILayout.IntField(
-                    "Max Sphere Splits", CSGSettings.MaxSphereSplits
-                );
-
-                EditorGUILayout.Space();
-
-                EditorGUILayout.LabelField("Surfaces", EditorStyles.boldLabel);
-
-                bool beforeToggleWorldSpaceTexture = (CSGSettings.DefaultTexGenFlags & TexGenFlags.WorldSpaceTexture)
-                 != TexGenFlags.WorldSpaceTexture;
-
-                bool afterToggleWorldSpaceTexture = EditorGUILayout.ToggleLeft(
-                    "Lock Texture To Object (Default)", beforeToggleWorldSpaceTexture
-                );
-
-                if(afterToggleWorldSpaceTexture != beforeToggleWorldSpaceTexture)
+                if(afterToggleWorldSpaceTexture)
                 {
-                    if(afterToggleWorldSpaceTexture)
-                    {
-                        CSGSettings.DefaultTexGenFlags &= ~TexGenFlags.WorldSpaceTexture;
-                    }
-                    else
-                    {
-                        CSGSettings.DefaultTexGenFlags |= TexGenFlags.WorldSpaceTexture;
-                    }
+                    CSGSettings.DefaultTexGenFlags &= ~TexGenFlags.WorldSpaceTexture;
                 }
-
-                CSGSettings.ShowSceneInfo = EditorGUILayout.ToggleLeft("Show Scene Info", CSGSettings.ShowSceneInfo);
+                else
+                {
+                    CSGSettings.DefaultTexGenFlags |= TexGenFlags.WorldSpaceTexture;
+                }
             }
+
+            CSGSettings.ShowSceneInfo = EditorGUILayout.ToggleLeft("Show Scene Info", CSGSettings.ShowSceneInfo);
 
             if(EditorGUI.EndChangeCheck())
             {
-#if !UNITY_2018_4_OR_NEWER && !UNITY_2019_1_OR_NEWER
-                CSGProjectSettings.Instance.Save();
-#endif
                 CSGSettings.Save();
             }
         }
@@ -80,40 +65,38 @@ namespace RealtimeCSG
         {
             EditorGUI.BeginChangeCheck();
 
+            CSGProjectSettings.Instance.saveMeshesInSceneFiles = !EditorGUILayout.ToggleLeft(
+                "[Experimental] Don't Save Meshes In Scene Files"
+              , !CSGProjectSettings.Instance.saveMeshesInSceneFiles
+            );
+
+            if(!CSGProjectSettings.Instance.saveMeshesInSceneFiles)
             {
-                CSGProjectSettings.Instance.saveMeshesInSceneFiles = !EditorGUILayout.ToggleLeft(
-                    "[Experimental] Don't Save Meshes In Scene Files"
-                  , !CSGProjectSettings.Instance.saveMeshesInSceneFiles
-                );
-
-                if(!CSGProjectSettings.Instance.saveMeshesInSceneFiles)
-                {
-                    EditorGUILayout.HelpBox(
-                        "Meshes will be rebuilt on editor & scene load. This is an experimental option, if meshes are not rebuilding properly, please disable it."
-                       ,
-                        MessageType.Warning, true
-                    );
-                }
-                else
-                {
-                    EditorGUILayout.HelpBox(
-                        "If enabled, meshes will be automatically rebuilt on editor & scene load, dramatically saving disk space."
-                       ,
-                        MessageType.Info, true
-                    );
-                }
-
-                CSGProjectSettings.Instance.snapEverythingTo0001Grid = EditorGUILayout.ToggleLeft(
-                    "Snap All CSG Objects To 0.001 Grid", CSGProjectSettings.Instance.snapEverythingTo0001Grid
-                );
-
                 EditorGUILayout.HelpBox(
-                    "If enabled, every CSG object will snap to a small grid regardless of snapping options. " +
-                    "This ensures things line up when on a tiny scale, but can make it difficult to work at a small scale."
+                    "Meshes will be rebuilt on editor & scene load. This is an experimental option, if meshes are not rebuilding properly, please disable it."
+                   ,
+                    MessageType.Warning, true
+                );
+            }
+            else
+            {
+                EditorGUILayout.HelpBox(
+                    "If enabled, meshes will be automatically rebuilt on editor & scene load, dramatically saving disk space."
                    ,
                     MessageType.Info, true
                 );
             }
+
+            CSGProjectSettings.Instance.snapEverythingTo0001Grid = EditorGUILayout.ToggleLeft(
+                "Snap All CSG Objects To 0.001 Grid", CSGProjectSettings.Instance.snapEverythingTo0001Grid
+            );
+
+            EditorGUILayout.HelpBox(
+                "If enabled, every CSG object will snap to a small grid regardless of snapping options. " +
+                "This ensures things line up when on a tiny scale, but can make it difficult to work at a small scale."
+               ,
+                MessageType.Info, true
+            );
 
             if(EditorGUI.EndChangeCheck())
             {
@@ -122,30 +105,16 @@ namespace RealtimeCSG
         }
     }
 
-#if UNITY_2018_4_OR_NEWER
     // Register a SettingsProvider using IMGUI for the drawing framework:
     internal static class RealtimeCSGOptionsIMGUIRegister
     {
         [SettingsProvider]
         public static SettingsProvider CreateCSGPreferenceSettings()
         {
-            CSGKeysPreferenceWindow.KeyPref[] keys     = CSGKeysPreferenceWindow.GetKeys();
-            HashSet<string>                   keywords = new HashSet<string>();
-
-            foreach(CSGKeysPreferenceWindow.KeyPref key in keys)
-            {
-                string[] pieces = key.name.Split(' ', '/');
-
-                foreach(string piece in pieces)
-                {
-                    keywords.Add(piece);
-                }
-            }
-
             SettingsProvider provider = new SettingsProvider("Preferences/RealtimeCSG", SettingsScope.User)
             {
                 label = "Realtime CSG"
-              , guiHandler = (searchContext) =>
+              , guiHandler = _ =>
                 {
                     GUILayout.Label("Options", EditorStyles.boldLabel);
                     GUILayout.Space(10);
@@ -172,7 +141,7 @@ namespace RealtimeCSG
                 new SettingsProvider("Project/RealtimeCSGProjectSettings", SettingsScope.Project)
                 {
                     label = "Realtime CSG"
-                  , guiHandler = (searchContext) =>
+                  , guiHandler = _ =>
                     {
                         GUILayout.Label("Options", EditorStyles.boldLabel);
                         GUILayout.Space(10);
@@ -184,5 +153,4 @@ namespace RealtimeCSG
             return provider;
         }
     }
-#endif
 }

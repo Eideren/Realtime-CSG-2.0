@@ -5,26 +5,11 @@ using UnityEngine;
 
 namespace RealtimeCSG
 {
-    public enum DistanceUnit
-    {
-        Meters
-      , Centimeters
-      , Millimeters
-      , Feet
-      , Inches
-    }
-
-    public enum PixelUnit
-    {
-        Relative
-      , Pixels
-    }
-
     public static class Units
     {
-        private static string[] pixelUnitStrings = { string.Empty, "pixels" };
+        private static readonly string[] pixelUnitStrings = { string.Empty, "pixels" };
 
-        private static GUIContent[] pixelUnitGUIContent =
+        private static readonly GUIContent[] pixelUnitGUIContent =
         {
             new GUIContent(pixelUnitStrings[0]), new GUIContent(pixelUnitStrings[1])
         };
@@ -39,9 +24,9 @@ namespace RealtimeCSG
             return pixelUnitGUIContent[(int)unit];
         }
 
-        private static string[] distanceUnitStrings = { "m", "cm", "mm", "ft", "\"" };
+        private static readonly string[] distanceUnitStrings = { "m", "cm", "mm", "ft", "\"" };
 
-        private static GUIContent[] distanceUnitGUIContent =
+        private static readonly GUIContent[] distanceUnitGUIContent =
         {
             new GUIContent(distanceUnitStrings[0]), new GUIContent(distanceUnitStrings[1])
           , new GUIContent(distanceUnitStrings[2]), new GUIContent(distanceUnitStrings[3])
@@ -115,13 +100,13 @@ namespace RealtimeCSG
         {
             switch(unit)
             {
-                case PixelUnit.Relative: return (double)value;
-                case PixelUnit.Pixels:   return (double)(value * 4096.0);
+                case PixelUnit.Relative: return value;
+                case PixelUnit.Pixels:   return value * 4096.0;
             }
 
             Debug.LogWarning("Tried to convert value to unknown pixel unit");
 
-            return (double)value;
+            return value;
         }
 
         public static double UnityToPixelsUnit(float value)
@@ -163,8 +148,8 @@ namespace RealtimeCSG
             DistanceUnit unit, Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false
         )
         {
-            StringBuilder builder     = new StringBuilder();
-            string        unit_string = GetUnitString(unit);
+            StringBuilder builder    = new StringBuilder();
+            string        unitString = GetUnitString(unit);
 
             if(lockX)
             {
@@ -173,7 +158,7 @@ namespace RealtimeCSG
             else
             {
                 builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "x: {0} {1}\n", UnityToDistanceUnit(unit, value.x), unit_string
+                    CultureInfo.InvariantCulture, "x: {0} {1}\n", UnityToDistanceUnit(unit, value.x), unitString
                 );
             }
 
@@ -184,7 +169,7 @@ namespace RealtimeCSG
             else
             {
                 builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "y: {0} {1}\n", UnityToDistanceUnit(unit, value.y), unit_string
+                    CultureInfo.InvariantCulture, "y: {0} {1}\n", UnityToDistanceUnit(unit, value.y), unitString
                 );
             }
 
@@ -195,7 +180,7 @@ namespace RealtimeCSG
             else
             {
                 builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "z: {0} {1}", UnityToDistanceUnit(unit, value.z), unit_string
+                    CultureInfo.InvariantCulture, "z: {0} {1}", UnityToDistanceUnit(unit, value.z), unitString
                 );
             }
 
@@ -211,7 +196,7 @@ namespace RealtimeCSG
         {
             if(float.IsNaN(value))
             {
-                return "??";
+                return "NaN";
             }
 
             return string.Format(
@@ -228,8 +213,8 @@ namespace RealtimeCSG
             DistanceUnit unit, Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false
         )
         {
-            StringBuilder builder     = new StringBuilder();
-            string        unit_string = GetUnitString(unit);
+            StringBuilder builder    = new StringBuilder();
+            string        unitString = GetUnitString(unit);
 
             if(lockX)
             {
@@ -238,7 +223,7 @@ namespace RealtimeCSG
             else
             {
                 builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "x: {0:F} {1}\n", UnityToDistanceUnit(unit, value.x), unit_string
+                    CultureInfo.InvariantCulture, "x: {0:F} {1}\n", UnityToDistanceUnit(unit, value.x), unitString
                 );
             }
 
@@ -249,7 +234,7 @@ namespace RealtimeCSG
             else
             {
                 builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "y: {0:F} {1}\n", UnityToDistanceUnit(unit, value.y), unit_string
+                    CultureInfo.InvariantCulture, "y: {0:F} {1}\n", UnityToDistanceUnit(unit, value.y), unitString
                 );
             }
 
@@ -260,7 +245,7 @@ namespace RealtimeCSG
             else
             {
                 builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "z: {0:F} {1}", UnityToDistanceUnit(unit, value.z), unit_string
+                    CultureInfo.InvariantCulture, "z: {0:F} {1}", UnityToDistanceUnit(unit, value.z), unitString
                 );
             }
 
@@ -320,35 +305,35 @@ namespace RealtimeCSG
             return string.Format(CultureInfo.InvariantCulture, "{0:F}°", value); // (value % 360));
         }
 
-        private const double meter_to_centimeter = 100.0;
-        private const double meter_to_millimeter = 1000.0;
-        private const double meter_to_inches = 39.37007874;
-        private const double meter_to_feet = 3.28084;
-        private const double emperial_rounding = 10000000;
+        private const double METER_TO_CENTIMETER = 100.0;
+        private const double METER_TO_MILLIMETER = 1000.0;
+        private const double METER_TO_INCHES = 39.37007874;
+        private const double METER_TO_FEET = 3.28084;
+        private const double EMPERIAL_ROUNDING = 10000000;
 
         public static double UnityToDistanceUnit(DistanceUnit unit, float value)
         {
             if(float.IsNaN(value) || float.IsInfinity(value))
             {
-                return (double)value;
+                return value;
             }
 
-            double result = (double)value;
+            double result = value;
 
             switch(unit)
             {
                 // values are in meters by default in unity
                 case DistanceUnit.Meters:      break;
-                case DistanceUnit.Centimeters: result *= meter_to_centimeter; break;
-                case DistanceUnit.Millimeters: result *= meter_to_millimeter; break;
+                case DistanceUnit.Centimeters: result *= METER_TO_CENTIMETER; break;
+                case DistanceUnit.Millimeters: result *= METER_TO_MILLIMETER; break;
                 case DistanceUnit.Inches:
-                    result *= meter_to_inches;
-                    result =  Math.Round(result * emperial_rounding) / emperial_rounding;
+                    result *= METER_TO_INCHES;
+                    result =  Math.Round(result * EMPERIAL_ROUNDING) / EMPERIAL_ROUNDING;
 
                     break;
                 case DistanceUnit.Feet:
-                    result *= meter_to_feet;
-                    result =  Math.Round(result * emperial_rounding) / emperial_rounding;
+                    result *= METER_TO_FEET;
+                    result =  Math.Round(result * EMPERIAL_ROUNDING) / EMPERIAL_ROUNDING;
 
                     break;
                 default:
@@ -359,7 +344,7 @@ namespace RealtimeCSG
                 }
             }
 
-            return (double)result;
+            return result;
         }
 
         public static double UnityToDistanceUnit(float value)
@@ -374,22 +359,22 @@ namespace RealtimeCSG
                 return (float)value;
             }
 
-            double result = (double)value;
+            double result = value;
 
             switch(unit)
             {
                 // values are in meters by default in unity
                 case DistanceUnit.Meters:      break;
-                case DistanceUnit.Centimeters: result /= meter_to_centimeter; break;
-                case DistanceUnit.Millimeters: result /= meter_to_millimeter; break;
+                case DistanceUnit.Centimeters: result /= METER_TO_CENTIMETER; break;
+                case DistanceUnit.Millimeters: result /= METER_TO_MILLIMETER; break;
                 case DistanceUnit.Inches:
-                    result /= meter_to_inches;
-                    result =  Math.Round(result * emperial_rounding) / emperial_rounding;
+                    result /= METER_TO_INCHES;
+                    result =  Math.Round(result * EMPERIAL_ROUNDING) / EMPERIAL_ROUNDING;
 
                     break;
                 case DistanceUnit.Feet:
-                    result /= meter_to_feet;
-                    result =  Math.Round(result * emperial_rounding) / emperial_rounding;
+                    result /= METER_TO_FEET;
+                    result =  Math.Round(result * EMPERIAL_ROUNDING) / EMPERIAL_ROUNDING;
 
                     break;
                 default:

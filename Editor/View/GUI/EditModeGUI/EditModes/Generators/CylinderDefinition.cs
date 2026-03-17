@@ -12,9 +12,6 @@ namespace RealtimeCSG
         [SerializeField] public bool circleSingleSurfaceEnds = true;
         [SerializeField] public bool circleDistanceToSide = true;
         [SerializeField] public bool circleRecenter = true;
-
-        [SerializeField] public float circleRadius = 0.0f;
-//		[SerializeField] public Vector3		circleTangent;
-//		[SerializeField] public Vector3		circleBinormal;
+        [SerializeField] public float circleRadius = 1;
     }
 }

@@ -6,9 +6,10 @@ namespace RealtimeCSG.Helpers
 {
     public static class CSGSlider1D
     {
-        private static Vector2 s_StartMousePosition, s_CurrentMousePosition;
-        private static Vector3 s_StartPosition;
-        private static Vector3[] s_SnapVertices;
+        private static Vector2 m_StartMousePosition;
+        private static Vector2 m_CurrentMousePosition;
+        private static Vector3 m_StartPosition;
+        private static Vector3[] m_SnapVertices;
 
         internal static Vector3 Do(
             Camera camera, int id, Vector3 position, Vector3 direction, float size, CSGHandles.CapFunction capFunction
@@ -35,7 +36,7 @@ namespace RealtimeCSG.Helpers
                 }
                 case EventType.MouseDown:
                 {
-                    if(CSGHandles.disabled)
+                    if(CSGHandles.Disabled)
                     {
                         break;
                     }
@@ -43,7 +44,7 @@ namespace RealtimeCSG.Helpers
                     if(((HandleUtility.nearestControl == id && evt.button == 0) ||
                            (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
                     {
-                        s_SnapVertices = null;
+                        m_SnapVertices = null;
 
                         if(initFunction != null)
                         {
@@ -51,8 +52,8 @@ namespace RealtimeCSG.Helpers
                         }
 
                         GUIUtility.hotControl  = GUIUtility.keyboardControl = id;
-                        s_CurrentMousePosition = s_StartMousePosition       = evt.mousePosition;
-                        s_StartPosition        = position;
+                        m_CurrentMousePosition = m_StartMousePosition       = evt.mousePosition;
+                        m_StartPosition        = position;
                         evt.Use();
                         EditorGUIUtility.SetWantsMouseJumping(1);
                     }
@@ -63,26 +64,19 @@ namespace RealtimeCSG.Helpers
                 {
                     if(GUIUtility.hotControl == id)
                     {
-                        if(s_SnapVertices == null)
+                        if(m_SnapVertices == null)
                         {
-                            if(snapVertices != null)
-                            {
-                                s_SnapVertices = snapVertices.ToArray();
-                            }
-                            else
-                            {
-                                s_SnapVertices = new Vector3[] { s_StartPosition };
-                            }
+                            m_SnapVertices = snapVertices != null ? snapVertices.ToArray() : new[] { m_StartPosition };
                         }
 
-                        s_CurrentMousePosition += evt.delta;
+                        m_CurrentMousePosition += evt.delta;
 
                         float dist = HandleUtility.CalcLineTranslation(
-                            s_StartMousePosition, s_CurrentMousePosition, s_StartPosition, direction
+                            m_StartMousePosition, m_CurrentMousePosition, m_StartPosition, direction
                         );
 
                         Vector3 worldDirection = Handles.matrix.MultiplyVector(direction);
-                        Vector3 worldPosition  = Handles.matrix.MultiplyPoint(s_StartPosition) + worldDirection * dist;
+                        Vector3 worldPosition  = Handles.matrix.MultiplyPoint(m_StartPosition) + worldDirection * dist;
                         position = Handles.inverseMatrix.MultiplyPoint(worldPosition);
 
                         switch(snapMode)
@@ -90,24 +84,24 @@ namespace RealtimeCSG.Helpers
                             case SnapMode.GridSnapping:
                             {
                                 Vector3 delta = CSGGrid.SnapDeltaToGrid(
-                                    camera, position - s_StartPosition, s_SnapVertices, false, true
+                                    camera, position - m_StartPosition, m_SnapVertices, false, true
                                 );
 
-                                position = delta + s_StartPosition;
+                                position = delta + m_StartPosition;
 
                                 break;
                             }
                             case SnapMode.RelativeSnapping:
                             {
-                                Vector3 delta = CSGGrid.SnapDeltaRelative(camera, position - s_StartPosition, false);
-                                position = delta + s_StartPosition;
+                                Vector3 delta = CSGGrid.SnapDeltaRelative(camera, position - m_StartPosition, false);
+                                position = delta + m_StartPosition;
 
                                 break;
                             }
                             default:
                             case SnapMode.None:
                             {
-                                position = CSGGrid.HandleLockedAxi(position - s_StartPosition) + s_StartPosition;
+                                position = CSGGrid.HandleLockedAxi(position - m_StartPosition) + m_StartPosition;
 
                                 break;
                             }
@@ -141,7 +135,7 @@ namespace RealtimeCSG.Helpers
                     Color originalColor = Handles.color;
 
                     Handles.color = CSGHandles.StateColor(
-                        originalColor, CSGHandles.disabled, CSGHandles.FocusControl == id
+                        originalColor, CSGHandles.Disabled, CSGHandles.FocusControl == id
                     );
 
                     if(capFunction != null)

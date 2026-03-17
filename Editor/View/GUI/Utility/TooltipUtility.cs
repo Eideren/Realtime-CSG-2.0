@@ -7,14 +7,14 @@ namespace RealtimeCSG
 {
     internal static class TooltipUtility
     {
-        private static TooltipContentState currentState;
+        private static TooltipContentState m_CurrentState;
 
-        private static readonly Dictionary<UnityEngine.Object, TooltipContentState> currentStateCache =
-            new Dictionary<UnityEngine.Object, TooltipContentState>();
+        private static readonly Dictionary<Object, TooltipContentState> currentStateCache =
+            new Dictionary<Object, TooltipContentState>();
 
-        private const float TooltipWaitTime = 0.125f;
+        private const float TOOLTIP_WAIT_TIME = 0.125f;
 
-        private static readonly List<UnityEngine.Object> removeObjects = new List<UnityEngine.Object>();
+        private static readonly List<Object> removeObjects = new List<Object>();
 
         public static void CleanCache()
         {
@@ -44,9 +44,7 @@ namespace RealtimeCSG
 
         public static void InitToolTip(SceneView sceneView)
         {
-            TooltipContentState state;
-
-            if(!currentStateCache.TryGetValue(sceneView, out state))
+            if(!currentStateCache.TryGetValue(sceneView, out TooltipContentState state))
             {
                 state                        = new TooltipContentState();
                 currentStateCache[sceneView] = state;
@@ -57,9 +55,7 @@ namespace RealtimeCSG
 
         public static void InitToolTip(EditorWindow editorWindow)
         {
-            TooltipContentState state;
-
-            if(!currentStateCache.TryGetValue(editorWindow, out state))
+            if(!currentStateCache.TryGetValue(editorWindow, out TooltipContentState state))
             {
                 state                           = new TooltipContentState();
                 currentStateCache[editorWindow] = state;
@@ -70,9 +66,7 @@ namespace RealtimeCSG
 
         public static void InitToolTip(Editor editor)
         {
-            TooltipContentState state;
-
-            if(!currentStateCache.TryGetValue(editor, out state))
+            if(!currentStateCache.TryGetValue(editor, out TooltipContentState state))
             {
                 state                     = new TooltipContentState();
                 currentStateCache[editor] = state;
@@ -83,24 +77,24 @@ namespace RealtimeCSG
 
         private static void InitToolTip(TooltipContentState state, EditorWindow editorWindow)
         {
-            currentState = state;
+            m_CurrentState = state;
 
             if(Event.current.type != EventType.Repaint)
             {
                 return;
             }
 
-            currentState.currentToolTip = null;
-            currentState.drawnThisFrame = false;
-            currentState.editorWindow   = editorWindow;
-            currentState.editor         = null;
+            m_CurrentState.currentToolTip = null;
+            m_CurrentState.drawnThisFrame = false;
+            m_CurrentState.editorWindow   = editorWindow;
+            m_CurrentState.editor         = null;
 
-            currentState.maxArea = new Rect(0, 0, editorWindow.position.width, editorWindow.position.height);
+            m_CurrentState.maxArea = new Rect(0, 0, editorWindow.position.width, editorWindow.position.height);
         }
 
         private static void InitToolTip(TooltipContentState state, Editor editor)
         {
-            currentState = state;
+            m_CurrentState = state;
 
             if(Event.current.type != EventType.Repaint &&
                Event.current.type != EventType.Layout)
@@ -108,70 +102,60 @@ namespace RealtimeCSG
                 return;
             }
 
-            currentState.currentToolTip = null;
-            currentState.drawnThisFrame = false;
-            currentState.editorWindow   = null;
-            currentState.editor         = editor;
+            m_CurrentState.currentToolTip = null;
+            m_CurrentState.drawnThisFrame = false;
+            m_CurrentState.editorWindow   = null;
+            m_CurrentState.editor         = editor;
 
-            currentState.maxArea = new Rect(0, 0, EditorGUIUtility.currentViewWidth, Screen.height);
-        }
-
-        public static bool FoundToolTip()
-        {
-            return currentState.currentToolTip != null;
+            m_CurrentState.maxArea = new Rect(0, 0, EditorGUIUtility.currentViewWidth, Screen.height);
         }
 
         private static void UpdateToolTip(bool getLastRect = false, bool goUp = false)
         {
-            if(currentState == null)
+            if(m_CurrentState == null)
             {
                 return;
             }
 
-            if(currentState.prevToolTip != currentState.currentToolTip)
+            if(m_CurrentState.prevToolTip != m_CurrentState.currentToolTip)
             {
-                currentState.prevToolTip            = currentState.currentToolTip;
-                currentState.tooltipTimer           = Time.realtimeSinceStartup;
-                currentState.currentToolTipTitle    = null;
-                currentState.currentToolTipContents = null;
-                currentState.currentToolTipKeyCodes = null;
+                m_CurrentState.prevToolTip            = m_CurrentState.currentToolTip;
+                m_CurrentState.tooltipTimer           = Time.realtimeSinceStartup;
+                m_CurrentState.currentToolTipTitle    = null;
+                m_CurrentState.currentToolTipContents = null;
+                m_CurrentState.currentToolTipKeyCodes = null;
             }
 
-            if(currentState.currentToolTip == null)
+            if(m_CurrentState.currentToolTip == null)
             {
                 return;
             }
 
-            GUIStyle titleStyle    = CSG_GUIStyleUtility.toolTipTitleStyle;
-            GUIStyle contentsStyle = CSG_GUIStyleUtility.toolTipContentsStyle;
-            GUIStyle keycodesStyle = CSG_GUIStyleUtility.toolTipKeycodesStyle;
+            GUIStyle titleStyle    = CsgguiStyleUtility.ToolTipTitleStyle;
+            GUIStyle contentsStyle = CsgguiStyleUtility.ToolTipContentsStyle;
+            GUIStyle keycodesStyle = CsgguiStyleUtility.ToolTipKeycodesStyle;
 
-            if(currentState.currentToolTipTitle == null)
+            if(m_CurrentState.currentToolTipTitle == null)
             {
-                string currentToolTipTitleString    = currentState.currentToolTip.TitleString();
-                string currentToolTipContentsString = currentState.currentToolTip.ContentsString();
-                string currentToolTipKeyCodesString = currentState.currentToolTip.KeyString();
+                string currentToolTipTitleString    = m_CurrentState.currentToolTip.TitleString();
+                string currentToolTipContentsString = m_CurrentState.currentToolTip.ContentsString();
+                string currentToolTipKeyCodesString = m_CurrentState.currentToolTip.KeyString();
 
-                currentState.currentToolTipTitle    = new GUIContent(currentToolTipTitleString);
-                currentState.currentToolTipContents = new GUIContent(currentToolTipContentsString);
+                m_CurrentState.currentToolTipTitle    = new GUIContent(currentToolTipTitleString);
+                m_CurrentState.currentToolTipContents = new GUIContent(currentToolTipContentsString);
 
-                if(string.IsNullOrEmpty(currentToolTipKeyCodesString))
-                {
-                    currentState.currentToolTipKeyCodes = null;
-                }
-                else
-                {
-                    currentState.currentToolTipKeyCodes = new GUIContent(currentToolTipKeyCodesString);
-                }
+                m_CurrentState.currentToolTipKeyCodes = string.IsNullOrEmpty(currentToolTipKeyCodesString)
+                    ? null
+                    : new GUIContent(currentToolTipKeyCodesString);
 
-                Vector2 currentToolTipTitleSize    = titleStyle.CalcSize(currentState.currentToolTipTitle);
-                Vector2 currentToolTipContentsSize = contentsStyle.CalcSize(currentState.currentToolTipContents);
+                Vector2 currentToolTipTitleSize    = titleStyle.CalcSize(m_CurrentState.currentToolTipTitle);
+                Vector2 currentToolTipContentsSize = contentsStyle.CalcSize(m_CurrentState.currentToolTipContents);
 
-                Vector2 currentToolTipKeyCodesSize = currentState.currentToolTipKeyCodes != null
-                    ? keycodesStyle.CalcSize(currentState.currentToolTipKeyCodes)
+                Vector2 currentToolTipKeyCodesSize = m_CurrentState.currentToolTipKeyCodes != null
+                    ? keycodesStyle.CalcSize(m_CurrentState.currentToolTipKeyCodes)
                     : Vector2.zero;
 
-                Rect currentArea = getLastRect ? GUILayoutUtility.GetLastRect() : currentState.maxArea;
+                Rect currentArea = getLastRect ? GUILayoutUtility.GetLastRect() : m_CurrentState.maxArea;
 
                 Vector2 size = currentToolTipTitleSize;
 
@@ -180,127 +164,124 @@ namespace RealtimeCSG
                 );
 
                 size.y = currentToolTipTitleSize.y + currentToolTipContentsSize.y + currentToolTipKeyCodesSize.y;
-                currentState.currentToolTipArea = GUIUtility.ScreenToGUIRect(currentState.tooltipArea);
-                currentState.currentToolTipArea.width = size.x;
+                m_CurrentState.currentToolTipArea = GUIUtility.ScreenToGUIRect(m_CurrentState.tooltipArea);
+                m_CurrentState.currentToolTipArea.width = size.x;
 
-                if(currentState.currentToolTipArea.xMax > currentArea.xMax)
+                if(m_CurrentState.currentToolTipArea.xMax > currentArea.xMax)
                 {
-                    currentState.currentToolTipArea.xMin -= currentState.currentToolTipArea.xMax - currentArea.xMax;
+                    m_CurrentState.currentToolTipArea.xMin -= m_CurrentState.currentToolTipArea.xMax - currentArea.xMax;
                 }
 
-                if(currentState.currentToolTipArea.xMin < 0)
+                if(m_CurrentState.currentToolTipArea.xMin < 0)
                 {
-                    currentState.currentToolTipArea.xMin  = 0;
-                    currentState.currentToolTipArea.width = currentArea.xMax;
+                    m_CurrentState.currentToolTipArea.xMin  = 0;
+                    m_CurrentState.currentToolTipArea.width = currentArea.xMax;
                 }
 
                 float currentToolTipTitleHeight = titleStyle.CalcHeight(
-                    currentState.currentToolTipTitle, currentState.currentToolTipArea.width
+                    m_CurrentState.currentToolTipTitle, m_CurrentState.currentToolTipArea.width
                 );
 
                 float currentToolTipContentsHeight = contentsStyle.CalcHeight(
-                    currentState.currentToolTipContents, currentState.currentToolTipArea.width
+                    m_CurrentState.currentToolTipContents, m_CurrentState.currentToolTipArea.width
                 );
 
-                float currentToolTipKeyCodesHeight = currentState.currentToolTipKeyCodes != null
+                float currentToolTipKeyCodesHeight = m_CurrentState.currentToolTipKeyCodes != null
                     ? keycodesStyle.CalcHeight(
-                        currentState.currentToolTipKeyCodes, currentState.currentToolTipArea.width
+                        m_CurrentState.currentToolTipKeyCodes, m_CurrentState.currentToolTipArea.width
                     )
                     : 0;
 
-                currentState.currentToolTipArea.height = currentToolTipTitleHeight + currentToolTipContentsHeight
+                m_CurrentState.currentToolTipArea.height = currentToolTipTitleHeight + currentToolTipContentsHeight
                   + currentToolTipKeyCodesHeight + 4;
 
                 if(goUp)
                 {
-                    if(currentState.currentToolTipArea.y - currentState.tooltipArea.height < 0)
+                    if(m_CurrentState.currentToolTipArea.y - m_CurrentState.tooltipArea.height < 0)
                     {
-                        currentState.currentToolTipArea.y += currentState.tooltipArea.height;
+                        m_CurrentState.currentToolTipArea.y += m_CurrentState.tooltipArea.height;
                     }
                     else
                     {
-                        currentState.currentToolTipArea.y -= currentState.currentToolTipArea.height;
+                        m_CurrentState.currentToolTipArea.y -= m_CurrentState.currentToolTipArea.height;
                     }
                 }
                 else
                 {
-                    if(currentState.currentToolTipArea.yMax + currentState.tooltipArea.height < currentArea.yMax)
+                    if(m_CurrentState.currentToolTipArea.yMax + m_CurrentState.tooltipArea.height < currentArea.yMax)
                     {
-                        currentState.currentToolTipArea.y += currentState.tooltipArea.height;
+                        m_CurrentState.currentToolTipArea.y += m_CurrentState.tooltipArea.height;
                     }
                     else
                     {
-                        currentState.currentToolTipArea.y -= currentState.currentToolTipArea.height;
+                        m_CurrentState.currentToolTipArea.y -= m_CurrentState.currentToolTipArea.height;
                     }
                 }
 
-                if(currentState.currentToolTipArea.y < 0)
+                if(m_CurrentState.currentToolTipArea.y < 0)
                 {
-                    currentState.currentToolTipArea.y = 0;
+                    m_CurrentState.currentToolTipArea.y = 0;
                 }
 
-                currentState.currentToolTipTitleArea.x     = currentState.currentToolTipArea.x;
-                currentState.currentToolTipTitleArea.width = currentState.currentToolTipArea.width;
+                m_CurrentState.currentToolTipTitleArea.x     = m_CurrentState.currentToolTipArea.x;
+                m_CurrentState.currentToolTipTitleArea.width = m_CurrentState.currentToolTipArea.width;
 
-                currentState.currentToolTipContentsArea.x     = currentState.currentToolTipArea.x;
-                currentState.currentToolTipContentsArea.width = currentState.currentToolTipArea.width;
+                m_CurrentState.currentToolTipContentsArea.x     = m_CurrentState.currentToolTipArea.x;
+                m_CurrentState.currentToolTipContentsArea.width = m_CurrentState.currentToolTipArea.width;
 
-                currentState.currentToolTipKeyCodesArea.x     = currentState.currentToolTipArea.x;
-                currentState.currentToolTipKeyCodesArea.width = currentState.currentToolTipArea.width;
+                m_CurrentState.currentToolTipKeyCodesArea.x     = m_CurrentState.currentToolTipArea.x;
+                m_CurrentState.currentToolTipKeyCodesArea.width = m_CurrentState.currentToolTipArea.width;
 
-                currentState.currentToolTipTitleArea.height    = currentToolTipTitleHeight;
-                currentState.currentToolTipContentsArea.height = currentToolTipContentsHeight;
-                currentState.currentToolTipKeyCodesArea.height = currentToolTipKeyCodesHeight;
+                m_CurrentState.currentToolTipTitleArea.height    = currentToolTipTitleHeight;
+                m_CurrentState.currentToolTipContentsArea.height = currentToolTipContentsHeight;
+                m_CurrentState.currentToolTipKeyCodesArea.height = currentToolTipKeyCodesHeight;
 
-                currentState.currentToolTipTitleArea.y = currentState.currentToolTipArea.y;
+                m_CurrentState.currentToolTipTitleArea.y = m_CurrentState.currentToolTipArea.y;
 
-                currentState.currentToolTipContentsArea.y = currentState.currentToolTipTitleArea.y
-                  + currentState.currentToolTipTitleArea.height;
+                m_CurrentState.currentToolTipContentsArea.y = m_CurrentState.currentToolTipTitleArea.y
+                  + m_CurrentState.currentToolTipTitleArea.height;
 
-                currentState.currentToolTipKeyCodesArea.y = currentState.currentToolTipContentsArea.y
-                  + currentState.currentToolTipContentsArea.height;
+                m_CurrentState.currentToolTipKeyCodesArea.y = m_CurrentState.currentToolTipContentsArea.y
+                  + m_CurrentState.currentToolTipContentsArea.height;
 
-                if(currentState.currentToolTipKeyCodes != null)
+                if(m_CurrentState.currentToolTipKeyCodes != null)
                 {
-                    currentState.currentToolTipKeyCodesArea.height += 4;
+                    m_CurrentState.currentToolTipKeyCodesArea.height += 4;
                 }
                 else
                 {
-                    currentState.currentToolTipContentsArea.height += 4;
+                    m_CurrentState.currentToolTipContentsArea.height += 4;
                 }
             }
         }
 
         public static void DrawToolTip(bool getLastRect = true, bool goUp = false)
         {
-            if(!CSGSettings.ShowTooltips ||
-               currentState == null)
+            if(!CSGSettings.ShowTooltips || m_CurrentState == null)
             {
                 return;
             }
 
-            if(Event.current.type != EventType.Repaint /* ||
-                currentState.drawnThisFrame*/)
+            if(Event.current.type != EventType.Repaint)
             {
-                if(currentState.prevToolTip != currentState.currentToolTip &&
-                   currentState.editor != null)
+                if(m_CurrentState.prevToolTip != m_CurrentState.currentToolTip && m_CurrentState.editor != null)
                 {
-                    currentState.editor.Repaint();
+                    m_CurrentState.editor.Repaint();
                 }
 
                 return;
             }
 
-            if(currentState.currentToolTip == null)
+            if(m_CurrentState.currentToolTip == null)
             {
                 return;
             }
 
             UpdateToolTip(getLastRect, goUp);
 
-            GUIStyle titleStyle    = CSG_GUIStyleUtility.toolTipTitleStyle;
-            GUIStyle contentsStyle = CSG_GUIStyleUtility.toolTipContentsStyle;
-            GUIStyle keycodesStyle = CSG_GUIStyleUtility.toolTipKeycodesStyle;
+            GUIStyle titleStyle    = CsgguiStyleUtility.ToolTipTitleStyle;
+            GUIStyle contentsStyle = CsgguiStyleUtility.ToolTipContentsStyle;
+            GUIStyle keycodesStyle = CsgguiStyleUtility.ToolTipKeycodesStyle;
 
             Color prevBackgroundColor = GUI.backgroundColor;
             Color prevColor           = GUI.color;
@@ -308,16 +289,18 @@ namespace RealtimeCSG
             GUI.backgroundColor = Color.black;
             GUI.color           = Color.white;
 
-            EditorGUI.LabelField(currentState.currentToolTipTitleArea, currentState.currentToolTipTitle, titleStyle);
-
             EditorGUI.LabelField(
-                currentState.currentToolTipContentsArea, currentState.currentToolTipContents, contentsStyle
+                m_CurrentState.currentToolTipTitleArea, m_CurrentState.currentToolTipTitle, titleStyle
             );
 
-            if(currentState.currentToolTipKeyCodes != null)
+            EditorGUI.LabelField(
+                m_CurrentState.currentToolTipContentsArea, m_CurrentState.currentToolTipContents, contentsStyle
+            );
+
+            if(m_CurrentState.currentToolTipKeyCodes != null)
             {
                 EditorGUI.LabelField(
-                    currentState.currentToolTipKeyCodesArea, currentState.currentToolTipKeyCodes, keycodesStyle
+                    m_CurrentState.currentToolTipKeyCodesArea, m_CurrentState.currentToolTipKeyCodes, keycodesStyle
                 );
             }
 
@@ -328,7 +311,7 @@ namespace RealtimeCSG
 
         public static void SetToolTip(ToolTip tooltip)
         {
-            if(tooltip == null || currentState == null)
+            if(tooltip == null || m_CurrentState == null)
             {
                 return;
             }
@@ -346,25 +329,25 @@ namespace RealtimeCSG
 
         public static void SetToolTip(ToolTip tooltip, Rect currentArea)
         {
-            if(tooltip == null || currentState == null)
+            if(tooltip == null || m_CurrentState == null)
             {
                 return;
             }
 
             if(currentArea.Contains(Event.current.mousePosition) &&
-               (EditorWindow.mouseOverWindow == currentState.editorWindow ||
-                   currentState.editorWindow == null))
+               (EditorWindow.mouseOverWindow == m_CurrentState.editorWindow ||
+                   m_CurrentState.editorWindow == null))
             {
                 Rect newArea = GUIToScreenRect(currentArea);
 
-                if(currentState.prevToolTip == tooltip &&
-                   currentState.tooltipArea != newArea)
+                if(m_CurrentState.prevToolTip == tooltip &&
+                   m_CurrentState.tooltipArea != newArea)
                 {
-                    currentState.prevToolTip = null;
+                    m_CurrentState.prevToolTip = null;
                 }
 
-                currentState.tooltipArea    = newArea;
-                currentState.currentToolTip = tooltip;
+                m_CurrentState.tooltipArea    = newArea;
+                m_CurrentState.currentToolTip = tooltip;
             }
         }
     }

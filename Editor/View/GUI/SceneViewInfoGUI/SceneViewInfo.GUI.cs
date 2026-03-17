@@ -1,11 +1,3 @@
-/* * * * * * * * * * * * * * * * * * * * * *
-License: MIT (TLDR: https://tldrlegal.com/license/mit-license)
-Author: Daniel Cornelius
-
-Description:
-Handles drawing information in the scene view, such as brush and model count.
-* * * * * * * * * * * * * * * * * * * * * */
-
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -14,12 +6,12 @@ namespace RealtimeCSG
 {
     internal sealed partial class SceneViewInfoGUI
     {
-        private static StringBuilder sb = new StringBuilder(64);
+        private static StringBuilder m_StringBuilder = new StringBuilder(64);
 
         public static void DrawInfoGUI(SceneView sceneView)
         {
             InitStyles(sceneView);
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
 
             try
             {
@@ -34,24 +26,18 @@ namespace RealtimeCSG
                 int modelCount = Mathf.Clamp(InternalCSGModelManager.Models.Length - 1, 0, int.MaxValue);
                 int brushCount = InternalCSGModelManager.Brushes.Count;
 
-                sb = new StringBuilder(64);
+                m_StringBuilder = new StringBuilder(64);
 
-                sb.Append("Models:\t")
+                m_StringBuilder.Append("Models:\t")
                    .Append(modelCount)
                    .Append("\nBrushes:\t")
                    .Append(brushCount);
 
-                GUILayout.BeginArea(infoGUIRect, infoGUIBGStyle);
+                GUILayout.BeginArea(m_InfoGUIRect, m_InfoGuibgStyle);
 
-                {
-                    GUILayout.FlexibleSpace();
+                GUILayout.FlexibleSpace();
 
-                    GUILayout.Label(
-                        sb.ToString(),
-                        infoGUIStyle,
-                        GUILayout.Height(infoGUILabelHeight)
-                    );
-                }
+                GUILayout.Label(m_StringBuilder.ToString(), m_InfoGUIStyle, GUILayout.Height(INFO_GUI_LABEL_HEIGHT));
 
                 GUILayout.EndArea();
             }

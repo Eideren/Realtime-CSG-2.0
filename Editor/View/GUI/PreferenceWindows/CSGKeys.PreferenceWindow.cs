@@ -12,8 +12,8 @@ namespace RealtimeCSG
     {
         internal class LocalStyles
         {
-            public GUIStyle sectionScrollView = "PreferencesSectionBox";
-            public GUIStyle settingsBoxTitle = "OL Title";
+            public readonly GUIStyle sectionScrollView = "PreferencesSectionBox";
+            public readonly GUIStyle settingsBoxTitle = "OL Title";
             public GUIStyle settingsBox = "OL Box";
             public GUIStyle errorLabel = "WordWrappedLabel";
             public GUIStyle sectionElement = "PreferencesSection";
@@ -22,11 +22,11 @@ namespace RealtimeCSG
             public GUIStyle oddRow = "CN EntryBackOdd";
 
             //public GUIStyle selected = "ServerUpdateChangesetOn";
-            public GUIStyle keysElement = "PreferencesKeysElement";
+            public readonly GUIStyle keysElement = "PreferencesKeysElement";
             public GUIStyle warningIcon = "CN EntryWarn";
-            public GUIStyle sectionHeader = new GUIStyle(EditorStyles.largeLabel);
-            public GUIStyle cacheFolderLocation = new GUIStyle(GUI.skin.label);
-            public GUIStyle redTextBox;
+            public readonly GUIStyle sectionHeader = new GUIStyle(EditorStyles.largeLabel);
+            public readonly GUIStyle cacheFolderLocation = new GUIStyle(GUI.skin.label);
+            public readonly GUIStyle redTextBox;
 
             public LocalStyles()
             {
@@ -38,14 +38,9 @@ namespace RealtimeCSG
                 sectionHeader.margin.top  =  10;
                 sectionHeader.margin.left += 1;
 
-                if(!EditorGUIUtility.isProSkin)
-                {
-                    sectionHeader.normal.textColor = new Color(0.4f, 0.4f, 0.4f, 1.0f);
-                }
-                else
-                {
-                    sectionHeader.normal.textColor = new Color(0.7f, 0.7f, 0.7f, 1.0f);
-                }
+                sectionHeader.normal.textColor = !EditorGUIUtility.isProSkin
+                    ? new Color(0.4f, 0.4f, 0.4f, 1.0f)
+                    : new Color(0.7f, 0.7f, 0.7f, 1.0f);
 
                 redTextBox                  = new GUIStyle(GUI.skin.textField);
                 redTextBox.normal.textColor = Color.red;
@@ -54,14 +49,13 @@ namespace RealtimeCSG
             }
         }
 
-        private static Vector2 keyNamesScrollPos = Vector2.zero;
-        private static Vector2 keySettingsScrollPos = Vector2.zero;
-        private static KeyPref m_SelectedKey = null;
+        private static Vector2 m_KeyNamesScrollPos = Vector2.zero;
+        private static Vector2 m_KeySettingsScrollPos = Vector2.zero;
+        private static KeyPref m_SelectedKey;
 
         private static int m_SelectedKeyIndex = -1;
 
-//		static bool foundSelectedKey = false;
-        private static LocalStyles constants = null;
+        private static LocalStyles m_Constants;
 
         public class KeyPref
         {
@@ -69,8 +63,8 @@ namespace RealtimeCSG
             public KeyEvent keyEvent;
         }
 
-        private static KeyPref[] keyArray = null;
-        private static KeyCodeWithModifier newKey = new KeyCodeWithModifier();
+        private static KeyPref[] m_KeyArray;
+        private static KeyCodeWithModifier m_NewKey;
 
         public static KeyPref[] GetKeys()
         {
@@ -85,16 +79,9 @@ namespace RealtimeCSG
                     KeyPref pref = new KeyPref();
 
                     KeyDescription attribute =
-                        field.GetCustomAttributes(typeof(KeyDescription), false).FirstOrDefault() as KeyDescription;
+                        (KeyDescription)field.GetCustomAttributes(typeof(KeyDescription), false).FirstOrDefault();
 
-                    if(attribute != null)
-                    {
-                        pref.name = attribute.name;
-                    }
-                    else
-                    {
-                        pref.name = ObjectNames.NicifyVariableName(field.Name);
-                    }
+                    pref.name = attribute != null ? attribute.name : ObjectNames.NicifyVariableName(field.Name);
 
                     pref.keyEvent = (KeyEvent)field.GetValue(null);
                     prefs.Add(pref);
@@ -104,14 +91,14 @@ namespace RealtimeCSG
             return prefs.ToArray();
         }
 
-        private static bool checkBounds = false;
-        private static int s_KeysControlHash = "KeysControlHash".GetHashCode();
-        private static int s_KeyEventFieldHash = "KeyEventField".GetHashCode();
-        private static int bKeyEventActive = -1;
+        private static bool m_CheckBounds;
+        private static readonly int keysControlHash = "KeysControlHash".GetHashCode();
+        private static readonly int keyEventFieldHash = "KeyEventField".GetHashCode();
+        private static int m_BKeyEventActive = -1;
 
         private static void DoKeyEventField(Rect position, int index, ref KeyCodeWithModifier key, GUIStyle style)
         {
-            int   id  = GUIUtility.GetControlID(s_KeyEventFieldHash + index, FocusType.Passive, position);
+            int   id  = GUIUtility.GetControlID(keyEventFieldHash + index, FocusType.Passive, position);
             Event evt = Event.current;
 
             switch(evt.GetTypeForControl(id))
@@ -124,14 +111,14 @@ namespace RealtimeCSG
                         GUIUtility.hotControl = id;
                         evt.Use();
 
-                        if(bKeyEventActive == id)
+                        if(m_BKeyEventActive == id)
                             // cancel
                         {
-                            bKeyEventActive = -1;
+                            m_BKeyEventActive = -1;
                         }
                         else
                         {
-                            bKeyEventActive = id;
+                            m_BKeyEventActive = id;
                         }
                     }
 
@@ -161,9 +148,9 @@ namespace RealtimeCSG
                 }
                 case EventType.Repaint:
                 {
-                    if(bKeyEventActive == id)
+                    if(m_BKeyEventActive == id)
                     {
-                        style.Draw(position, defaultKeyContent, id);
+                        style.Draw(position, m_DefaultKeyContent, id);
                     }
                     else
                     {
@@ -175,7 +162,7 @@ namespace RealtimeCSG
                 }
                 case EventType.KeyDown:
                 {
-                    if(GUIUtility.hotControl == id && bKeyEventActive == id)
+                    if(GUIUtility.hotControl == id && m_BKeyEventActive == id)
                     {
                         // ignore presses of just modifier keys
                         if(evt.character == '\0')
@@ -197,9 +184,9 @@ namespace RealtimeCSG
                             }
                         }
 
-                        bKeyEventActive = -1;
-                        GUI.changed     = true;
-                        key.keyCode     = evt.keyCode;
+                        m_BKeyEventActive = -1;
+                        GUI.changed       = true;
+                        key.keyCode       = evt.keyCode;
 
                         key.modifiers = (evt.command ? EventModifiers.Command : 0)
                           | (evt.alt ? EventModifiers.Alt : 0)
@@ -208,8 +195,6 @@ namespace RealtimeCSG
 
                         GUIUtility.hotControl = 0;
                         evt.Use();
-
-                        return;
                     }
 
                     break;
@@ -217,7 +202,7 @@ namespace RealtimeCSG
             }
         }
 
-        private static GUIContent defaultKeyContent = new GUIContent("[Please press a key]");
+        private static readonly GUIContent m_DefaultKeyContent = new GUIContent("[Please press a key]");
 
         internal static void KeyEventField(Rect position, int index, ref KeyCodeWithModifier key, GUIStyle style)
         {
@@ -228,15 +213,15 @@ namespace RealtimeCSG
             int index, ref KeyCodeWithModifier key, GUIStyle style, params GUILayoutOption[] options
         )
         {
-            Rect r = GUILayoutUtility.GetRect(defaultKeyContent, style, options);
+            Rect r = GUILayoutUtility.GetRect(m_DefaultKeyContent, style, options);
             KeyEventField(r, index, ref key, style);
         }
 
         private static bool UniqueKey(ref KeyCodeWithModifier keyPref, int index)
         {
-            for(int i = 0; i < keyArray.Length; i++)
+            for(int i = 0; i < m_KeyArray.Length; i++)
             {
-                KeyCodeWithModifier[] allKeys = keyArray[i].keyEvent.keys;
+                KeyCodeWithModifier[] allKeys = m_KeyArray[i].keyEvent.keys;
 
                 for(int j = 0; j < allKeys.Length; j++)
                 {
@@ -263,7 +248,7 @@ namespace RealtimeCSG
 
             if(keyPref.keyCode != KeyCode.None && !UniqueKey(ref keyPref, index))
             {
-                KeyEventField(index, ref keyPref, constants.redTextBox);
+                KeyEventField(index, ref keyPref, m_Constants.redTextBox);
             }
             else
             {
@@ -278,36 +263,36 @@ namespace RealtimeCSG
 
             EventModifiers modifier = keyPref.modifiers;
 
-            bool modifier_command = (modifier & EventModifiers.Command) != 0;
-            bool modifier_alt     = (modifier & EventModifiers.Alt) != 0;
-            bool modifier_shift   = (modifier & EventModifiers.Shift) != 0;
-            bool modifier_control = (modifier & EventModifiers.Control) != 0;
+            bool modifierCommand = (modifier & EventModifiers.Command) != 0;
+            bool modifierAlt     = (modifier & EventModifiers.Alt) != 0;
+            bool modifierShift   = (modifier & EventModifiers.Shift) != 0;
+            bool modifierControl = (modifier & EventModifiers.Control) != 0;
 
             if(Application.platform == RuntimePlatform.OSXEditor)
             {
-                modifier_command = GUILayout.Toggle(modifier_command, "Command");
+                modifierCommand = GUILayout.Toggle(modifierCommand, "Command");
             }
 
-            modifier_control = GUILayout.Toggle(modifier_control, "Control");
-            modifier_shift   = GUILayout.Toggle(modifier_shift, "Shift");
-            modifier_alt     = GUILayout.Toggle(modifier_alt, "Alt");
+            modifierControl = GUILayout.Toggle(modifierControl, "Control");
+            modifierShift   = GUILayout.Toggle(modifierShift, "Shift");
+            modifierAlt     = GUILayout.Toggle(modifierAlt, "Alt");
 
-            bool key_is_no_longer_valid = index != -1 &&
+            bool keyIsNoLongerValid = index != -1 &&
                 (GUILayout.Button("Remove") ||
                     keyPref.keyCode == KeyCode.None);
 
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
-            if(GUI.changed && key_is_no_longer_valid)
+            if(GUI.changed && keyIsNoLongerValid)
             {
-                keyPref.modifiers = (modifier_command ? EventModifiers.Command : 0)
-                  | (modifier_alt ? EventModifiers.Alt : 0)
-                  | (modifier_shift ? EventModifiers.Shift : 0)
-                  | (modifier_control ? EventModifiers.Control : 0);
+                keyPref.modifiers = (modifierCommand ? EventModifiers.Command : 0)
+                  | (modifierAlt ? EventModifiers.Alt : 0)
+                  | (modifierShift ? EventModifiers.Shift : 0)
+                  | (modifierControl ? EventModifiers.Control : 0);
             }
 
-            return key_is_no_longer_valid;
+            return keyIsNoLongerValid;
         }
 
         private static bool PreferenceKey(ref KeyCodeWithModifier[] events, int index)
@@ -320,7 +305,8 @@ namespace RealtimeCSG
 
                 return false;
             }
-            else if(GUI.changed)
+
+            if(GUI.changed)
             {
                 events[index] = keyPref;
             }
@@ -330,113 +316,109 @@ namespace RealtimeCSG
 
         private static void RevertKeys()
         {
-            if(keyArray == null)
+            if(m_KeyArray == null)
             {
-                keyArray = GetKeys();
+                m_KeyArray = GetKeys();
             }
 
-            for(int i = 0; i < keyArray.Length; i++)
+            for(int i = 0; i < m_KeyArray.Length; i++)
             {
-                keyArray[i].keyEvent.keys = keyArray[i].keyEvent.defaultKeys.ToList().ToArray();
+                m_KeyArray[i].keyEvent.keys = m_KeyArray[i].keyEvent.defaultKeys;
             }
         }
 
         public static void ReadKeys()
         {
-            if(keyArray == null)
+            if(m_KeyArray == null)
             {
-                keyArray = GetKeys();
+                m_KeyArray = GetKeys();
             }
 
-            for(int i = 0; i < keyArray.Length; i++)
+            for(int i = 0; i < m_KeyArray.Length; i++)
             {
-                keyArray[i].keyEvent.keys = keyArray[i].keyEvent.defaultKeys.ToList().ToArray();
+                m_KeyArray[i].keyEvent.keys = m_KeyArray[i].keyEvent.defaultKeys;
             }
 
-            for(int i = 0; i < keyArray.Length; i++)
+            for(int i = 0; i < m_KeyArray.Length; i++)
             {
-                string key_name  = "KEY:" + keyArray[i].name;
-                string key_value = EditorPrefs.GetString(key_name, null);
+                string keyName  = "KEY:" + m_KeyArray[i].name;
+                string keyValue = EditorPrefs.GetString(keyName, null);
 
-                if(string.IsNullOrEmpty(key_value))
+                if(string.IsNullOrEmpty(keyValue))
                 {
-                    keyArray[i].keyEvent.keys = keyArray[i].keyEvent.defaultKeys.ToList().ToArray();
+                    m_KeyArray[i].keyEvent.keys = m_KeyArray[i].keyEvent.defaultKeys;
 
                     continue;
                 }
 
                 try
                 {
-                    string[] key_strings = key_value.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-                    keyArray[i].keyEvent.keys = new KeyCodeWithModifier[key_strings.Length];
+                    string[] keyStrings = keyValue.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                    m_KeyArray[i].keyEvent.keys = new KeyCodeWithModifier[keyStrings.Length];
 
-                    for(int j = 0; j < key_strings.Length; j++)
+                    for(int j = 0; j < keyStrings.Length; j++)
                     {
-                        string[] key_string = key_strings[j].Split(':');
+                        string[] keyString = keyStrings[j].Split(':');
 
-                        if(key_string.Length == 0)
+                        if(keyString.Length == 0)
                         {
                             continue;
                         }
 
-                        KeyCode        keyCode = (KeyCode)Enum.Parse(typeof(KeyCode), key_string[0]);
-                        int            intModifier;
+                        KeyCode        keyCode   = (KeyCode)Enum.Parse(typeof(KeyCode), keyString[0]);
                         EventModifiers modifiers = EventModifiers.None;
 
-                        if(key_string.Length > 0 && int.TryParse(key_string[1], out intModifier))
+                        if(keyString.Length > 0 && int.TryParse(keyString[1], out int intModifier))
                         {
                             modifiers = (EventModifiers)intModifier;
                         }
 
-                        keyArray[i].keyEvent.keys[j].keyCode   = keyCode;
-                        keyArray[i].keyEvent.keys[j].modifiers = modifiers;
+                        m_KeyArray[i].keyEvent.keys[j].keyCode   = keyCode;
+                        m_KeyArray[i].keyEvent.keys[j].modifiers = modifiers;
                     }
                 }
                 catch
                 {
-                    keyArray[i].keyEvent.keys = keyArray[i].keyEvent.defaultKeys.ToList().ToArray();
+                    m_KeyArray[i].keyEvent.keys = m_KeyArray[i].keyEvent.defaultKeys;
                 }
             }
         }
 
         private static void StoreKeys()
         {
-            for(int i = 0; i < keyArray.Length; i++)
+            for(int i = 0; i < m_KeyArray.Length; i++)
             {
-                string                key_name    = "KEY:" + keyArray[i].name;
-                StringBuilder         key_builder = new StringBuilder();
-                KeyCodeWithModifier[] keys        = keyArray[i].keyEvent.keys;
+                string                keyName    = "KEY:" + m_KeyArray[i].name;
+                StringBuilder         keyBuilder = new StringBuilder();
+                KeyCodeWithModifier[] keys       = m_KeyArray[i].keyEvent.keys;
 
                 for(int j = 0; j < keys.Length; j++)
                 {
                     KeyCodeWithModifier key = keys[j];
-                    key_builder.Append(key.keyCode.ToString());
-                    key_builder.Append(':');
-                    key_builder.Append((int)key.modifiers);
-                    key_builder.Append('|');
+                    keyBuilder.Append(key.keyCode.ToString());
+                    keyBuilder.Append(':');
+                    keyBuilder.Append((int)key.modifiers);
+                    keyBuilder.Append('|');
                 }
 
-                EditorPrefs.SetString(key_name, key_builder.ToString());
+                EditorPrefs.SetString(keyName, keyBuilder.ToString());
             }
         }
 
-#if !UNITY_2018_4_OR_NEWER && !UNITY_2019_1_OR_NEWER
-        [PreferenceItem("CSG Keys")]
-#endif
         public static void PreferenceWindow()
         {
-            if(constants == null)
+            if(m_Constants == null)
             {
-                constants = new LocalStyles();
+                m_Constants = new LocalStyles();
             }
 
-            if(keyArray == null)
+            if(m_KeyArray == null)
             {
-                keyArray = GetKeys();
+                m_KeyArray = GetKeys();
                 ReadKeys();
             }
 
-            int id = GUIUtility.GetControlID(s_KeysControlHash, FocusType.Keyboard);
+            int id = GUIUtility.GetControlID(keysControlHash, FocusType.Keyboard);
 
             KeyPref prevKey          = null;
             KeyPref nextKey          = null;
@@ -446,14 +428,14 @@ namespace RealtimeCSG
 
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical(GUILayout.MaxWidth(width));
-            GUILayout.Label("Actions", constants.settingsBoxTitle, GUILayout.ExpandWidth(true));
+            GUILayout.Label("Actions", m_Constants.settingsBoxTitle, GUILayout.ExpandWidth(true));
             Rect selectedRect = default;
-            keyNamesScrollPos = GUILayout.BeginScrollView(keyNamesScrollPos); //, constants.settingsBox);
+            m_KeyNamesScrollPos = GUILayout.BeginScrollView(m_KeyNamesScrollPos);
 
             {
-                for(int i = 0; i < keyArray.Length; i++)
+                for(int i = 0; i < m_KeyArray.Length; i++)
                 {
-                    KeyPref keyPref = keyArray[i];
+                    KeyPref keyPref = m_KeyArray[i];
 
                     if(!foundSelectedKey)
                     {
@@ -476,16 +458,16 @@ namespace RealtimeCSG
 
                     EditorGUI.BeginChangeCheck();
 
-                    if(GUILayout.Toggle(keyPref == m_SelectedKey, keyPref.name, constants.keysElement))
+                    if(GUILayout.Toggle(keyPref == m_SelectedKey, keyPref.name, m_Constants.keysElement))
                     {
                         if(m_SelectedKey != keyPref)
                         {
-                            checkBounds = true;
+                            m_CheckBounds = true;
                         }
 
                         m_SelectedKeyIndex = i;
                         m_SelectedKey      = keyPref;
-                        newKey             = new KeyCodeWithModifier();
+                        m_NewKey           = new KeyCodeWithModifier();
 
                         if(Event.current.type == EventType.Repaint)
                         {
@@ -503,36 +485,36 @@ namespace RealtimeCSG
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
 
-            if(Event.current.type == EventType.Repaint && checkBounds)
+            if(Event.current.type == EventType.Repaint && m_CheckBounds)
             {
-                checkBounds = false;
+                m_CheckBounds = false;
                 Rect scrollViewRect = GUILayoutUtility.GetLastRect();
                 scrollViewRect.position =  Vector2.zero;
-                scrollViewRect.position += keyNamesScrollPos;
+                scrollViewRect.position += m_KeyNamesScrollPos;
                 scrollViewRect.yMax     -= 34;
 
                 if(selectedRect.yMax > scrollViewRect.yMax)
                 {
-                    keyNamesScrollPos.y = selectedRect.yMax - scrollViewRect.height;
+                    m_KeyNamesScrollPos.y = selectedRect.yMax - scrollViewRect.height;
                     HandleUtility.Repaint();
                 }
 
                 if(selectedRect.yMin < scrollViewRect.yMin)
                 {
-                    keyNamesScrollPos.y = selectedRect.yMin;
+                    m_KeyNamesScrollPos.y = selectedRect.yMin;
                     HandleUtility.Repaint();
                 }
 
-                if(keyNamesScrollPos.y < 0)
+                if(m_KeyNamesScrollPos.y < 0)
                 {
-                    keyNamesScrollPos.y = 0;
+                    m_KeyNamesScrollPos.y = 0;
                 }
             }
 
             GUILayout.Space(10.0f);
 
             GUILayout.BeginVertical();
-            keySettingsScrollPos = GUILayout.BeginScrollView(keySettingsScrollPos);
+            m_KeySettingsScrollPos = GUILayout.BeginScrollView(m_KeySettingsScrollPos);
 
             if(m_SelectedKey != null)
             {
@@ -545,11 +527,11 @@ namespace RealtimeCSG
                     PreferenceKey(ref allKeys, i);
                 }
 
-                PreferenceKeyItem(ref newKey);
+                PreferenceKeyItem(ref m_NewKey);
 
-                if(newKey.keyCode != KeyCode.None)
+                if(m_NewKey.keyCode != KeyCode.None)
                 {
-                    ArrayUtility.Add(ref allKeys, newKey);
+                    ArrayUtility.Add(ref allKeys, m_NewKey);
                 }
 
                 m_SelectedKey.keyEvent.keys = allKeys;
@@ -568,8 +550,7 @@ namespace RealtimeCSG
                                 if(prevKey != null && prevKey != m_SelectedKey)
                                 {
                                     m_SelectedKey = prevKey;
-                                    checkBounds   = true;
-                                    //m_ValidKeyChange = true;
+                                    m_CheckBounds = true;
                                 }
 
                                 Event.current.Use();
@@ -580,8 +561,7 @@ namespace RealtimeCSG
                                 if(nextKey != null && nextKey != m_SelectedKey)
                                 {
                                     m_SelectedKey = nextKey;
-                                    checkBounds   = true;
-                                    //m_ValidKeyChange = true;
+                                    m_CheckBounds = true;
                                 }
 
                                 Event.current.Use();

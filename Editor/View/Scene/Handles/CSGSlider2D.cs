@@ -5,10 +5,10 @@ namespace RealtimeCSG.Helpers
 {
     public class CSGSlider2D
     {
-        private static Vector2 s_CurrentMousePosition;
-        private static Vector3 s_StartPosition;
-        private static Vector3[] s_SnapVertices;
-        private static Vector2 s_StartPlaneOffset;
+        private static Vector2 m_CurrentMousePosition;
+        private static Vector3 m_StartPosition;
+        private static Vector3[] m_SnapVertices;
+        private static Vector2 m_StartPlaneOffset;
 
         public static Vector3 Do(
             Camera camera, int id, Vector3 handlePos, Vector3 offset, Vector3 handleDir, Vector3 slideDir1
@@ -26,18 +26,11 @@ namespace RealtimeCSG.Helpers
 
             if(GUI.changed)
             {
-                handlePos = s_StartPosition + slideDir1 * delta.x + slideDir2 * delta.y;
+                handlePos = m_StartPosition + slideDir1 * delta.x + slideDir2 * delta.y;
 
-                if(s_SnapVertices == null)
+                if(m_SnapVertices == null)
                 {
-                    if(snapVertices != null)
-                    {
-                        s_SnapVertices = snapVertices;
-                    }
-                    else
-                    {
-                        s_SnapVertices = new Vector3[] { s_StartPosition };
-                    }
+                    m_SnapVertices = snapVertices != null ? snapVertices : new[] { m_StartPosition };
                 }
 
                 switch(snapMode)
@@ -45,22 +38,22 @@ namespace RealtimeCSG.Helpers
                     case SnapMode.GridSnapping:
                     {
                         handlePos = CSGGrid.SnapDeltaToGrid(
-                            camera, handlePos - s_StartPosition, s_SnapVertices, false, true
-                        ) + s_StartPosition;
+                            camera, handlePos - m_StartPosition, m_SnapVertices, false, true
+                        ) + m_StartPosition;
 
                         break;
                     }
                     case SnapMode.RelativeSnapping:
                     {
-                        handlePos = CSGGrid.SnapDeltaRelative(camera, handlePos - s_StartPosition, false)
-                          + s_StartPosition;
+                        handlePos = CSGGrid.SnapDeltaRelative(camera, handlePos - m_StartPosition, false)
+                          + m_StartPosition;
 
                         break;
                     }
                     default:
                     case SnapMode.None:
                     {
-                        handlePos = CSGGrid.HandleLockedAxi(handlePos - s_StartPosition) + s_StartPosition;
+                        handlePos = CSGGrid.HandleLockedAxi(handlePos - m_StartPosition) + m_StartPosition;
 
                         break;
                     }
@@ -103,7 +96,7 @@ namespace RealtimeCSG.Helpers
                 }
                 case EventType.MouseDown:
                 {
-                    if(CSGHandles.disabled)
+                    if(CSGHandles.Disabled)
                     {
                         break;
                     }
@@ -111,7 +104,7 @@ namespace RealtimeCSG.Helpers
                     if(((HandleUtility.nearestControl == id && evt.button == 0) ||
                            (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
                     {
-                        s_SnapVertices = null;
+                        m_SnapVertices = null;
 
                         if(initFunction != null)
                         {
@@ -122,18 +115,17 @@ namespace RealtimeCSG.Helpers
                             Handles.matrix.MultiplyVector(handleDir), Handles.matrix.MultiplyPoint(handlePos)
                         );
 
-                        Ray   mouseRay = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                        float dist     = 0.0f;
-                        plane.Raycast(mouseRay, out dist);
+                        Ray mouseRay = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
+                        plane.Raycast(mouseRay, out float dist);
 
                         GUIUtility.hotControl  = GUIUtility.keyboardControl = id;
-                        s_CurrentMousePosition = evt.mousePosition;
-                        s_StartPosition        = handlePos;
+                        m_CurrentMousePosition = evt.mousePosition;
+                        m_StartPosition        = handlePos;
 
                         Vector3 localMousePoint = Handles.inverseMatrix.MultiplyPoint(mouseRay.GetPoint(dist));
                         Vector3 clickOffset     = localMousePoint - handlePos;
-                        s_StartPlaneOffset.x = Vector3.Dot(clickOffset, slideDir1);
-                        s_StartPlaneOffset.y = Vector3.Dot(clickOffset, slideDir2);
+                        m_StartPlaneOffset.x = Vector3.Dot(clickOffset, slideDir1);
+                        m_StartPlaneOffset.y = Vector3.Dot(clickOffset, slideDir2);
 
                         evt.Use();
                         EditorGUIUtility.SetWantsMouseJumping(1);
@@ -145,32 +137,30 @@ namespace RealtimeCSG.Helpers
                 {
                     if(GUIUtility.hotControl == id)
                     {
-                        s_CurrentMousePosition += evt.delta;
+                        m_CurrentMousePosition += evt.delta;
                         Vector3 worldPosition  = Handles.matrix.MultiplyPoint(handlePos);
                         Vector3 worldSlideDir1 = Handles.matrix.MultiplyVector(slideDir1).normalized;
                         Vector3 worldSlideDir2 = Handles.matrix.MultiplyVector(slideDir2).normalized;
 
-                        Ray mouseRay = HandleUtility.GUIPointToWorldRay(s_CurrentMousePosition);
+                        Ray mouseRay = HandleUtility.GUIPointToWorldRay(m_CurrentMousePosition);
 
                         Plane plane = new Plane(
                             worldPosition, worldPosition + worldSlideDir1, worldPosition + worldSlideDir2
                         );
 
-                        float dist = 0.0f;
-
-                        if(plane.Raycast(mouseRay, out dist))
+                        if(plane.Raycast(mouseRay, out float dist))
                         {
                             Vector3 hitpos = Handles.inverseMatrix.MultiplyPoint(mouseRay.GetPoint(dist));
 
                             deltaDistanceAlongDirections.x = HandleUtility.PointOnLineParameter(
-                                hitpos, s_StartPosition, slideDir1
+                                hitpos, m_StartPosition, slideDir1
                             );
 
                             deltaDistanceAlongDirections.y = HandleUtility.PointOnLineParameter(
-                                hitpos, s_StartPosition, slideDir2
+                                hitpos, m_StartPosition, slideDir2
                             );
 
-                            deltaDistanceAlongDirections -= s_StartPlaneOffset;
+                            deltaDistanceAlongDirections -= m_StartPlaneOffset;
 
                             GUI.changed = true;
                         }
@@ -210,7 +200,7 @@ namespace RealtimeCSG.Helpers
                     {
                         Handles.color = Handles.selectedColor;
                     }
-                    else if(CSGHandles.disabled)
+                    else if(CSGHandles.Disabled)
                     {
                         Handles.color = Color.Lerp(originalColor, Handles.secondaryColor, 0.75f);
                     }

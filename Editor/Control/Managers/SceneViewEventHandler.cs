@@ -54,7 +54,7 @@ namespace RealtimeCSG
 
             SceneDragToolManager.OnHandleDragAndDrop(sceneView);
             RectangleSelectionManager.Update(sceneView);
-            EditModeManager.InitSceneGUI(sceneView);
+            EditModeManager.InitSceneGUI();
 
             if(Event.current.type == EventType.Repaint)
             {

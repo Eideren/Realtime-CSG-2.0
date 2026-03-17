@@ -8,34 +8,34 @@ namespace RealtimeCSG
 {
     internal sealed partial class EditmodePlaceGUI
     {
-        private static int SceneViewMeshOverlayHash = "SceneViewMeshOverlay".GetHashCode();
+        private static readonly int sceneViewMeshOverlayHash = "SceneViewMeshOverlay".GetHashCode();
 
-        private static Rect lastGuiRect;
+        private static Rect m_LastGuiRect;
 
-        public static Rect GetLastSceneGUIRect(EditModePlace tool)
+        public static Rect GetLastSceneGUIRect()
         {
-            return lastGuiRect;
+            return m_LastGuiRect;
         }
 
-        public static void OnSceneGUI(Rect windowRect, EditModePlace tool)
+        public static void OnSceneGUI(EditModePlace tool)
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             {
-                GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                 {
-                    GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                     {
                         GUILayout.FlexibleSpace();
 
-                        CSG_GUIStyleUtility.ResetGUIState();
+                        CsgguiStyleUtility.ResetGUIState();
 
                         GUIStyle windowStyle = GUI.skin.window;
-                        GUILayout.BeginVertical(ContentTitleLabel, windowStyle, CSG_GUIStyleUtility.ContentEmpty);
+                        GUILayout.BeginVertical(m_ContentTitleLabel, windowStyle, CsgguiStyleUtility.contentEmpty);
 
                         {
                             OnGUIContents(true, tool);
@@ -44,7 +44,7 @@ namespace RealtimeCSG
                         GUILayout.EndVertical();
 
                         Rect currentArea = GUILayoutUtility.GetLastRect();
-                        lastGuiRect = currentArea;
+                        m_LastGuiRect = currentArea;
 
                         Rect buttonArea = currentArea;
                         buttonArea.x      += buttonArea.width - 17;
@@ -57,10 +57,10 @@ namespace RealtimeCSG
                             EditModeToolWindowSceneGUI.GetWindow();
                         }
 
-                        TooltipUtility.SetToolTip(CSG_GUIStyleUtility.PopOutTooltip, buttonArea);
+                        TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
                         int controlID = GUIUtility.GetControlID(
-                            SceneViewMeshOverlayHash, FocusType.Keyboard, currentArea
+                            sceneViewMeshOverlayHash, FocusType.Keyboard, currentArea
                         );
 
                         switch(Event.current.GetTypeForControl(controlID))
@@ -127,24 +127,24 @@ namespace RealtimeCSG
             GUILayout.EndHorizontal();
         }
 
-        public static void OnInspectorGUI(EditorWindow window, float height)
+        public static void OnInspectorGUI()
         {
-            lastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
+            m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModePlace tool = EditModeManager.ActiveTool as EditModePlace;
 
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
         }
 
         private static void ShowCSGOperations(bool isSceneGUI, EditModePlace tool, FilteredSelection filteredSelection)
         {
-            bool operations_enabled = tool != null &&
+            bool operationsEnabled = tool != null &&
                 filteredSelection.nodeTargets.Length > 0 &&
                 filteredSelection.nodeTargets.Length
              == filteredSelection.brushTargets.Length + filteredSelection.operationTargets.Length;
 
-            EditorGUI.BeginDisabledGroup(!operations_enabled);
+            EditorGUI.BeginDisabledGroup(!operationsEnabled);
 
             {
                 bool mixedValues = tool == null || (filteredSelection.brushTargets.Length == 0
@@ -186,8 +186,6 @@ namespace RealtimeCSG
                 GUILayout.BeginVertical(isSceneGUI ? GUI.skin.box : GUIStyle.none);
 
                 {
-                    bool passThroughValue = false;
-
                     if(tool != null &&
                        filteredSelection.brushTargets.Length == 0 &&
                        filteredSelection.operationTargets.Length > 0 &&
@@ -209,10 +207,10 @@ namespace RealtimeCSG
 
                         mixedValues = !passThrough.HasValue || passThrough.Value;
 
-                        bool ptMixedValues = !passThrough.HasValue;
-                        passThroughValue = passThrough.HasValue ? passThrough.Value : false;
+                        bool ptMixedValues    = !passThrough.HasValue;
+                        bool passThroughValue = passThrough.HasValue && passThrough.Value;
 
-                        if(CSG_EditorGUIUtility.PassThroughButton(passThroughValue, ptMixedValues))
+                        if(CSGEditorGUIUtility.PassThroughButton(passThroughValue, ptMixedValues))
                         {
                             Undo.RecordObjects(filteredSelection.operationTargets, "Changed CSG operation of nodes");
 
@@ -234,7 +232,7 @@ namespace RealtimeCSG
                     EditorGUI.BeginChangeCheck();
 
                     {
-                        operationType = CSG_EditorGUIUtility.ChooseOperation(operationType, mixedValues);
+                        operationType = CSGEditorGUIUtility.ChooseOperation(operationType, mixedValues);
                     }
 
                     if(EditorGUI.EndChangeCheck() && tool != null)
@@ -275,14 +273,14 @@ namespace RealtimeCSG
                 Tools.pivotRotation == PivotRotation.Local ? tool.LocalSpacePivotCenter : tool.WorldSpacePivotCenter
             );
 
-            GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
             {
-                GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                 {
                     ShowCSGOperations(isSceneGUI, tool, filteredSelection);
-                    GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                     {
                         EditorGUI.BeginDisabledGroup(!tool.HaveSelection);
@@ -295,19 +293,19 @@ namespace RealtimeCSG
                                 );
 
                                 {
-                                    if(GUILayout.Button(MoveByOffsetContent))
+                                    if(GUILayout.Button(moveByOffsetContent))
                                     {
                                         tool.MoveByOffset(CSGSettings.DefaultMoveOffset);
                                     }
 
-                                    TooltipUtility.SetToolTip(MoveByOffsetTooltip);
+                                    TooltipUtility.SetToolTip(moveByOffsetTooltip);
 
-                                    if(GUILayout.Button(CloneMoveByOffsetContent))
+                                    if(GUILayout.Button(cloneMoveByOffsetContent))
                                     {
                                         tool.CloneMoveByOffset(CSGSettings.DefaultMoveOffset);
                                     }
 
-                                    TooltipUtility.SetToolTip(CloneMoveByOffsetTooltip);
+                                    TooltipUtility.SetToolTip(cloneMoveByOffsetTooltip);
                                 }
 
                                 EditorGUI.EndDisabledGroup();
@@ -319,29 +317,29 @@ namespace RealtimeCSG
                                 );
 
                                 {
-                                    if(GUILayout.Button(RotateByOffsetContent))
+                                    if(GUILayout.Button(rotateByOffsetContent))
                                     {
                                         tool.RotateByOffset(Quaternion.Euler(CSGSettings.DefaultRotateOffset));
                                     }
 
-                                    TooltipUtility.SetToolTip(RotateByOffsetTooltip);
+                                    TooltipUtility.SetToolTip(rotateByOffsetTooltip);
 
-                                    if(GUILayout.Button(CloneRotateByOffsetContent))
+                                    if(GUILayout.Button(cloneRotateByOffsetContent))
                                     {
                                         tool.CloneRotateByOffset(Quaternion.Euler(CSGSettings.DefaultRotateOffset));
                                     }
 
-                                    TooltipUtility.SetToolTip(CloneRotateByOffsetTooltip);
+                                    TooltipUtility.SetToolTip(cloneRotateByOffsetTooltip);
                                 }
 
                                 EditorGUI.EndDisabledGroup();
 
-                                if(GUILayout.Button(RecenterPivotContent))
+                                if(GUILayout.Button(recenterPivotContent))
                                 {
                                     tool.RecenterPivot();
                                 }
 
-                                TooltipUtility.SetToolTip(RecenterPivotTooltip);
+                                TooltipUtility.SetToolTip(recenterPivotTooltip);
                             }
                         }
 
@@ -356,16 +354,16 @@ namespace RealtimeCSG
 
                 if(Tools.current == Tool.Move)
                 {
-                    GUILayoutOption[] doubleFieldOptions = isSceneGUI ? MaxWidth150 : CSG_GUIStyleUtility.ContentEmpty;
+                    GUILayoutOption[] doubleFieldOptions = isSceneGUI ? maxWidth150 : CsgguiStyleUtility.contentEmpty;
                     EditorGUI.BeginDisabledGroup(!tool.HaveSelection);
 
                     {
                         EditorGUI.BeginChangeCheck();
 
                         {
-                            GUILayout.Label(MoveOffsetContent);
+                            GUILayout.Label(moveOffsetContent);
 
-                            defaultMoveOffset = CSG_EditorGUIUtility.DistanceVector3Field(
+                            defaultMoveOffset = CSGEditorGUIUtility.DistanceVector3Field(
                                 defaultMoveOffset, false, doubleFieldOptions
                             );
                         }
@@ -381,15 +379,15 @@ namespace RealtimeCSG
                 }
                 else if(Tools.current == Tool.Rotate)
                 {
-                    GUILayoutOption[] doubleFieldOptions = isSceneGUI ? MaxWidth150 : CSG_GUIStyleUtility.ContentEmpty;
+                    GUILayoutOption[] doubleFieldOptions = isSceneGUI ? maxWidth150 : CsgguiStyleUtility.contentEmpty;
                     EditorGUI.BeginDisabledGroup(Tools.pivotMode == PivotMode.Center || !tool.HaveSelection);
 
                     {
                         EditorGUI.BeginChangeCheck();
 
                         {
-                            GUILayout.Label(RotationCenterContent);
-                            defaultRotateOffset = CSG_EditorGUIUtility.EulerDegreeField(defaultRotateOffset);
+                            GUILayout.Label(rotationCenterContent);
+                            defaultRotateOffset = CSGEditorGUIUtility.EulerDegreeField(defaultRotateOffset);
                         }
 
                         if(EditorGUI.EndChangeCheck())
@@ -401,13 +399,13 @@ namespace RealtimeCSG
                         EditorGUI.BeginChangeCheck();
 
                         {
-                            GUILayout.Label(PivotCenterContent);
+                            GUILayout.Label(pivotCenterContent);
 
-                            displayNewCenter = CSG_EditorGUIUtility.DistanceVector3Field(
+                            displayNewCenter = CSGEditorGUIUtility.DistanceVector3Field(
                                 displayNewCenter, false, doubleFieldOptions
                             );
 
-                            TooltipUtility.SetToolTip(PivotVectorTooltip);
+                            TooltipUtility.SetToolTip(pivotVectorTooltip);
                         }
 
                         if(EditorGUI.EndChangeCheck())

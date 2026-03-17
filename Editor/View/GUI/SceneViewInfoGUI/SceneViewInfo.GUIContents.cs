@@ -1,11 +1,3 @@
-/* * * * * * * * * * * * * * * * * * * * * *
-License: MIT (TLDR: https://tldrlegal.com/license/mit-license)
-Author: Daniel Cornelius
-
-Description:
-Handles styles for SceneViewInfoGUI
-* * * * * * * * * * * * * * * * * * * * * */
-
 using UnityEditor;
 using UnityEngine;
 
@@ -15,39 +7,34 @@ namespace RealtimeCSG
     {
         private static readonly Color infoGUITextColor = new Color32(160, 160, 160, 255);
 
-        private static Rect infoGUIRect;
-        private static GUIStyle infoGUIStyle;
-        private static GUIStyle infoGUIBGStyle;
-        private const float infoGUILabelHeight = 34;
-        private static Texture2D m_InfoGUIBGTex;
+        private static Rect m_InfoGUIRect;
+        private static GUIStyle m_InfoGUIStyle;
+        private static GUIStyle m_InfoGuibgStyle;
+        private const float INFO_GUI_LABEL_HEIGHT = 34;
+        private static Texture2D m_InfoGuibgTex;
 
-        private static Texture2D InfoGUIBGTex
+        private static Texture2D InfoGuibgTex
         {
             get
             {
-                if(m_InfoGUIBGTex == null)
+                if(m_InfoGuibgTex == null)
                 {
-                    m_InfoGUIBGTex = Resources.Load<Texture2D>("GUI/infobg_blk");
+                    m_InfoGuibgTex = Resources.Load<Texture2D>("GUI/infobg_blk");
                 }
 
-                return m_InfoGUIBGTex;
+                return m_InfoGuibgTex;
             }
         }
 
         private static void InitStyles(SceneView sceneView)
         {
-#if UNITY_2018_3_OR_NEWER
-            infoGUIRect.x = sceneView.rootVisualElement.contentRect.width - 116;
-            infoGUIRect.y = sceneView.rootVisualElement.contentRect.height - 74;
-#else
-            infoGUIRect.x = sceneView.position.width - 116;
-            infoGUIRect.y = sceneView.position.height - 74;
-#endif
+            m_InfoGUIRect.x = sceneView.rootVisualElement.contentRect.width - 116;
+            m_InfoGUIRect.y = sceneView.rootVisualElement.contentRect.height - 74;
 
-            infoGUIRect.width  = 110;
-            infoGUIRect.height = infoGUILabelHeight;
+            m_InfoGUIRect.width  = 110;
+            m_InfoGUIRect.height = INFO_GUI_LABEL_HEIGHT;
 
-            infoGUIStyle = new GUIStyle("MiniLabel")
+            m_InfoGUIStyle = new GUIStyle("MiniLabel")
             {
                 alignment = TextAnchor.UpperLeft
               , normal    = new GUIStyleState { textColor = infoGUITextColor }
@@ -56,7 +43,7 @@ namespace RealtimeCSG
               , fontSize  = 11
             };
 
-            infoGUIBGStyle = new GUIStyle("box") { normal = new GUIStyleState { background = InfoGUIBGTex } };
+            m_InfoGuibgStyle = new GUIStyle("box") { normal = new GUIStyleState { background = InfoGuibgTex } };
         }
     }
 }

@@ -4,79 +4,67 @@ namespace RealtimeCSG
 {
     internal sealed partial class EditModeMeshModeGUI
     {
-        private static GUIContent ContentMeshLabel;
+        private static GUIContent m_ContentMeshLabel;
 
-//		static GUIContent			ContentBrushesLabel;
-//		static GUIContent			ContentEdgesLabel;
-        private static readonly GUIContent ContentDefaultMaterial = new GUIContent("Default");
+        private static readonly GUIContent contentDefaultMaterial = new GUIContent("Default");
 
         private static readonly GUILayoutOption labelWidth = GUILayout.Width(30);
         private static readonly GUILayoutOption largeLabelWidth = GUILayout.Width(80);
-        private static readonly GUILayoutOption[] InSceneWidth = new GUILayoutOption[] { GUILayout.Width(150) };
+        private static readonly GUILayoutOption[] inSceneWidth = { GUILayout.Width(150) };
 
-        /*
-        static readonly CSGOperationType[] operationValues = new CSGOperationType[]
-            {
-                CSGOperationType.Additive,
-                CSGOperationType.Subtractive,
-                CSGOperationType.Intersecting
-            };
-        */
         private static void InitLocalStyles()
         {
-            if(ContentMeshLabel != null)
+            if(m_ContentMeshLabel != null)
             {
                 return;
             }
 
-            ContentMeshLabel = new GUIContent(CSG_GUIStyleUtility.brushEditModeNames[(int)ToolEditMode.Edit]);
-//			ContentBrushesLabel	= new GUIContent(GUIStyleUtility.brushEditModeNames[(int)BrushEditMode.Brushes]);
-//			ContentEdgesLabel	= new GUIContent("Edges");
+            m_ContentMeshLabel = new GUIContent(CsgguiStyleUtility.BrushEditModeNames[(int)ToolEditMode.Edit]);
         }
 
-        private static readonly GUIContent ContentFlip = new GUIContent("Flip");
-        private static readonly GUIContent ContentFlipX = new GUIContent("X");
+        private static readonly GUIContent contentFlip = new GUIContent("Flip");
+        private static readonly GUIContent contentFlipX = new GUIContent("X");
 
-        private static readonly ToolTip TooltipFlipX = new ToolTip(
+        private static readonly ToolTip tooltipFlipX = new ToolTip(
             "Flip X", "Flip the selection in the x direction", Keys.flipSelectionX
         );
 
-        private static readonly GUIContent ContentFlipY = new GUIContent("Y");
+        private static readonly GUIContent contentFlipY = new GUIContent("Y");
 
-        private static readonly ToolTip TooltipFlipY = new ToolTip(
+        private static readonly ToolTip tooltipFlipY = new ToolTip(
             "Flip Y", "Flip the selection in the y direction", Keys.flipSelectionY
         );
 
-        private static readonly GUIContent ContentFlipZ = new GUIContent("Z");
+        private static readonly GUIContent contentFlipZ = new GUIContent("Z");
 
-        private static readonly ToolTip TooltipFlipZ = new ToolTip(
+        private static readonly ToolTip tooltipFlipZ = new ToolTip(
             "Flip Z", "Flip the selection in the z direction", Keys.flipSelectionZ
         );
 
-        private static readonly GUIContent ContentSnapToGrid = new GUIContent("Snap to grid");
+        private static readonly GUIContent contentSnapToGrid = new GUIContent("Snap to grid");
 
-        private static readonly ToolTip TooltipSnapToGrid = new ToolTip(
-            ContentSnapToGrid.text, "Snap the selection to the closest grid lines", Keys.snapToGridKey
+        private static readonly ToolTip tooltipSnapToGrid = new ToolTip(
+            contentSnapToGrid.text, "Snap the selection to the closest grid lines", Keys.snapToGridKey
         );
 
-        private static readonly GUIContent ContentSelection = new GUIContent("Selection");
-        private static readonly GUIContent ContentIgnoreHidden = new GUIContent("Ignore Hidden Surfaces");
+        private static readonly GUIContent contentSelection = new GUIContent("Selection");
+        private static readonly GUIContent contentIgnoreHidden = new GUIContent("Ignore Hidden Surfaces");
 
-        private static readonly ToolTip TooltipIgnoreHidden = new ToolTip(
+        private static readonly ToolTip tooltipIgnoreHidden = new ToolTip(
             "Ignore Hidden Surfaces", "When set, selecting surfaces will\n" +
             "only select the front most surfaces."
         );
 
-        private static readonly GUIContent ContentVertex = new GUIContent("Vertex");
-        private static readonly ToolTip TooltipVertex = new ToolTip("Vertex", "When set you can select vertices.");
-        private static readonly GUIContent ContentEdge = new GUIContent("Edge");
-        private static readonly ToolTip TooltipEdge = new ToolTip("Edge", "When set you can select edges.");
-        private static readonly GUIContent ContentSurface = new GUIContent("Surface");
-        private static readonly ToolTip TooltipSurface = new ToolTip("Surface", "When set you can select surfaces.");
+        private static readonly GUIContent contentVertex = new GUIContent("Vertex");
+        private static readonly ToolTip tooltipVertex = new ToolTip("Vertex", "When set you can select vertices.");
+        private static readonly GUIContent contentEdge = new GUIContent("Edge");
+        private static readonly ToolTip tooltipEdge = new ToolTip("Edge", "When set you can select edges.");
+        private static readonly GUIContent contentSurface = new GUIContent("Surface");
+        private static readonly ToolTip tooltipSurface = new ToolTip("Surface", "When set you can select surfaces.");
 
-        private static readonly GUIContent ContentAutoCommitExtrusion = new GUIContent("Auto commit extrusion");
+        private static readonly GUIContent contentAutoCommitExtrusion = new GUIContent("Auto commit extrusion");
 
-        private static readonly ToolTip TooltipAutoCommitExtrusion = new ToolTip(
+        private static readonly ToolTip tooltipAutoCommitExtrusion = new ToolTip(
             "Auto commit extrusion", "When set, when extruding a surface,\n" +
             "using shift drag on a polygon,\n" +
             "editing will automatically commit\n" +

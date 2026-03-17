@@ -5,10 +5,12 @@ namespace RealtimeCSG.Helpers
 {
     public class CSGDisc
     {
-        private static Vector2 s_StartMousePosition, s_CurrentMousePosition;
-        private static Vector3 s_StartPosition, s_StartAxis;
-        private static Quaternion s_StartRotation;
-        private static float s_RotationDist;
+        private static Vector2 m_StartMousePosition;
+        private static Vector2 m_CurrentMousePosition;
+        private static Vector3 m_StartPosition;
+        private static Vector3 m_StartAxis;
+        private static Quaternion m_StartRotation;
+        private static float m_RotationDist;
 
         private static float SnapValue(float val, float snap, bool snapping)
         {
@@ -55,7 +57,7 @@ namespace RealtimeCSG.Helpers
                 }
                 case EventType.MouseDown:
                 {
-                    if(CSGHandles.disabled)
+                    if(CSGHandles.Disabled)
                     {
                         break;
                     }
@@ -70,21 +72,20 @@ namespace RealtimeCSG.Helpers
 
                         GUIUtility.hotControl = GUIUtility.keyboardControl = id; // Grab mouse focus
 
-                        //Tools.LockHandlePosition();
                         if(cutoffPlane)
                         {
                             Vector3 from = Vector3.Cross(axis, camera.transform.forward).normalized;
-                            s_StartPosition = HandleUtility.ClosestPointToArc(position, axis, from, 180, size);
+                            m_StartPosition = HandleUtility.ClosestPointToArc(position, axis, from, 180, size);
                         }
                         else
                         {
-                            s_StartPosition = HandleUtility.ClosestPointToDisc(position, axis, size);
+                            m_StartPosition = HandleUtility.ClosestPointToDisc(position, axis, size);
                         }
 
-                        s_RotationDist         = 0;
-                        s_StartRotation        = rotation;
-                        s_StartAxis            = axis;
-                        s_CurrentMousePosition = s_StartMousePosition = Event.current.mousePosition;
+                        m_RotationDist         = 0;
+                        m_StartRotation        = rotation;
+                        m_StartAxis            = axis;
+                        m_CurrentMousePosition = m_StartMousePosition = Event.current.mousePosition;
                         evt.Use();
                         EditorGUIUtility.SetWantsMouseJumping(1);
                     }
@@ -95,15 +96,15 @@ namespace RealtimeCSG.Helpers
                 {
                     if(GUIUtility.hotControl == id)
                     {
-                        Vector3 direction = Vector3.Cross(axis, position - s_StartPosition).normalized;
-                        s_CurrentMousePosition += evt.delta;
+                        Vector3 direction = Vector3.Cross(axis, position - m_StartPosition).normalized;
+                        m_CurrentMousePosition += evt.delta;
 
-                        s_RotationDist = HandleUtility.CalcLineTranslation(
-                            s_StartMousePosition, s_CurrentMousePosition, s_StartPosition, direction
+                        m_RotationDist = HandleUtility.CalcLineTranslation(
+                            m_StartMousePosition, m_CurrentMousePosition, m_StartPosition, direction
                         ) / size * 30;
 
-                        s_RotationDist = SnapValue(s_RotationDist, snap, snapping);
-                        rotation       = Quaternion.AngleAxis(s_RotationDist * -1, s_StartAxis) * s_StartRotation;
+                        m_RotationDist = SnapValue(m_RotationDist, snap, snapping);
+                        rotation       = Quaternion.AngleAxis(m_RotationDist * -1, m_StartAxis) * m_StartRotation;
 
                         GUI.changed = true;
                         evt.Use();
@@ -115,7 +116,6 @@ namespace RealtimeCSG.Helpers
                 {
                     if(GUIUtility.hotControl == id && (evt.button == 0 || evt.button == 2))
                     {
-                        //Tools.UnlockHandlePosition();
                         GUIUtility.hotControl = 0;
                         evt.Use();
 
@@ -134,7 +134,6 @@ namespace RealtimeCSG.Helpers
                     if(evt.keyCode == KeyCode.Escape && GUIUtility.hotControl == id)
                     {
                         // We do not use the event nor clear hotcontrol to ensure auto revert value kicks in from native side
-                        //Tools.UnlockHandlePosition();
                         EditorGUIUtility.SetWantsMouseJumping(0);
                     }
 
@@ -153,32 +152,19 @@ namespace RealtimeCSG.Helpers
                     if(GUIUtility.hotControl == id)
                     {
                         Vector3 from = Vector3.Cross(
-                            axis, Vector3.Cross(axis, (s_StartPosition - position).normalized).normalized
+                            axis, Vector3.Cross(axis, (m_StartPosition - position).normalized).normalized
                         );
 
                         float radius   = size * 1.1f;
-                        float endAngle = s_RotationDist;
+                        float endAngle = m_RotationDist;
 
                         PaintUtility.DrawRotateCircle(
                             camera, position, axis, from, radius, 0, 0, endAngle, Handles.color, name, true
                         );
 
-                        PaintUtility.DrawRotateCirclePie(position, axis, from, radius, 0, 0, endAngle, Handles.color);
-                        /*
-                        Color t = Handles.color;
-                        Vector3 from = (s_StartPosition - position).normalized;
-                        Handles.color = Handles.secondaryColor;
-                        Handles.DrawLine(position, position + from * size * 1.1f);
-                        float d = Mathf.Repeat(-s_RotationDist - 180, 360) - 180;
-                        Vector3 to = Quaternion.AngleAxis(d, axis) * from;
-                        Handles.DrawLine(position, position + to * size * 1.1f);
-
-                        Handles.color = Handles.secondaryColor * new Color(1, 1, 1, .2f);
-                        Handles.DrawSolidArc(position, axis, from, d, size);
-                        Handles.color = t;
-                        */
+                        PaintUtility.DrawRotateCirclePie(position, axis, from, radius, 0, endAngle, Handles.color);
                     }
-                    else if(CSGHandles.disabled)
+                    else if(CSGHandles.Disabled)
                     {
                         Handles.color = Color.Lerp(originalColor, Handles.secondaryColor, 0.75f);
                     }

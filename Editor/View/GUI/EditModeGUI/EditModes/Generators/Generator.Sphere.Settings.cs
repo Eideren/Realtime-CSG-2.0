@@ -1,19 +1,19 @@
 ﻿using System;
-using UnityEditor;
-using UnityEngine;
 using InternalRealtimeCSG;
 using RealtimeCSG.Legacy;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
     [Serializable]
     internal sealed class GeneratorSphereSettings : IShapeSettings
     {
-        public Vector3[] vertices = new Vector3[0];
-        public int[] vertexIDs = new int[0];
-        public bool[] onGeometryVertices = new bool[0];
+        public Vector3[] vertices = Array.Empty<Vector3>();
+        public int[] vertexIDs = Array.Empty<int>();
+        public bool[] onGeometryVertices = Array.Empty<bool>();
 
-        public int sphereSplits
+        public int SphereSplits
         {
             get => Mathf.Max(1, CSGSettings.SphereSplits);
             set
@@ -28,7 +28,7 @@ namespace RealtimeCSG
             }
         }
 
-        public float sphereOffset
+        public float SphereOffset
         {
             get => CSGSettings.SphereOffset;
             set
@@ -43,7 +43,7 @@ namespace RealtimeCSG
             }
         }
 
-        public bool sphereSmoothShading
+        public bool SphereSmoothShading
         {
             get => CSGSettings.SphereSmoothShading;
             set
@@ -58,7 +58,7 @@ namespace RealtimeCSG
             }
         }
 
-        public bool isHemiSphere
+        public bool IsHemiSphere
         {
             get => CSGSettings.HemiSphereMode;
             set
@@ -73,7 +73,7 @@ namespace RealtimeCSG
             }
         }
 
-        public float sphereRadius = 0.0f;
+        public float sphereRadius;
 
         public void AddPoint(Vector3 position)
         {
@@ -126,12 +126,10 @@ namespace RealtimeCSG
 
         public void Reset()
         {
-            vertices = new Vector3[0];
+            vertices = Array.Empty<Vector3>();
         }
 
-        public Vector3[] GetVertices(
-            CSGPlane buildPlane, Vector3 worldPosition, Vector3 gridTangent, Vector3 gridBinormal, out bool isValid
-        )
+        public Vector3[] GetVertices(CSGPlane buildPlane, Vector3 worldPosition, Vector3 gridTangent, out bool isValid)
         {
             if(vertices.Length < 1)
             {
@@ -140,41 +138,38 @@ namespace RealtimeCSG
                 return vertices;
             }
 
-            if(sphereSplits < 1)
+            if(SphereSplits < 1)
             {
-                sphereSplits = 1;
+                SphereSplits = 1;
             }
 
-            int realSplits = (sphereSplits + 1) * 4;
+            int     realSplits = (SphereSplits + 1) * 4;
+            Vector3 vertex1    = vertices.Length > 1 ? vertices[1] : worldPosition;
+            Vector3 delta      = vertex1 - vertices[0];
 
-            //var tangent = GeometryUtility.CalculateTangent(buildPlane.normal);
-
-            Vector3 vertex1 = vertices.Length > 1 ? vertices[1] : worldPosition;
-
-            Vector3 delta = vertex1 - vertices[0];
             sphereRadius = delta.magnitude;
 
             if(sphereRadius <= MathConstants.DistanceEpsilon)
             {
                 isValid = false;
 
-                return new Vector3[0];
+                return Array.Empty<Vector3>();
             }
 
             Matrix4x4 matrix       = GeometryUtility.Rotate2DToPlaneMatrix(buildPlane);
             Vector3[] realVertices = new Vector3[realSplits];
 
-            float angle_offset = GeometryUtility.SignedAngle(gridTangent, delta / sphereRadius, buildPlane.normal);
-            angle_offset -= 90;
+            float angleOffset = GeometryUtility.SignedAngle(gridTangent, delta / sphereRadius, buildPlane.normal);
+            angleOffset -= 90;
 
-            angle_offset += sphereOffset;
-            angle_offset *= Mathf.Deg2Rad;
+            angleOffset += SphereOffset;
+            angleOffset *= Mathf.Deg2Rad;
 
             Vector3 p1 = MathConstants.zeroVector3;
 
             for(int i = 0; i < realSplits; i++)
             {
-                float angle = i * Mathf.PI * 2.0f / (float)realSplits + angle_offset;
+                float angle = i * Mathf.PI * 2.0f / realSplits + angleOffset;
 
                 p1.x = Mathf.Sin(angle) * sphereRadius;
                 p1.z = Mathf.Cos(angle) * sphereRadius;
@@ -208,7 +203,7 @@ namespace RealtimeCSG
         {
             for(int i = 0; i < vertices.Length; i++)
             {
-                vertices[i] = vertices[i] + offset;
+                vertices[i] += offset;
             }
         }
 

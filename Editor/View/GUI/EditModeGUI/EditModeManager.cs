@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
-using UnityEngine;
 using InternalRealtimeCSG;
-using RealtimeCSG.Legacy;
 using RealtimeCSG.Components;
 using RealtimeCSG.Foundation;
+using RealtimeCSG.Legacy;
+using UnityEditor;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace RealtimeCSG
 {
     internal sealed class EditModeManager : ScriptableObject
     {
-        private static EditModeManager instance = null;
+        private static EditModeManager m_Instance;
 
-        [NonSerialized] private bool generateMode = false;
-        [NonSerialized] private FilteredSelection filteredSelection = new FilteredSelection();
+        [NonSerialized] private bool _generateMode;
+        [NonSerialized] private readonly FilteredSelection _filteredSelection = new FilteredSelection();
 
         [SerializeField] private ToolEditMode editMode = ToolEditMode.Place;
-        [SerializeField] private IEditMode activeTool = null;
+        [SerializeField] private IEditMode _activeTool;
 
-        private static IEditMode[] brushTools = null;
+        private static IEditMode[] m_BrushTools;
 
         public static FilteredSelection FilteredSelection
         {
@@ -29,7 +29,7 @@ namespace RealtimeCSG
             {
                 InitTools();
 
-                return instance.filteredSelection;
+                return m_Instance._filteredSelection;
             }
         }
 
@@ -39,7 +39,7 @@ namespace RealtimeCSG
             {
                 InitTools();
 
-                return instance.activeTool;
+                return m_Instance._activeTool;
             }
         }
 
@@ -49,26 +49,26 @@ namespace RealtimeCSG
             {
                 InitTools();
 
-                return instance.editMode;
+                return m_Instance.editMode;
             }
             set
             {
-                if(instance.editMode == value)
+                if(m_Instance.editMode == value)
                 {
                     return;
                 }
 
-                Undo.RecordObject(instance, "Changed edit mode");
+                Undo.RecordObject(m_Instance, "Changed edit mode");
 
-                instance.editMode     = value;
-                instance.generateMode = false;
+                m_Instance.editMode      = value;
+                m_Instance._generateMode = false;
 
-                CSGSettings.EditMode = instance.editMode;
+                CSGSettings.EditMode = m_Instance.editMode;
                 CSGSettings.Save();
 
                 if(ActiveTool != null)
                 {
-                    CSG_EditorGUIUtility.RepaintAll();
+                    CSGEditorGUIUtility.RepaintAll();
                 }
             }
         }
@@ -79,40 +79,40 @@ namespace RealtimeCSG
             {
                 InitTools();
 
-                if(instance.generateMode)
+                if(m_Instance._generateMode)
                 {
-                    return brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+                    return m_BrushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
                 }
 
-                ToolEditMode editMode = instance.editMode;
+                ToolEditMode editMode = m_Instance.editMode;
 
-                if(editMode < firstEditMode ||
-                   editMode > lastEditModes)
+                if(editMode < m_FirstEditMode ||
+                   editMode > m_LastEditModes)
                 {
-                    return brushTools[0];
+                    return m_BrushTools[0];
                 }
 
-                return brushTools[(int)editMode];
+                return m_BrushTools[(int)editMode];
             }
         }
 
-        private static ToolEditMode firstEditMode;
-        private static ToolEditMode lastEditModes;
+        private static ToolEditMode m_FirstEditMode;
+        private static ToolEditMode m_LastEditModes;
 
-        private const HideFlags scriptableObjectHideflags = HideFlags.DontSaveInBuild | HideFlags.DontSaveInEditor
+        private const HideFlags SCRIPTABLE_OBJECT_HIDEFLAGS = HideFlags.DontSaveInBuild | HideFlags.DontSaveInEditor
           | HideFlags.NotEditable | HideFlags.HideInHierarchy;
 
         private static void InitTools()
         {
-            if(instance)
+            if(m_Instance)
             {
                 return;
             }
 
             List<ToolEditMode> values = Enum.GetValues(typeof(ToolEditMode)).Cast<ToolEditMode>().ToList();
             values.Sort();
-            firstEditMode = values[0];
-            lastEditModes = values[values.Count - 1];
+            m_FirstEditMode = values[0];
+            m_LastEditModes = values[values.Count - 1];
 
             Undo.undoRedoPerformed -= UndoRedoPerformed;
             Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -127,10 +127,10 @@ namespace RealtimeCSG
                 DestroyImmediate(managers[i]);
             }
 
-            instance           = CreateInstance<EditModeManager>();
-            instance.hideFlags = scriptableObjectHideflags;
+            m_Instance           = CreateInstance<EditModeManager>();
+            m_Instance.hideFlags = SCRIPTABLE_OBJECT_HIDEFLAGS;
 
-            Type[] types = new Type[]
+            Type[] types =
             {
                 typeof(EditModePlace), typeof(EditModeGenerate), typeof(EditModeMeshEdit), typeof(EditModeClip)
               , typeof(EditModeSurface)
@@ -141,7 +141,7 @@ namespace RealtimeCSG
                 Debug.LogWarning("types.Length != values.Count");
             }
 
-            brushTools = new IEditMode[values.Count];
+            m_BrushTools = new IEditMode[values.Count];
 
             for(int j = 0; j < types.Length; j++)
             {
@@ -153,23 +153,23 @@ namespace RealtimeCSG
                 }
 
                 ScriptableObject obj = CreateInstance(types[j]);
-                brushTools[j] = obj as IEditMode;
+                m_BrushTools[j] = obj as IEditMode;
 
-                if(brushTools[j] == null)
+                if(m_BrushTools[j] == null)
                 {
                     Debug.LogWarning("brushTools[j] == null");
 
                     continue;
                 }
 
-                if(!(brushTools[j] is ScriptableObject))
+                if(!(m_BrushTools[j] is ScriptableObject))
                 {
                     Debug.LogWarning("!(brushTools[j] is ScriptableObject)");
 
                     continue;
                 }
 
-                obj.hideFlags = scriptableObjectHideflags;
+                obj.hideFlags = SCRIPTABLE_OBJECT_HIDEFLAGS;
             }
 
             EditModeGenerate.ShapeCommitted -= OnShapeCommittedEvent;
@@ -178,22 +178,22 @@ namespace RealtimeCSG
             EditModeGenerate.ShapeCancelled += OnShapeCancelledEvent;
 
             CSGSettings.Reload();
-            instance.editMode = CSGSettings.EditMode;
+            m_Instance.editMode = CSGSettings.EditMode;
 
             UpdateSelection(true);
             InitTargets();
         }
 
-        private static HashSet<CSGNode> selectedNodes = new HashSet<CSGNode>();
-        private static HashSet<Transform> selectedOthers = new HashSet<Transform>();
+        private static HashSet<CSGNode> m_SelectedNodes = new HashSet<CSGNode>();
+        private static HashSet<Transform> m_SelectedOthers = new HashSet<Transform>();
 
         public static void UpdateSelection(bool forceUpdate = false)
         {
             InitTools();
 
-            GetTargetSelection(ref selectedNodes, ref selectedOthers);
+            GetTargetSelection(ref m_SelectedNodes, ref m_SelectedOthers);
 
-            if(!instance.filteredSelection.UpdateSelection(selectedNodes, selectedOthers) &&
+            if(!m_Instance._filteredSelection.UpdateSelection(m_SelectedNodes, m_SelectedOthers) &&
                !forceUpdate)
             {
                 return;
@@ -210,9 +210,9 @@ namespace RealtimeCSG
                 InternalCSGModelManager.SkipCheckForChanges = false;
             }
 
-            foreach(IEditMode tool in brushTools)
+            foreach(IEditMode tool in m_BrushTools)
             {
-                tool.SetTargets(instance.filteredSelection);
+                tool.SetTargets(m_Instance._filteredSelection);
             }
         }
 
@@ -228,8 +228,6 @@ namespace RealtimeCSG
             if(SceneView.currentDrawingSceneView != null)
             {
                 SceneView.lastActiveSceneView.RemoveNotification();
-
-                return;
             }
         }
 
@@ -240,14 +238,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(SceneView.lastActiveSceneView != null)
-            {
-                SceneView.lastActiveSceneView.ShowNotification(new GUIContent(message));
-
-                return;
-            }
-
-            if(SceneView.currentDrawingSceneView != null)
+            if(SceneView.lastActiveSceneView != null || SceneView.currentDrawingSceneView != null)
             {
                 SceneView.lastActiveSceneView.ShowNotification(new GUIContent(message));
 
@@ -275,13 +266,7 @@ namespace RealtimeCSG
 
         public static bool DeselectAll()
         {
-            if(instance.activeTool != null &&
-               instance.activeTool.DeselectAll())
-            {
-                return true;
-            }
-
-            return false;
+            return m_Instance._activeTool != null && m_Instance._activeTool.DeselectAll();
         }
 
         private static void UndoRedoPerformed()
@@ -291,9 +276,9 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(instance.activeTool != null)
+            if(m_Instance._activeTool != null)
             {
-                instance.activeTool.UndoRedoPerformed();
+                m_Instance._activeTool.UndoRedoPerformed();
             }
 
             UpdateSelection(true);
@@ -306,13 +291,13 @@ namespace RealtimeCSG
                 return;
             }
 
-            CSG_EditorGUIUtility.RepaintAll();
+            CSGEditorGUIUtility.RepaintAll();
         }
 
         private static bool GetTargetSelection(ref HashSet<CSGNode> nodes, ref HashSet<Transform> others)
         {
-            selectedNodes.Clear();
-            selectedOthers.Clear();
+            m_SelectedNodes.Clear();
+            m_SelectedOthers.Clear();
 
             if(Selection.gameObjects == null)
             {
@@ -345,16 +330,16 @@ namespace RealtimeCSG
         {
             IEditMode newTool = CurrentTool;
 
-            if(newTool == instance.activeTool)
+            if(newTool == m_Instance._activeTool)
             {
-                if(instance.filteredSelection.nodeTargets != null &&
-                   instance.filteredSelection.nodeTargets.Length > 0)
+                if(m_Instance._filteredSelection.nodeTargets != null &&
+                   m_Instance._filteredSelection.nodeTargets.Length > 0)
                 {
-                    OnEnableTool(instance.activeTool);
+                    OnEnableTool(m_Instance._activeTool);
                 }
                 else
                 {
-                    OnDisableTool(instance.activeTool);
+                    OnDisableTool(m_Instance._activeTool);
                 }
             }
             else
@@ -367,13 +352,13 @@ namespace RealtimeCSG
         {
             InitTools();
 
-            if(instance.editMode == lastEditModes)
+            if(m_Instance.editMode == m_LastEditModes)
             {
-                EditMode = firstEditMode;
+                EditMode = m_FirstEditMode;
             }
             else
             {
-                EditMode = (ToolEditMode)(instance.editMode + 1);
+                EditMode = m_Instance.editMode + 1;
             }
         }
 
@@ -381,13 +366,13 @@ namespace RealtimeCSG
         {
             InitTools();
 
-            if(instance.editMode == firstEditMode)
+            if(m_Instance.editMode == m_FirstEditMode)
             {
-                EditMode = lastEditModes;
+                EditMode = m_LastEditModes;
             }
             else
             {
-                EditMode = (ToolEditMode)(instance.editMode - 1);
+                EditMode = m_Instance.editMode - 1;
             }
         }
 
@@ -398,25 +383,16 @@ namespace RealtimeCSG
                 return;
             }
 
-            IEditMode newTool;
+            IEditMode newTool = !CSGSettings.EnableRealtimeCSG ? null : CurrentTool;
 
-            if(!CSGSettings.EnableRealtimeCSG)
+            if(m_Instance._activeTool != newTool)
             {
-                newTool = null;
-            }
-            else
-            {
-                newTool = CurrentTool;
-            }
-
-            if(instance.activeTool != newTool)
-            {
-                if(instance.activeTool != null)
+                if(m_Instance._activeTool != null)
                 {
-                    OnDisableTool(instance.activeTool);
+                    OnDisableTool(m_Instance._activeTool);
                 }
 
-                instance.activeTool = newTool;
+                m_Instance._activeTool = newTool;
 
                 if(newTool != null)
                 {
@@ -446,9 +422,7 @@ namespace RealtimeCSG
                 case SnapMode.RelativeSnapping: // TODO: fixme
                 case SnapMode.GridSnapping:
                 {
-                    snappedPoint = snappedPoint + CSGGrid.ForceSnapDeltaToGrid(
-                        camera, MathConstants.zeroVector3, snappedPoint
-                    );
+                    snappedPoint += CSGGrid.ForceSnapDeltaToGrid(camera, MathConstants.zeroVector3, snappedPoint);
 
                     snappedPoint = CSGGrid.PointFromGridSpace(
                         CSGGrid.CubeProject(
@@ -456,10 +430,8 @@ namespace RealtimeCSG
                         )
                     );
 
-                    // snap twice to get rid of some tiny movements caused by the projection in depth	
-                    snappedPoint = snappedPoint + CSGGrid.ForceSnapDeltaToGrid(
-                        camera, MathConstants.zeroVector3, snappedPoint
-                    );
+                    // snap twice to get rid of some tiny movements caused by the projection in depth
+                    snappedPoint += CSGGrid.ForceSnapDeltaToGrid(camera, MathConstants.zeroVector3, snappedPoint);
 
                     snappedPoint = CSGGrid.PointFromGridSpace(
                         CSGGrid.CubeProject(
@@ -501,7 +473,7 @@ namespace RealtimeCSG
             if(doGridSnapping)
             {
                 Vector3 delta = CSGGrid.ForceSnapDeltaToRay(camera, ray, MathConstants.zeroVector3, snappedPoint);
-                snappedPoint = snappedPoint + delta;
+                snappedPoint += delta;
             }
 
             return snappedPoint;
@@ -509,24 +481,24 @@ namespace RealtimeCSG
 
         private static void OnShapeCancelledEvent()
         {
-            if(!instance.generateMode)
+            if(!m_Instance._generateMode)
             {
                 return;
             }
 
-            instance.generateMode = false;
+            m_Instance._generateMode = false;
         }
 
         private static void OnShapeCommittedEvent()
         {
-            instance.generateMode = false;
+            m_Instance._generateMode = false;
         }
 
         private static bool HandleBuilderEvents()
         {
-            if(CSGSettings.EditMode != instance.editMode)
+            if(CSGSettings.EditMode != m_Instance.editMode)
             {
-                CSGSettings.EditMode = instance.editMode;
+                CSGSettings.EditMode = m_Instance.editMode;
                 CSGSettings.Save();
             }
 
@@ -535,70 +507,57 @@ namespace RealtimeCSG
                 case EventType.KeyDown:
                 {
                     if(GUIUtility.hotControl == 0 &&
-                       Keys.freeBuilderMode.IsKeyPressed() && !instance.generateMode)
+                       Keys.freeBuilderMode.IsKeyPressed() && !m_Instance._generateMode)
                     {
-                        EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+                        EditModeGenerate generateBrushTool =
+                            m_BrushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+
                         generateBrushTool.BuilderMode = ShapeMode.FreeDraw;
-                        instance.generateMode         = true;
+                        m_Instance._generateMode      = true;
                         Event.current.Use();
 
                         return true;
                     }
 
-                    if(Keys.cylinderBuilderMode.IsKeyPressed() && !instance.generateMode)
+                    if(Keys.cylinderBuilderMode.IsKeyPressed() && !m_Instance._generateMode)
                     {
-                        EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+                        EditModeGenerate generateBrushTool =
+                            m_BrushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+
                         generateBrushTool.BuilderMode = ShapeMode.Cylinder;
-                        instance.generateMode         = true;
+                        m_Instance._generateMode      = true;
                         Event.current.Use();
 
                         return true;
                     }
 
-                    if(Keys.boxBuilderMode.IsKeyPressed() && !instance.generateMode)
+                    if(Keys.boxBuilderMode.IsKeyPressed() && !m_Instance._generateMode)
                     {
-                        EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+                        EditModeGenerate generateBrushTool =
+                            m_BrushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+
                         generateBrushTool.BuilderMode = ShapeMode.Box;
-                        instance.generateMode         = true;
+                        m_Instance._generateMode      = true;
                         Event.current.Use();
 
                         return true;
                     }
 
-                    if(Keys.sphereBuilderMode.IsKeyPressed() && !instance.generateMode)
+                    if(Keys.sphereBuilderMode.IsKeyPressed() && !m_Instance._generateMode)
                     {
-                        EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+                        EditModeGenerate generateBrushTool =
+                            m_BrushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+
                         generateBrushTool.BuilderMode = ShapeMode.Sphere;
-                        instance.generateMode         = true;
+                        m_Instance._generateMode      = true;
                         Event.current.Use();
 
                         return true;
                     }
-                    else if(Keys.switchToObjectEditMode.IsKeyPressed())
-                    {
-                        Event.current.Use();
 
-                        return true;
-                    }
-                    else if(Keys.switchToGenerateEditMode.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        return true;
-                    }
-                    else if(Keys.switchToMeshEditMode.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        return true;
-                    }
-                    else if(Keys.switchToClipEditMode.IsKeyPressed())
-                    {
-                        Event.current.Use();
-
-                        return true;
-                    }
-                    else if(Keys.switchToSurfaceEditMode.IsKeyPressed())
+                    if(Keys.switchToObjectEditMode.IsKeyPressed() || Keys.switchToGenerateEditMode.IsKeyPressed()
+                    || Keys.switchToMeshEditMode.IsKeyPressed() || Keys.switchToClipEditMode.IsKeyPressed()
+                    || Keys.switchToSurfaceEditMode.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -609,18 +568,20 @@ namespace RealtimeCSG
                 }
                 case EventType.KeyUp:
                 {
-                    if(instance.generateMode &&
+                    if(m_Instance._generateMode &&
                        (Keys.freeBuilderMode.IsKeyPressed() ||
                            Keys.cylinderBuilderMode.IsKeyPressed() ||
                            Keys.boxBuilderMode.IsKeyPressed() ||
                            Keys.sphereBuilderMode.IsKeyPressed()))
                     {
                         Event.current.Use();
-                        EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+
+                        EditModeGenerate generateBrushTool =
+                            m_BrushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
 
                         if(!generateBrushTool.HotKeyReleased())
                         {
-                            instance.generateMode = false;
+                            m_Instance._generateMode = false;
                         }
                     }
                     else if(Keys.switchToObjectEditMode.IsKeyPressed())
@@ -690,24 +651,24 @@ namespace RealtimeCSG
             return false;
         }
 
-        [NonSerialized] private LineMeshManager zTestLineMeshManager = new LineMeshManager();
-        [NonSerialized] private LineMeshManager noZTestLineMeshManager = new LineMeshManager();
+        [NonSerialized] private readonly LineMeshManager _zTestLineMeshManager = new LineMeshManager();
+        [NonSerialized] private readonly LineMeshManager _noZTestLineMeshManager = new LineMeshManager();
 
         private void OnDestroy()
         {
-            zTestLineMeshManager.Destroy();
-            noZTestLineMeshManager.Destroy();
+            _zTestLineMeshManager.Destroy();
+            _noZTestLineMeshManager.Destroy();
         }
 
-        private static readonly int SceneWindowHash = "SceneWindowHash".GetHashCode();
+        private static readonly int sceneWindowHash = "SceneWindowHash".GetHashCode();
 
-        private static List<EditModeToolWindowSceneGUI> currentEditorWindows = new List<EditModeToolWindowSceneGUI>();
+        private static List<EditModeToolWindowSceneGUI> m_CurrentEditorWindows = new List<EditModeToolWindowSceneGUI>();
 
-        public static bool InitSceneGUI(SceneView sceneView)
+        public static bool InitSceneGUI()
         {
-            currentEditorWindows = EditModeToolWindowSceneGUI.GetEditorWindows();
+            m_CurrentEditorWindows = EditModeToolWindowSceneGUI.GetEditorWindows();
 
-            return currentEditorWindows.Count == 0;
+            return m_CurrentEditorWindows.Count == 0;
         }
 
         public static void OnSceneGUI(SceneView sceneView)
@@ -726,7 +687,7 @@ namespace RealtimeCSG
             {
                 UpdateTool();
 
-                if(instance.activeTool != null)
+                if(m_Instance._activeTool != null)
                 {
                     if(CSGSettings.EnableRealtimeCSG)
                     {
@@ -734,21 +695,21 @@ namespace RealtimeCSG
                         Vector2 sceneSize = sceneView.position.size;
 
                         Rect sceneRect = new Rect(
-                            0, 0, sceneSize.x, sceneSize.y - (CSG_GUIStyleUtility.BottomToolBarHeight + 4 + 17)
+                            0, 0, sceneSize.x, sceneSize.y - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4 + 17)
                         );
 
                         // This helps prevent weird issues with overlapping sceneviews + avoid some performance issues with multiple sceneviews open
                         if(EditorWindow.mouseOverWindow == sceneView || (Event.current.type != EventType.MouseMove
                             && Event.current.type != EventType.Layout))
                         {
-                            instance.activeTool.HandleEvents(sceneView, sceneRect);
+                            m_Instance._activeTool.HandleEvents(sceneView, sceneRect);
                         }
                     }
                     else
                     {
                         if(Event.current.type == EventType.Repaint)
                         {
-                            CSGBrush[]              brushes         = instance.filteredSelection.brushTargets;
+                            CSGBrush[]              brushes         = m_Instance._filteredSelection.brushTargets;
                             List<GeometryWireframe> wireframes      = new List<GeometryWireframe>(brushes.Length);
                             List<Matrix4x4>         transformations = new List<Matrix4x4>(brushes.Length);
 
@@ -776,7 +737,7 @@ namespace RealtimeCSG
                             if(wireframes.Count > 0)
                             {
                                 CSGRenderer.DrawSelectedBrushes(
-                                    instance.zTestLineMeshManager, instance.noZTestLineMeshManager,
+                                    m_Instance._zTestLineMeshManager, m_Instance._noZTestLineMeshManager,
                                     wireframes.ToArray(), transformations.ToArray(),
                                     ColorSettings.SelectedOutlines, GUIConstants.THICK_LINE_SCALE
                                 );
@@ -785,23 +746,23 @@ namespace RealtimeCSG
                             MaterialUtility.LineDashMultiplier      = 1.0f;
                             MaterialUtility.LineThicknessMultiplier = 1.0f;
                             MaterialUtility.LineAlphaMultiplier     = 1.0f;
-                            instance.zTestLineMeshManager.Render(MaterialUtility.ZTestGenericLine);
-                            instance.zTestLineMeshManager.Render(MaterialUtility.ZTestGenericLine);
+                            m_Instance._zTestLineMeshManager.Render(MaterialUtility.ZTestGenericLine);
+                            m_Instance._zTestLineMeshManager.Render(MaterialUtility.ZTestGenericLine);
                         }
                     }
                 }
             }
 
-            int       sceneWindowId   = GUIUtility.GetControlID(SceneWindowHash, FocusType.Passive);
+            int       sceneWindowId   = GUIUtility.GetControlID(sceneWindowHash, FocusType.Passive);
             EventType sceneWindowType = Event.current.GetTypeForControl(sceneWindowId);
 
             if(sceneWindowType == EventType.Repaint)
             {
-                if(currentEditorWindows.Count > 0)
+                if(m_CurrentEditorWindows.Count > 0)
                 {
-                    for(int i = 0; i < currentEditorWindows.Count; i++)
+                    for(int i = 0; i < m_CurrentEditorWindows.Count; i++)
                     {
-                        currentEditorWindows[i].Repaint();
+                        m_CurrentEditorWindows[i].Repaint();
                     }
 
                     return;
@@ -818,7 +779,7 @@ namespace RealtimeCSG
                 if(sceneView && sceneWindowType != EventType.Used &&
                    (!SceneDragToolManager.IsDraggingObjectInScene || EditMode == ToolEditMode.Surfaces))
                 {
-                    if(currentEditorWindows.Count == 0)
+                    if(m_CurrentEditorWindows.Count == 0)
                     {
                         try
                         {
@@ -836,17 +797,17 @@ namespace RealtimeCSG
         }
 
         public static void GenerateFromSurface(
-            Camera camera, CSGBrush cSGBrush, CSGPlane polygonPlane, Vector3 direction, Vector3[] points
+            Camera camera, CSGBrush cSgBrush, CSGPlane polygonPlane, Vector3 direction, Vector3[] points
           , int[] pointIndices, uint[] smoothingGroups, bool drag, CSGOperationType forceDragSource
           , bool autoCommitExtrusion
         )
         {
             EditMode = ToolEditMode.Generate;
             UpdateTool();
-            EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
+            EditModeGenerate generateBrushTool = m_BrushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
 
             generateBrushTool.GenerateFromPolygon(
-                camera, cSGBrush, polygonPlane, direction, points, pointIndices, smoothingGroups, drag, forceDragSource
+                camera, cSgBrush, polygonPlane, direction, points, pointIndices, smoothingGroups, drag, forceDragSource
               , autoCommitExtrusion
             );
         }
@@ -855,20 +816,19 @@ namespace RealtimeCSG
 
         public static Transform[] CloneTargets(SetTransformation setTransform = null)
         {
-            if(instance.filteredSelection.nodeTargets.Length == 0)
+            if(m_Instance._filteredSelection.nodeTargets.Length == 0)
             {
-                return new Transform[0];
+                return Array.Empty<Transform>();
             }
 
             int groupId = Undo.GetCurrentGroup();
-            //Undo.IncrementCurrentGroup();
 
-            GameObject[] newTargets    = new GameObject[instance.filteredSelection.nodeTargets.Length];
-            Transform[]  newTransforms = new Transform[instance.filteredSelection.nodeTargets.Length];
+            GameObject[] newTargets    = new GameObject[m_Instance._filteredSelection.nodeTargets.Length];
+            Transform[]  newTransforms = new Transform[m_Instance._filteredSelection.nodeTargets.Length];
 
-            for(int i = 0; i < instance.filteredSelection.nodeTargets.Length; i++)
+            for(int i = 0; i < m_Instance._filteredSelection.nodeTargets.Length; i++)
             {
-                GameObject originalGameObject = instance.filteredSelection.nodeTargets[i].gameObject;
+                GameObject originalGameObject = m_Instance._filteredSelection.nodeTargets[i].gameObject;
                 Transform  originalTransform  = originalGameObject.GetComponent<Transform>();
 
                 newTargets[i] = CSGPrefabUtility.Instantiate(originalGameObject);
@@ -910,9 +870,7 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        uint newSmoothingGroup;
-
-                        if(!uniqueSmoothingGroups.TryGetValue(smoothingGroup, out newSmoothingGroup))
+                        if(!uniqueSmoothingGroups.TryGetValue(smoothingGroup, out uint newSmoothingGroup))
                         {
                             newSmoothingGroup                     = SurfaceUtility.FindUnusedSmoothingGroupIndex();
                             uniqueSmoothingGroups[smoothingGroup] = newSmoothingGroup;

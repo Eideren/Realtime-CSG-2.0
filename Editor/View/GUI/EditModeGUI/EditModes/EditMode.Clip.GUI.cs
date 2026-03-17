@@ -1,55 +1,55 @@
-﻿using UnityEditor;
+﻿using InternalRealtimeCSG;
+using UnityEditor;
 using UnityEngine;
-using InternalRealtimeCSG;
 
 namespace RealtimeCSG
 {
     internal sealed partial class EditModeClipGUI
     {
-        private static int SceneViewMeshOverlayHash = "SceneViewClipOverlay".GetHashCode();
+        private static readonly int sceneViewMeshOverlayHash = "SceneViewClipOverlay".GetHashCode();
 
         private static void InitLocalStyles()
         {
-            if(ContentClipLabel != null)
+            if(m_ContentClipLabel != null)
             {
                 return;
             }
 
-            ContentClipLabel = new GUIContent(CSG_GUIStyleUtility.brushEditModeNames[(int)ToolEditMode.Clip]);
+            m_ContentClipLabel = new GUIContent(CsgguiStyleUtility.BrushEditModeNames[(int)ToolEditMode.Clip]);
         }
 
-        private static bool doCommit = false; // unity bug workaround
-        private static bool doCancel = false; // unity bug workaround
+        private static bool m_DoCommit; // unity bug workaround
+        private static bool m_DoCancel; // unity bug workaround
 
-        private static Rect lastGuiRect;
+        private static Rect m_LastGuiRect;
 
-        public static Rect GetLastSceneGUIRect(EditModeClip tool)
+        public static Rect GetLastSceneGUIRect()
         {
-            return lastGuiRect;
+            return m_LastGuiRect;
         }
 
-        public static void OnSceneGUI(Rect windowRect, EditModeClip tool)
+        public static void OnSceneGUI(EditModeClip tool)
         {
-            doCommit = false; // unity bug workaround
-            doCancel = false; // unity bug workaround
+            m_DoCommit = false; // unity bug workaround
+            m_DoCancel = false; // unity bug workaround
 
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             {
-                GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                 {
-                    GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                     {
                         GUILayout.FlexibleSpace();
 
-                        CSG_GUIStyleUtility.ResetGUIState();
+                        CsgguiStyleUtility.ResetGUIState();
 
                         GUIStyle windowStyle = GUI.skin.window;
-                        GUILayout.BeginVertical(ContentClipLabel, windowStyle, CSG_GUIStyleUtility.ContentEmpty);
+                        GUILayout.BeginVertical(m_ContentClipLabel, windowStyle, CsgguiStyleUtility.contentEmpty);
 
                         {
                             OnGUIContents(true, tool);
@@ -57,7 +57,7 @@ namespace RealtimeCSG
 
                         GUILayout.EndVertical();
                         Rect currentArea = GUILayoutUtility.GetLastRect();
-                        lastGuiRect = currentArea;
+                        m_LastGuiRect = currentArea;
 
                         Rect buttonArea = currentArea;
                         buttonArea.x      += buttonArea.width - 17;
@@ -70,10 +70,10 @@ namespace RealtimeCSG
                             EditModeToolWindowSceneGUI.GetWindow();
                         }
 
-                        TooltipUtility.SetToolTip(CSG_GUIStyleUtility.PopOutTooltip, buttonArea);
+                        TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
                         int controlID = GUIUtility.GetControlID(
-                            SceneViewMeshOverlayHash, FocusType.Passive, currentArea
+                            sceneViewMeshOverlayHash, FocusType.Passive, currentArea
                         );
 
                         switch(Event.current.GetTypeForControl(controlID))
@@ -141,12 +141,12 @@ namespace RealtimeCSG
 
             if(tool != null)
             {
-                if(doCommit)
+                if(m_DoCommit)
                 {
                     tool.Commit(); // unity bug workaround
                 }
 
-                if(doCancel)
+                if(m_DoCancel)
                 {
                     tool.Cancel(); // unity bug workaround
                 }
@@ -159,20 +159,15 @@ namespace RealtimeCSG
 
             if(tool.ClipBrushCount == 0)
             {
-                GUILayout.Label(
-                    string.Format("no brushes selected", tool.ClipBrushCount), CSG_GUIStyleUtility.redTextArea
-                );
+                GUILayout.Label("no brushes selected", CsgguiStyleUtility.RedTextArea);
             }
             else
             {
-                if(tool.ClipBrushCount == 1)
-                {
-                    GUILayout.Label(string.Format("{0} brush selected", tool.ClipBrushCount));
-                }
-                else
-                {
-                    GUILayout.Label(string.Format("{0} brushes selected", tool.ClipBrushCount));
-                }
+                GUILayout.Label(
+                    tool.ClipBrushCount == 1
+                        ? $"{tool.ClipBrushCount} brush selected"
+                        : $"{tool.ClipBrushCount} brushes selected"
+                );
             }
 
             EditorGUILayout.Space();
@@ -183,7 +178,7 @@ namespace RealtimeCSG
 
                 {
                     ClipMode newClipMode = tool != null ? tool.clipMode : (ClipMode)999;
-                    CSG_Skin skin        = CSG_GUIStyleUtility.Skin;
+                    CSGSkin skin        = CsgguiStyleUtility.Skin;
 
                     for(int i = 0; i < clipModeValues.Length; i++)
                     {
@@ -193,12 +188,12 @@ namespace RealtimeCSG
 
                         if(selected)
                         {
-                            style   = CSG_GUIStyleUtility.selectedIconLabelStyle;
+                            style   = CsgguiStyleUtility.SelectedIconLabelStyle;
                             content = skin.clipNamesOn[i];
                         }
                         else
                         {
-                            style   = CSG_GUIStyleUtility.unselectedIconLabelStyle;
+                            style   = CsgguiStyleUtility.UnselectedIconLabelStyle;
                             content = skin.clipNames[i];
                         }
 
@@ -207,7 +202,7 @@ namespace RealtimeCSG
                             newClipMode = clipModeValues[i];
                         }
 
-                        TooltipUtility.SetToolTip(CSG_GUIStyleUtility.clipTooltips[i]);
+                        TooltipUtility.SetToolTip(CsgguiStyleUtility.clipTooltips[i]);
                     }
 
                     if(tool != null && tool.clipMode != newClipMode)
@@ -226,10 +221,10 @@ namespace RealtimeCSG
                 bool disabled = tool == null || tool.editMode != EditModeClip.EditMode.EditPoints;
 
                 Material defaultMaterial = CSGSettings.DefaultMaterial;
-                GUILayout.BeginVertical(isSceneGUI ? MaterialSceneWidth : CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginVertical(isSceneGUI ? materialSceneWidth : CsgguiStyleUtility.contentEmpty);
 
                 {
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
                         if(isSceneGUI)
@@ -237,7 +232,7 @@ namespace RealtimeCSG
                             EditorGUI.BeginChangeCheck();
 
                             {
-                                defaultMaterial = CSG_EditorGUIUtility.MaterialImage(defaultMaterial);
+                                defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial);
                             }
 
                             if(EditorGUI.EndChangeCheck() && defaultMaterial)
@@ -246,26 +241,26 @@ namespace RealtimeCSG
                                 CSGSettings.Save();
                             }
 
-                            GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
                         }
 
                         {
                             EditorGUI.BeginDisabledGroup(disabled);
 
                             {
-                                if(GUILayout.Button(ContentCancel))
+                                if(GUILayout.Button(contentCancel))
                                 {
-                                    doCancel = true;
+                                    m_DoCancel = true;
                                 }
 
-                                TooltipUtility.SetToolTip(CancelTooltip);
+                                TooltipUtility.SetToolTip(cancelTooltip);
 
-                                if(GUILayout.Button(ContentCommit))
+                                if(GUILayout.Button(contentCommit))
                                 {
-                                    doCommit = true;
+                                    m_DoCommit = true;
                                 }
 
-                                TooltipUtility.SetToolTip(CommitTooltip);
+                                TooltipUtility.SetToolTip(commitTooltip);
                             }
 
                             EditorGUI.EndDisabledGroup();
@@ -300,11 +295,11 @@ namespace RealtimeCSG
                 if(!isSceneGUI)
                 {
                     EditorGUILayout.Space();
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        EditorGUILayout.LabelField(ContentDefaultMaterial, largeLabelWidth);
-                        GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                        EditorGUILayout.LabelField(contentDefaultMaterial, largeLabelWidth);
+                        GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                         {
                             EditorGUI.BeginChangeCheck();
@@ -322,11 +317,11 @@ namespace RealtimeCSG
                         }
 
                         GUILayout.Space(2);
-                        GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                         {
                             GUILayout.Space(5);
-                            defaultMaterial = CSG_EditorGUIUtility.MaterialImage(defaultMaterial, false);
+                            defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial, false);
                         }
 
                         GUILayout.EndHorizontal();
@@ -334,12 +329,6 @@ namespace RealtimeCSG
                     }
 
                     GUILayout.EndHorizontal();
-                    /*
-                    // Unity won't let us do this
-                    GUILayout.BeginVertical(GUIStyleUtility.ContentEmpty);
-                    OnGUIContentsMaterialInspector(first_material, multiple_materials);
-                    GUILayout.EndVertical();
-                    */
                 }
 
                 GUILayout.EndVertical();
@@ -348,26 +337,26 @@ namespace RealtimeCSG
             EditorGUI.EndDisabledGroup();
         }
 
-        public static void OnInspectorGUI(EditorWindow window, float height)
+        public static void OnInspectorGUI()
         {
-            lastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
+            m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModeClip tool = EditModeManager.ActiveTool as EditModeClip;
 
-            doCommit = false; // unity bug workaround
-            doCancel = false; // unity bug workaround
+            m_DoCommit = false; // unity bug workaround
+            m_DoCancel = false; // unity bug workaround
 
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
 
             if(tool != null)
             {
-                if(doCommit)
+                if(m_DoCommit)
                 {
                     tool.Commit(); // unity bug workaround
                 }
 
-                if(doCancel)
+                if(m_DoCancel)
                 {
                     tool.Cancel(); // unity bug workaround
                 }

@@ -19,7 +19,6 @@ namespace RealtimeCSG
 
         public Rect currentToolTipArea;
 
-        //public Vector2    rectOffset;
         public float tooltipTimer = 0;
         public bool drawnThisFrame = false;
 

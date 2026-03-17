@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using RealtimeCSG.Components;
 using RealtimeCSG.Foundation;
-using RealtimeCSG.Components;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
@@ -27,7 +27,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
 
             CSGNode node = o.GetComponent<CSGNode>();
 
@@ -37,17 +37,17 @@ namespace RealtimeCSG
                 return;
             }
 
-            CSGOperationType operationType = CSGOperationType.Additive;
+            CSGOperationType operationType;
 
             CSGBrush brush = node as CSGBrush;
 
             if(brush != null)
             {
                 operationType = brush.OperationType;
-                CSG_Skin skin = CSG_GUIStyleUtility.Skin;
+                CSGSkin skin = CsgguiStyleUtility.Skin;
 
                 GUI.Label(
-                    selectionRect, skin.hierarchyOperations[(int)operationType], CSG_GUIStyleUtility.rightAlignedLabel
+                    selectionRect, skin.hierarchyOperations[(int)operationType], CsgguiStyleUtility.RightAlignedLabel
                 );
 
                 return;
@@ -57,7 +57,7 @@ namespace RealtimeCSG
 
             if(operation != null)
             {
-                CSG_Skin skin = CSG_GUIStyleUtility.Skin;
+                CSGSkin skin = CsgguiStyleUtility.Skin;
 
                 if(!operation.PassThrough)
                 {
@@ -68,16 +68,14 @@ namespace RealtimeCSG
                     {
                         GUI.Label(
                             selectionRect, skin.hierarchyOperations[operationTypeIndex]
-                          , CSG_GUIStyleUtility.rightAlignedLabel
+                          , CsgguiStyleUtility.RightAlignedLabel
                         );
                     }
                 }
                 else
                 {
-                    GUI.Label(selectionRect, skin.hierarchyPassThrough, CSG_GUIStyleUtility.rightAlignedLabel);
+                    GUI.Label(selectionRect, skin.hierarchyPassThrough, CsgguiStyleUtility.RightAlignedLabel);
                 }
-
-                return;
             }
         }
     }

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using InternalRealtimeCSG;
+﻿using System.Collections.Generic;
 using System.Linq;
+using InternalRealtimeCSG;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
@@ -9,21 +9,21 @@ namespace RealtimeCSG
     {
         private sealed class TriangleMesh
         {
-            public const int MaxVertexCount = 65000 - 3;
-            public const int MaxIndexCount = MaxVertexCount * 3;
+            public const int MAX_VERTEX_COUNT = 65000 - 3;
+            public const int MAX_INDEX_COUNT = MAX_VERTEX_COUNT * 3;
 
             public int VertexCount
             {
                 get => vertexCount;
             }
 
-            public Vector3[] vertices = new Vector3[MaxVertexCount];
-            public Color[] colors = new Color [MaxVertexCount];
-            public int[] indices = new int [MaxIndexCount];
-            public int vertexCount = 0;
-            public int indexCount = 0;
+            public Vector3[] vertices = new Vector3[MAX_VERTEX_COUNT];
+            public Color[] colors = new Color [MAX_VERTEX_COUNT];
+            public int[] indices = new int [MAX_INDEX_COUNT];
+            public int vertexCount;
+            public int indexCount;
 
-            private Mesh mesh;
+            private Mesh _mesh;
 
             public TriangleMesh()
             {
@@ -147,30 +147,29 @@ namespace RealtimeCSG
             {
                 if(vertexCount == 0)
                 {
-                    if(mesh != null && mesh.vertexCount != 0)
+                    if(_mesh != null && _mesh.vertexCount != 0)
                     {
-                        mesh.Clear(true);
+                        _mesh.Clear(true);
                     }
 
                     return;
                 }
 
-                if(mesh)
+                if(_mesh)
                 {
-                    mesh.Clear(true);
+                    _mesh.Clear(true);
                 }
                 else
                 {
-                    mesh           = new Mesh();
-                    mesh.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
-                    mesh.MarkDynamic();
+                    _mesh           = new Mesh();
+                    _mesh.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
+                    _mesh.MarkDynamic();
                 }
 
                 Vector3[] newVertices;
                 Color[]   newColors;
-                int[]     newIndices;
 
-                if(vertexCount == MaxVertexCount)
+                if(vertexCount == MAX_VERTEX_COUNT)
                 {
                     newVertices = vertices;
                     newColors   = colors;
@@ -181,40 +180,33 @@ namespace RealtimeCSG
                     newColors   = colors.Take(vertexCount).ToArray();
                 }
 
-                if(indexCount == MaxIndexCount)
-                {
-                    newIndices = indices;
-                }
-                else
-                {
-                    newIndices = indices.Take(indexCount).ToArray();
-                }
+                int[] newIndices = indexCount == MAX_INDEX_COUNT ? indices : indices.Take(indexCount).ToArray();
 
-                mesh.vertices = newVertices;
-                mesh.colors   = newColors;
-                mesh.SetIndices(newIndices, MeshTopology.Triangles, 0, false);
-                mesh.RecalculateBounds();
-                mesh.UploadMeshData(false);
+                _mesh.vertices = newVertices;
+                _mesh.colors   = newColors;
+                _mesh.SetIndices(newIndices, MeshTopology.Triangles, 0, false);
+                _mesh.RecalculateBounds();
+                _mesh.UploadMeshData(false);
             }
 
             public void Draw()
             {
-                if(vertexCount == 0 || mesh == null)
+                if(vertexCount == 0 || _mesh == null)
                 {
                     return;
                 }
 
-                Graphics.DrawMeshNow(mesh, MathConstants.identityMatrix);
+                Graphics.DrawMeshNow(_mesh, MathConstants.identityMatrix);
             }
 
             internal void Destroy()
             {
-                if(mesh)
+                if(_mesh)
                 {
-                    UnityEngine.Object.DestroyImmediate(mesh);
+                    Object.DestroyImmediate(_mesh);
                 }
 
-                mesh        = null;
+                _mesh       = null;
                 vertices    = null;
                 colors      = null;
                 indices     = null;
@@ -225,37 +217,37 @@ namespace RealtimeCSG
 
         public void Begin()
         {
-            if(triangleMeshes == null || triangleMeshes.Count == 0)
+            if(_triangleMeshes == null || _triangleMeshes.Count == 0)
             {
                 return;
             }
 
-            currentTriangleMesh = 0;
+            _currentTriangleMesh = 0;
 
-            for(int i = 0; i < triangleMeshes.Count; i++)
+            for(int i = 0; i < _triangleMeshes.Count; i++)
             {
-                triangleMeshes[i].Clear();
+                _triangleMeshes[i].Clear();
             }
         }
 
         public void End()
         {
-            if(triangleMeshes == null || triangleMeshes.Count == 0)
+            if(_triangleMeshes == null || _triangleMeshes.Count == 0)
             {
                 return;
             }
 
-            int max = Mathf.Min(currentTriangleMesh, triangleMeshes.Count);
+            int max = Mathf.Min(_currentTriangleMesh, _triangleMeshes.Count);
 
             for(int i = 0; i <= max; i++)
             {
-                triangleMeshes[i].CommitMesh();
+                _triangleMeshes[i].CommitMesh();
             }
         }
 
         public void Render(Material genericMaterial)
         {
-            if(triangleMeshes == null || triangleMeshes.Count == 0)
+            if(_triangleMeshes == null || _triangleMeshes.Count == 0)
             {
                 return;
             }
@@ -263,109 +255,109 @@ namespace RealtimeCSG
             if(genericMaterial &&
                genericMaterial.SetPass(0))
             {
-                int max = Mathf.Min(currentTriangleMesh, triangleMeshes.Count - 1);
+                int max = Mathf.Min(_currentTriangleMesh, _triangleMeshes.Count - 1);
 
                 for(int i = 0; i <= max; i++)
                 {
-                    triangleMeshes[i].Draw();
+                    _triangleMeshes[i].Draw();
                 }
             }
         }
 
-        private List<TriangleMesh> triangleMeshes = new List<TriangleMesh>();
-        private int currentTriangleMesh = 0;
+        private readonly List<TriangleMesh> _triangleMeshes = new List<TriangleMesh>();
+        private int _currentTriangleMesh;
 
         public PolygonMeshManager()
         {
-            triangleMeshes.Add(new TriangleMesh());
+            _triangleMeshes.Add(new TriangleMesh());
         }
 
         public void DrawTriangles(Matrix4x4 matrix, Vector3[] vertices, int[] indices, Color color)
         {
-            int          triangleMeshIndex = currentTriangleMesh;
-            TriangleMesh triangleMesh      = triangleMeshes[currentTriangleMesh];
+            int          triangleMeshIndex = _currentTriangleMesh;
+            TriangleMesh triangleMesh      = _triangleMeshes[_currentTriangleMesh];
 
-            if(triangleMesh.VertexCount + vertices.Length >= TriangleMesh.MaxVertexCount)
+            if(triangleMesh.VertexCount + vertices.Length >= TriangleMesh.MAX_VERTEX_COUNT)
             {
-                currentTriangleMesh++;
+                _currentTriangleMesh++;
 
-                if(currentTriangleMesh >= triangleMeshes.Count)
+                if(_currentTriangleMesh >= _triangleMeshes.Count)
                 {
-                    triangleMeshes.Add(new TriangleMesh());
+                    _triangleMeshes.Add(new TriangleMesh());
                 }
 
-                triangleMesh = triangleMeshes[currentTriangleMesh];
+                triangleMesh = _triangleMeshes[_currentTriangleMesh];
                 triangleMesh.Clear();
             }
 
             triangleMesh.AddTriangles(matrix, vertices, indices, color);
 
-            currentTriangleMesh = triangleMeshIndex;
+            _currentTriangleMesh = triangleMeshIndex;
         }
 
         public void DrawPolygon(Matrix4x4 matrix, Vector3[] vertices, int[] indices, Color color)
         {
-            int          triangleMeshIndex = currentTriangleMesh;
-            TriangleMesh triangleMesh      = triangleMeshes[currentTriangleMesh];
+            int          triangleMeshIndex = _currentTriangleMesh;
+            TriangleMesh triangleMesh      = _triangleMeshes[_currentTriangleMesh];
 
-            if(triangleMesh.VertexCount + (indices.Length * 3 - 2) >= TriangleMesh.MaxVertexCount)
+            if(triangleMesh.VertexCount + (indices.Length * 3 - 2) >= TriangleMesh.MAX_VERTEX_COUNT)
             {
-                currentTriangleMesh++;
+                _currentTriangleMesh++;
 
-                if(currentTriangleMesh >= triangleMeshes.Count)
+                if(_currentTriangleMesh >= _triangleMeshes.Count)
                 {
-                    triangleMeshes.Add(new TriangleMesh());
+                    _triangleMeshes.Add(new TriangleMesh());
                 }
 
-                triangleMesh = triangleMeshes[currentTriangleMesh];
+                triangleMesh = _triangleMeshes[_currentTriangleMesh];
                 triangleMesh.Clear();
             }
 
             triangleMesh.AddPolygon(matrix, vertices, indices, color);
 
-            currentTriangleMesh = triangleMeshIndex;
+            _currentTriangleMesh = triangleMeshIndex;
         }
 
         public void DrawPolygon(Vector3[] vertices, int[] indices, Color color)
         {
-            int          triangleMeshIndex = currentTriangleMesh;
-            TriangleMesh triangleMesh      = triangleMeshes[currentTriangleMesh];
+            int          triangleMeshIndex = _currentTriangleMesh;
+            TriangleMesh triangleMesh      = _triangleMeshes[_currentTriangleMesh];
 
-            if(triangleMesh.VertexCount + (indices.Length * 3 - 2) >= TriangleMesh.MaxVertexCount)
+            if(triangleMesh.VertexCount + (indices.Length * 3 - 2) >= TriangleMesh.MAX_VERTEX_COUNT)
             {
-                currentTriangleMesh++;
+                _currentTriangleMesh++;
 
-                if(currentTriangleMesh >= triangleMeshes.Count)
+                if(_currentTriangleMesh >= _triangleMeshes.Count)
                 {
-                    triangleMeshes.Add(new TriangleMesh());
+                    _triangleMeshes.Add(new TriangleMesh());
                 }
 
-                triangleMesh = triangleMeshes[currentTriangleMesh];
+                triangleMesh = _triangleMeshes[_currentTriangleMesh];
             }
 
             triangleMesh.AddPolygon(vertices, indices, color);
 
-            currentTriangleMesh = triangleMeshIndex;
+            _currentTriangleMesh = triangleMeshIndex;
         }
 
         internal void Destroy()
         {
-            for(int i = 0; i < triangleMeshes.Count; i++)
+            for(int i = 0; i < _triangleMeshes.Count; i++)
             {
-                triangleMeshes[i].Destroy();
+                _triangleMeshes[i].Destroy();
             }
 
-            triangleMeshes.Clear();
-            currentTriangleMesh = 0;
+            _triangleMeshes.Clear();
+            _currentTriangleMesh = 0;
         }
 
         internal void Clear()
         {
-            currentTriangleMesh = 0;
+            _currentTriangleMesh = 0;
 
-            for(int i = 0; i < triangleMeshes.Count; i++)
+            for(int i = 0; i < _triangleMeshes.Count; i++)
             {
-                triangleMeshes[i].Clear();
+                _triangleMeshes[i].Clear();
             }
         }
     }

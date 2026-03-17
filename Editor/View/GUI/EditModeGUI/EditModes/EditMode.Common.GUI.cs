@@ -25,9 +25,9 @@ namespace InternalRealtimeCSG
 
         public static void UpdateLightmapUVButton(ref Rect rect)
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
 
-            if(IndentableButton(UpdateLightmapUVContent, ref rect, CSG_GUIStyleUtility.redButton))
+            if(IndentableButton(updateLightmapUVContent, ref rect, CsgguiStyleUtility.RedButton))
             {
                 CSGModelManager.BuildLightmapUvs();
             }
@@ -35,9 +35,9 @@ namespace InternalRealtimeCSG
 
         public static void UpdateLightmapUVButton()
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
 
-            if(IndentableButton(UpdateLightmapUVContent, CSG_GUIStyleUtility.redButton))
+            if(IndentableButton(updateLightmapUVContent, CsgguiStyleUtility.RedButton))
             {
                 CSGModelManager.BuildLightmapUvs();
             }
@@ -46,7 +46,6 @@ namespace InternalRealtimeCSG
         public static bool NeedLightmapUVUpdate(CSGModel[] models)
         {
             bool needLightmapUVUpdate = false;
-//			bool needColliderUpdate   = false;
 
             for(int m = 0; m < models.Length; m++)
             {
@@ -57,7 +56,6 @@ namespace InternalRealtimeCSG
 
                 needLightmapUVUpdate = needLightmapUVUpdate
                  || (MeshInstanceManager.NeedToGenerateLightmapUVsForModel(models[m]) && !models[m].AutoRebuildUVs);
-//				needColliderUpdate   = needColliderUpdate   || (MeshInstanceManager.NeedToGenerateCollidersForModel(models[m])   && !models[m].AutoRebuildColliders);
             }
 
             return needLightmapUVUpdate;
@@ -167,20 +165,19 @@ namespace InternalRealtimeCSG
             SurfaceFlagState state, SelectedBrushSurface[] selectedBrushSurfaces, bool isSceneGUI = false
         )
         {
-            GUIStyle leftStyle = isSceneGUI ? EditorStyles.miniButtonLeft : GUI.skin.button;
-            //var middleStyle	= isSceneGUI ? EditorStyles.miniButtonMid   : GUI.skin.button;
+            GUIStyle leftStyle  = isSceneGUI ? EditorStyles.miniButtonLeft : GUI.skin.button;
             GUIStyle rightStyle = isSceneGUI ? EditorStyles.miniButtonRight : GUI.skin.button;
 
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             {
                 if(!isSceneGUI)
                 {
-                    GUILayout.Label(ContentShadows, EditModeSurfaceGUI.largeLabelWidth);
+                    GUILayout.Label(contentShadows, EditModeSurfaceGUI.largeLabelWidth);
                 }
                 else
                 {
-                    GUILayout.Label(ContentShadows, EditorStyles.miniLabel, EditModeSurfaceGUI.smallLabelWidth);
+                    GUILayout.Label(contentShadows, EditorStyles.miniLabel, EditModeSurfaceGUI.smallLabelWidth);
                 }
 
                 EditorGUI.BeginChangeCheck();
@@ -190,10 +187,10 @@ namespace InternalRealtimeCSG
                     EditorGUI.showMixedValue = !state.noReceiveShadows.HasValue;
 
                     state.noReceiveShadows = !GUILayout.Toggle(
-                        !(state.noReceiveShadows ?? state.noRender ?? true), ContentReceiveShadowsSurfaces, leftStyle
+                        !(state.noReceiveShadows ?? state.noRender ?? true), contentReceiveShadowsSurfaces, leftStyle
                     );
 
-                    TooltipUtility.SetToolTip(ToolTipReceiveShadowsSurfaces);
+                    TooltipUtility.SetToolTip(toolTipReceiveShadowsSurfaces);
                 }
 
                 if(EditorGUI.EndChangeCheck())
@@ -210,10 +207,10 @@ namespace InternalRealtimeCSG
                     EditorGUI.showMixedValue = !state.noCastShadows.HasValue;
 
                     state.noCastShadows = !GUILayout.Toggle(
-                        !(state.noCastShadows ?? true), ContentCastShadowsSurfaces, rightStyle
+                        !(state.noCastShadows ?? true), contentCastShadowsSurfaces, rightStyle
                     );
 
-                    TooltipUtility.SetToolTip(ToolTipCastShadowsSurfaces);
+                    TooltipUtility.SetToolTip(toolTipCastShadowsSurfaces);
                 }
 
                 if(EditorGUI.EndChangeCheck())
@@ -226,15 +223,15 @@ namespace InternalRealtimeCSG
 
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             {
                 EditorGUI.BeginChangeCheck();
 
                 {
                     EditorGUI.showMixedValue = !state.noRender.HasValue;
-                    state.noRender = !GUILayout.Toggle(!(state.noRender ?? true), ContentVisibleSurfaces, leftStyle);
-                    TooltipUtility.SetToolTip(ToolTipVisibleSurfaces);
+                    state.noRender = !GUILayout.Toggle(!(state.noRender ?? true), contentVisibleSurfaces, leftStyle);
+                    TooltipUtility.SetToolTip(toolTipVisibleSurfaces);
                 }
 
                 if(EditorGUI.EndChangeCheck())
@@ -250,10 +247,10 @@ namespace InternalRealtimeCSG
                     EditorGUI.showMixedValue = !state.noCollision.HasValue;
 
                     state.noCollision = !GUILayout.Toggle(
-                        !(state.noCollision ?? true), ContentCollisionSurfaces, rightStyle
+                        !(state.noCollision ?? true), contentCollisionSurfaces, rightStyle
                     );
 
-                    TooltipUtility.SetToolTip(ToolTipCollisionSurfaces);
+                    TooltipUtility.SetToolTip(toolTipCollisionSurfaces);
                 }
 
                 if(EditorGUI.EndChangeCheck())
@@ -279,7 +276,7 @@ namespace InternalRealtimeCSG
 
             {
                 tempRect.Set(rect.x + 4, rect.y + 1, 45, 16);
-                GUI.Label(tempRect, ContentShadows, EditorStyles.miniLabel);
+                GUI.Label(tempRect, contentShadows, EditorStyles.miniLabel);
 
                 EditorGUI.BeginChangeCheck();
 
@@ -288,8 +285,8 @@ namespace InternalRealtimeCSG
                     bool enabled = !(state.noReceiveShadows ?? state.noRender ?? true);
                     EditorGUI.showMixedValue = mixed;
                     tempRect.Set(rect.x + 53, rect.y + 1, 90 - 4, 15);
-                    state.noReceiveShadows = !GUI.Toggle(tempRect, enabled, ContentReceiveShadowsSurfaces, leftStyle);
-                    TooltipUtility.SetToolTip(ToolTipReceiveShadowsSurfaces, tempRect);
+                    state.noReceiveShadows = !GUI.Toggle(tempRect, enabled, contentReceiveShadowsSurfaces, leftStyle);
+                    TooltipUtility.SetToolTip(toolTipReceiveShadowsSurfaces, tempRect);
                 }
 
                 if(EditorGUI.EndChangeCheck())
@@ -306,8 +303,8 @@ namespace InternalRealtimeCSG
                     bool enabled = !(state.noCastShadows ?? true);
                     EditorGUI.showMixedValue = mixed;
                     tempRect.Set(rect.x + 143 - 4, rect.y + 1, 74 - 4, 15);
-                    state.noCastShadows = !GUI.Toggle(tempRect, enabled, ContentCastShadowsSurfaces, rightStyle);
-                    TooltipUtility.SetToolTip(ToolTipCastShadowsSurfaces, tempRect);
+                    state.noCastShadows = !GUI.Toggle(tempRect, enabled, contentCastShadowsSurfaces, rightStyle);
+                    TooltipUtility.SetToolTip(toolTipCastShadowsSurfaces, tempRect);
                 }
 
                 if(EditorGUI.EndChangeCheck())
@@ -326,8 +323,8 @@ namespace InternalRealtimeCSG
                     bool enabled = !(state.noRender ?? true);
                     EditorGUI.showMixedValue = mixed;
                     tempRect.Set(rect.x + 4, rect.y + 18, 94, 15);
-                    state.noRender = !GUI.Toggle(tempRect, enabled, ContentVisibleSurfaces, leftStyle);
-                    TooltipUtility.SetToolTip(ToolTipVisibleSurfaces, tempRect);
+                    state.noRender = !GUI.Toggle(tempRect, enabled, contentVisibleSurfaces, leftStyle);
+                    TooltipUtility.SetToolTip(toolTipVisibleSurfaces, tempRect);
                 }
 
                 if(EditorGUI.EndChangeCheck())
@@ -344,8 +341,8 @@ namespace InternalRealtimeCSG
                     bool enabled = !(state.noCollision ?? true);
                     EditorGUI.showMixedValue = mixed;
                     tempRect.Set(rect.x + 98, rect.y + 18, 112, 15);
-                    state.noCollision = !GUI.Toggle(tempRect, enabled, ContentCollisionSurfaces, rightStyle);
-                    TooltipUtility.SetToolTip(ToolTipCollisionSurfaces, tempRect);
+                    state.noCollision = !GUI.Toggle(tempRect, enabled, contentCollisionSurfaces, rightStyle);
+                    TooltipUtility.SetToolTip(toolTipCollisionSurfaces, tempRect);
                 }
 
                 if(EditorGUI.EndChangeCheck())
@@ -361,8 +358,7 @@ namespace InternalRealtimeCSG
 
         public static TexGenFlags OnSurfaceFlagButtons(TexGenFlags texGenFlags, bool isSceneGUI = false)
         {
-            GUIStyle leftStyle = EditorStyles.miniButtonLeft;
-            //var middleStyle = EditorStyles.miniButtonMid;
+            GUIStyle leftStyle  = EditorStyles.miniButtonLeft;
             GUIStyle rightStyle = EditorStyles.miniButtonRight;
 
             bool noRender      = (texGenFlags & TexGenFlags.NoRender) == TexGenFlags.NoRender;
@@ -372,22 +368,22 @@ namespace InternalRealtimeCSG
             bool noReceiveShadows =
                 noRender || (texGenFlags & TexGenFlags.NoReceiveShadows) == TexGenFlags.NoReceiveShadows;
 
-            GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
             {
-                GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                 {
-                    GUILayout.Label(ContentShadows, EditorStyles.miniLabel, EditModeSurfaceGUI.smallLabelWidth);
+                    GUILayout.Label(contentShadows, EditorStyles.miniLabel, EditModeSurfaceGUI.smallLabelWidth);
                     EditorGUI.BeginChangeCheck();
 
                     {
                         // TODO: implement support
                         noReceiveShadows = !GUILayout.Toggle(
-                            !noReceiveShadows, ContentReceiveShadowsSurfaces, leftStyle
+                            !noReceiveShadows, contentReceiveShadowsSurfaces, leftStyle
                         );
 
-                        TooltipUtility.SetToolTip(ToolTipReceiveShadowsSurfaces);
+                        TooltipUtility.SetToolTip(toolTipReceiveShadowsSurfaces);
                     }
 
                     if(EditorGUI.EndChangeCheck())
@@ -408,8 +404,8 @@ namespace InternalRealtimeCSG
 
                     {
                         // TODO: implement support
-                        noCastShadows = !GUILayout.Toggle(!noCastShadows, ContentCastShadowsSurfaces, rightStyle);
-                        TooltipUtility.SetToolTip(ToolTipCastShadowsSurfaces);
+                        noCastShadows = !GUILayout.Toggle(!noCastShadows, contentCastShadowsSurfaces, rightStyle);
+                        TooltipUtility.SetToolTip(toolTipCastShadowsSurfaces);
                     }
 
                     if(EditorGUI.EndChangeCheck())
@@ -429,14 +425,14 @@ namespace InternalRealtimeCSG
 
                 GUILayout.EndHorizontal();
 
-                GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                 {
                     EditorGUI.BeginChangeCheck();
 
                     {
-                        noRender = !GUILayout.Toggle(!noRender, ContentVisibleSurfaces, leftStyle);
-                        TooltipUtility.SetToolTip(ToolTipVisibleSurfaces);
+                        noRender = !GUILayout.Toggle(!noRender, contentVisibleSurfaces, leftStyle);
+                        TooltipUtility.SetToolTip(toolTipVisibleSurfaces);
                     }
 
                     if(EditorGUI.EndChangeCheck())
@@ -456,8 +452,8 @@ namespace InternalRealtimeCSG
                     EditorGUI.BeginChangeCheck();
 
                     {
-                        noCollision = !GUILayout.Toggle(!noCollision, ContentCollisionSurfaces, rightStyle);
-                        TooltipUtility.SetToolTip(ToolTipCollisionSurfaces);
+                        noCollision = !GUILayout.Toggle(!noCollision, contentCollisionSurfaces, rightStyle);
+                        TooltipUtility.SetToolTip(toolTipCollisionSurfaces);
                     }
 
                     if(EditorGUI.EndChangeCheck())

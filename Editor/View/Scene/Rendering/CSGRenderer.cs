@@ -1,39 +1,38 @@
-﻿using UnityEngine;
-using UnityEditor;
-using InternalRealtimeCSG;
-using RealtimeCSG.Legacy;
+﻿using InternalRealtimeCSG;
 using RealtimeCSG.Components;
+using RealtimeCSG.Legacy;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
     internal static class CSGRenderer
     {
-        public const float visibleOuterLineDots = 2.0f;
-        public const float visibleInnerLineDots = 4.0f;
+        public const float VISIBLE_OUTER_LINE_DOTS = 2.0f;
+        public const float VISIBLE_INNER_LINE_DOTS = 4.0f;
 
-        public const float invisibleOuterLineDots = 2.0f;
-        public const float invisibleInnerLineDots = 4.0f;
+        public const float INVISIBLE_OUTER_LINE_DOTS = 2.0f;
+        public const float INVISIBLE_INNER_LINE_DOTS = 4.0f;
 
-        public const float invalidLineDots = 2.0f;
+        public const float INVALID_LINE_DOTS = 2.0f;
 
-        public const float unselected_factor = 0.65f;
-        public const float inner_factor = 0.70f;
-        public const float occluded_factor = 0.80f;
+        public const float UNSELECTED_FACTOR = 0.65f;
+        public const float INNER_FACTOR = 0.70f;
+        public const float OCCLUDED_FACTOR = 0.80f;
 
         public static void DrawSelectedBrush(
             int brushNodeID, Matrix4x4 transformation, Color wireframeColor, float thickness = -1
         )
         {
-            Color selectedOuterColor         = wireframeColor; //selectedOuterColor.a         = 1.0f;
-            Color selectedInnerColor         = selectedOuterColor * inner_factor;
-            Color selectedOuterOccludedColor = selectedOuterColor * occluded_factor;
-            Color selectedInnerOccludedColor = selectedInnerColor * occluded_factor;
+            Color selectedInnerColor         = wireframeColor * INNER_FACTOR;
+            Color selectedOuterOccludedColor = wireframeColor * OCCLUDED_FACTOR;
+            Color selectedInnerOccludedColor = selectedInnerColor * OCCLUDED_FACTOR;
 
             selectedOuterOccludedColor.a *= 0.5f;
             selectedInnerOccludedColor.a *= 0.5f;
 
             DrawOutlines(
-                brushNodeID, transformation, selectedOuterColor, selectedOuterOccludedColor, selectedInnerColor
+                brushNodeID, transformation, wireframeColor, selectedOuterOccludedColor, selectedInnerColor
               , selectedInnerOccludedColor, thickness
             );
         }
@@ -43,10 +42,9 @@ namespace RealtimeCSG
           , Matrix4x4[] transformations, Color wireframeColor, float thickness = -1
         )
         {
-            Color selectedOuterColor         = wireframeColor; //selectedOuterColor.a         = 1.0f;
-            Color selectedInnerColor         = selectedOuterColor * inner_factor;
-            Color selectedOuterOccludedColor = selectedOuterColor * occluded_factor;
-            Color selectedInnerOccludedColor = selectedInnerColor * occluded_factor;
+            Color selectedInnerColor         = wireframeColor * INNER_FACTOR;
+            Color selectedOuterOccludedColor = wireframeColor * OCCLUDED_FACTOR;
+            Color selectedInnerOccludedColor = selectedInnerColor * OCCLUDED_FACTOR;
 
             selectedOuterOccludedColor.a *= 0.5f;
             selectedInnerOccludedColor.a *= 0.5f;
@@ -54,7 +52,7 @@ namespace RealtimeCSG
             GeometryWireframe[] wireframes = BrushOutlineManager.GetBrushOutlines(brushNodeIDs);
 
             DrawOutlines(
-                zTestLineMeshManager, noZTestLineMeshManager, wireframes, transformations, selectedOuterColor
+                zTestLineMeshManager, noZTestLineMeshManager, wireframes, transformations, wireframeColor
               , selectedOuterOccludedColor, selectedInnerColor, selectedInnerOccludedColor, thickness
             );
         }
@@ -64,34 +62,15 @@ namespace RealtimeCSG
           , Matrix4x4[] transformations, Color wireframeColor, float thickness = -1
         )
         {
-            Color selectedOuterColor         = wireframeColor; //selectedOuterColor.a         = 1.0f;
-            Color selectedInnerColor         = selectedOuterColor * inner_factor;
-            Color selectedOuterOccludedColor = selectedOuterColor * occluded_factor;
-            Color selectedInnerOccludedColor = selectedInnerColor * occluded_factor;
-
-            //selectedOuterOccludedColor.a *= 0.5f;
-            //selectedInnerOccludedColor.a *= 0.5f;
+            Color selectedInnerColor         = wireframeColor * INNER_FACTOR;
+            Color selectedOuterOccludedColor = wireframeColor * OCCLUDED_FACTOR;
+            Color selectedInnerOccludedColor = selectedInnerColor * OCCLUDED_FACTOR;
 
             DrawOutlines(
-                zTestLineMeshManager, noZTestLineMeshManager, wireframes, transformations, selectedOuterColor
+                zTestLineMeshManager, noZTestLineMeshManager, wireframes, transformations, wireframeColor
               , selectedOuterOccludedColor, selectedInnerColor, selectedInnerOccludedColor, thickness
             );
         }
-        /*
-        public static void DrawSelectedBrush(GeometryWireframe outline, Matrix4x4 transformation, Color wireframeColor, float thickness = -1)
-        {
-            Color selectedOuterColor		 = wireframeColor;
-            Color selectedInnerColor		 = wireframeColor * inner_factor;
-            Color selectedOuterOccludedColor = selectedOuterColor * occluded_factor;
-            Color selectedInnerOccludedColor = selectedInnerColor * occluded_factor;
-
-            selectedOuterOccludedColor.a *= 0.5f;
-            selectedInnerOccludedColor.a *= 0.5f;
-
-            CSGRenderer.DrawOutlines(outline, transformation, selectedOuterColor, selectedOuterOccludedColor, selectedInnerColor, selectedInnerOccludedColor, thickness);
-        }*/
-
-        //static readonly Color emptyColor = new Color(0, 0, 0, 0);
 
         public static void DrawSelectedBrush(
             int brushNodeID, Shape shape, Matrix4x4 transformation, Color wireframeColor, int surfaceIndex
@@ -100,29 +79,24 @@ namespace RealtimeCSG
         {
             if(selectAllSurfaces)
             {
-                Color selectedOuterColor         = wireframeColor;
-                Color selectedInnerColor         = wireframeColor;
-                Color selectedOuterOccludedColor = selectedOuterColor * occluded_factor;
-                Color selectedInnerOccludedColor = selectedInnerColor * occluded_factor;
+                Color selectedOuterOccludedColor = wireframeColor * OCCLUDED_FACTOR;
+                Color selectedInnerOccludedColor = wireframeColor * OCCLUDED_FACTOR;
 
                 selectedOuterOccludedColor.a *= 0.5f;
                 selectedInnerOccludedColor.a *= 0.5f;
 
                 DrawOutlines(
-                    brushNodeID, transformation, selectedOuterColor, selectedOuterOccludedColor, selectedInnerColor
+                    brushNodeID, transformation, wireframeColor, selectedOuterOccludedColor, wireframeColor
                   , selectedInnerOccludedColor, thickness
                 );
             }
             else
             {
-                Color unselectedOuterColor         = wireframeColor * unselected_factor;
-                Color unselectedInnerColor         = wireframeColor * (unselected_factor * inner_factor);
-                Color selectedOuterColor           = wireframeColor;
-                Color selectedInnerColor           = wireframeColor * inner_factor;
-                Color unselectedOuterOccludedColor = unselectedOuterColor * occluded_factor;
-                Color unselectedInnerOccludedColor = unselectedInnerColor * occluded_factor;
-//				Color selectedOuterOccludedColor	= selectedOuterColor * occluded_factor;
-//				Color selectedInnerOccludedColor	= selectedInnerColor * occluded_factor; 
+                Color unselectedOuterColor         = wireframeColor * UNSELECTED_FACTOR;
+                Color unselectedInnerColor         = wireframeColor * (UNSELECTED_FACTOR * INNER_FACTOR);
+                Color selectedInnerColor           = wireframeColor * INNER_FACTOR;
+                Color unselectedOuterOccludedColor = unselectedOuterColor * OCCLUDED_FACTOR;
+                Color unselectedInnerOccludedColor = unselectedInnerColor * OCCLUDED_FACTOR;
 
                 unselectedOuterOccludedColor.a *= 0.5f;
                 unselectedInnerOccludedColor.a *= 0.5f;
@@ -130,7 +104,7 @@ namespace RealtimeCSG
                 if(surfaceIndex >= 0 && surfaceIndex < shape.Surfaces.Length)
                 {
                     DrawSurfaceOutlines(
-                        brushNodeID, shape, transformation, surfaceIndex, selectedOuterColor, selectedInnerColor
+                        brushNodeID, shape, transformation, surfaceIndex, wireframeColor, selectedInnerColor
                     );
                 }
 
@@ -160,12 +134,10 @@ namespace RealtimeCSG
                 return;
             }
 
-            GeometryWireframe outline;
-
             if(!InternalCSGModelManager.External.getSurfaceOutline(
                    brushNodeID,
                    surfaceIndex,
-                   out outline
+                   out GeometryWireframe outline
                ))
             {
                 return;
@@ -179,7 +151,7 @@ namespace RealtimeCSG
 
                 if(outline.visibleOuterLines != null && outline.visibleOuterLines.Length > 0)
                 {
-                    Handles.DrawDottedLines(outline.vertices, outline.visibleOuterLines, visibleOuterLineDots);
+                    Handles.DrawDottedLines(outline.vertices, outline.visibleOuterLines, VISIBLE_OUTER_LINE_DOTS);
 
                     PaintUtility.DrawLines(
                         transformation, outline.vertices, outline.visibleOuterLines, thickness, outerColor
@@ -188,7 +160,7 @@ namespace RealtimeCSG
 
                 if(outline.invisibleOuterLines != null && outline.invisibleOuterLines.Length > 0)
                 {
-                    Handles.DrawDottedLines(outline.vertices, outline.invisibleOuterLines, invisibleOuterLineDots);
+                    Handles.DrawDottedLines(outline.vertices, outline.invisibleOuterLines, INVISIBLE_OUTER_LINE_DOTS);
                 }
             }
 
@@ -198,7 +170,7 @@ namespace RealtimeCSG
 
                 if(outline.visibleInnerLines != null && outline.visibleInnerLines.Length > 0)
                 {
-                    Handles.DrawDottedLines(outline.vertices, outline.visibleInnerLines, visibleInnerLineDots);
+                    Handles.DrawDottedLines(outline.vertices, outline.visibleInnerLines, VISIBLE_INNER_LINE_DOTS);
 
                     PaintUtility.DrawLines(
                         transformation, outline.vertices, outline.visibleInnerLines, thickness, innerColor
@@ -207,7 +179,7 @@ namespace RealtimeCSG
 
                 if(outline.invisibleInnerLines != null && outline.invisibleInnerLines.Length > 0)
                 {
-                    Handles.DrawDottedLines(outline.vertices, outline.invisibleInnerLines, invisibleInnerLineDots);
+                    Handles.DrawDottedLines(outline.vertices, outline.invisibleInnerLines, INVISIBLE_INNER_LINE_DOTS);
                 }
 #if TEST_ENABLED
 				if (outline.invalidLines != null && outline.invalidLines.Length > 0)
@@ -217,13 +189,9 @@ namespace RealtimeCSG
 				}
 #endif
             }
-            //if (visibleTriangles != null && visibleTriangles.Length > 0 && surfaceColor.a > 0)
-            //{
-            //PaintUtility.DrawTriangles(transformation, vertices, visibleTriangles, surfaceColor);
-            //}
         }
 
-        private const float kMinAlpha = 1 / 255.0f;
+        private const float K_MIN_ALPHA = 1 / 255.0f;
 
         public static void DrawSurfaceOutlines(
             LineMeshManager visibleLinesMeshManager,
@@ -242,7 +210,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(invisibleOutlineColor.a >= kMinAlpha)
+            if(invisibleOutlineColor.a >= K_MIN_ALPHA)
             {
                 for(int i = 0; i < outlines.Length; i++)
                 {
@@ -279,7 +247,7 @@ namespace RealtimeCSG
                 }
             }
 
-            if(invisibleInnerColor.a >= kMinAlpha)
+            if(invisibleInnerColor.a >= K_MIN_ALPHA)
             {
                 for(int i = 0; i < outlines.Length; i++)
                 {
@@ -290,7 +258,7 @@ namespace RealtimeCSG
                     {
                         invisibleLinesMeshManager.DrawLines(
                             transformation, outline.vertices, outline.visibleOuterLines, invisibleInnerColor
-                          , dashSize: visibleOuterLineDots
+                          , dashSize: VISIBLE_OUTER_LINE_DOTS
                         );
                     }
 
@@ -298,13 +266,13 @@ namespace RealtimeCSG
                     {
                         invisibleLinesMeshManager.DrawLines(
                             transformation, outline.vertices, outline.invisibleOuterLines, invisibleInnerColor
-                          , dashSize: invisibleOuterLineDots
+                          , dashSize: INVISIBLE_OUTER_LINE_DOTS
                         );
                     }
                 }
             }
 
-            if(invisibleOuterColor.a >= kMinAlpha)
+            if(invisibleOuterColor.a >= K_MIN_ALPHA)
             {
                 for(int i = 0; i < outlines.Length; i++)
                 {
@@ -315,7 +283,7 @@ namespace RealtimeCSG
                     {
                         invisibleLinesMeshManager.DrawLines(
                             transformation, outline.vertices, outline.visibleInnerLines, invisibleOuterColor
-                          , dashSize: visibleInnerLineDots
+                          , dashSize: VISIBLE_INNER_LINE_DOTS
                         );
                     }
 
@@ -323,7 +291,7 @@ namespace RealtimeCSG
                     {
                         invisibleLinesMeshManager.DrawLines(
                             transformation, outline.vertices, outline.invisibleInnerLines, invisibleOuterColor
-                          , dashSize: invisibleInnerLineDots
+                          , dashSize: INVISIBLE_INNER_LINE_DOTS
                         );
                     }
                 }
@@ -342,7 +310,7 @@ namespace RealtimeCSG
 			}
 #endif
 
-            if(visibleOutlineColor.a >= kMinAlpha)
+            if(visibleOutlineColor.a >= K_MIN_ALPHA)
             {
                 for(int i = 0; i < outlines.Length; i++)
                 {
@@ -368,7 +336,7 @@ namespace RealtimeCSG
                 }
             }
 
-            if(visibleOuterColor.a >= kMinAlpha || visibleInnerColor.a >= kMinAlpha)
+            if(visibleOuterColor.a >= K_MIN_ALPHA || visibleInnerColor.a >= K_MIN_ALPHA)
             {
                 for(int i = 0; i < outlines.Length; i++)
                 {
@@ -376,7 +344,7 @@ namespace RealtimeCSG
 
                     Matrix4x4 transformation = transformations[i];
 
-                    if(visibleInnerColor.a >= kMinAlpha && outline.visibleOuterLines != null
+                    if(visibleInnerColor.a >= K_MIN_ALPHA && outline.visibleOuterLines != null
                     && outline.visibleOuterLines.Length != 0)
                     {
                         visibleLinesMeshManager.DrawLines(
@@ -385,7 +353,7 @@ namespace RealtimeCSG
                         );
                     }
 
-                    if(visibleOuterColor.a >= kMinAlpha && outline.visibleInnerLines != null
+                    if(visibleOuterColor.a >= K_MIN_ALPHA && outline.visibleInnerLines != null
                     && outline.visibleInnerLines.Length != 0)
                     {
                         visibleLinesMeshManager.DrawLines(
@@ -396,7 +364,7 @@ namespace RealtimeCSG
                 }
             }
 
-            if(surfaceColor.a >= kMinAlpha)
+            if(surfaceColor.a >= K_MIN_ALPHA)
             {
                 for(int i = 0; i < outlines.Length; i++)
                 {
@@ -444,7 +412,6 @@ namespace RealtimeCSG
                 }
                 else
                 {
-                    //PaintUtility.DrawUnoccludedLines(transformation, outline.vertices, outline.visibleOuterLines, outerColor);
                     PaintUtility.DrawLines(
                         transformation, outline.vertices, outline.visibleOuterLines, thickness, outerColor
                     );
@@ -459,7 +426,6 @@ namespace RealtimeCSG
                 }
                 else
                 {
-                    //PaintUtility.DrawUnoccludedLines(transformation, outline.vertices, outline.visibleInnerLines, innerColor);
                     PaintUtility.DrawLines(
                         transformation, outline.vertices, outline.visibleInnerLines, thickness, innerColor
                     );
@@ -469,25 +435,25 @@ namespace RealtimeCSG
             if(outline.visibleOuterLines != null && outline.visibleOuterLines.Length > 0)
             {
                 Handles.color = outerColorOccluded;
-                Handles.DrawDottedLines(outline.vertices, outline.visibleOuterLines, visibleOuterLineDots);
+                Handles.DrawDottedLines(outline.vertices, outline.visibleOuterLines, VISIBLE_OUTER_LINE_DOTS);
             }
 
             if(outline.visibleInnerLines != null && outline.visibleInnerLines.Length > 0)
             {
                 Handles.color = innerColorOccluded;
-                Handles.DrawDottedLines(outline.vertices, outline.visibleInnerLines, visibleInnerLineDots);
+                Handles.DrawDottedLines(outline.vertices, outline.visibleInnerLines, VISIBLE_INNER_LINE_DOTS);
             }
 
             if(outline.invisibleOuterLines != null && outline.invisibleOuterLines.Length > 0)
             {
                 Handles.color = outerColorOccluded;
-                Handles.DrawDottedLines(outline.vertices, outline.invisibleOuterLines, invisibleOuterLineDots);
+                Handles.DrawDottedLines(outline.vertices, outline.invisibleOuterLines, INVISIBLE_OUTER_LINE_DOTS);
             }
 
             if(outline.invisibleInnerLines != null && outline.invisibleInnerLines.Length > 0)
             {
                 Handles.color = innerColor;
-                Handles.DrawDottedLines(outline.vertices, outline.invisibleInnerLines, invisibleInnerLineDots);
+                Handles.DrawDottedLines(outline.vertices, outline.invisibleInnerLines, INVISIBLE_INNER_LINE_DOTS);
             }
 #if TEST_ENABLED
 			if (outline.invalidLines != null && outline.invalidLines.Length > 0)
@@ -510,8 +476,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(outlines == null || transformations == null ||
-               outlines.Length != transformations.Length)
+            if(outlines == null || transformations == null || outlines.Length != transformations.Length)
             {
                 zTestLineMeshManager.Clear();
                 noZTestLineMeshManager.Clear();
@@ -527,9 +492,7 @@ namespace RealtimeCSG
                 {
                     GeometryWireframe outline = outlines[i];
 
-                    if(outline == null ||
-                       outline.vertices == null ||
-                       outline.vertices.Length == 0)
+                    if(outline == null || outline.vertices == null || outline.vertices.Length == 0)
                     {
                         continue;
                     }
@@ -540,16 +503,14 @@ namespace RealtimeCSG
                     {
                         zTestLineMeshManager.DrawLines(
                             transformation, outline.vertices, outline.visibleOuterLines, outerColor
-                        ); //, zTest: true);
-                        //PaintUtility.DrawLines(transformation, outline.vertices, outline.visibleOuterLines, outerColor);//CustomWireMaterial
+                        );
                     }
 
                     if(outline.visibleInnerLines != null && outline.visibleInnerLines.Length > 0)
                     {
                         zTestLineMeshManager.DrawLines(
                             transformation, outline.vertices, outline.visibleInnerLines, innerColor
-                        ); //, zTest: true);//CustomWireMaterial
-                        //PaintUtility.DrawLines(transformation, outline.vertices, outline.visibleInnerLines, innerColor);//CustomWireMaterial
+                        );
                     }
                 }
             }
@@ -559,9 +520,7 @@ namespace RealtimeCSG
                 {
                     GeometryWireframe outline = outlines[i];
 
-                    if(outline == null ||
-                       outline.vertices == null ||
-                       outline.vertices.Length == 0)
+                    if(outline == null || outline.vertices == null || outline.vertices.Length == 0)
                     {
                         continue;
                     }
@@ -570,20 +529,16 @@ namespace RealtimeCSG
 
                     if(outline.visibleOuterLines != null && outline.visibleOuterLines.Length > 0)
                     {
-                        //PaintUtility.DrawUnoccludedLines(transformation, outline.vertices, outline.visibleOuterLines, outerColor);
                         zTestLineMeshManager.DrawLines(
                             transformation, outline.vertices, outline.visibleOuterLines, outerColor, thickness
-                        ); //, zTest: true);
-                        //PaintUtility.DrawLines(transformation, outline.vertices, outline.visibleOuterLines, thickness, outerColor);//CustomThickWireMaterial
+                        );
                     }
 
                     if(outline.visibleInnerLines != null && outline.visibleInnerLines.Length > 0)
                     {
-                        //PaintUtility.DrawUnoccludedLines(transformation, outline.vertices, outline.visibleInnerLines, innerColor);
                         zTestLineMeshManager.DrawLines(
                             transformation, outline.vertices, outline.visibleInnerLines, innerColor, thickness
-                        ); //, zTest: true);
-                        //PaintUtility.DrawLines(transformation, outline.vertices, outline.visibleInnerLines, thickness, innerColor);//CustomThickWireMaterial
+                        );
                     }
                 }
             }
@@ -596,9 +551,7 @@ namespace RealtimeCSG
             {
                 GeometryWireframe outline = outlines[i];
 
-                if(outline == null ||
-                   outline.vertices == null ||
-                   outline.vertices.Length == 0)
+                if(outline == null || outline.vertices == null || outline.vertices.Length == 0)
                 {
                     continue;
                 }
@@ -608,42 +561,34 @@ namespace RealtimeCSG
 
                 if(outline.visibleOuterLines != null && outline.visibleOuterLines.Length > 0)
                 {
-                    //Handles.color = outerColorOccluded;
-                    //Handles.DrawDottedLines(outline.vertices, outline.visibleOuterLines, visibleOuterLineDots);	// internal
                     noZTestLineMeshManager.DrawLines(
                         transformation, outline.vertices, outline.visibleOuterLines, outerColorOccluded
-                      , dashSize: visibleOuterLineDots
-                    ); //, zTest: false);
+                      , dashSize: VISIBLE_OUTER_LINE_DOTS
+                    );
                 }
 
                 if(outline.visibleInnerLines != null && outline.visibleInnerLines.Length > 0)
                 {
-                    //Handles.color = innerColorOccluded;
-                    //Handles.DrawDottedLines(outline.vertices, outline.visibleInnerLines, visibleInnerLineDots); // internal
                     noZTestLineMeshManager.DrawLines(
                         transformation, outline.vertices, outline.visibleInnerLines, innerColorOccluded
-                      , dashSize: visibleInnerLineDots
-                    ); //, zTest: false);
+                      , dashSize: VISIBLE_INNER_LINE_DOTS
+                    );
                 }
 
                 if(outline.invisibleOuterLines != null && outline.invisibleOuterLines.Length > 0)
                 {
-                    //Handles.color = outerColorOccluded;
-                    //Handles.DrawDottedLines(outline.vertices, outline.invisibleOuterLines, invisibleOuterLineDots); // internal
                     noZTestLineMeshManager.DrawLines(
                         transformation, outline.vertices, outline.invisibleOuterLines, outerColorOccluded
-                      , dashSize: invisibleOuterLineDots
-                    ); //, zTest: false);
+                      , dashSize: INVISIBLE_OUTER_LINE_DOTS
+                    );
                 }
 
                 if(outline.invisibleInnerLines != null && outline.invisibleInnerLines.Length > 0)
                 {
-                    //Handles.color = innerColor;
-                    //Handles.DrawDottedLines(outline.vertices, outline.invisibleInnerLines, invisibleInnerLineDots); // internal
                     noZTestLineMeshManager.DrawLines(
                         transformation, outline.vertices, outline.invisibleInnerLines, innerColor
-                      , dashSize: invisibleInnerLineDots
-                    ); //, zTest: false);
+                      , dashSize: INVISIBLE_INNER_LINE_DOTS
+                    );
                 }
 #if TEST_ENABLED
 				if (outline.invalidLines != null && outline.invalidLines.Length > 0)
@@ -695,18 +640,14 @@ namespace RealtimeCSG
             Vector3[] vertices = outline.vertices;
             int[]     indices  = outline.visibleOuterLines;
 
-            if(indices != null &&
-               indices.Length > 0 &&
-               (indices.Length & 1) == 0)
+            if(indices != null && indices.Length > 0 && (indices.Length & 1) == 0)
             {
                 lineMeshManager.DrawLines(transformation, vertices, indices, color);
             }
 
             indices = outline.invisibleOuterLines;
 
-            if(indices != null &&
-               indices.Length > 0 &&
-               (indices.Length & 1) == 0)
+            if(indices != null && indices.Length > 0 && (indices.Length & 1) == 0)
             {
                 lineMeshManager.DrawLines(transformation, vertices, indices, color);
             }

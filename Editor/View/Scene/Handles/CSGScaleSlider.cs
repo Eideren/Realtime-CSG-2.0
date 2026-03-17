@@ -5,10 +5,12 @@ namespace RealtimeCSG.Helpers
 {
     public class CSGScaleSlider
     {
-        private static float s_StartScale, s_ScaleDrawLength = 1.0f;
-        private static Vector3 s_StartScale3;
-        private static float s_ValueDrag;
-        private static Vector2 s_StartMousePosition, s_CurrentMousePosition;
+        private static float m_StartScale;
+        private static float m_ScaleDrawLength = 1.0f;
+        private static Vector3 m_StartScale3;
+        private static float m_ValueDrag;
+        private static Vector2 m_StartMousePosition;
+        private static Vector2 m_CurrentMousePosition;
 
         private static float SnapValue(float val, float snap, bool snapping)
         {
@@ -41,7 +43,7 @@ namespace RealtimeCSG.Helpers
                 }
                 case EventType.MouseDown:
                 {
-                    if(CSGHandles.disabled)
+                    if(CSGHandles.Disabled)
                     {
                         break;
                     }
@@ -55,8 +57,8 @@ namespace RealtimeCSG.Helpers
                         }
 
                         GUIUtility.hotControl  = GUIUtility.keyboardControl = id;
-                        s_CurrentMousePosition = s_StartMousePosition       = evt.mousePosition;
-                        s_StartScale           = scale;
+                        m_CurrentMousePosition = m_StartMousePosition       = evt.mousePosition;
+                        m_StartScale           = scale;
                         evt.Use();
                         EditorGUIUtility.SetWantsMouseJumping(1);
                     }
@@ -67,14 +69,14 @@ namespace RealtimeCSG.Helpers
                 {
                     if(GUIUtility.hotControl == id)
                     {
-                        s_CurrentMousePosition += evt.delta;
+                        m_CurrentMousePosition += evt.delta;
 
                         float dist = 1 + HandleUtility.CalcLineTranslation(
-                            s_StartMousePosition, s_CurrentMousePosition, position, direction
+                            m_StartMousePosition, m_CurrentMousePosition, position, direction
                         ) / size;
 
                         dist        = SnapValue(dist, snap, snapping);
-                        scale       = s_StartScale * dist;
+                        scale       = m_StartScale * dist;
                         GUI.changed = true;
                         evt.Use();
                     }
@@ -106,7 +108,7 @@ namespace RealtimeCSG.Helpers
                     {
                         Handles.color = Handles.selectedColor;
                     }
-                    else if(CSGHandles.disabled)
+                    else if(CSGHandles.Disabled)
                     {
                         Handles.color = Color.Lerp(originalColor, Handles.secondaryColor, 0.75f);
                     }
@@ -115,16 +117,14 @@ namespace RealtimeCSG.Helpers
 
                     if(GUIUtility.hotControl == id)
                     {
-                        s = size * scale / s_StartScale;
+                        s = size * scale / m_StartScale;
                     }
-#if UNITY_5_6_OR_NEWER
+
                     Handles.CubeHandleCap(
-                        id, position + direction * s * s_ScaleDrawLength, rotation, size * .1f, EventType.Repaint
+                        id, position + direction * s * m_ScaleDrawLength, rotation, size * .1f, EventType.Repaint
                     );
-#else
-					Handles.CubeCap(id, position + direction * s * s_ScaleDrawLength, rotation, size * .1f);
-#endif
-                    Handles.DrawLine(position, position + direction * (s * s_ScaleDrawLength - size * .05f));
+
+                    Handles.DrawLine(position, position + direction * (s * m_ScaleDrawLength - size * .05f));
 
                     Handles.color = originalColor;
 
@@ -153,7 +153,7 @@ namespace RealtimeCSG.Helpers
                 }
                 case EventType.MouseDown:
                 {
-                    if(CSGHandles.disabled)
+                    if(CSGHandles.Disabled)
                     {
                         break;
                     }
@@ -167,8 +167,8 @@ namespace RealtimeCSG.Helpers
                         }
 
                         GUIUtility.hotControl = GUIUtility.keyboardControl = id;
-                        s_StartScale3         = value;
-                        s_ValueDrag           = 0;
+                        m_StartScale3         = value;
+                        m_ValueDrag           = 0;
                         evt.Use();
                         EditorGUIUtility.SetWantsMouseJumping(1);
                     }
@@ -179,10 +179,10 @@ namespace RealtimeCSG.Helpers
                 {
                     if(GUIUtility.hotControl == id)
                     {
-                        s_ValueDrag += HandleUtility.niceMouseDelta * .01f;
+                        m_ValueDrag += HandleUtility.niceMouseDelta * .01f;
 
-                        float oldScaleValue = s_StartScale3.x;
-                        float newScaleValue = (SnapValue(s_ValueDrag, snap, snapping) + 1.0f) * s_StartScale3.x;
+                        float oldScaleValue = m_StartScale3.x;
+                        float newScaleValue = (SnapValue(m_ValueDrag, snap, snapping) + 1.0f) * m_StartScale3.x;
 
                         float dif = newScaleValue / oldScaleValue;
 
@@ -193,15 +193,15 @@ namespace RealtimeCSG.Helpers
 
                         if(!CSGSettings.LockAxisY)
                         {
-                            value.y = s_StartScale3.y * dif;
+                            value.y = m_StartScale3.y * dif;
                         }
 
                         if(!CSGSettings.LockAxisZ)
                         {
-                            value.z = s_StartScale3.z * dif;
+                            value.z = m_StartScale3.z * dif;
                         }
 
-                        s_ScaleDrawLength = value.x / s_StartScale3.x;
+                        m_ScaleDrawLength = value.x / m_StartScale3.x;
                         GUI.changed       = true;
                         evt.Use();
                     }
@@ -214,8 +214,8 @@ namespace RealtimeCSG.Helpers
                     {
                         if(evt.keyCode == KeyCode.Escape)
                         {
-                            value                 = s_StartScale3;
-                            s_ScaleDrawLength     = 1.0f;
+                            value                 = m_StartScale3;
+                            m_ScaleDrawLength     = 1.0f;
                             GUIUtility.hotControl = 0;
                             GUI.changed           = true;
                             evt.Use();
@@ -229,7 +229,7 @@ namespace RealtimeCSG.Helpers
                     if(GUIUtility.hotControl == id && (evt.button == 0 || evt.button == 2))
                     {
                         GUIUtility.hotControl = 0;
-                        s_ScaleDrawLength     = 1.0f;
+                        m_ScaleDrawLength     = 1.0f;
                         evt.Use();
 
                         if(shutdownFunction != null)
@@ -250,7 +250,7 @@ namespace RealtimeCSG.Helpers
                     {
                         Handles.color = Handles.selectedColor;
                     }
-                    else if(CSGHandles.disabled)
+                    else if(CSGHandles.Disabled)
                     {
                         Handles.color = Color.Lerp(originalColor, Handles.secondaryColor, 0.75f);
                     }

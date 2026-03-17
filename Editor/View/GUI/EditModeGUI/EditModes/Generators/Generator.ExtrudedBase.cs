@@ -1,11 +1,11 @@
 using System;
-using UnityEditor;
-using UnityEngine;
-using InternalRealtimeCSG;
 using System.Linq;
+using InternalRealtimeCSG;
+using RealtimeCSG.Components;
 using RealtimeCSG.Foundation;
 using RealtimeCSG.Legacy;
-using RealtimeCSG.Components;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
@@ -13,37 +13,37 @@ namespace RealtimeCSG
     internal struct ExtrusionPoint
     {
         [NonSerialized]
-        public int ID;
+        public int id;
 
-        public Vector3 Position;
+        public Vector3 position;
     }
 
-    internal abstract class GeneratorExtrudedBase : GeneratorBase //, IBrushGenerator
+    internal abstract class GeneratorExtrudedBase : GeneratorBase
     {
-        protected const float handle_extension = 1.2f;
+        protected const float HANDLE_EXTENSION = 1.2f;
 
-        private const CSGOperationType invalidCSGOperationType = (CSGOperationType)99;
+        private const CSGOperationType INVALID_CSG_OPERATION_TYPE = (CSGOperationType)99;
 
         [SerializeField] private Vector3[] outlineVertices;
         [SerializeField] private ShapePolygon[] polygons;
         [SerializeField] private ShapeEdge[] shapeEdges;
         [SerializeField] protected ExtrusionPoint[] extrusionPoints = new ExtrusionPoint[2];
 
-        [SerializeField] internal bool haveForcedDirection = false;
+        [SerializeField] internal bool haveForcedDirection;
         [SerializeField] internal Vector3 forcedDirection;
 
         [SerializeField] internal bool smearTextures = true;
         [NonSerialized] internal bool forceDragHandle;
-        [NonSerialized] internal CSGOperationType? forceDragSource = null;
-        [NonSerialized] internal bool commitExtrusionAfterRelease = false;
+        [NonSerialized] internal CSGOperationType? forceDragSource;
+        [NonSerialized] internal bool commitExtrusionAfterRelease;
 
-        [NonSerialized] private CSGPlane movePlane;
-        [NonSerialized] private Vector3 movePolygonDirection;
+        [NonSerialized] private CSGPlane _movePlane;
+        [NonSerialized] private Vector3 _movePolygonDirection;
 
-        [NonSerialized] private bool firstClick = false;
-        [NonSerialized] private Vector3 dragPositionStart = Vector3.zero;
-        [NonSerialized] private Vector3 heightHandleOffset = Vector3.zero;
-        [NonSerialized] private Vector2 heightPosition = Vector2.zero;
+        [NonSerialized] private bool _firstClick;
+        [NonSerialized] private Vector3 _dragPositionStart = Vector3.zero;
+        [NonSerialized] private Vector3 _heightHandleOffset = Vector3.zero;
+        [NonSerialized] private Vector2 _heightPosition = Vector2.zero;
 
         public float DefaultHeight
         {
@@ -54,9 +54,7 @@ namespace RealtimeCSG
         // used by GUI to decide to show Height
         public bool HaveHeight
         {
-            get =>
-                (editMode == EditMode.ExtrudeShape ||
-                    editMode == EditMode.EditShape) && extrusionPoints.Length <= 2;
+            get => (editMode == EditMode.ExtrudeShape || editMode == EditMode.EditShape) && extrusionPoints.Length <= 2;
         }
 
         public bool HaveExtrusion
@@ -64,7 +62,7 @@ namespace RealtimeCSG
             get =>
                 extrusionPoints.Length > 2 ||
                 (extrusionPoints.Length == 2 &&
-                    (extrusionPoints[0].Position - extrusionPoints[1].Position).sqrMagnitude
+                    (extrusionPoints[0].position - extrusionPoints[1].position).sqrMagnitude
                   > MathConstants.EqualityEpsilonSqr);
         }
 
@@ -94,7 +92,7 @@ namespace RealtimeCSG
 
                 Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.normal;
 
-                return GetSegmentLength(extrusionPoints[0].Position, extrusionPoints[1].Position, direction);
+                return GetSegmentLength(extrusionPoints[0].position, extrusionPoints[1].position, direction);
             }
             set
             {
@@ -104,7 +102,7 @@ namespace RealtimeCSG
                 }
 
                 Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.normal;
-                float   height = GetSegmentLength(extrusionPoints[0].Position, extrusionPoints[1].Position, direction);
+                float   height = GetSegmentLength(extrusionPoints[0].position, extrusionPoints[1].position, direction);
                 float   cleanValue = GeometryUtility.CleanLength(value);
 
                 if(height == cleanValue)
@@ -124,7 +122,7 @@ namespace RealtimeCSG
                 }
 
                 Undo.RecordObject(this, "Modified Shape Height");
-                extrusionPoints[1].Position = extrusionPoints[0].Position + direction * cleanValue;
+                extrusionPoints[1].position = extrusionPoints[0].position + direction * cleanValue;
                 UpdateBaseShape();
             }
         }
@@ -134,8 +132,8 @@ namespace RealtimeCSG
             base.Reset();
             commitExtrusionAfterRelease = false;
             extrusionPoints             = new ExtrusionPoint[2];
-            extrusionPoints[0].Position = MathConstants.zeroVector3;
-            extrusionPoints[1].Position = MathConstants.zeroVector3;
+            extrusionPoints[0].position = MathConstants.zeroVector3;
+            extrusionPoints[1].position = MathConstants.zeroVector3;
             haveForcedDirection         = false;
 
             smearTextures   = true;
@@ -153,8 +151,8 @@ namespace RealtimeCSG
 
             extrusionPoints = new ExtrusionPoint[2];
 
-            extrusionPoints[1].Position =
-                extrusionPoints[0].Position = brushPosition;
+            extrusionPoints[1].position =
+                extrusionPoints[0].position = brushPosition;
 
             return true;
         }
@@ -163,9 +161,8 @@ namespace RealtimeCSG
         {
             for(int i = 0; i < extrusionPoints.Length; i++)
             {
-                int newControlID = GUIUtility.GetControlID(ShapeBuilderCenterHash, FocusType.Passive);
-                //if (Event.current.type == EventType.Layout)
-                extrusionPoints[i].ID = newControlID;
+                int newControlID = GUIUtility.GetControlID(shapeBuilderCenterHash, FocusType.Passive);
+                extrusionPoints[i].id = newControlID;
             }
         }
 
@@ -174,11 +171,6 @@ namespace RealtimeCSG
             isFinished = true;
             CleanupGrid();
 
-            return Commit(camera, true);
-        }
-
-        private bool Commit(Camera camera, bool useDefaultHeight)
-        {
             if(polygons == null || polygons.Length == 0)
             {
                 Cancel();
@@ -199,8 +191,8 @@ namespace RealtimeCSG
 
                     UpdateBaseShape(false);
 
-                    extrusionPoints[1].Position =
-                        extrusionPoints[0].Position + buildPlane.normal.normalized * DefaultHeight;
+                    extrusionPoints[1].position =
+                        extrusionPoints[0].position + buildPlane.normal.normalized * DefaultHeight;
                 }
             }
 
@@ -242,16 +234,16 @@ namespace RealtimeCSG
             polygons = newPolygons;
         }
 
-        protected void GenerateBrushesFromPolygons(ShapeEdge[] shapeEdges = null, bool inGridSpace = true)
+        protected void GenerateBrushesFromPolygons(ShapeEdge[] edges = null, bool inGridSpace = true)
         {
-            this.shapeEdges = shapeEdges;
-            editMode        = EditMode.ExtrudeShape;
+            shapeEdges = edges;
+            editMode   = EditMode.ExtrudeShape;
             GenerateBrushObjects(polygons.Length * (extrusionPoints.Length - 1), inGridSpace);
         }
 
         protected void UpdateBrushOperation()
         {
-            if(forceCurrentCSGOperationType == invalidCSGOperationType)
+            if(forceCurrentCSGOperationType == INVALID_CSG_OPERATION_TYPE)
             {
                 if(HaveHeight)
                 {
@@ -264,37 +256,16 @@ namespace RealtimeCSG
                     {
                         if(forceDragSource.HasValue && forceDragSource.Value != CSGOperationType.Additive)
                         {
-                            if(Height > 0)
-                            {
-                                desiredOperation = CSGOperationType.Subtractive;
-                            }
-                            else
-                            {
-                                desiredOperation = CSGOperationType.Additive;
-                            }
+                            desiredOperation = Height > 0 ? CSGOperationType.Subtractive : CSGOperationType.Additive;
                         }
                         else
                         {
-                            if(Height > 0)
-                            {
-                                desiredOperation = CSGOperationType.Additive;
-                            }
-                            else
-                            {
-                                desiredOperation = CSGOperationType.Subtractive;
-                            }
+                            desiredOperation = Height > 0 ? CSGOperationType.Additive : CSGOperationType.Subtractive;
                         }
                     }
                     else
                     {
-                        if(invertedWorld)
-                        {
-                            desiredOperation = CSGOperationType.Subtractive;
-                        }
-                        else
-                        {
-                            desiredOperation = CSGOperationType.Additive;
-                        }
+                        desiredOperation = invertedWorld ? CSGOperationType.Subtractive : CSGOperationType.Additive;
                     }
 
                     if(currentCSGOperationType != desiredOperation)
@@ -364,8 +335,8 @@ namespace RealtimeCSG
                             Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.normal;
 
                             float distance =
-                                new CSGPlane(direction, extrusionPoints[slice].Position).Distance(
-                                    extrusionPoints[slice + 1].Position
+                                new CSGPlane(direction, extrusionPoints[slice].position).Distance(
+                                    extrusionPoints[slice + 1].position
                                 );
 
                             if(float.IsInfinity(distance) || float.IsNaN(distance))
@@ -375,17 +346,14 @@ namespace RealtimeCSG
 
                             Matrix4x4 poly2dToWorldMatrix = brush.transform.worldToLocalMatrix *
                                 Matrix4x4.TRS(
-                                    extrusionPoints[slice].Position
+                                    extrusionPoints[slice].position
                                   , Quaternion.FromToRotation(MathConstants.upVector3, buildPlane.normal),
                                     Vector3.one
-                                ); // * parentModel.transform.localToWorldMatrix;
-
-                            ControlMesh newControlMesh;
-                            Shape       newShape;
+                                );
 
                             if(!CreateControlMeshForBrushIndex(
-                                   parentModel, brush, polygons[p], poly2dToWorldMatrix, distance, out newControlMesh
-                                 , out newShape
+                                   brush, polygons[p], poly2dToWorldMatrix, distance, out ControlMesh _
+                                 , out Shape _
                                ))
                             {
                                 failures = true;
@@ -460,7 +428,6 @@ namespace RealtimeCSG
                     EditorUtility.SetDirty(this);
                 }
 
-                //CSGModelManager.External.SetDirty(parentModel.modelNodeID); 
                 InternalCSGModelManager.CheckForChanges(modifiedHierarchy);
             }
             finally
@@ -480,9 +447,7 @@ namespace RealtimeCSG
                         int brushIndex   = shapeEdges[se].polygonIndex + slice * shapeEdges.Length;
                         int surfaceIndex = shapeEdges[se].edgeIndex;
 
-                        if(brushIndex < 0 ||
-                           brushIndex >= generatedBrushes.Length ||
-                           surfaceIndex == -1)
+                        if(brushIndex < 0 || brushIndex >= generatedBrushes.Length || surfaceIndex == -1)
                         {
                             continue;
                         }
@@ -496,7 +461,7 @@ namespace RealtimeCSG
                                 SurfaceUtility.CopyLastMaterial(
                                     brush, surfaceIndex,
                                     lastBrush, lastSurfaceIndex,
-                                    registerUndo = false
+                                    false
                                 );
                             }
                             else
@@ -531,7 +496,6 @@ namespace RealtimeCSG
             }
 
             Vector3 middlePoint = (end + start) * 0.5f;
-
             Vector3 screenPoint = camera.WorldToScreenPoint(middlePoint);
 
             if(screenPoint.z < 0)
@@ -544,7 +508,7 @@ namespace RealtimeCSG
             Vector2 normal2D      = (textCenter2DB - textCenter2DA).normalized;
 
             Vector2 textCenter2D = textCenter2DB;
-            textCenter2D += normal2D * (hover_text_distance * 2);
+            textCenter2D += normal2D * (HOVER_TEXT_DISTANCE * 2);
 
             Ray textCenterRay = HandleUtility.GUIPointToWorldRay(textCenter2D);
 
@@ -554,7 +518,7 @@ namespace RealtimeCSG
             PaintUtility.DrawLine(middlePoint, textCenter, Color.black);
             PaintUtility.DrawDottedLine(middlePoint, textCenter, ColorSettings.SnappedEdges);
 
-            PaintUtility.DrawScreenText(textCenter2D, "Y: " + Units.ToRoundedDistanceString(Mathf.Abs(distance)));
+            PaintUtility.DrawScreenText(textCenter2D, $"Y: {Units.ToRoundedDistanceString(Mathf.Abs(distance))}");
         }
 
         public override AABB GetShapeBounds()
@@ -577,12 +541,12 @@ namespace RealtimeCSG
 
         private Vector3 GetHeightHandlePosition(SceneView sceneView, Vector3 point)
         {
-            Ray      mouseRay      = HandleUtility.GUIPointToWorldRay(heightPosition);
+            Ray      mouseRay      = HandleUtility.GUIPointToWorldRay(_heightPosition);
             CSGPlane alignedPlane  = new CSGPlane(sceneView.camera.transform.forward, point);
-            Vector3  planePosition = alignedPlane.RayIntersection(mouseRay); // buildPlane.Project() - grabOffset;
+            Vector3  planePosition = alignedPlane.RayIntersection(mouseRay);
 
             Vector3 worldPosition = GeometryUtility.ProjectPointOnInfiniteLine(
-                planePosition, brushPosition, movePolygonDirection
+                planePosition, brushPosition, _movePolygonDirection
             );
 
             return worldPosition;
@@ -622,17 +586,17 @@ namespace RealtimeCSG
 
             bool assume2DView = CSGSettings.Assume2DView(camera);
 
-            firstClick                        = ignoreFirstMouseUp;
+            _firstClick                       = ignoreFirstMouseUp;
             editMode                          = EditMode.ExtrudeShape;
-            GUIUtility.hotControl             = extrusionPoints[index].ID;
-            GUIUtility.keyboardControl        = extrusionPoints[index].ID;
+            GUIUtility.hotControl             = extrusionPoints[index].id;
+            GUIUtility.keyboardControl        = extrusionPoints[index].id;
             EditorGUIUtility.editingTextField = false;
             EditorGUIUtility.SetWantsMouseJumping(1);
 
             Vector3 surfaceDirection   = buildPlane.normal;
             Vector3 closestAxisForward = GeometryUtility.SnapToClosestAxis(-camera.transform.forward);
             Vector3 closestAxisArrow   = GeometryUtility.SnapToClosestAxis(surfaceDirection);
-            Vector3 tangent, normal;
+            Vector3 tangent;
             float   dot = Mathf.Abs(Vector3.Dot(closestAxisForward, closestAxisArrow));
 
             if(dot != 1)
@@ -650,7 +614,6 @@ namespace RealtimeCSG
                     v2 = new Vector3(0, 0, 1);
                 }
                 else
-                    //if (closestAxisForward.y == 0 && closestAxisForward.z == 0)
                 {
                     v1 = new Vector3(0, 1, 0);
                     v2 = new Vector3(0, 0, 1);
@@ -660,21 +623,14 @@ namespace RealtimeCSG
                 float   dot1     = Vector3.Dot(backward, v1);
                 float   dot2     = Vector3.Dot(backward, v2);
 
-                if(dot1 < dot2)
-                {
-                    tangent = v1;
-                }
-                else
-                {
-                    tangent = v2;
-                }
+                tangent = dot1 < dot2 ? v1 : v2;
             }
             else
             {
                 tangent = GeometryUtility.SnapToClosestAxis(Vector3.Cross(surfaceDirection, -camera.transform.forward));
             }
 
-            normal = Vector3.Cross(surfaceDirection, tangent);
+            Vector3 normal = Vector3.Cross(surfaceDirection, tangent);
 
             if(assume2DView)
             {
@@ -686,42 +642,42 @@ namespace RealtimeCSG
                 normal = GeometryUtility.SnapToClosestAxis(-camera.transform.forward);
             }
 
-            movePlane = new CSGPlane(normal, extrusionPoints[index].Position);
+            _movePlane = new CSGPlane(normal, extrusionPoints[index].position);
 
-            if(!assume2DView && Mathf.Abs(movePlane.Distance(camera.transform.position)) < 2.0f)
+            if(!assume2DView && Mathf.Abs(_movePlane.Distance(camera.transform.position)) < 2.0f)
             {
-                Vector3 new_tangent = Vector3.Cross(normal, closestAxisForward);
+                Vector3 newTangent = Vector3.Cross(normal, closestAxisForward);
 
-                if(new_tangent != MathConstants.zeroVector3)
+                if(newTangent != MathConstants.zeroVector3)
                 {
-                    tangent   = new_tangent;
-                    normal    = Vector3.Cross(surfaceDirection, tangent);
-                    movePlane = new CSGPlane(normal, extrusionPoints[index].Position);
+                    tangent    = newTangent;
+                    normal     = Vector3.Cross(surfaceDirection, tangent);
+                    _movePlane = new CSGPlane(normal, extrusionPoints[index].position);
                 }
             }
 
-            movePolygonDirection = haveForcedDirection ? forcedDirection : buildPlane.normal;
+            _movePolygonDirection = haveForcedDirection ? forcedDirection : buildPlane.normal;
 
             if(!isFinished)
             {
-                CSGGrid.SetForcedGrid(camera, movePlane);
+                CSGGrid.SetForcedGrid(camera, _movePlane);
             }
 
-            CSGPlane plane = new CSGPlane(buildPlane.normal, extrusionPoints[index].Position);
-            heightPosition = Event.current.mousePosition;
+            CSGPlane plane = new CSGPlane(buildPlane.normal, extrusionPoints[index].position);
+            _heightPosition = Event.current.mousePosition;
 
-            heightHandleOffset = plane.Distance(GetHeightHandlePosition(sceneView, extrusionPoints[index].Position))
-              * movePolygonDirection;
+            _heightHandleOffset = plane.Distance(GetHeightHandlePosition(sceneView, extrusionPoints[index].position))
+              * _movePolygonDirection;
 
-            if(float.IsInfinity(heightHandleOffset.x) || float.IsNaN(heightHandleOffset.x) ||
-               float.IsInfinity(heightHandleOffset.y) || float.IsNaN(heightHandleOffset.y) ||
-               float.IsInfinity(heightHandleOffset.z) || float.IsNaN(heightHandleOffset.z))
+            if(float.IsInfinity(_heightHandleOffset.x) || float.IsNaN(_heightHandleOffset.x) ||
+               float.IsInfinity(_heightHandleOffset.y) || float.IsNaN(_heightHandleOffset.y) ||
+               float.IsInfinity(_heightHandleOffset.z) || float.IsNaN(_heightHandleOffset.z))
             {
-                heightHandleOffset = Vector3.zero;
+                _heightHandleOffset = Vector3.zero;
             }
         }
 
-        protected void CenterExtrusionPoints(CSGPlane buildPlane)
+        protected void CenterExtrusionPoints(CSGPlane plane)
         {
             if(!HaveHeight)
             {
@@ -729,11 +685,11 @@ namespace RealtimeCSG
             }
 
             Vector3 center = GetShapeBounds().Center;
-            brushPosition = buildPlane.Project(center);
-            float height0 = buildPlane.Distance(extrusionPoints[0].Position);
-            float height1 = buildPlane.Distance(extrusionPoints[1].Position);
-            extrusionPoints[0].Position = brushPosition + buildPlane.normal * height0;
-            extrusionPoints[1].Position = brushPosition + buildPlane.normal * height1;
+            brushPosition = plane.Project(center);
+            float height0 = plane.Distance(extrusionPoints[0].position);
+            float height1 = plane.Distance(extrusionPoints[1].position);
+            extrusionPoints[0].position = brushPosition + plane.normal * height0;
+            extrusionPoints[1].position = brushPosition + plane.normal * height1;
         }
 
         protected void HandleHeightHandles(SceneView sceneView, Rect sceneRect, bool showHeightValue)
@@ -742,7 +698,7 @@ namespace RealtimeCSG
 
             for(int p = 0; p < extrusionPoints.Length; p++)
             {
-                EventType type = Event.current.GetTypeForControl(extrusionPoints[p].ID);
+                EventType type = Event.current.GetTypeForControl(extrusionPoints[p].id);
 
                 switch(type)
                 {
@@ -753,7 +709,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        bool      isSelected = extrusionPoints[p].ID == GUIUtility.keyboardControl;
+                        bool      isSelected = extrusionPoints[p].id == GUIUtility.keyboardControl;
                         Color     temp       = Handles.color;
                         Matrix4x4 origMatrix = Handles.matrix;
 
@@ -767,7 +723,7 @@ namespace RealtimeCSG
                             state |= SelectState.Selected;
                             state |= SelectState.Hovering;
                         }
-                        else if(HandleUtility.nearestControl == extrusionPoints[p].ID)
+                        else if(HandleUtility.nearestControl == extrusionPoints[p].id)
                         {
                             state |= SelectState.Hovering;
                         }
@@ -784,7 +740,7 @@ namespace RealtimeCSG
 
                             Color surfaceColor = ColorSettings.ShapeDrawingFill;
 
-                            if(GUIUtility.hotControl == extrusionPoints[p].ID)
+                            if(GUIUtility.hotControl == extrusionPoints[p].id)
                             {
                                 topWireframeColor = ColorSettings.BoundsEdgeHover;
 
@@ -794,7 +750,7 @@ namespace RealtimeCSG
 
                                 surfaceColor.a *= 0.5f;
                             }
-                            else if(GUIUtility.hotControl == 0 && HandleUtility.nearestControl == extrusionPoints[p].ID)
+                            else if(GUIUtility.hotControl == 0 && HandleUtility.nearestControl == extrusionPoints[p].id)
                             {
                                 topWireframeColor =  ColorSettings.BoundsEdgeHover;
                                 surfaceColor      =  ColorSettings.PolygonInnerStateColor[(int)SelectState.Selected];
@@ -802,7 +758,7 @@ namespace RealtimeCSG
                             }
 
                             Matrix4x4 poly2dToWorldMatrix = Matrix4x4.TRS(
-                                extrusionPoints[p].Position
+                                extrusionPoints[p].position
                               , Quaternion.FromToRotation(MathConstants.upVector3, buildPlane.normal)
                               , MathConstants.oneVector3
                             );
@@ -813,7 +769,7 @@ namespace RealtimeCSG
                             }
 
                             poly2dToWorldMatrix = Matrix4x4.TRS(
-                                extrusionPoints[p].Position, Quaternion.identity, MathConstants.oneVector3
+                                extrusionPoints[p].position, Quaternion.identity, MathConstants.oneVector3
                             );
 
                             for(int i = 1; i < outlineVertices.Length; i++)
@@ -825,7 +781,6 @@ namespace RealtimeCSG
 
                                 PaintUtility.DrawDottedLine(
                                     poly2dToWorldMatrix, outlineVertices[i - 1], outlineVertices[i], topWireframeColor
-                                  , 4.0f
                                 );
                             }
 
@@ -836,12 +791,12 @@ namespace RealtimeCSG
 
                             PaintUtility.DrawDottedLine(
                                 poly2dToWorldMatrix, outlineVertices[outlineVertices.Length - 1], outlineVertices[0]
-                              , topWireframeColor, 4.0f
+                              , topWireframeColor
                             );
 
                             if(p > 0)
                             {
-                                Vector3 prevOffset = extrusionPoints[p - 1].Position;
+                                Vector3 prevOffset = extrusionPoints[p - 1].position;
 
                                 Matrix4x4 prevPoly2dToWorldMatrix = Matrix4x4.TRS(
                                     prevOffset, Quaternion.identity, MathConstants.oneVector3
@@ -852,7 +807,7 @@ namespace RealtimeCSG
                                     Vector3 from = prevPoly2dToWorldMatrix.MultiplyPoint(outlineVertices[i]);
                                     Vector3 to   = poly2dToWorldMatrix.MultiplyPoint(outlineVertices[i]);
                                     PaintUtility.DrawLine(from, to, GUIConstants.OLD_LINE_SCALE, wireframeColor);
-                                    PaintUtility.DrawDottedLine(from, to, wireframeColor, 4.0f);
+                                    PaintUtility.DrawDottedLine(from, to, wireframeColor);
                                 }
                             }
                         }
@@ -864,42 +819,42 @@ namespace RealtimeCSG
                             color = Color.red;
                         }
 
-                        float handleSize       = CSG_HandleUtility.GetHandleSize(extrusionPoints[p].Position);
+                        float handleSize       = CSGHandleUtility.GetHandleSize(extrusionPoints[p].position);
                         float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
 
                         if(p > 0)
                         {
                             PaintUtility.DrawDottedLine(
-                                extrusionPoints[p - 1].Position, extrusionPoints[p].Position, color, 4.0f
+                                extrusionPoints[p - 1].position, extrusionPoints[p].position, color
                             );
                         }
 
                         Handles.color = color;
 
                         PaintUtility.SquareDotCap(
-                            extrusionPoints[p].ID, extrusionPoints[p].Position, rotation, scaledHandleSize
+                            extrusionPoints[p].id, extrusionPoints[p].position, rotation, scaledHandleSize
                         );
 
                         Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.normal;
 
                         float distance =
-                            new CSGPlane(direction, extrusionPoints[p].Position).Distance(
-                                extrusionPoints[1 - p].Position
+                            new CSGPlane(direction, extrusionPoints[p].position).Distance(
+                                extrusionPoints[1 - p].position
                             );
 
                         if(distance <= MathConstants.DistanceEpsilon)
                         {
                             PaintUtility.DrawArrowCap(
-                                extrusionPoints[p].Position, direction
-                              , HandleUtility.GetHandleSize(extrusionPoints[p].Position)
+                                extrusionPoints[p].position, direction
+                              , HandleUtility.GetHandleSize(extrusionPoints[p].position)
                             );
                         }
 
                         if(distance > -MathConstants.DistanceEpsilon)
                         {
                             PaintUtility.DrawArrowCap(
-                                extrusionPoints[p].Position, -direction
-                              , HandleUtility.GetHandleSize(extrusionPoints[p].Position)
+                                extrusionPoints[p].position, -direction
+                              , HandleUtility.GetHandleSize(extrusionPoints[p].position)
                             );
                         }
 
@@ -909,11 +864,11 @@ namespace RealtimeCSG
                         if(p > 0 && showHeightValue)
                         {
                             float length = GetSegmentLength(
-                                extrusionPoints[p].Position, extrusionPoints[p - 1].Position, direction
+                                extrusionPoints[p].position, extrusionPoints[p - 1].position, direction
                             );
 
                             PaintHeightMessage(
-                                camera, extrusionPoints[p - 1].Position, extrusionPoints[p].Position, gridTangent
+                                camera, extrusionPoints[p - 1].position, extrusionPoints[p].position, gridTangent
                               , length
                             );
                         }
@@ -929,7 +884,7 @@ namespace RealtimeCSG
                         }
 
                         Matrix4x4 poly2dToWorldMatrix = Matrix4x4.TRS(
-                            extrusionPoints[p].Position
+                            extrusionPoints[p].position
                           , Quaternion.FromToRotation(MathConstants.upVector3, buildPlane.normal)
                           , MathConstants.oneVector3
                         );
@@ -937,40 +892,40 @@ namespace RealtimeCSG
                         bool forceOverHandle = IsMouseOverShapePolygons(poly2dToWorldMatrix);
 
                         HandleUtility.AddControl(
-                            extrusionPoints[p].ID, forceOverHandle ? 3.0f : float.PositiveInfinity
+                            extrusionPoints[p].id, forceOverHandle ? 3.0f : float.PositiveInfinity
                         );
 
                         Matrix4x4 origMatrix = Handles.matrix;
                         Handles.matrix = MathConstants.identityMatrix;
-                        float handleSize       = CSG_HandleUtility.GetHandleSize(extrusionPoints[p].Position);
-                        float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE * handle_extension;
+                        float handleSize       = CSGHandleUtility.GetHandleSize(extrusionPoints[p].position);
+                        float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE * HANDLE_EXTENSION;
 
                         float distanceToCircle = HandleUtility.DistanceToCircle(
-                            extrusionPoints[p].Position, scaledHandleSize
+                            extrusionPoints[p].position, scaledHandleSize
                         );
 
-                        HandleUtility.AddControl(extrusionPoints[p].ID, distanceToCircle);
+                        HandleUtility.AddControl(extrusionPoints[p].id, distanceToCircle);
 
                         Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.normal;
 
                         float distance =
-                            new CSGPlane(direction, extrusionPoints[p].Position).Distance(
-                                extrusionPoints[1 - p].Position
+                            new CSGPlane(direction, extrusionPoints[p].position).Distance(
+                                extrusionPoints[1 - p].position
                             );
 
                         if(distance <= MathConstants.DistanceEpsilon)
                         {
                             PaintUtility.AddArrowCapControl(
-                                extrusionPoints[p].ID, extrusionPoints[p].Position, direction
-                              , HandleUtility.GetHandleSize(extrusionPoints[p].Position)
+                                extrusionPoints[p].id, extrusionPoints[p].position, direction
+                              , HandleUtility.GetHandleSize(extrusionPoints[p].position)
                             );
                         }
 
                         if(distance > -MathConstants.DistanceEpsilon)
                         {
                             PaintUtility.AddArrowCapControl(
-                                extrusionPoints[p].ID, extrusionPoints[p].Position, -direction
-                              , HandleUtility.GetHandleSize(extrusionPoints[p].Position)
+                                extrusionPoints[p].id, extrusionPoints[p].position, -direction
+                              , HandleUtility.GetHandleSize(extrusionPoints[p].position)
                             );
                         }
 
@@ -1011,7 +966,7 @@ namespace RealtimeCSG
                         }
 
                         if(GUIUtility.hotControl == 0 &&
-                           HandleUtility.nearestControl == extrusionPoints[p].ID && Event.current.button == 0)
+                           HandleUtility.nearestControl == extrusionPoints[p].id && Event.current.button == 0)
                         {
                             if(editMode != EditMode.ExtrudeShape &&
                                !StartExtrudeMode(camera))
@@ -1021,7 +976,7 @@ namespace RealtimeCSG
                             else
                             {
                                 UpdateBaseShape(false);
-                                dragPositionStart = extrusionPoints[p].Position;
+                                _dragPositionStart = extrusionPoints[p].position;
                                 GrabHeightHandle(sceneView, p);
                                 BeginExtrusion();
                                 Event.current.Use();
@@ -1039,30 +994,28 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(GUIUtility.hotControl == extrusionPoints[p].ID) // && Event.current.button == 0)
+                        if(GUIUtility.hotControl == extrusionPoints[p].id)
                         {
                             Undo.RecordObject(this, "Extrude shape");
-                            heightPosition += Event.current.delta;
+                            _heightPosition += Event.current.delta;
 
-                            Vector3 worldPosition = GetHeightHandlePosition(sceneView, extrusionPoints[p].Position)
-                              - heightHandleOffset;
+                            Vector3 worldPosition = GetHeightHandlePosition(sceneView, extrusionPoints[p].position)
+                              - _heightHandleOffset;
 
                             if(float.IsInfinity(worldPosition.x) || float.IsNaN(worldPosition.x) ||
                                float.IsInfinity(worldPosition.y) || float.IsNaN(worldPosition.y) ||
                                float.IsInfinity(worldPosition.z) || float.IsNaN(worldPosition.z))
                             {
-                                worldPosition = extrusionPoints[p].Position;
+                                worldPosition = extrusionPoints[p].position;
                             }
 
                             ResetVisuals();
 
                             if(raySnapFunction != null)
                             {
-                                CSGBrush snappedOnBrush = null;
-
                                 worldPosition = raySnapFunction(
-                                    camera, worldPosition, new Ray(brushPosition, movePolygonDirection)
-                                  , ref visualSnappedEdges, out snappedOnBrush
+                                    camera, worldPosition, new Ray(brushPosition, _movePolygonDirection)
+                                  , ref visualSnappedEdges, out CSGBrush snappedOnBrush
                                 );
 
                                 visualSnappedBrush = snappedOnBrush;
@@ -1070,13 +1023,13 @@ namespace RealtimeCSG
 
                             visualSnappedGrid = CSGGrid.FindAllGridEdgesThatTouchPoint(camera, worldPosition);
 
-                            extrusionPoints[p].Position = GeometryUtility.ProjectPointOnInfiniteLine(
-                                worldPosition, brushPosition, movePolygonDirection
+                            extrusionPoints[p].position = GeometryUtility.ProjectPointOnInfiniteLine(
+                                worldPosition, brushPosition, _movePolygonDirection
                             );
 
                             if(p == 0)
                             {
-                                MoveShape(extrusionPoints[0].Position - dragPositionStart);
+                                MoveShape(extrusionPoints[0].position - _dragPositionStart);
                                 UpdateBaseShape();
                             }
 
@@ -1085,8 +1038,6 @@ namespace RealtimeCSG
 
                             GUI.changed = true;
                             Event.current.Use();
-
-                            break;
                         }
 
                         break;
@@ -1095,16 +1046,15 @@ namespace RealtimeCSG
                     {
                         forceDragHandle = false;
 
-                        //forceDragSource = null;
-                        if(GUIUtility.hotControl == extrusionPoints[p].ID &&
+                        if(GUIUtility.hotControl == extrusionPoints[p].id &&
                            Event.current.button == 0 &&
                            (Tools.viewTool == ViewTool.None || Tools.viewTool == ViewTool.Pan))
                         {
                             EndExtrusion();
 
-                            if(firstClick)
+                            if(_firstClick)
                             {
-                                firstClick = false;
+                                _firstClick = false;
 
                                 break;
                             }
@@ -1143,8 +1093,6 @@ namespace RealtimeCSG
                                     }
                                 }
                             }
-
-                            break;
                         }
 
                         break;
@@ -1160,9 +1108,6 @@ namespace RealtimeCSG
         {
             base.HandleEvents(sceneView, sceneRect);
 
-            //if (editMode != EditMode.EditShape)
-            //	return;
-
             if(GUIUtility.hotControl == 0 &&
                Event.current.type == EventType.MouseUp &&
                Event.current.modifiers == EventModifiers.None &&
@@ -1175,7 +1120,7 @@ namespace RealtimeCSG
                 if(editMode == EditMode.ExtrudeShape)
                 {
                     Camera camera = sceneView.camera;
-                    Commit(camera, false);
+                    Commit(camera);
                 }
                 else
                 {
@@ -1195,7 +1140,7 @@ namespace RealtimeCSG
         internal abstract bool StartExtrudeMode(Camera camera, bool showErrorMessage = true);
 
         internal abstract bool CreateControlMeshForBrushIndex(
-            CSGModel parentModel, CSGBrush brush, ShapePolygon polygon, Matrix4x4 localToWorld, float height
+            CSGBrush brush, ShapePolygon polygon, Matrix4x4 localToWorld, float height
           , out ControlMesh newControlMesh, out Shape newShape
         );
     }

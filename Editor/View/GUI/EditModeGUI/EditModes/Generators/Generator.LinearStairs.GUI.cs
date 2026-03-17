@@ -14,7 +14,7 @@ namespace RealtimeCSG
             EditorGUI.BeginChangeCheck();
 
             {
-                GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                 {
                     GUILayout.Label(content, width80);
@@ -24,19 +24,12 @@ namespace RealtimeCSG
                         TooltipUtility.SetToolTip(tooltip);
                     }
 
-                    if(!isSceneGUI)
-                    {
-                        newValue = Units.DistanceUnitToUnity(
-                            distanceUnit, EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, value))
-                        );
-                    }
-                    else
-                    {
-                        newValue = Units.DistanceUnitToUnity(
-                            distanceUnit
-                          , EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, value), width65)
-                        );
-                    }
+                    newValue = Units.DistanceUnitToUnity(
+                        distanceUnit
+                      , !isSceneGUI
+                            ? EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, value))
+                            : EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, value), width65)
+                    );
 
                     if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
                     {
@@ -44,7 +37,7 @@ namespace RealtimeCSG
                         CSGSettings.DistanceUnit = distanceUnit;
                         CSGSettings.UpdateSnapSettings();
                         CSGSettings.Save();
-                        CSG_EditorGUIUtility.RepaintAll();
+                        CSGEditorGUIUtility.RepaintAll();
                     }
                 }
 
@@ -56,12 +49,7 @@ namespace RealtimeCSG
                 }
             }
 
-            if(EditorGUI.EndChangeCheck())
-            {
-                return newValue;
-            }
-
-            return value;
+            return EditorGUI.EndChangeCheck() ? newValue : value;
         }
 
         private static int IntValueSettings(int value, GUIContent content, ToolTip tooltip, bool isSceneGUI)
@@ -70,7 +58,7 @@ namespace RealtimeCSG
             EditorGUI.BeginChangeCheck();
 
             {
-                GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                 {
                     GUILayout.Label(content, width80);
@@ -80,14 +68,7 @@ namespace RealtimeCSG
                         TooltipUtility.SetToolTip(tooltip);
                     }
 
-                    if(!isSceneGUI)
-                    {
-                        newValue = EditorGUILayout.IntField(value);
-                    }
-                    else
-                    {
-                        newValue = EditorGUILayout.IntField(value, width65);
-                    }
+                    newValue = !isSceneGUI ? EditorGUILayout.IntField(value) : EditorGUILayout.IntField(value, width65);
                 }
 
                 GUILayout.EndHorizontal();
@@ -98,12 +79,7 @@ namespace RealtimeCSG
                 }
             }
 
-            if(EditorGUI.EndChangeCheck())
-            {
-                return newValue;
-            }
-
-            return value;
+            return EditorGUI.EndChangeCheck() ? newValue : value;
         }
 
         private static StairsBottom EnumValueSettings(
@@ -114,7 +90,7 @@ namespace RealtimeCSG
             EditorGUI.BeginChangeCheck();
 
             {
-                GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                 {
                     GUILayout.Label(content, width80);
@@ -124,14 +100,9 @@ namespace RealtimeCSG
                         TooltipUtility.SetToolTip(tooltip);
                     }
 
-                    if(!isSceneGUI)
-                    {
-                        newValue = (StairsBottom)EditorGUILayout.EnumPopup(value);
-                    }
-                    else
-                    {
-                        newValue = (StairsBottom)EditorGUILayout.EnumPopup(value, width65);
-                    }
+                    newValue = !isSceneGUI
+                        ? (StairsBottom)EditorGUILayout.EnumPopup(value)
+                        : (StairsBottom)EditorGUILayout.EnumPopup(value, width65);
                 }
 
                 GUILayout.EndHorizontal();
@@ -142,23 +113,18 @@ namespace RealtimeCSG
                 }
             }
 
-            if(EditorGUI.EndChangeCheck())
-            {
-                return newValue;
-            }
-
-            return value;
+            return EditorGUI.EndChangeCheck() ? newValue : value;
         }
 
         private static void OnGUIContents(GeneratorLinearStairs generator, bool isSceneGUI)
         {
-            GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
             {
                 EditorGUI.BeginChangeCheck();
 
                 int totalSteps = Mathf.Max(
-                    IntValueSettings(generator.TotalSteps, TotalStepsContent, TotalStepsTooltip, isSceneGUI), 1
+                    IntValueSettings(generator.TotalSteps, totalStepsContent, totalStepsTooltip, isSceneGUI), 1
                 );
 
                 if(EditorGUI.EndChangeCheck())
@@ -169,8 +135,8 @@ namespace RealtimeCSG
                 EditorGUI.BeginChangeCheck();
 
                 float stepDepth = Mathf.Max(
-                    FloatUnitsSettings(generator.StepDepth, StepDepthContent, StepDepthTooltip, isSceneGUI)
-                  , GeneratorLinearStairsSettings.kMinStepDepth
+                    FloatUnitsSettings(generator.StepDepth, stepDepthContent, stepDepthTooltip, isSceneGUI)
+                  , GeneratorLinearStairsSettings.MIN_STEP_DEPTH
                 );
 
                 if(EditorGUI.EndChangeCheck())
@@ -181,8 +147,8 @@ namespace RealtimeCSG
                 EditorGUI.BeginChangeCheck();
 
                 float stepHeight = Mathf.Max(
-                    FloatUnitsSettings(generator.StepHeight, StepHeightContent, StepHeightTooltip, isSceneGUI)
-                  , GeneratorLinearStairsSettings.kMinStepHeight
+                    FloatUnitsSettings(generator.StepHeight, stepHeightContent, stepHeightTooltip, isSceneGUI)
+                  , GeneratorLinearStairsSettings.MIN_STEP_HEIGHT
                 );
 
                 if(EditorGUI.EndChangeCheck())
@@ -195,7 +161,7 @@ namespace RealtimeCSG
                 EditorGUI.BeginChangeCheck();
 
                 float stairsWidth = Mathf.Max(
-                    FloatUnitsSettings(generator.StairsWidth, StairsWidthContent, StairsWidthTooltip, isSceneGUI), 0.01f
+                    FloatUnitsSettings(generator.StairsWidth, stairsWidthContent, stairsWidthTooltip, isSceneGUI), 0.01f
                 );
 
                 if(EditorGUI.EndChangeCheck())
@@ -206,7 +172,7 @@ namespace RealtimeCSG
                 EditorGUI.BeginChangeCheck();
 
                 float stairsHeight = Mathf.Max(
-                    FloatUnitsSettings(generator.StairsHeight, StairsHeightContent, StairsHeightTooltip, isSceneGUI)
+                    FloatUnitsSettings(generator.StairsHeight, stairsHeightContent, stairsHeightTooltip, isSceneGUI)
                   , 0.01f
                 );
 
@@ -218,7 +184,7 @@ namespace RealtimeCSG
                 EditorGUI.BeginChangeCheck();
 
                 float stairsDepth = Mathf.Max(
-                    FloatUnitsSettings(generator.StairsDepth, StairsDepthContent, StairsDepthTooltip, isSceneGUI), 0.01f
+                    FloatUnitsSettings(generator.StairsDepth, stairsDepthContent, stairsDepthTooltip, isSceneGUI), 0.01f
                 );
 
                 if(EditorGUI.EndChangeCheck())
@@ -231,7 +197,7 @@ namespace RealtimeCSG
                 EditorGUI.BeginChangeCheck();
 
                 float extraDepth = Mathf.Max(
-                    FloatUnitsSettings(generator.ExtraDepth, ExtraDepthContent, ExtraDepthTooltip, isSceneGUI), 0
+                    FloatUnitsSettings(generator.ExtraDepth, extraDepthContent, extraDepthTooltip, isSceneGUI), 0
                 );
 
                 if(EditorGUI.EndChangeCheck())
@@ -242,7 +208,7 @@ namespace RealtimeCSG
                 EditorGUI.BeginChangeCheck();
 
                 float extraHeight = Mathf.Max(
-                    FloatUnitsSettings(generator.ExtraHeight, ExtraHeightContent, ExtraHeightTooltip, isSceneGUI), 0
+                    FloatUnitsSettings(generator.ExtraHeight, extraHeightContent, extraHeightTooltip, isSceneGUI), 0
                 );
 
                 if(EditorGUI.EndChangeCheck())
@@ -253,7 +219,7 @@ namespace RealtimeCSG
                 EditorGUI.BeginChangeCheck();
 
                 StairsBottom bottom = EnumValueSettings(
-                    generator.StairsBottom, StairsBottomContent, StairsBottomTooltip, isSceneGUI
+                    generator.StairsBottom, stairsBottomContent, stairsBottomTooltip, isSceneGUI
                 );
 
                 if(EditorGUI.EndChangeCheck())
@@ -267,7 +233,7 @@ namespace RealtimeCSG
 
         public static bool OnShowGUI(GeneratorLinearStairs generator, bool isSceneGUI)
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             OnGUIContents(generator, isSceneGUI);
 
             return true;

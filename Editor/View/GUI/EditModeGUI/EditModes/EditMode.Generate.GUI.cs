@@ -7,35 +7,35 @@ namespace RealtimeCSG
 {
     internal sealed partial class EditModeGenerateGUI
     {
-        private static int SceneViewMeshOverlayHash = "SceneViewMeshOverlay".GetHashCode();
+        private static readonly int sceneViewMeshOverlayHash = "SceneViewMeshOverlay".GetHashCode();
 
-        private static Rect lastGuiRect;
+        private static Rect m_LastGuiRect;
 
-        public static Rect GetLastSceneGUIRect(EditModeGenerate tool)
+        public static Rect GetLastSceneGUIRect()
         {
-            return lastGuiRect;
+            return m_LastGuiRect;
         }
 
-        public static bool OnSceneGUI(Rect windowRect, EditModeGenerate tool)
+        public static bool OnSceneGUI(EditModeGenerate tool)
         {
             tool.CurrentGenerator.StartGUI();
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             {
-                GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                 {
-                    GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                     {
                         GUILayout.FlexibleSpace();
 
-                        CSG_GUIStyleUtility.ResetGUIState();
+                        CsgguiStyleUtility.ResetGUIState();
                         GUIStyle windowStyle = GUI.skin.window;
 
-                        GUILayout.BeginVertical(ContentTitleLabel, windowStyle, GUILayout.Width(275));
+                        GUILayout.BeginVertical(m_ContentTitleLabel, windowStyle, GUILayout.Width(275));
 
                         {
                             OnGUIContents(tool, true, 0);
@@ -43,7 +43,7 @@ namespace RealtimeCSG
 
                         GUILayout.EndVertical();
                         Rect currentArea = GUILayoutUtility.GetLastRect();
-                        lastGuiRect = currentArea;
+                        m_LastGuiRect = currentArea;
 
                         Rect buttonArea = currentArea;
                         buttonArea.x      += buttonArea.width - 17;
@@ -56,10 +56,10 @@ namespace RealtimeCSG
                             EditModeToolWindowSceneGUI.GetWindow();
                         }
 
-                        TooltipUtility.SetToolTip(CSG_GUIStyleUtility.PopOutTooltip, buttonArea);
+                        TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
                         int controlID = GUIUtility.GetControlID(
-                            SceneViewMeshOverlayHash, FocusType.Keyboard, currentArea
+                            sceneViewMeshOverlayHash, FocusType.Keyboard, currentArea
                         );
 
                         switch(Event.current.GetTypeForControl(controlID))
@@ -138,7 +138,7 @@ namespace RealtimeCSG
             {
                 if(isSceneGUI)
                 {
-                    GUILayout.BeginVertical(GUI.skin.box, Width100);
+                    GUILayout.BeginVertical(GUI.skin.box, width100);
                 }
                 else
                 {
@@ -149,7 +149,7 @@ namespace RealtimeCSG
                     bool             mixedValues = !enabled;
                     CSGOperationType operation   = generator.CurrentCSGOperationType;
                     EditorGUI.BeginChangeCheck();
-                    operation = CSG_EditorGUIUtility.ChooseOperation(operation, mixedValues);
+                    operation = CSGEditorGUIUtility.ChooseOperation(operation, mixedValues);
 
                     if(EditorGUI.EndChangeCheck())
                     {
@@ -166,7 +166,7 @@ namespace RealtimeCSG
         private static void CommitOrCancel(bool isSceneGUI, EditModeGenerate tool)
         {
             Material defaultMaterial = CSGSettings.DefaultMaterial;
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             {
                 if(isSceneGUI)
@@ -178,7 +178,7 @@ namespace RealtimeCSG
                         EditorGUI.BeginChangeCheck();
 
                         {
-                            defaultMaterial = CSG_EditorGUIUtility.MaterialImage(defaultMaterial);
+                            defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial);
                         }
 
                         if(EditorGUI.EndChangeCheck() && defaultMaterial)
@@ -191,7 +191,7 @@ namespace RealtimeCSG
 
                     GUILayout.EndVertical();
                     GUILayout.Space(4);
-                    GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
                 }
 
                 {
@@ -199,19 +199,19 @@ namespace RealtimeCSG
                     EditorGUI.BeginDisabledGroup(!generator.CanCommit);
 
                     {
-                        if(GUILayout.Button(CancelContent))
+                        if(GUILayout.Button(cancelContent))
                         {
                             generator.DoCancel();
                         }
 
-                        TooltipUtility.SetToolTip(CancelTooltip);
+                        TooltipUtility.SetToolTip(cancelTooltip);
 
-                        if(GUILayout.Button(CreateContent))
+                        if(GUILayout.Button(createContent))
                         {
                             generator.DoCommit();
                         }
 
-                        TooltipUtility.SetToolTip(CreateTooltip);
+                        TooltipUtility.SetToolTip(createTooltip);
                     }
 
                     EditorGUI.EndDisabledGroup();
@@ -243,26 +243,25 @@ namespace RealtimeCSG
             }
         }
 
-        private static Vector2 scrollPos;
-        private static Rect[] shapeModeRects;
+        private static Vector2 m_ScrollPos;
+        private static Rect[] m_ShapeModeRects;
 
         private static void OnGUIContents(EditModeGenerate tool, bool isSceneGUI, float height)
         {
             if(!isSceneGUI)
             {
-                Rect     shapeModeBounds;
-                CSG_Skin csg_skin = CSG_GUIStyleUtility.Skin;
+                CSGSkin csgSkin = CsgguiStyleUtility.Skin;
 
-                tool.BuilderMode = (ShapeMode)CSG_EditorGUIUtility.ToolbarWrapped(
-                    (int)tool.BuilderMode, ref shapeModeRects, out shapeModeBounds, csg_skin.shapeModeNames
-                  , CSG_GUIStyleUtility.shapeModeTooltips, height, EditorGUIUtility.currentViewWidth - 4
+                tool.BuilderMode = (ShapeMode)CSGEditorGUIUtility.ToolbarWrapped(
+                    (int)tool.BuilderMode, ref m_ShapeModeRects, out Rect shapeModeBounds, csgSkin.shapeModeNames
+                  , CsgguiStyleUtility.shapeModeTooltips, height, EditorGUIUtility.currentViewWidth - 4
                 );
 
                 GUILayout.Space(shapeModeBounds.height);
 
                 EditModeCommonGUI.StartToolGUI();
 
-                scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+                m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
 
                 {
                     ChooseOperation(tool, isSceneGUI);
@@ -270,11 +269,11 @@ namespace RealtimeCSG
                     CommitOrCancel(isSceneGUI, tool);
                     EditorGUILayout.Space();
                     Material defaultMaterial = CSGSettings.DefaultMaterial;
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        EditorGUILayout.LabelField(ContentDefaultMaterial, largeLabelWidth);
-                        GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                        EditorGUILayout.LabelField(contentDefaultMaterial, largeLabelWidth);
+                        GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                         {
                             EditorGUI.BeginChangeCheck();
@@ -293,14 +292,14 @@ namespace RealtimeCSG
                         }
 
                         GUILayout.Space(2);
-                        GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                         {
                             GUILayout.Space(5);
                             EditorGUI.BeginChangeCheck();
 
                             {
-                                defaultMaterial = CSG_EditorGUIUtility.MaterialImage(defaultMaterial, false);
+                                defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial, false);
                             }
 
                             if(EditorGUI.EndChangeCheck() && defaultMaterial)
@@ -316,12 +315,6 @@ namespace RealtimeCSG
                     }
 
                     GUILayout.EndHorizontal();
-                    /*
-                    // Unity won't let us do this
-                    GUILayout.BeginVertical(GUIStyleUtility.ContentEmpty);
-                    OnGUIContentsMaterialInspector(first_material, multiple_materials);
-                    GUILayout.EndVertical();
-                    */
                 }
 
                 EditorGUILayout.EndScrollView();
@@ -339,12 +332,12 @@ namespace RealtimeCSG
 
                         Rect rect = GUILayoutUtility.GetLastRect();
 
-                        CSG_Skin csg_skin = CSG_GUIStyleUtility.Skin;
-                        Rect     shapeModeBounds;
+                        CSGSkin csgSkin = CsgguiStyleUtility.Skin;
 
-                        tool.BuilderMode = (ShapeMode)CSG_EditorGUIUtility.ToolbarWrapped(
-                            (int)tool.BuilderMode, ref shapeModeRects, out shapeModeBounds, csg_skin.shapeModeNames
-                          , CSG_GUIStyleUtility.shapeModeTooltips, rect.y, 100
+                        tool.BuilderMode = (ShapeMode)CSGEditorGUIUtility.ToolbarWrapped(
+                            (int)tool.BuilderMode, ref m_ShapeModeRects, out Rect shapeModeBounds
+                          , csgSkin.shapeModeNames
+                          , CsgguiStyleUtility.shapeModeTooltips, rect.y, 100
                         );
 
                         GUILayout.Space(shapeModeBounds.height);
@@ -353,7 +346,7 @@ namespace RealtimeCSG
                     }
 
                     GUILayout.EndVertical();
-                    GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                     {
                         tool.CurrentGenerator.OnShowGUI(isSceneGUI);
@@ -370,9 +363,9 @@ namespace RealtimeCSG
 
         public static void OnInspectorGUI(EditModeGenerate tool, EditorWindow window, float height)
         {
-            lastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
+            m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             tool.CurrentGenerator.StartGUI();
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(tool, false, height);
             tool.CurrentGenerator.FinishGUI();

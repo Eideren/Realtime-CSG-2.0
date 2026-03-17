@@ -211,7 +211,7 @@ namespace RealtimeCSG
                                 Frustum frustum = CameraUtility.GetCameraSubFrustumGUI(sceneView.camera, rect);
 
                                 // Find all the brushes (and it's gameObjects) that are in the frustum
-                                if(SceneQueryUtility.GetItemsInFrustum(frustum.Planes, rectFoundGameObjects))
+                                if(SceneQueryUtility.GetItemsInFrustum(frustum.planes, rectFoundGameObjects))
                                 {
                                     modified = true;
                                 }

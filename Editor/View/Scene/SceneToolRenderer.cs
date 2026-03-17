@@ -6,21 +6,21 @@ namespace RealtimeCSG
 {
     internal static class SceneToolRenderer
     {
-        private static int meshGeneration = -1;
+        private static int m_MeshGeneration = -1;
 
-        private static LineMeshManager lineMeshManager = new LineMeshManager();
+        private static readonly LineMeshManager lineMeshManager = new LineMeshManager();
 
         internal static void Cleanup()
         {
-            meshGeneration = -1;
+            m_MeshGeneration = -1;
             lineMeshManager.Destroy();
         }
 
-        private static bool forceOutlineUpdate = false;
+        private static bool m_ForceOutlineUpdate;
 
         internal static void SetOutlineDirty()
         {
-            forceOutlineUpdate = false;
+            m_ForceOutlineUpdate = false;
         }
 
         internal static void OnPaint(SceneView sceneView)
@@ -45,10 +45,10 @@ namespace RealtimeCSG
 
             if(CSGSettings.IsWireframeShown(sceneView))
             {
-                if(forceOutlineUpdate || meshGeneration != InternalCSGModelManager.MeshGeneration)
+                if(m_ForceOutlineUpdate || m_MeshGeneration != InternalCSGModelManager.MeshGeneration)
                 {
-                    forceOutlineUpdate = false;
-                    meshGeneration     = InternalCSGModelManager.MeshGeneration;
+                    m_ForceOutlineUpdate = false;
+                    m_MeshGeneration     = InternalCSGModelManager.MeshGeneration;
                     lineMeshManager.Begin();
 
                     for(int i = 0; i < InternalCSGModelManager.Brushes.Count; i++)
@@ -65,10 +65,10 @@ namespace RealtimeCSG
                             brush.outlineColor = ColorSettings.GetBrushOutlineColor(brush);
                         }
 
-                        Matrix4x4 brush_transformation = brush.compareTransformation.localToWorldMatrix;
+                        Matrix4x4 brushTransformation = brush.compareTransformation.localToWorldMatrix;
 
                         CSGRenderer.DrawSimpleOutlines(
-                            lineMeshManager, brush.brushNodeID, brush_transformation, brush.outlineColor.Value
+                            lineMeshManager, brush.brushNodeID, brushTransformation, brush.outlineColor.Value
                         );
                     }
 

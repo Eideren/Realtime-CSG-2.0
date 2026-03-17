@@ -1,12 +1,12 @@
-﻿using UnityEditor;
+﻿using InternalRealtimeCSG;
+using UnityEditor;
 using UnityEngine;
-using InternalRealtimeCSG;
 
 namespace RealtimeCSG
 {
     internal static class CursorUtility
     {
-        private static readonly MouseCursor[] SegmentCursors = new MouseCursor[]
+        private static readonly MouseCursor[] segmentCursors =
         {
             MouseCursor.ResizeVertical, MouseCursor.ResizeUpRight, MouseCursor.ResizeHorizontal
           , MouseCursor.ResizeUpLeft, MouseCursor.ResizeVertical, MouseCursor.ResizeUpRight
@@ -18,9 +18,7 @@ namespace RealtimeCSG
         )
         {
             Vector3 worldCenterPoint1 = matrix.MultiplyPoint(center);
-
-            Vector3 worldCenterPoint2 = worldCenterPoint1 +
-                matrix.MultiplyVector(direction * 10.0f);
+            Vector3 worldCenterPoint2 = worldCenterPoint1 + matrix.MultiplyVector(direction * 10.0f);
 
             Vector2 guiPoint1 = HandleUtility.WorldToGUIPoint(worldCenterPoint1);
             Vector2 guiPoint2 = HandleUtility.WorldToGUIPoint(worldCenterPoint2);
@@ -34,48 +32,44 @@ namespace RealtimeCSG
             const float segmentAngle = 360 / 8.0f;
 
             float angle = (360 + (GeometryUtility.SignedAngle(MathConstants.upVector2, direction) + 180 + angleOffset))
-              % 360; // (Vector2.Angle(MathConstants.upVector2, direction) / 8) - (180 / 8);
+              % 360;
 
             int segment = Mathf.FloorToInt((angle / segmentAngle + 0.5f) % 8.0f);
 
-            return SegmentCursors[segment];
+            return segmentCursors[segment];
         }
 
         public static MouseCursor GetCursorForEdge(Vector2 direction)
         {
             const float segmentAngle = 360 / 8.0f;
 
-            float angle = (360 + (GeometryUtility.SignedAngle(MathConstants.upVector2, direction) + 180))
-              % 360; // (Vector2.Angle(MathConstants.upVector2, direction) / 8) - (180 / 8);
+            float angle   = (360 + (GeometryUtility.SignedAngle(MathConstants.upVector2, direction) + 180)) % 360;
+            int   segment = Mathf.FloorToInt((angle / segmentAngle + 2.5f) % 8.0f);
 
-            int segment = Mathf.FloorToInt((angle / segmentAngle + 2.5f) % 8.0f);
-
-            return SegmentCursors[segment];
+            return segmentCursors[segment];
         }
 
         public static MouseCursor GetToolCursor()
         {
-            switch(Tools.current)
+            return Tools.current switch
             {
-                case Tool.Move:   return MouseCursor.MoveArrow;
-                case Tool.Rotate: return MouseCursor.RotateArrow;
-                case Tool.Scale:  return MouseCursor.ScaleArrow;
-                case Tool.Rect:   return MouseCursor.SlideArrow;
-                case Tool.View:   return MouseCursor.Orbit;
-                default:          return MouseCursor.Arrow;
-            }
+                Tool.Move   => MouseCursor.MoveArrow
+              , Tool.Rotate => MouseCursor.RotateArrow
+              , Tool.Scale  => MouseCursor.ScaleArrow
+              , Tool.Rect   => MouseCursor.SlideArrow
+              , Tool.View   => MouseCursor.Orbit
+              , _           => MouseCursor.Arrow
+            };
         }
 
         public static MouseCursor GetSelectionCursor(SelectionType selectionType)
         {
-            switch(selectionType)
+            return selectionType switch
             {
-                case SelectionType.Additive:    return MouseCursor.ArrowPlus;
-                case SelectionType.Subtractive: return MouseCursor.ArrowMinus;
-                case SelectionType.Toggle:      return MouseCursor.Arrow;
-
-                default: return MouseCursor.Arrow;
-            }
+                SelectionType.Additive    => MouseCursor.ArrowPlus
+              , SelectionType.Subtractive => MouseCursor.ArrowMinus
+              , _                         => MouseCursor.Arrow
+            };
         }
     }
 }

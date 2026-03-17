@@ -1,5 +1,5 @@
-﻿using RealtimeCSG.Legacy;
-using RealtimeCSG.Components;
+﻿using RealtimeCSG.Components;
+using RealtimeCSG.Legacy;
 using UnityEngine;
 
 namespace RealtimeCSG
@@ -56,13 +56,8 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                _outlinesManager.DrawLines(
-                    meshState.worldPoints, meshState.edges, ColorSettings.MeshEdgeOutline, 1.0f
-                ); //, zTest: false);
-
-                _edgeColorsManager.DrawLines(
-                    meshState.worldPoints, meshState.edges, meshState.edgeColors, 1.0f
-                ); //, zTest: false);
+                _outlinesManager.DrawLines(meshState.worldPoints, meshState.edges, ColorSettings.MeshEdgeOutline);
+                _edgeColorsManager.DrawLines(meshState.worldPoints, meshState.edges, meshState.edgeColors);
 
                 for(int p = 0; p < meshState.polygonPointIndices.Length; p++)
                 {

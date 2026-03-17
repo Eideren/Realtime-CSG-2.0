@@ -42,26 +42,26 @@ namespace RealtimeCSG
             }
         }
 
-        private static Flags s_Flags;
+        private static Flags m_Flags;
 
-        private Camera m_Camera;
+        private readonly Camera _camera;
 
-        private const float kFrameWidth = 1f;
-        private const float kLineHeight = 20f;
+        private const float FRAME_WIDTH = 1f;
+        private const float LINE_HEIGHT = 20f;
 
         private SurfaceVisibilityPopup(Camera camera)
         {
-            m_Camera = camera;
+            _camera = camera;
         }
 
         public override Vector2 GetWindowSize()
         {
-            if(s_Flags == null)
+            if(m_Flags == null)
             {
-                s_Flags = new Flags();
+                m_Flags = new Flags();
             }
 
-            float   windowHeight = 2f * kFrameWidth + kLineHeight * (s_Flags.helperSurfaceFlagContent.Length + 2) + 4;
+            float   windowHeight = 2f * FRAME_WIDTH + LINE_HEIGHT * (m_Flags.helperSurfaceFlagContent.Length + 2) + 4;
             Vector2 windowSize   = new Vector2(210, windowHeight);
 
             return windowSize;
@@ -69,14 +69,14 @@ namespace RealtimeCSG
 
         public override void OnGUI(Rect rect)
         {
-            if(!m_Camera)
+            if(!_camera)
             {
                 return;
             }
 
-            if(s_Flags == null)
+            if(m_Flags == null)
             {
-                s_Flags = new Flags();
+                m_Flags = new Flags();
             }
 
             // We do not use the layout event
@@ -104,17 +104,18 @@ namespace RealtimeCSG
 
         private void Draw(Rect rect)
         {
-            int allVisibleSurfaces = (int)HelperSurfaceFlags.ShowVisibleSurfaces;
-            int allHelperSurfaces  = s_Flags.allSurfaces & ~allVisibleSurfaces;
+            const int allVisibleSurfaces = (int)HelperSurfaceFlags.ShowVisibleSurfaces;
 
-            Rect drawPos = new Rect(kFrameWidth, kFrameWidth, rect.width - 2 * kFrameWidth, kLineHeight);
+            int allHelperSurfaces = m_Flags.allSurfaces & ~allVisibleSurfaces;
+
+            Rect drawPos = new Rect(FRAME_WIDTH, FRAME_WIDTH, rect.width - 2 * FRAME_WIDTH, LINE_HEIGHT);
 
             int helperSurfaces = (int)CSGSettings.VisibleHelperSurfaces;
             EditorGUI.BeginChangeCheck();
 
             GUI.Toggle(
-                drawPos, helperSurfaces == allVisibleSurfaces, s_Flags.onlyVisibleContent
-              , CSG_GUIStyleUtility.Skin.menuItem
+                drawPos, helperSurfaces == allVisibleSurfaces, m_Flags.onlyVisibleContent
+              , CsgguiStyleUtility.Skin.menuItem
             );
 
             if(EditorGUI.EndChangeCheck())
@@ -122,16 +123,16 @@ namespace RealtimeCSG
                 CSGSettings.VisibleHelperSurfaces = (HelperSurfaceFlags)allVisibleSurfaces;
                 MeshInstanceManager.UpdateHelperSurfaceVisibility();
                 CSGSettings.Save();
-                CSG_EditorGUIUtility.RepaintAll();
+                CSGEditorGUIUtility.RepaintAll();
             }
 
-            drawPos.y += kLineHeight;
+            drawPos.y += LINE_HEIGHT;
 
             EditorGUI.BeginChangeCheck();
 
             GUI.Toggle(
-                drawPos, helperSurfaces == allHelperSurfaces, s_Flags.allHelperContent
-              , CSG_GUIStyleUtility.Skin.menuItem
+                drawPos, helperSurfaces == allHelperSurfaces, m_Flags.allHelperContent
+              , CsgguiStyleUtility.Skin.menuItem
             );
 
             if(EditorGUI.EndChangeCheck())
@@ -139,25 +140,24 @@ namespace RealtimeCSG
                 CSGSettings.VisibleHelperSurfaces = (HelperSurfaceFlags)allHelperSurfaces;
                 MeshInstanceManager.UpdateHelperSurfaceVisibility();
                 CSGSettings.Save();
-                CSG_EditorGUIUtility.RepaintAll();
+                CSGEditorGUIUtility.RepaintAll();
             }
 
-            drawPos.y += kLineHeight;
-
+            drawPos.y += LINE_HEIGHT;
             drawPos.y += 4;
 
-            for(int i = 0; i < s_Flags.helperSurfaceFlagContent.Length; i++)
+            for(int i = 0; i < m_Flags.helperSurfaceFlagContent.Length; i++)
             {
-                int flag = s_Flags.helperSurfaceFlagValues[i];
-                DrawListElement(drawPos, s_Flags.helperSurfaceFlagContent[i], helperSurfaces, flag);
-                drawPos.y += kLineHeight;
+                int flag = m_Flags.helperSurfaceFlagValues[i];
+                DrawListElement(drawPos, m_Flags.helperSurfaceFlagContent[i], helperSurfaces, flag);
+                drawPos.y += LINE_HEIGHT;
             }
         }
 
         private void DrawListElement(Rect rect, GUIContent toggleName, int helperSurfaces, int flag)
         {
             EditorGUI.BeginChangeCheck();
-            bool result = GUI.Toggle(rect, (helperSurfaces & flag) != 0, toggleName, CSG_GUIStyleUtility.Skin.menuItem);
+            bool result = GUI.Toggle(rect, (helperSurfaces & flag) != 0, toggleName, CsgguiStyleUtility.Skin.menuItem);
 
             if(EditorGUI.EndChangeCheck())
             {
@@ -172,51 +172,51 @@ namespace RealtimeCSG
 
                 MeshInstanceManager.UpdateHelperSurfaceVisibility();
                 CSGSettings.Save();
-                CSG_EditorGUIUtility.RepaintAll();
+                CSGEditorGUIUtility.RepaintAll();
             }
         }
 
         public static void Button(SceneView sceneView, Rect currentRect)
         {
-            if(s_Flags == null)
+            if(m_Flags == null)
             {
-                s_Flags = new Flags();
+                m_Flags = new Flags();
             }
 
             int        helperSurfaces = (int)CSGSettings.VisibleHelperSurfaces;
             GUIStyle   style          = EditorStyles.toolbarDropDown;
-            GUIContent buttonContent  = s_Flags.mixedValueContent;
+            GUIContent buttonContent  = m_Flags.mixedValueContent;
 
             if(!EditorGUI.showMixedValue)
             {
-                int allVisibleSurfaces = (int)HelperSurfaceFlags.ShowVisibleSurfaces;
-                int allHelperSurfaces  = s_Flags.allSurfaces & ~allVisibleSurfaces;
+                const int allVisibleSurfaces = (int)HelperSurfaceFlags.ShowVisibleSurfaces;
+
+                int allHelperSurfaces = m_Flags.allSurfaces & ~allVisibleSurfaces;
 
                 if(helperSurfaces == 0)
                 {
-                    buttonContent = s_Flags.nothingContent;
-                    style         = CSG_GUIStyleUtility.Skin.redToolbarDropDown;
+                    buttonContent = m_Flags.nothingContent;
+                    style         = CsgguiStyleUtility.Skin.redToolbarDropDown;
                 }
                 else if(helperSurfaces == allVisibleSurfaces)
                 {
-                    buttonContent = s_Flags.onlyVisibleContent;
+                    buttonContent = m_Flags.onlyVisibleContent;
                 }
                 else if(helperSurfaces == allHelperSurfaces)
                 {
-                    buttonContent = s_Flags.allHelperContent;
+                    buttonContent = m_Flags.allHelperContent;
                 }
                 else
                 {
                     int count = 0;
 
-                    for(int i = 0; i < s_Flags.helperSurfaceFlagContent.Length; i++)
+                    for(int i = 0; i < m_Flags.helperSurfaceFlagContent.Length; i++)
                     {
-                        int flag = s_Flags.helperSurfaceFlagValues[i];
+                        int flag = m_Flags.helperSurfaceFlagValues[i];
 
                         if((helperSurfaces & flag) != 0)
                         {
                             count++;
-                            buttonContent = s_Flags.helperSurfaceFlagContent[i];
 
                             if(count > 1)
                             {
@@ -225,7 +225,7 @@ namespace RealtimeCSG
                         }
                     }
 
-                    buttonContent = s_Flags.mixedContent;
+                    buttonContent = m_Flags.mixedContent;
                 }
             }
 

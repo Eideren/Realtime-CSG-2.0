@@ -1,51 +1,49 @@
-﻿using UnityEditor;
-using UnityEngine;
-using InternalRealtimeCSG;
+﻿using InternalRealtimeCSG;
 using RealtimeCSG.Components;
 using RealtimeCSG.Foundation;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
     internal sealed partial class EditModeMeshModeGUI
     {
-        private static int SceneViewMeshOverlayHash = "SceneViewMeshOverlay".GetHashCode();
+        private static readonly int sceneViewMeshOverlayHash = "SceneViewMeshOverlay".GetHashCode();
 
-        private static Rect lastGuiRect;
+        private static Rect m_LastGuiRect;
 
-        public static Rect GetLastSceneGUIRect(EditModeMeshEdit tool)
+        public static Rect GetLastSceneGUIRect()
         {
-            return lastGuiRect;
+            return m_LastGuiRect;
         }
 
-        public static void OnSceneGUI(Rect windowRect, EditModeMeshEdit tool)
+        public static void OnSceneGUI(EditModeMeshEdit tool)
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             {
-                GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                 {
-                    GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                     {
                         GUILayout.FlexibleSpace();
 
-                        CSG_GUIStyleUtility.ResetGUIState();
+                        CsgguiStyleUtility.ResetGUIState();
 
                         GUILayout.BeginVertical(
-                            ContentMeshLabel, CSG_GUIStyleUtility.unpaddedWindow, CSG_GUIStyleUtility.ContentEmpty
+                            m_ContentMeshLabel, CsgguiStyleUtility.UnpaddedWindow, CsgguiStyleUtility.contentEmpty
                         );
 
-                        {
-                            OnGUIContents(true, tool);
-                        }
+                        OnGUIContents(true, tool);
 
                         GUILayout.EndVertical();
 
                         Rect currentArea = GUILayoutUtility.GetLastRect();
-                        lastGuiRect = currentArea;
+                        m_LastGuiRect = currentArea;
 
                         Rect buttonArea = currentArea;
                         buttonArea.x      += buttonArea.width - 17;
@@ -58,10 +56,10 @@ namespace RealtimeCSG
                             EditModeToolWindowSceneGUI.GetWindow();
                         }
 
-                        TooltipUtility.SetToolTip(CSG_GUIStyleUtility.PopOutTooltip, buttonArea);
+                        TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
                         int controlID = GUIUtility.GetControlID(
-                            SceneViewMeshOverlayHash, FocusType.Keyboard, currentArea
+                            sceneViewMeshOverlayHash, FocusType.Keyboard, currentArea
                         );
 
                         switch(Event.current.GetTypeForControl(controlID))
@@ -128,11 +126,11 @@ namespace RealtimeCSG
             GUILayout.EndHorizontal();
         }
 
-        public static void OnInspectorGUI(EditorWindow window, float height)
+        public static void OnInspectorGUI()
         {
-            lastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
+            m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModeMeshEdit tool = EditModeManager.ActiveTool as EditModeMeshEdit;
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
         }
@@ -141,10 +139,10 @@ namespace RealtimeCSG
             bool isSceneGUI, EditModeMeshEdit tool, FilteredSelection filteredSelection
         )
         {
-            bool operations_enabled = tool != null &&
+            bool operationsEnabled = tool != null &&
                 filteredSelection.nodeTargets.Length > 0 && filteredSelection.modelTargets.Length == 0;
 
-            EditorGUI.BeginDisabledGroup(!operations_enabled);
+            EditorGUI.BeginDisabledGroup(!operationsEnabled);
 
             {
                 bool mixedValues = tool == null || (filteredSelection.brushTargets.Length == 0
@@ -186,10 +184,7 @@ namespace RealtimeCSG
                 GUILayout.BeginVertical(isSceneGUI ? GUI.skin.box : GUIStyle.none);
 
                 {
-                    bool passThroughValue = false;
-
                     if(tool != null &&
-                       //filteredSelection.BrushTargets.Length == 0 &&
                        filteredSelection.operationTargets.Length > 0 &&
                        filteredSelection.operationTargets.Length
                     == filteredSelection.nodeTargets.Length) // only operations
@@ -209,10 +204,10 @@ namespace RealtimeCSG
 
                         mixedValues = !passThrough.HasValue || passThrough.Value;
 
-                        bool ptMixedValues = !passThrough.HasValue;
-                        passThroughValue = passThrough.HasValue ? passThrough.Value : false;
+                        bool ptMixedValues    = !passThrough.HasValue;
+                        bool passThroughValue = passThrough.HasValue && passThrough.Value;
 
-                        if(CSG_EditorGUIUtility.PassThroughButton(passThroughValue, ptMixedValues))
+                        if(CSGEditorGUIUtility.PassThroughButton(passThroughValue, ptMixedValues))
                         {
                             Undo.RecordObjects(filteredSelection.operationTargets, "Changed CSG operation of nodes");
 
@@ -234,7 +229,7 @@ namespace RealtimeCSG
                     EditorGUI.BeginChangeCheck();
 
                     {
-                        operationType = CSG_EditorGUIUtility.ChooseOperation(operationType, mixedValues);
+                        operationType = CSGEditorGUIUtility.ChooseOperation(operationType, mixedValues);
                     }
 
                     if(EditorGUI.EndChangeCheck() && tool != null)
@@ -263,20 +258,6 @@ namespace RealtimeCSG
             EditorGUI.EndDisabledGroup();
         }
 
-        /*
-                GUILayout.BeginHorizontal(GUIStyleUtility.ContentEmpty);
-                {
-
-                    GUILayout.BeginVertical(isSceneGUI ? GUI.skin.box : GUIStyle.none);
-                    {
-                        //GUILayout.Label(Keys.VerticalMoveMode.ToString() + " to dragging brush up/down", EditorStyles.miniLabel);
-                        GUILayout.Label("Control (hold) to drag polygon on it's plane", EditorStyles.miniLabel);
-                        GUILayout.Label("Shift (hold) to drag extrude polygon", EditorStyles.miniLabel);
-                        GUILayout.Label("Shift (hold) to chamfer edges and vertices", EditorStyles.miniLabel);
-                    }
-                    GUILayout.EndVertical();
-                }
-                GUILayout.EndHorizontal();*/
         private static void OnGUIContents(bool isSceneGUI, EditModeMeshEdit tool)
         {
             EditModeCommonGUI.StartToolGUI();
@@ -289,7 +270,7 @@ namespace RealtimeCSG
             GUIStyle button = GUI.skin.button;
 
             Material defaultMaterial = CSGSettings.DefaultMaterial;
-            GUILayout.BeginVertical(isSceneGUI ? InSceneWidth : CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginVertical(isSceneGUI ? inSceneWidth : CsgguiStyleUtility.contentEmpty);
 
             {
                 ShowCSGOperations(isSceneGUI, tool, filteredSelection);
@@ -301,18 +282,18 @@ namespace RealtimeCSG
                     bool selectionEdge            = CSGSettings.SelectionEdge;
                     bool selectionSurface         = CSGSettings.SelectionSurface;
 
-                    EditorGUILayout.LabelField(ContentSelection);
+                    EditorGUILayout.LabelField(contentSelection);
                     EditorGUI.BeginChangeCheck();
 
                     {
-                        GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                         {
                             selectionIgnoreBackfaced = GUILayout.Toggle(
-                                selectionIgnoreBackfaced, ContentIgnoreHidden, button
+                                selectionIgnoreBackfaced, contentIgnoreHidden, button
                             );
 
-                            TooltipUtility.SetToolTip(TooltipIgnoreHidden);
+                            TooltipUtility.SetToolTip(tooltipIgnoreHidden);
                         }
 
                         GUILayout.EndHorizontal();
@@ -321,21 +302,21 @@ namespace RealtimeCSG
                         {
                             GUILayout.Label(
                                 "No selection mode has been selected and nothing can be selected"
-                              , CSG_GUIStyleUtility.redTextArea
+                              , CsgguiStyleUtility.RedTextArea
                             );
                         }
 
-                        GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                         {
-                            selectionVertex = GUILayout.Toggle(selectionVertex, ContentVertex, button);
-                            TooltipUtility.SetToolTip(TooltipVertex);
+                            selectionVertex = GUILayout.Toggle(selectionVertex, contentVertex, button);
+                            TooltipUtility.SetToolTip(tooltipVertex);
 
-                            selectionEdge = GUILayout.Toggle(selectionEdge, ContentEdge, button);
-                            TooltipUtility.SetToolTip(TooltipEdge);
+                            selectionEdge = GUILayout.Toggle(selectionEdge, contentEdge, button);
+                            TooltipUtility.SetToolTip(tooltipEdge);
 
-                            selectionSurface = GUILayout.Toggle(selectionSurface, ContentSurface, button);
-                            TooltipUtility.SetToolTip(TooltipSurface);
+                            selectionSurface = GUILayout.Toggle(selectionSurface, contentSurface, button);
+                            TooltipUtility.SetToolTip(tooltipSurface);
                         }
 
                         GUILayout.EndHorizontal();
@@ -361,8 +342,8 @@ namespace RealtimeCSG
                     EditorGUI.BeginChangeCheck();
 
                     {
-                        autoCommitExtrusion = GUILayout.Toggle(autoCommitExtrusion, ContentAutoCommitExtrusion, button);
-                        TooltipUtility.SetToolTip(TooltipAutoCommitExtrusion);
+                        autoCommitExtrusion = GUILayout.Toggle(autoCommitExtrusion, contentAutoCommitExtrusion, button);
+                        TooltipUtility.SetToolTip(tooltipAutoCommitExtrusion);
                     }
 
                     if(EditorGUI.EndChangeCheck())
@@ -373,19 +354,19 @@ namespace RealtimeCSG
                 }
 
                 GUILayout.EndVertical();
-                GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                 {
                     if(isSceneGUI)
                     {
                         GUILayout.Space(4);
-                        GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                        GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                         {
                             EditorGUI.BeginChangeCheck();
 
                             {
-                                defaultMaterial = CSG_EditorGUIUtility.MaterialImage(defaultMaterial, true);
+                                defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial);
                             }
 
                             if(EditorGUI.EndChangeCheck() && defaultMaterial)
@@ -398,74 +379,49 @@ namespace RealtimeCSG
                         GUILayout.EndVertical();
                     }
 
-                    bool have_nodes = tool != null && filteredSelection.nodeTargets.Length > 0;
+                    bool haveNodes = tool != null && filteredSelection.nodeTargets.Length > 0;
 
-                    GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        EditorGUI.BeginDisabledGroup(!have_nodes);
+                        EditorGUI.BeginDisabledGroup(!haveNodes);
 
                         {
-                            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                             {
-                                if(isSceneGUI)
-                                {
-                                    EditorGUILayout.LabelField(ContentFlip, labelWidth);
-                                }
-                                else
-                                {
-                                    EditorGUILayout.LabelField(ContentFlip, largeLabelWidth);
-                                }
+                                EditorGUILayout.LabelField(contentFlip, isSceneGUI ? labelWidth : largeLabelWidth);
 
-                                if(GUILayout.Button(ContentFlipX, left))
+                                if(GUILayout.Button(contentFlipX, left))
                                 {
                                     tool.FlipX();
                                 }
 
-                                TooltipUtility.SetToolTip(TooltipFlipX);
+                                TooltipUtility.SetToolTip(tooltipFlipX);
 
-                                if(GUILayout.Button(ContentFlipY, middle))
+                                if(GUILayout.Button(contentFlipY, middle))
                                 {
                                     tool.FlipY();
                                 }
 
-                                TooltipUtility.SetToolTip(TooltipFlipY);
+                                TooltipUtility.SetToolTip(tooltipFlipY);
 
-                                if(GUILayout.Button(ContentFlipZ, right))
+                                if(GUILayout.Button(contentFlipZ, right))
                                 {
                                     tool.FlipZ();
                                 }
 
-                                TooltipUtility.SetToolTip(TooltipFlipZ);
+                                TooltipUtility.SetToolTip(tooltipFlipZ);
                             }
 
                             GUILayout.EndHorizontal();
 
-                            /*
-                            EditorGUILayout.LabelField(ContentEdgesLabel);
-                            GUILayout.BeginHorizontal(GUIStyleUtility.ContentEmpty);
-                            {
-                                EditorGUI.BeginDisabledGroup(!tool.CanSmooth());
-                                {
-                                    if (GUILayout.Button("Smooth"))		{ tool.Smooth(); }
-                                }
-                                EditorGUI.EndDisabledGroup();
-                                EditorGUI.BeginDisabledGroup(!tool.CanUnSmooth());
-                                {
-                                    if (GUILayout.Button("Un-smooth"))	{ tool.UnSmooth(); }
-                                }
-                                EditorGUI.EndDisabledGroup();
-                            }
-                            GUILayout.EndHorizontal();
-                            */
-
-                            if(GUILayout.Button(ContentSnapToGrid))
+                            if(GUILayout.Button(contentSnapToGrid))
                             {
                                 tool.SnapToGrid(Camera.current);
                             }
 
-                            TooltipUtility.SetToolTip(TooltipSnapToGrid);
+                            TooltipUtility.SetToolTip(tooltipSnapToGrid);
                         }
 
                         EditorGUI.EndDisabledGroup();
@@ -480,11 +436,11 @@ namespace RealtimeCSG
                 if(!isSceneGUI)
                 {
                     EditorGUILayout.Space();
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        EditorGUILayout.LabelField(ContentDefaultMaterial, largeLabelWidth);
-                        GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+                        EditorGUILayout.LabelField(contentDefaultMaterial, largeLabelWidth);
+                        GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
                         {
                             EditorGUI.BeginChangeCheck();
@@ -502,11 +458,11 @@ namespace RealtimeCSG
                         }
 
                         GUILayout.Space(2);
-                        GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                         {
                             GUILayout.Space(5);
-                            defaultMaterial = CSG_EditorGUIUtility.MaterialImage(defaultMaterial, false);
+                            defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial, false);
                         }
 
                         GUILayout.EndHorizontal();
@@ -514,12 +470,6 @@ namespace RealtimeCSG
                     }
 
                     GUILayout.EndHorizontal();
-                    /*
-                    // Unity won't let us do this
-                    GUILayout.BeginVertical(GUIStyleUtility.ContentEmpty);
-                    OnGUIContentsMaterialInspector(first_material, multiple_materials);
-                    GUILayout.EndVertical();
-                    */
                 }
                 else
                 {

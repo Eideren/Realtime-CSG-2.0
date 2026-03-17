@@ -1,20 +1,20 @@
 ﻿using System;
-using UnityEditor;
-using UnityEngine;
 using InternalRealtimeCSG;
 using RealtimeCSG.Legacy;
+using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
     [Serializable]
     internal sealed class GeneratorCylinderSettings : IShapeSettings
     {
-        public Vector3[] backupVertices = new Vector3[0];
-        public Vector3[] vertices = new Vector3[0];
-        public int[] vertexIDs = new int[0];
-        public bool[] onGeometryVertices = new bool[0];
+        public Vector3[] backupVertices = Array.Empty<Vector3>();
+        public Vector3[] vertices = Array.Empty<Vector3>();
+        public int[] vertexIDs = Array.Empty<int>();
+        public bool[] onGeometryVertices = Array.Empty<bool>();
 
-        public int circleSides
+        public int CircleSides
         {
             get => Mathf.Max(3, CSGSettings.CircleSides);
             set
@@ -29,7 +29,7 @@ namespace RealtimeCSG
             }
         }
 
-        public float circleOffset
+        public float CircleOffset
         {
             get => CSGSettings.CircleOffset;
             set
@@ -44,7 +44,7 @@ namespace RealtimeCSG
             }
         }
 
-        public bool circleSmoothShading
+        public bool CircleSmoothShading
         {
             get => CSGSettings.CircleSmoothShading;
             set
@@ -59,7 +59,7 @@ namespace RealtimeCSG
             }
         }
 
-        public bool circleSingleSurfaceEnds
+        public bool CircleSingleSurfaceEnds
         {
             get => CSGSettings.CircleSingleSurfaceEnds;
             set
@@ -74,7 +74,7 @@ namespace RealtimeCSG
             }
         }
 
-        public bool circleDistanceToSide
+        public bool CircleDistanceToSide
         {
             get => CSGSettings.CircleDistanceToSide;
             set
@@ -89,7 +89,7 @@ namespace RealtimeCSG
             }
         }
 
-        public bool circleRecenter
+        public bool CircleRecenter
         {
             get => CSGSettings.CircleRecenter;
             set
@@ -104,8 +104,8 @@ namespace RealtimeCSG
             }
         }
 
-        public float radiusA = 0.0f;
-        public float radiusB = 0.0f;
+        public float radiusA;
+        public float radiusB;
 
         public void AddPoint(Vector3 position)
         {
@@ -160,15 +160,15 @@ namespace RealtimeCSG
 
         public void Reset()
         {
-            backupVertices = new Vector3[0];
-            vertices       = new Vector3[0];
+            backupVertices = Array.Empty<Vector3>();
+            vertices       = Array.Empty<Vector3>();
 
-            circleSides             = Mathf.Max(3, CSGSettings.CircleSides);
-            circleOffset            = CSGSettings.CircleOffset;
-            circleSmoothShading     = CSGSettings.CircleSmoothShading;
-            circleSingleSurfaceEnds = CSGSettings.CircleSingleSurfaceEnds;
-            circleDistanceToSide    = CSGSettings.CircleDistanceToSide;
-            circleRecenter          = CSGSettings.CircleRecenter;
+            CircleSides             = Mathf.Max(3, CSGSettings.CircleSides);
+            CircleOffset            = CSGSettings.CircleOffset;
+            CircleSmoothShading     = CSGSettings.CircleSmoothShading;
+            CircleSingleSurfaceEnds = CSGSettings.CircleSingleSurfaceEnds;
+            CircleDistanceToSide    = CSGSettings.CircleDistanceToSide;
+            CircleRecenter          = CSGSettings.CircleRecenter;
         }
 
         public void CopyBackupVertices()
@@ -188,52 +188,49 @@ namespace RealtimeCSG
                 return vertices;
             }
 
-            if(circleSides < 3)
+            if(CircleSides < 3)
             {
-                circleSides = 3;
+                CircleSides = 3;
             }
 
-            //var tangent = GeometryUtility.CalculateTangent(buildPlane.normal);
-
             Vector3 vertex1 = vertices.Length > 1 ? vertices[1] : worldPosition;
-
-            Vector3 delta = vertex1 - vertices[0];
+            Vector3 delta   = vertex1 - vertices[0];
             radiusA = delta.magnitude;
 
             if(radiusA <= MathConstants.DistanceEpsilon)
             {
                 isValid = false;
 
-                return new Vector3[0];
+                return Array.Empty<Vector3>();
             }
 
             Matrix4x4 matrix       = GeometryUtility.Rotate2DToPlaneMatrix(buildPlane);
-            Vector3[] realVertices = new Vector3[circleSides];
+            Vector3[] realVertices = new Vector3[CircleSides];
 
-            float angle_offset = GeometryUtility.SignedAngle(gridTangent, delta / radiusA, buildPlane.normal);
+            float angleOffset = GeometryUtility.SignedAngle(gridTangent, delta / radiusA, buildPlane.normal);
 
-            if(circleDistanceToSide)
+            if(CircleDistanceToSide)
             {
-                angle_offset += 90;
+                angleOffset += 90;
 
-                if((circleSides & 1) != 1)
+                if((CircleSides & 1) != 1)
                 {
-                    angle_offset += 180.0f / circleSides;
+                    angleOffset += 180.0f / CircleSides;
                 }
             }
             else
             {
-                angle_offset -= 90;
+                angleOffset -= 90;
             }
 
-            angle_offset += circleOffset;
-            angle_offset *= Mathf.Deg2Rad;
+            angleOffset += CircleOffset;
+            angleOffset *= Mathf.Deg2Rad;
 
             Vector3 p1 = MathConstants.zeroVector3;
 
-            for(int i = 0; i < circleSides; i++)
+            for(int i = 0; i < CircleSides; i++)
             {
-                float angle = i * Mathf.PI * 2.0f / (float)circleSides + angle_offset;
+                float angle = i * Mathf.PI * 2.0f / CircleSides + angleOffset;
 
                 p1.x = Mathf.Sin(angle) * radiusA;
                 p1.z = Mathf.Cos(angle) * radiusA;
@@ -241,7 +238,7 @@ namespace RealtimeCSG
                 realVertices[i] = p1;
             }
 
-            if(circleRecenter)
+            if(CircleRecenter)
             {
                 Vector3 dirx = matrix.MultiplyVector(delta.normalized);
                 Vector3 dirz = Vector3.Cross(MathConstants.upVector3, dirx);
@@ -251,7 +248,7 @@ namespace RealtimeCSG
                 float maxx = float.NegativeInfinity;
                 float maxz = float.NegativeInfinity;
 
-                for(int i = 0; i < circleSides; i++)
+                for(int i = 0; i < CircleSides; i++)
                 {
                     Vector3 point = realVertices[i];
                     float   x     = Vector3.Dot(point, dirx);
@@ -269,7 +266,7 @@ namespace RealtimeCSG
                 Vector3 centerx = (maxx + minx) * -0.5f * dirx;
                 Vector3 centerz = (maxz + minz) * -0.5f * dirz;
 
-                for(int i = 0; i < circleSides; i++)
+                for(int i = 0; i < CircleSides; i++)
                 {
                     Vector3 point = realVertices[i];
                     float   x     = Vector3.Dot(point, dirx);
@@ -286,7 +283,7 @@ namespace RealtimeCSG
                 }
             }
 
-            for(int i = 0; i < circleSides; i++)
+            for(int i = 0; i < CircleSides; i++)
             {
                 Vector3 point = realVertices[i];
 

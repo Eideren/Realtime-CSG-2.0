@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EditModeToolWindowSceneGUI : EditorWindow
 {
-    private const string WindowTitle = "Realtime-CSG";
-    private static List<EditModeToolWindowSceneGUI> windows = new List<EditModeToolWindowSceneGUI>();
+    private const string WINDOW_TITLE = "Realtime-CSG";
+    private static readonly List<EditModeToolWindowSceneGUI> windows = new List<EditModeToolWindowSceneGUI>();
 
     public static List<EditModeToolWindowSceneGUI> GetEditorWindows()
     {
@@ -24,7 +24,7 @@ public class EditModeToolWindowSceneGUI : EditorWindow
     public static EditModeToolWindowSceneGUI GetWindow()
     {
         EditModeToolWindowSceneGUI editorWindow =
-            EditorWindow.GetWindow<EditModeToolWindowSceneGUI>(WindowTitle, true, typeof(EditModeToolWindowEditor));
+            EditorWindow.GetWindow<EditModeToolWindowSceneGUI>(WINDOW_TITLE, true, typeof(EditModeToolWindowEditor));
 
         editorWindow.minSize = new Vector2(32, 64);
         editorWindow.Show();

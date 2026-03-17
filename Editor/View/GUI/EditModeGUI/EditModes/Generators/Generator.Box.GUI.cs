@@ -5,20 +5,20 @@ namespace RealtimeCSG
 {
     internal sealed partial class GeneratorBoxGUI
     {
-        private static void BoxSettingsGUI(GeneratorBox generator, bool isSceneGUI)
+        private static void BoxSettingsGUI(GeneratorBox generator)
         {
             DistanceUnit distanceUnit = CSGSettings.DistanceUnit;
             DistanceUnit nextUnit     = Units.CycleToNextUnit(distanceUnit);
             GUIContent   unitText     = Units.GetUnitGUIContent(distanceUnit);
 
-            GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
             {
                 {
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        GUILayout.Label(HeightContent, Width65);
+                        GUILayout.Label(heightContent, width65);
 
                         float height = generator.HaveHeight
                             ? generator.Height
@@ -45,27 +45,27 @@ namespace RealtimeCSG
                             }
                         }
 
-                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, Width25))
+                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
                         {
                             distanceUnit             = nextUnit;
                             CSGSettings.DistanceUnit = distanceUnit;
                             CSGSettings.UpdateSnapSettings();
                             CSGSettings.Save();
-                            CSG_EditorGUIUtility.RepaintAll();
+                            CSGEditorGUIUtility.RepaintAll();
                         }
                     }
 
                     GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(HeightTooltip);
+                    TooltipUtility.SetToolTip(heightTooltip);
                 }
 
                 EditorGUI.BeginDisabledGroup(!generator.CanCommit);
 
                 {
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        GUILayout.Label(LengthContent, Width65);
+                        GUILayout.Label(lengthContent, width65);
                         float width = generator.Width;
                         EditorGUI.BeginChangeCheck();
 
@@ -81,22 +81,22 @@ namespace RealtimeCSG
                             generator.Width = width;
                         }
 
-                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, Width25))
+                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
                         {
                             distanceUnit             = nextUnit;
                             CSGSettings.DistanceUnit = distanceUnit;
                             CSGSettings.UpdateSnapSettings();
                             CSGSettings.Save();
-                            CSG_EditorGUIUtility.RepaintAll();
+                            CSGEditorGUIUtility.RepaintAll();
                         }
                     }
 
                     GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(LengthTooltip);
-                    GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+                    TooltipUtility.SetToolTip(lengthTooltip);
+                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
                     {
-                        GUILayout.Label(WidthContent, Width65);
+                        GUILayout.Label(widthContent, width65);
                         float length = generator.Length;
                         EditorGUI.BeginChangeCheck();
 
@@ -112,18 +112,18 @@ namespace RealtimeCSG
                             generator.Length = length;
                         }
 
-                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, Width25))
+                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
                         {
                             distanceUnit             = nextUnit;
                             CSGSettings.DistanceUnit = distanceUnit;
                             CSGSettings.UpdateSnapSettings();
                             CSGSettings.Save();
-                            CSG_EditorGUIUtility.RepaintAll();
+                            CSGEditorGUIUtility.RepaintAll();
                         }
                     }
 
                     GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(WidthTooltip);
+                    TooltipUtility.SetToolTip(widthTooltip);
                 }
 
                 EditorGUI.EndDisabledGroup();
@@ -134,36 +134,11 @@ namespace RealtimeCSG
 
         private static void OnGUIContents(GeneratorBox generator, bool isSceneGUI)
         {
-            //GUILayout.BeginVertical(GUIStyleUtility.ContentEmpty);
-            //{
-            //bool enabled = generator.HaveBrushes;
-            GUILayout.BeginHorizontal(CSG_GUIStyleUtility.ContentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
-            { /*
-                EditorGUI.BeginDisabledGroup(!enabled);
-                {
-                    if (isSceneGUI)
-                        GUILayout.BeginVertical(GUI.skin.box, Width100);
-                    else
-                        GUILayout.BeginVertical(GUIStyle.none);
-                    {
-                        bool mixedValues = !enabled;
-                        CSGOperationType operation = generator.CurrentCSGOperationType;
-                        EditorGUI.BeginChangeCheck();
-                        operation = CSG_EditorGUIUtility.ChooseOperation(operation, mixedValues);
-                        if (EditorGUI.EndChangeCheck())
-                        {
-                            generator.CurrentCSGOperationType = operation;
-                        }
-                    }
-                    GUILayout.EndVertical();
-                }
-                EditorGUI.EndDisabledGroup();
-                */
-                if(isSceneGUI)
-                {
-                    BoxSettingsGUI(generator, true);
-                }
+            if(isSceneGUI)
+            {
+                BoxSettingsGUI(generator);
             }
 
             GUILayout.EndHorizontal();
@@ -172,34 +147,13 @@ namespace RealtimeCSG
             {
                 GUILayout.Space(5);
 
-                BoxSettingsGUI(generator, false);
-
-                //GUILayout.Space(10);
-            } /*else
-            {
-                GUILayout.Space(10);
-            }*/
-            /*
-            EditorGUI.BeginDisabledGroup(!generator.CanCommit);
-            {
-                GUILayout.BeginHorizontal(GUIStyleUtility.ContentEmpty);
-                {
-                    if (GUILayout.Button(CommitContent)) { generator.DoCommit(); }
-                    TooltipUtility.SetToolTip(CommitTooltip);
-                    if (GUILayout.Button(CancelContent)) { generator.DoCancel(); }
-                    TooltipUtility.SetToolTip(CancelTooltip);
-                }
-                GUILayout.EndHorizontal();
+                BoxSettingsGUI(generator);
             }
-            EditorGUI.EndDisabledGroup();
-            */
-            //}
-            //GUILayout.EndVertical();
         }
 
         public static bool OnShowGUI(GeneratorBox generator, bool isSceneGUI)
         {
-            CSG_GUIStyleUtility.InitStyles();
+            CsgguiStyleUtility.InitStyles();
             OnGUIContents(generator, isSceneGUI);
 
             return true;

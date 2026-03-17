@@ -1,99 +1,98 @@
 ﻿using System;
-using UnityEngine;
 using RealtimeCSG.Legacy;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
     internal class RotationCircle
     {
-        public bool HaveRotateStartAngle = false;
-        public Vector3 RotateStartVector;
-        public Vector3 RotateCenterPoint;
-        public Vector3 RotateSurfaceNormal;
-        public Vector3 RotateSurfaceTangent;
-        public float RotateRadius;
-        public float RotateOriginalAngle;
-        public float RotateCurrentStartAngle;
-        public float RotateCurrentSnappedAngle;
+        public bool haveRotateStartAngle;
+        public Vector3 rotateStartVector;
+        public Vector3 rotateCenterPoint;
+        public Vector3 rotateSurfaceNormal;
+        public Vector3 rotateSurfaceTangent;
+        public float rotateRadius;
+        public float rotateOriginalAngle;
+        public float rotateCurrentStartAngle;
+        public float rotateCurrentSnappedAngle;
 
         public void Clear()
         {
-            HaveRotateStartAngle      = false;
-            RotateRadius              = 0;
-            RotateCurrentStartAngle   = 0;
-            RotateCurrentSnappedAngle = 0;
+            haveRotateStartAngle      = false;
+            rotateRadius              = 0;
+            rotateCurrentStartAngle   = 0;
+            rotateCurrentSnappedAngle = 0;
         }
 
         public void Render(Camera camera)
         {
-            float endAngle = RotateCurrentStartAngle + RotateCurrentSnappedAngle;
+            float endAngle = rotateCurrentStartAngle + rotateCurrentSnappedAngle;
 
-            if(HaveRotateStartAngle)
+            if(haveRotateStartAngle)
             {
                 PaintUtility.DrawRotateCirclePie(
-                    RotateCenterPoint, RotateSurfaceNormal, RotateSurfaceTangent, RotateRadius,
-                    RotateOriginalAngle, RotateCurrentStartAngle, endAngle,
+                    rotateCenterPoint, rotateSurfaceNormal, rotateSurfaceTangent, rotateRadius, rotateCurrentStartAngle
+                  , endAngle,
                     ColorSettings.RotateCircleOutline
-                ); //, RotateCirclePieFill, ColorSettings.RotateCirclePieOutline);
+                );
             }
 
             PaintUtility.DrawRotateCircle(
-                camera, RotateCenterPoint, RotateSurfaceNormal, RotateSurfaceTangent, RotateRadius,
-                RotateOriginalAngle, RotateCurrentStartAngle, endAngle,
+                camera, rotateCenterPoint, rotateSurfaceNormal, rotateSurfaceTangent, rotateRadius,
+                rotateOriginalAngle, rotateCurrentStartAngle, endAngle,
                 ColorSettings.RotateCircleOutline
-            ); //, ColorSettings.RotateCircleHatches);
+            );
         }
 
         public void Initialize(Transform transform, Surface surface, Vector3 centerPoint)
         {
-            RotateSurfaceNormal  = transform.TransformVector(surface.Plane.normal);
-            RotateSurfaceTangent = transform.TransformVector(surface.Tangent);
-            RotateCenterPoint    = centerPoint;
+            rotateSurfaceNormal  = transform.TransformVector(surface.Plane.normal);
+            rotateSurfaceTangent = transform.TransformVector(surface.Tangent);
+            rotateCenterPoint    = centerPoint;
             Clear();
         }
 
         public bool UpdateRadius(TexGen surfaceTexGen, Vector3 currentSurfacePoint)
         {
-            float   handleSize     = CSG_HandleUtility.GetHandleSize(RotateCenterPoint);
-            Vector3 vectorToCenter = currentSurfacePoint - RotateCenterPoint;
-            RotateRadius = vectorToCenter.magnitude;
+            float   handleSize     = CSGHandleUtility.GetHandleSize(rotateCenterPoint);
+            Vector3 vectorToCenter = currentSurfacePoint - rotateCenterPoint;
+            rotateRadius = vectorToCenter.magnitude;
             vectorToCenter.Normalize();
 
             float rotateCurrentAngle = 0.0f;
 
-            if(!HaveRotateStartAngle)
+            if(!haveRotateStartAngle)
             {
-                if(RotateRadius > handleSize * GUIConstants.MIN_ROTATE_RADIUS)
+                if(rotateRadius > handleSize * GUIConstants.MIN_ROTATE_RADIUS)
                 {
-                    HaveRotateStartAngle = true;
-                    RotateOriginalAngle  = surfaceTexGen.RotationAngle;
-                    RotateStartVector    = vectorToCenter;
+                    haveRotateStartAngle = true;
+                    rotateOriginalAngle  = surfaceTexGen.RotationAngle;
+                    rotateStartVector    = vectorToCenter;
 
-                    RotateCurrentStartAngle = GeometryUtility.SignedAngle(
-                        RotateSurfaceTangent, vectorToCenter, RotateSurfaceNormal
+                    rotateCurrentStartAngle = GeometryUtility.SignedAngle(
+                        rotateSurfaceTangent, vectorToCenter, rotateSurfaceNormal
                     );
                 }
 
-                RotateRadius = Math.Max(RotateRadius, handleSize * GUIConstants.MIN_ROTATE_RADIUS);
+                rotateRadius = Math.Max(rotateRadius, handleSize * GUIConstants.MIN_ROTATE_RADIUS);
             }
             else
             {
                 rotateCurrentAngle = GeometryUtility.SignedAngle(
-                    RotateStartVector, vectorToCenter, RotateSurfaceNormal
+                    rotateStartVector, vectorToCenter, rotateSurfaceNormal
                 );
 
-                float minSize        = handleSize * GUIConstants.MIN_ROTATE_RADIUS * 2;
-                float radiusStepSize = minSize;
+                float minSize = handleSize * GUIConstants.MIN_ROTATE_RADIUS * 2;
 
-                RotateRadius = Mathf.CeilToInt((RotateRadius - minSize) / radiusStepSize - 0.5f) * radiusStepSize
+                rotateRadius = Mathf.CeilToInt((rotateRadius - minSize) / minSize - 0.5f) * minSize
                   + minSize;
             }
 
             // snap texture coordinates in world/local space
-            RotateCurrentSnappedAngle = GridUtility.SnappedAngle(RotateOriginalAngle + rotateCurrentAngle)
-              - RotateOriginalAngle;
+            rotateCurrentSnappedAngle = GridUtility.SnappedAngle(rotateOriginalAngle + rotateCurrentAngle)
+              - rotateOriginalAngle;
 
-            return HaveRotateStartAngle;
+            return haveRotateStartAngle;
         }
     }
 }

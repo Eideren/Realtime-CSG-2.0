@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace RealtimeCSG.Helpers
 {
-    public sealed partial class CSGHandles
+    public sealed class CSGHandles
     {
         public delegate void InitFunction();
 
@@ -11,50 +11,33 @@ namespace RealtimeCSG.Helpers
             int controlID, Vector3 position, Quaternion rotation, float size, EventType eventType
         );
 
-        private static Vector3[] s_Vertices = new Vector3[4];
-        private static Vector3[] s_Points = new Vector3[5];
-        private static Vector3 s_PlanarHandlesOctant = Vector3.one;
+        private static readonly Vector3[] vertices = new Vector3[4];
+        private static readonly Vector3[] points = new Vector3[5];
+        private static Vector3 m_PlanarHandlesOctant = Vector3.one;
 
-        internal static Color staticColor = new Color(.5f, .5f, .5f, 0f);
-        internal static float staticBlend = 0.6f;
+        internal static Color StaticColor = new Color(.5f, .5f, .5f, 0f);
+        internal static float StaticBlend = 0.6f;
 
-        internal static int s_xAxisMoveHandleHash = "xAxisFreeMoveHandleHash".GetHashCode();
-        internal static int s_yAxisMoveHandleHash = "yAxisFreeMoveHandleHash".GetHashCode();
-        internal static int s_zAxisMoveHandleHash = "zAxisFreeMoveHandleHash".GetHashCode();
-        internal static int s_xzAxisMoveHandleHash = "xzAxesFreeMoveHandleHash".GetHashCode();
-        internal static int s_xyAxisMoveHandleHash = "xyAxesFreeMoveHandleHash".GetHashCode();
-        internal static int s_yzAxisMoveHandleHash = "yzAxesFreeMoveHandleHash".GetHashCode();
-        internal static int s_centerMoveHandleHash = "centerFreeMoveHandleHash".GetHashCode();
+        internal static int XAxisMoveHandleHash = "xAxisFreeMoveHandleHash".GetHashCode();
+        internal static int YAxisMoveHandleHash = "yAxisFreeMoveHandleHash".GetHashCode();
+        internal static int ZAxisMoveHandleHash = "zAxisFreeMoveHandleHash".GetHashCode();
+        internal static int XZAxisMoveHandleHash = "xzAxesFreeMoveHandleHash".GetHashCode();
+        internal static int XYAxisMoveHandleHash = "xyAxesFreeMoveHandleHash".GetHashCode();
+        internal static int YZAxisMoveHandleHash = "yzAxesFreeMoveHandleHash".GetHashCode();
+        internal static int CenterMoveHandleHash = "centerFreeMoveHandleHash".GetHashCode();
 
-        internal static int s_ScaleSliderHash = "ScaleSliderHash".GetHashCode();
-        internal static int s_ScaleValueHandleHash = "ScaleValueHandleHash".GetHashCode();
-        internal static int s_DiscHash = "DiscHash".GetHashCode();
-        internal static int s_FreeRotateHandleHash = "FreeRotateHandleHash".GetHashCode();
+        internal static int ScaleSliderHash = "ScaleSliderHash".GetHashCode();
+        internal static int ScaleValueHandleHash = "ScaleValueHandleHash".GetHashCode();
+        internal static int DiscHash = "DiscHash".GetHashCode();
+        internal static int FreeRotateHandleHash = "FreeRotateHandleHash".GetHashCode();
 
-        internal static int s_SliderHash = "SliderHash".GetHashCode();
+        internal static int SliderHash = "SliderHash".GetHashCode();
 
         public static void CubeHandleCap(
             int controlID, Vector3 position, Quaternion rotation, float size, EventType eventType
         )
         {
-#if UNITY_5_6_OR_NEWER
             Handles.CubeHandleCap(controlID, position, rotation, size, eventType);
-#else
-			switch (eventType)
-			{
-				case EventType.Layout:
-				{
-					HandleUtility.AddControl(controlID, HandleUtility.DistanceToCircle(position, size * .1f));
-					break;
-				}
-				case EventType.Repaint:
-				{ 
-					var direction = rotation * Vector3.forward;
-					Handles.CubeCap(controlID, position, Quaternion.LookRotation(direction), size * .2f);
-					break;
-				}
-			}
-#endif
         }
 
         public static void DiamondDotCap(
@@ -72,7 +55,7 @@ namespace RealtimeCSG.Helpers
                 case EventType.Repaint:
                 {
                     Vector3 direction = rotation * Vector3.forward;
-                    PaintUtility.DiamondDotCap(controlID, position, Quaternion.LookRotation(direction), size * .2f);
+                    PaintUtility.DiamondDotCap(position, size * .2f);
 
                     break;
                 }
@@ -116,7 +99,7 @@ namespace RealtimeCSG.Helpers
                 case EventType.Repaint:
                 {
                     Vector3 direction = rotation * Vector3.forward;
-                    PaintUtility.CircleDotCap(controlID, position, Quaternion.LookRotation(direction), size * .2f);
+                    PaintUtility.CircleDotCap(position, size * .2f);
 
                     break;
                 }
@@ -127,113 +110,39 @@ namespace RealtimeCSG.Helpers
             int controlID, Vector3 position, Quaternion rotation, float size, EventType eventType
         )
         {
-#if UNITY_5_6_OR_NEWER
             Handles.DotHandleCap(controlID, position, rotation, size, eventType);
-#else
-			switch (eventType)
-			{
-				case EventType.Layout:
-				{
-					HandleUtility.AddControl(controlID, HandleUtility.DistanceToCircle(position, size * .1f));
-					break;
-				}
-				case EventType.Repaint:
-				{ 
-					var direction = rotation * Vector3.forward;
-					Handles.DotCap(controlID, position, Quaternion.LookRotation(direction), size * .2f);
-					break;
-				}
-			}
-#endif
         }
 
         public static void ArrowHandleCap(
             int controlID, Vector3 position, Quaternion rotation, float size, EventType eventType
         )
         {
-#if UNITY_5_6_OR_NEWER
             Handles.ArrowHandleCap(controlID, position, rotation, size, eventType);
-#else
-			switch (eventType)
-			{
-				case EventType.Layout:
-				{
-					var direction = rotation * Vector3.forward;
-					HandleUtility.AddControl (controlID, HandleUtility.DistanceToLine (position, position + direction * size * .9f));
-					HandleUtility.AddControl (controlID, HandleUtility.DistanceToCircle (position + direction * size, size * .2f));
-					break;
-				}
-				case EventType.Repaint:
-				{
-					var direction = rotation * Vector3.forward;
-					ConeHandleCap (controlID, position + direction * size, Quaternion.LookRotation (direction), size * .2f, eventType);
-					Handles.DrawLine (position, position + direction * size * .9f);
-					break;
-				}
-			}
-#endif
         }
 
         public static void HoverArrowHandleCap(
             int controlID, Vector3 position, Quaternion rotation, float size, EventType eventType
         )
         {
-#if UNITY_5_6_OR_NEWER
             Handles.ArrowHandleCap(controlID, position, rotation, size, eventType);
-#else
-			switch (eventType)
-			{
-				case EventType.Layout:
-				{
-					//var direction = rotation * Vector3.forward;
-					//HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(position, position + direction * size * .9f));
-					//HandleUtility.AddControl(controlID, HandleUtility.DistanceToCircle(position + direction * size, size * .2f));
-					HandleUtility.AddControl(controlID, HandleUtility.DistanceToCircle(position, size * .1f));
-					break;
-				}
-				case EventType.Repaint:
-				{
-					if (HandleUtility.nearestControl == controlID ||
-						GUIUtility.hotControl == controlID)
-					{
-						var direction = rotation * Vector3.forward;
-						ConeHandleCap(controlID, position + direction * size, Quaternion.LookRotation(direction), size * .2f, eventType);
-						Handles.DrawLine(position, position + direction * size * .9f);
-					}
-					break;
-				}
-			}
-#endif
         }
 
         public static void ConeHandleCap(
             int controlID, Vector3 position, Quaternion rotation, float size, EventType eventType
         )
         {
-#if UNITY_5_6_OR_NEWER
             Handles.ConeHandleCap(controlID, position, rotation, size, eventType);
-#else
-			switch (eventType)
-			{
-				case (EventType.Layout):
-					HandleUtility.AddControl (controlID, HandleUtility.DistanceToCircle (position, size));
-					break;
-				case (EventType.Repaint):
-					Handles.ConeCap(controlID, position, rotation, size);
-					break;
-			}
-#endif
         }
 
         internal static float DistanceToRectangleInternal(Vector3 position, Quaternion rotation, Vector2 size)
         {
             Vector3 sideways = rotation * new Vector3(size.x, 0, 0);
             Vector3 up       = rotation * new Vector3(0, size.y, 0);
-            s_Points[0] = HandleUtility.WorldToGUIPoint(position + sideways + up);
-            s_Points[1] = HandleUtility.WorldToGUIPoint(position + sideways - up);
-            s_Points[2] = HandleUtility.WorldToGUIPoint(position - sideways - up);
-            s_Points[3] = HandleUtility.WorldToGUIPoint(position - sideways + up);
-            s_Points[4] = s_Points[0];
+            points[0] = HandleUtility.WorldToGUIPoint(position + sideways + up);
+            points[1] = HandleUtility.WorldToGUIPoint(position + sideways - up);
+            points[2] = HandleUtility.WorldToGUIPoint(position - sideways - up);
+            points[3] = HandleUtility.WorldToGUIPoint(position - sideways + up);
+            points[4] = points[0];
 
             Vector2 pos      = Event.current.mousePosition;
             bool    oddNodes = false;
@@ -241,10 +150,10 @@ namespace RealtimeCSG.Helpers
 
             for(int i = 0; i < 5; i++)
             {
-                if(s_Points[i].y > pos.y != s_Points[j].y > pos.y)
+                if(points[i].y > pos.y != points[j].y > pos.y)
                 {
-                    if(pos.x < (s_Points[j].x - s_Points[i].x) * (pos.y - s_Points[i].y)
-                     / (s_Points[j].y - s_Points[i].y) + s_Points[i].x)
+                    if(pos.x < (points[j].x - points[i].x) * (pos.y - points[i].y)
+                     / (points[j].y - points[i].y) + points[i].x)
                     {
                         oddNodes = !oddNodes;
                     }
@@ -255,12 +164,12 @@ namespace RealtimeCSG.Helpers
 
             if(!oddNodes)
             {
-                float dist, closestDist = -1f;
+                float closestDist = -1f;
                 j = 1;
 
                 for(int i = 0; i < 4; i++)
                 {
-                    dist = HandleUtility.DistancePointToLineSegment(pos, s_Points[i], s_Points[j++]);
+                    float dist = HandleUtility.DistancePointToLineSegment(pos, points[i], points[j++]);
 
                     if(dist < closestDist || closestDist < 0)
                     {
@@ -270,10 +179,8 @@ namespace RealtimeCSG.Helpers
 
                 return closestDist;
             }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
 
         internal static bool ContainsStatic(GameObject[] objects)
@@ -294,7 +201,7 @@ namespace RealtimeCSG.Helpers
             return false;
         }
 
-        private static Vector3[] s_RectangleHandlePointsCache = new Vector3[5];
+        private static readonly Vector3[] rectangleHandlePointsCache = new Vector3[5];
 
         public static void RectangleHandleCap(
             int controlID, Vector3 position, Quaternion rotation, float size, EventType eventType
@@ -316,12 +223,12 @@ namespace RealtimeCSG.Helpers
                 case EventType.Repaint:
                     Vector3 sideways = rotation * new Vector3(size.x, 0, 0);
                     Vector3 up       = rotation * new Vector3(0, size.y, 0);
-                    s_RectangleHandlePointsCache[0] = position + sideways + up;
-                    s_RectangleHandlePointsCache[1] = position + sideways - up;
-                    s_RectangleHandlePointsCache[2] = position - sideways - up;
-                    s_RectangleHandlePointsCache[3] = position - sideways + up;
-                    s_RectangleHandlePointsCache[4] = position + sideways + up;
-                    Handles.DrawPolyLine(s_RectangleHandlePointsCache);
+                    rectangleHandlePointsCache[0] = position + sideways + up;
+                    rectangleHandlePointsCache[1] = position + sideways - up;
+                    rectangleHandlePointsCache[2] = position - sideways - up;
+                    rectangleHandlePointsCache[3] = position - sideways + up;
+                    rectangleHandlePointsCache[4] = position + sideways + up;
+                    Handles.DrawPolyLine(rectangleHandlePointsCache);
 
                     break;
             }
@@ -332,7 +239,7 @@ namespace RealtimeCSG.Helpers
           , Vector3[] snapVertices, InitFunction initFunction, InitFunction shutdownFunction
         )
         {
-            int id = GUIUtility.GetControlID(s_SliderHash, FocusType.Keyboard);
+            int id = GUIUtility.GetControlID(SliderHash, FocusType.Keyboard);
 
             return CSGSlider1D.Do(
                 camera, id, position, direction, size, capFunction, snapMode, snapVertices, initFunction
@@ -357,7 +264,7 @@ namespace RealtimeCSG.Helpers
             return CSGBounds.Do(camera, bounds, rotation, showEdgePoints);
         }
 
-        internal static bool disabled = false;
+        internal static bool Disabled;
 
         public static int FocusControl
         {
@@ -370,12 +277,7 @@ namespace RealtimeCSG.Helpers
 
                 int hotControl = GUIUtility.hotControl;
 
-                if(hotControl == 0)
-                {
-                    return HandleUtility.nearestControl;
-                }
-
-                return GUIUtility.keyboardControl;
+                return hotControl == 0 ? HandleUtility.nearestControl : GUIUtility.keyboardControl;
             }
         }
 
@@ -384,16 +286,16 @@ namespace RealtimeCSG.Helpers
             return QualitySettings.activeColorSpace == ColorSpace.Linear ? color.linear : color;
         }
 
-        public static Color preselectionColor = new Color(201f / 255, 200f / 255, 144f / 255, 0.89f);
+        public static Color PreselectionColor = new Color(201f / 255, 200f / 255, 144f / 255, 0.89f);
 
         public static Color StateColor(
             Color color, bool isDisabled = false, bool isSelected = false, bool isPreSelected = false
         )
         {
             return ToActiveColorSpace(
-                isDisabled || disabled ? Color.Lerp(color, staticColor, staticBlend) :
+                isDisabled || Disabled ? Color.Lerp(color, StaticColor, StaticBlend) :
                 isSelected ? Handles.selectedColor :
-                isPreSelected ? preselectionColor : color
+                isPreSelected ? PreselectionColor : color
             );
         }
 
@@ -403,20 +305,20 @@ namespace RealtimeCSG.Helpers
         )
         {
             GUI.SetNextControlName("xAxis");
-            int xAxisSlider = GUIUtility.GetControlID(s_xAxisMoveHandleHash, FocusType.Passive);
+            int xAxisSlider = GUIUtility.GetControlID(XAxisMoveHandleHash, FocusType.Passive);
             GUI.SetNextControlName("yAxis");
-            int yAxisSlider = GUIUtility.GetControlID(s_yAxisMoveHandleHash, FocusType.Passive);
+            int yAxisSlider = GUIUtility.GetControlID(YAxisMoveHandleHash, FocusType.Passive);
             GUI.SetNextControlName("zAxis");
-            int zAxisSlider = GUIUtility.GetControlID(s_zAxisMoveHandleHash, FocusType.Passive);
+            int zAxisSlider = GUIUtility.GetControlID(ZAxisMoveHandleHash, FocusType.Passive);
             GUI.SetNextControlName("xzPlane");
-            int xzPlaneSlider = GUIUtility.GetControlID(s_xzAxisMoveHandleHash, FocusType.Passive);
+            int xzPlaneSlider = GUIUtility.GetControlID(XZAxisMoveHandleHash, FocusType.Passive);
             GUI.SetNextControlName("xyPlane");
-            int xyPlaneSlider = GUIUtility.GetControlID(s_xyAxisMoveHandleHash, FocusType.Passive);
+            int xyPlaneSlider = GUIUtility.GetControlID(XYAxisMoveHandleHash, FocusType.Passive);
             GUI.SetNextControlName("yzPlane");
-            int yzPlaneSlider = GUIUtility.GetControlID(s_yzAxisMoveHandleHash, FocusType.Passive);
+            int yzPlaneSlider = GUIUtility.GetControlID(YZAxisMoveHandleHash, FocusType.Passive);
 
             bool isStatic     = !Tools.hidden && EditorApplication.isPlaying && ContainsStatic(Selection.gameObjects);
-            bool prevDisabled = disabled;
+            bool prevDisabled = Disabled;
 
             int hotControl = GUIUtility.hotControl;
 
@@ -475,7 +377,7 @@ namespace RealtimeCSG.Helpers
             Color xyPlaneColor = StateColor(Handles.zAxisColor, xyPlaneDisabled, xyAxiSelected);
             Color yzPlaneColor = StateColor(Handles.xAxisColor, yzPlaneDisabled, yzAxiSelected);
 
-            disabled = xAxisDisabled;
+            Disabled = xAxisDisabled;
 
             {
                 Handles.color = xAxisColor;
@@ -486,7 +388,7 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled = yAxisDisabled;
+            Disabled = yAxisDisabled;
 
             {
                 Handles.color = yAxisColor;
@@ -497,7 +399,7 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled = zAxisDisabled;
+            Disabled = zAxisDisabled;
 
             {
                 Handles.color = zAxisColor;
@@ -508,9 +410,9 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled = xzPlaneDisabled;
+            Disabled = xzPlaneDisabled;
 
-            if(!disabled)
+            if(!Disabled)
             {
                 Handles.color = xzPlaneColor;
 
@@ -520,9 +422,9 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled = xyPlaneDisabled;
+            Disabled = xyPlaneDisabled;
 
-            if(!disabled)
+            if(!Disabled)
             {
                 Handles.color = xyPlaneColor;
 
@@ -532,9 +434,9 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled = yzPlaneDisabled;
+            Disabled = yzPlaneDisabled;
 
-            if(!disabled)
+            if(!Disabled)
             {
                 Handles.color = yzPlaneColor;
 
@@ -544,7 +446,7 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled      = prevDisabled;
+            Disabled      = prevDisabled;
             Handles.color = originalColor;
 
             return position;
@@ -555,7 +457,7 @@ namespace RealtimeCSG.Helpers
           , InitFunction initFunction, InitFunction shutdownFunction
         )
         {
-            int id = GUIUtility.GetControlID(s_ScaleSliderHash, FocusType.Keyboard);
+            int id = GUIUtility.GetControlID(ScaleSliderHash, FocusType.Keyboard);
 
             return CSGScaleSlider.DoAxis(
                 id, scale, position, direction, rotation, size, snapping, snap, initFunction, shutdownFunction
@@ -567,7 +469,7 @@ namespace RealtimeCSG.Helpers
           , float snap, InitFunction initFunction, InitFunction shutdownFunction
         )
         {
-            int id = GUIUtility.GetControlID(s_ScaleValueHandleHash, FocusType.Keyboard);
+            int id = GUIUtility.GetControlID(ScaleValueHandleHash, FocusType.Keyboard);
 
             return CSGScaleSlider.DoCenter(
                 id, value, position, rotation, size, capFunction, snapping, snap, initFunction, shutdownFunction
@@ -583,13 +485,13 @@ namespace RealtimeCSG.Helpers
             Color originalColor = Handles.color;
             bool  isStatic      = !Tools.hidden && EditorApplication.isPlaying && ContainsStatic(Selection.gameObjects);
 
-            bool prevDisabled = disabled;
+            bool prevDisabled = Disabled;
 
-            disabled = prevDisabled || CSGSettings.LockAxisX;
+            Disabled = prevDisabled || CSGSettings.LockAxisX;
 
             {
                 Handles.color =
-                    isStatic ? Color.Lerp(Handles.xAxisColor, staticColor, staticBlend) : Handles.xAxisColor;
+                    isStatic ? Color.Lerp(Handles.xAxisColor, StaticColor, StaticBlend) : Handles.xAxisColor;
 
                 GUI.SetNextControlName("xAxis");
 
@@ -599,11 +501,11 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled = prevDisabled || CSGSettings.LockAxisY;
+            Disabled = prevDisabled || CSGSettings.LockAxisY;
 
             {
                 Handles.color =
-                    isStatic ? Color.Lerp(Handles.yAxisColor, staticColor, staticBlend) : Handles.yAxisColor;
+                    isStatic ? Color.Lerp(Handles.yAxisColor, StaticColor, StaticBlend) : Handles.yAxisColor;
 
                 GUI.SetNextControlName("yAxis");
 
@@ -613,11 +515,11 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled = prevDisabled || CSGSettings.LockAxisZ;
+            Disabled = prevDisabled || CSGSettings.LockAxisZ;
 
             {
                 Handles.color =
-                    isStatic ? Color.Lerp(Handles.zAxisColor, staticColor, staticBlend) : Handles.zAxisColor;
+                    isStatic ? Color.Lerp(Handles.zAxisColor, StaticColor, StaticBlend) : Handles.zAxisColor;
 
                 GUI.SetNextControlName("zAxis");
 
@@ -627,7 +529,7 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            disabled      = prevDisabled;
+            Disabled      = prevDisabled;
             Handles.color = Handles.centerColor;
 
             scale = ScaleValueHandle(
@@ -642,7 +544,7 @@ namespace RealtimeCSG.Helpers
                 scale = Vector3.zero;
             }
 
-            disabled      = prevDisabled;
+            Disabled      = prevDisabled;
             Handles.color = originalColor;
 
             return scale;
@@ -653,7 +555,7 @@ namespace RealtimeCSG.Helpers
           , bool snapping, float snap, InitFunction initFunction, InitFunction shutdownFunction = null
         )
         {
-            int id = GUIUtility.GetControlID(s_DiscHash, FocusType.Keyboard);
+            int id = GUIUtility.GetControlID(DiscHash, FocusType.Keyboard);
 
             return CSGDisc.Do(
                 camera, id, null, rotation, position, axis, size, cutoffPlane, snapping, snap, initFunction
@@ -666,9 +568,9 @@ namespace RealtimeCSG.Helpers
           , InitFunction shutdownFunction = null
         )
         {
-            int id = GUIUtility.GetControlID(s_FreeRotateHandleHash, FocusType.Keyboard);
+            int id = GUIUtility.GetControlID(FreeRotateHandleHash, FocusType.Keyboard);
 
-            return CSGFreeRotate.Do(camera, id, rotation, position, size, snapping, initFunction, shutdownFunction);
+            return CSGFreeRotate.Do(camera, id, rotation, position, size, initFunction, shutdownFunction);
         }
 
         public static Quaternion DoRotationHandle(
@@ -676,12 +578,12 @@ namespace RealtimeCSG.Helpers
           , InitFunction shutdownFunction = null
         )
         {
-            int hotControl   = EditorGUIUtility.hotControl;
-            int xAxisDiscID  = GUIUtility.GetControlID(s_DiscHash, FocusType.Keyboard);
-            int yAxisDiscID  = GUIUtility.GetControlID(s_DiscHash, FocusType.Keyboard);
-            int zAxisDiscID  = GUIUtility.GetControlID(s_DiscHash, FocusType.Keyboard);
-            int freeDiscID   = GUIUtility.GetControlID(s_DiscHash, FocusType.Keyboard);
-            int freeRotateID = GUIUtility.GetControlID(s_FreeRotateHandleHash, FocusType.Keyboard);
+            int hotControl   = GUIUtility.hotControl;
+            int xAxisDiscID  = GUIUtility.GetControlID(DiscHash, FocusType.Keyboard);
+            int yAxisDiscID  = GUIUtility.GetControlID(DiscHash, FocusType.Keyboard);
+            int zAxisDiscID  = GUIUtility.GetControlID(DiscHash, FocusType.Keyboard);
+            int freeDiscID   = GUIUtility.GetControlID(DiscHash, FocusType.Keyboard);
+            int freeRotateID = GUIUtility.GetControlID(FreeRotateHandleHash, FocusType.Keyboard);
 
             bool haveControl = hotControl == xAxisDiscID ||
                 hotControl == yAxisDiscID ||
@@ -693,7 +595,7 @@ namespace RealtimeCSG.Helpers
             Color temp = Handles.color;
 
             bool isStatic = !Tools.hidden && EditorApplication.isPlaying && ContainsStatic(Selection.gameObjects);
-            Handles.color = isStatic ? Color.Lerp(Handles.xAxisColor, staticColor, staticBlend) : Handles.xAxisColor;
+            Handles.color = isStatic ? Color.Lerp(Handles.xAxisColor, StaticColor, StaticBlend) : Handles.xAxisColor;
 
             if(!haveControl || hotControl == xAxisDiscID)
             {
@@ -703,7 +605,7 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            Handles.color = isStatic ? Color.Lerp(Handles.yAxisColor, staticColor, staticBlend) : Handles.yAxisColor;
+            Handles.color = isStatic ? Color.Lerp(Handles.yAxisColor, StaticColor, StaticBlend) : Handles.yAxisColor;
 
             if(!haveControl || hotControl == yAxisDiscID)
             {
@@ -713,7 +615,7 @@ namespace RealtimeCSG.Helpers
                 );
             }
 
-            Handles.color = isStatic ? Color.Lerp(Handles.zAxisColor, staticColor, staticBlend) : Handles.zAxisColor;
+            Handles.color = isStatic ? Color.Lerp(Handles.zAxisColor, StaticColor, StaticBlend) : Handles.zAxisColor;
 
             if(!haveControl || hotControl == zAxisDiscID)
             {
@@ -738,7 +640,7 @@ namespace RealtimeCSG.Helpers
                 if(!haveControl || hotControl == freeRotateID)
                 {
                     rotation = CSGFreeRotate.Do(
-                        camera, freeRotateID, rotation, position, size, snapping, initFunction, shutdownFunction
+                        camera, freeRotateID, rotation, position, size, initFunction, shutdownFunction
                     );
                 }
             }
@@ -753,29 +655,13 @@ namespace RealtimeCSG.Helpers
           , SnapMode snapMode, Vector3[] snapVertices, InitFunction initFunction, InitFunction shutdownFunction = null
         )
         {
-            int moveHandleHash = 0;
-
-            switch(planeID)
+            int moveHandleHash = planeID switch
             {
-                case PrincipleAxis2.XZ:
-                {
-                    moveHandleHash = s_xzAxisMoveHandleHash;
-
-                    break;
-                }
-                case PrincipleAxis2.XY:
-                {
-                    moveHandleHash = s_xyAxisMoveHandleHash;
-
-                    break;
-                }
-                case PrincipleAxis2.YZ:
-                {
-                    moveHandleHash = s_yzAxisMoveHandleHash;
-
-                    break;
-                }
-            }
+                PrincipleAxis2.XZ => XZAxisMoveHandleHash
+              , PrincipleAxis2.XY => XYAxisMoveHandleHash
+              , PrincipleAxis2.YZ => YZAxisMoveHandleHash
+              , _                 => 0
+            };
 
             int id = GUIUtility.GetControlID(moveHandleHash, FocusType.Keyboard);
 
@@ -790,39 +676,39 @@ namespace RealtimeCSG.Helpers
           , SnapMode snapMode, Vector3[] snapVertices, InitFunction initFunction, InitFunction shutdownFunction = null
         )
         {
-            int  axis1index = 0;
-            int  axis2index = 0;
+            int  axis1Index = 0;
+            int  axis2Index = 0;
             bool isStatic   = !Tools.hidden && EditorApplication.isPlaying && ContainsStatic(Selection.gameObjects);
 
             switch(planeID)
             {
                 case PrincipleAxis2.XZ:
                 {
-                    axis1index    = 0;
-                    axis2index    = 2;
-                    Handles.color = isStatic ? staticColor : Handles.yAxisColor;
+                    axis1Index    = 0;
+                    axis2Index    = 2;
+                    Handles.color = isStatic ? StaticColor : Handles.yAxisColor;
 
                     break;
                 }
                 case PrincipleAxis2.XY:
                 {
-                    axis1index    = 0;
-                    axis2index    = 1;
-                    Handles.color = isStatic ? staticColor : Handles.zAxisColor;
+                    axis1Index    = 0;
+                    axis2Index    = 1;
+                    Handles.color = isStatic ? StaticColor : Handles.zAxisColor;
 
                     break;
                 }
                 case PrincipleAxis2.YZ:
                 {
-                    axis1index    = 1;
-                    axis2index    = 2;
-                    Handles.color = isStatic ? staticColor : Handles.xAxisColor;
+                    axis1Index    = 1;
+                    axis2Index    = 2;
+                    Handles.color = isStatic ? StaticColor : Handles.xAxisColor;
 
                     break;
                 }
             }
 
-            int   axisNormalIndex = 3 - axis2index - axis1index;
+            int   axisNormalIndex = 3 - axis2Index - axis1Index;
             Color prevColor       = Handles.color;
 
             Matrix4x4 handleTransform = Matrix4x4.TRS(position, rotation, Vector3.one);
@@ -837,42 +723,42 @@ namespace RealtimeCSG.Helpers
                 return position;
             }
 
-            if(EditorGUIUtility.hotControl == 0)
+            if(GUIUtility.hotControl == 0)
             {
-                s_PlanarHandlesOctant[axis1index] = cameraToTransformToolVector[axis1index] < -0.01f ? -1 : 1;
-                s_PlanarHandlesOctant[axis2index] = cameraToTransformToolVector[axis2index] < -0.01f ? -1 : 1;
+                m_PlanarHandlesOctant[axis1Index] = cameraToTransformToolVector[axis1Index] < -0.01f ? -1 : 1;
+                m_PlanarHandlesOctant[axis2Index] = cameraToTransformToolVector[axis2Index] < -0.01f ? -1 : 1;
             }
 
-            Vector3 handleOffset = s_PlanarHandlesOctant;
+            Vector3 handleOffset = m_PlanarHandlesOctant;
             handleOffset[axisNormalIndex] = 0;
             handleOffset                  = rotation * (handleOffset * handleSize * 0.5f);
 
             Vector3 axis1      = Vector3.zero;
             Vector3 axis2      = Vector3.zero;
             Vector3 axisNormal = Vector3.zero;
-            axis1[axis1index]           = 1;
-            axis2[axis2index]           = 1;
+            axis1[axis1Index]           = 1;
+            axis2[axis2Index]           = 1;
             axisNormal[axisNormalIndex] = 1;
             axis1                       = rotation * axis1;
             axis2                       = rotation * axis2;
             axisNormal                  = rotation * axisNormal;
 
-            s_Vertices[0] = position + handleOffset + (axis1 + axis2) * handleSize * 0.5f;
-            s_Vertices[1] = position + handleOffset + (-axis1 + axis2) * handleSize * 0.5f;
-            s_Vertices[2] = position + handleOffset + (-axis1 - axis2) * handleSize * 0.5f;
-            s_Vertices[3] = position + handleOffset + (axis1 - axis2) * handleSize * 0.5f;
+            vertices[0] = position + handleOffset + (axis1 + axis2) * handleSize * 0.5f;
+            vertices[1] = position + handleOffset + (-axis1 + axis2) * handleSize * 0.5f;
+            vertices[2] = position + handleOffset + (-axis1 - axis2) * handleSize * 0.5f;
+            vertices[3] = position + handleOffset + (axis1 - axis2) * handleSize * 0.5f;
 
             Color innerColor = Handles.color;
             Color outerColor = Color.black;
             innerColor = new Color(innerColor.r, innerColor.g, innerColor.b, 0.1f);
 
-            if(disabled)
+            if(Disabled)
             {
                 innerColor = Handles.secondaryColor;
                 outerColor = innerColor;
             }
 
-            Handles.DrawSolidRectangleWithOutline(s_Vertices, innerColor, outerColor);
+            Handles.DrawSolidRectangleWithOutline(vertices, innerColor, outerColor);
 
             position = Slider2D(
                 camera, id, position, handleOffset, axisNormal, axis1, axis2, handleSize * 0.5f, RectangleHandleCap
