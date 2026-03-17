@@ -1357,7 +1357,7 @@ namespace RealtimeCSG
                     EditorUtility.SetDirty(this);
                 }
 
-                InternalCSGModelManager.External.SetDirty(parentModel.modelNodeID);
+                //InternalCSGModelManager.External.SetDirty(parentModel.modelNodeID);
                 InternalCSGModelManager.CheckForChanges(true);
                 //DebugEditorWindow.PrintDebugInfo();
             }

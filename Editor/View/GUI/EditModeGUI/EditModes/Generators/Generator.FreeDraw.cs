@@ -603,15 +603,7 @@ namespace RealtimeCSG
                 return true;
             }
 
-            ShapePolygonUtility.FixMaterials(
-                projectedVertices,
-                newPolygons,
-                Quaternion.identity,
-                brushPosition,
-                buildPlane,
-                curvedEdgeTexgens,
-                curvedShapeEdges
-            );
+            ShapePolygonUtility.FixMaterials(projectedVertices, newPolygons, curvedEdgeTexgens, curvedShapeEdges);
 
             if(registerUndo)
             {
@@ -627,36 +619,10 @@ namespace RealtimeCSG
         private bool BuildPlaneIsReversed
         {
             get
-            {                                       /*
-                if (planeOnGeometry)
-                {
-                    if (settings.onPlaneVertices.Length > 0)
-                    {
-                        var plane0 = settings.onPlaneVertices[0];
-                        var plane0_neg = plane0.Negated();
-                        for (int i = 1; i < settings.onPlaneVertices.Length; i++)
-                        {
-                            if (settings.onPlaneVertices[i] != plane0 &&
-                                settings.onPlaneVertices[i] != plane0_neg)
-                            {
-                                planeOnGeometry = false;
-                                break;
-                            }
-                        }
-                    } else
-                        planeOnGeometry = false;
-                }
-                */
-                CSGPlane realPlane = geometryPlane; /*
-                if (!planeOnGeometry)
-                    realPlane = RealtimeCSG.Grid.CurrentGridPlane;*/
+            {
+                CSGPlane realPlane = geometryPlane;
 
-                if(Vector3.Dot(realPlane.normal, buildPlane.normal) < 0)
-                {
-                    return true;
-                }
-
-                return false;
+                return Vector3.Dot(realPlane.normal, buildPlane.normal) < 0;
             }
         }
 
@@ -748,15 +714,7 @@ namespace RealtimeCSG
                 return false;
             }
 
-            ShapePolygonUtility.FixMaterials(
-                projectedVertices,
-                newPolygons,
-                Quaternion.identity,
-                brushPosition,
-                buildPlane,
-                curvedEdgeTexgens,
-                curvedShapeEdges
-            );
+            ShapePolygonUtility.FixMaterials(projectedVertices, newPolygons, curvedEdgeTexgens, curvedShapeEdges);
 
             EditModeManager.ResetMessage();
 
