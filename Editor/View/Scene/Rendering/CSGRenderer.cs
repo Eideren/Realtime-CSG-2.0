@@ -144,7 +144,7 @@ namespace RealtimeCSG
         public static void DrawSurfaceOutlines(
             int brushNodeID, Shape shape, Matrix4x4 transformation, int surfaceIndex,
             Color outerColor, Color innerColor,
-            float thickness = GUIConstants.oldThickLineScale
+            float thickness = GUIConstants.OLD_THICK_LINE_SCALE
         )
         {
             // .. could be a prefab
@@ -234,7 +234,7 @@ namespace RealtimeCSG
             Color visibleInnerColor, Color visibleOuterColor, Color visibleOutlineColor,
             Color invisibleInnerColor, Color invisibleOuterColor, Color invisibleOutlineColor,
             Color surfaceColor,
-            float thickness = GUIConstants.thickLineScale
+            float thickness = GUIConstants.THICK_LINE_SCALE
         )
         {
             if(outlines == null)

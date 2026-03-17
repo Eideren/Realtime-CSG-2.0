@@ -487,7 +487,7 @@ namespace RealtimeCSG
                 brush.brushNodeID, brush.Shape,
                 brush_transformation, ColorSettings.WireframeOutline,
                 highlight_surface,
-                false, GUIConstants.oldLineScale
+                false, GUIConstants.OLD_LINE_SCALE
             );
         }
 

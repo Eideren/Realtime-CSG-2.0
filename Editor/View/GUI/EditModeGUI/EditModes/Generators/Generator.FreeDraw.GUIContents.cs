@@ -26,7 +26,7 @@ namespace RealtimeCSG
         private static readonly GUIContent SplitSelectedContent = new GUIContent("Insert point");
 
         private static readonly ToolTip SplitSelectedTooltip = new ToolTip(
-            "Insert point", "Insert a new point in the middle of each selected edge.", Keys.InsertPoint
+            "Insert point", "Insert a new point in the middle of each selected edge.", Keys.insertPoint
         );
 
         private static readonly GUILayoutOption width20 = GUILayout.Width(25);

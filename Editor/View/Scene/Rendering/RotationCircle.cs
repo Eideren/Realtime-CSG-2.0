@@ -63,7 +63,7 @@ namespace RealtimeCSG
 
             if(!HaveRotateStartAngle)
             {
-                if(RotateRadius > handleSize * GUIConstants.minRotateRadius)
+                if(RotateRadius > handleSize * GUIConstants.MIN_ROTATE_RADIUS)
                 {
                     HaveRotateStartAngle = true;
                     RotateOriginalAngle  = surfaceTexGen.RotationAngle;
@@ -74,7 +74,7 @@ namespace RealtimeCSG
                     );
                 }
 
-                RotateRadius = Math.Max(RotateRadius, handleSize * GUIConstants.minRotateRadius);
+                RotateRadius = Math.Max(RotateRadius, handleSize * GUIConstants.MIN_ROTATE_RADIUS);
             }
             else
             {
@@ -82,7 +82,7 @@ namespace RealtimeCSG
                     RotateStartVector, vectorToCenter, RotateSurfaceNormal
                 );
 
-                float minSize        = handleSize * GUIConstants.minRotateRadius * 2;
+                float minSize        = handleSize * GUIConstants.MIN_ROTATE_RADIUS * 2;
                 float radiusStepSize = minSize;
 
                 RotateRadius = Mathf.CeilToInt((RotateRadius - minSize) / radiusStepSize - 0.5f) * radiusStepSize

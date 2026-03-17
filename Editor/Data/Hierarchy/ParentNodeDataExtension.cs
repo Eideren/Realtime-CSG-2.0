@@ -113,7 +113,7 @@ namespace RealtimeCSG
                     int iteratorChildIndex;
 
                     if(!iteratorParent.FindSiblingIndex(
-                           iteratorTransform, iterator.CachedTransformSiblingIndex, iteratorTransformID
+                           iterator.CachedTransformSiblingIndex, iteratorTransformID
                          , out iteratorChildIndex
                        ))
                     {
@@ -260,7 +260,7 @@ namespace RealtimeCSG
                 int       childIndex;
 
                 if(!lastParent.FindSiblingIndex(
-                       ancestor, ancestor.GetSiblingIndex(), ancestor.GetInstanceID(), out childIndex
+                       ancestor.GetSiblingIndex(), ancestor.GetInstanceID(), out childIndex
                    ))
                 {
                     break;

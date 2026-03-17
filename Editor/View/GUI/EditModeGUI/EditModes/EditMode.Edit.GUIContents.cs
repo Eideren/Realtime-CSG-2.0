@@ -38,25 +38,25 @@ namespace RealtimeCSG
         private static readonly GUIContent ContentFlipX = new GUIContent("X");
 
         private static readonly ToolTip TooltipFlipX = new ToolTip(
-            "Flip X", "Flip the selection in the x direction", Keys.FlipSelectionX
+            "Flip X", "Flip the selection in the x direction", Keys.flipSelectionX
         );
 
         private static readonly GUIContent ContentFlipY = new GUIContent("Y");
 
         private static readonly ToolTip TooltipFlipY = new ToolTip(
-            "Flip Y", "Flip the selection in the y direction", Keys.FlipSelectionY
+            "Flip Y", "Flip the selection in the y direction", Keys.flipSelectionY
         );
 
         private static readonly GUIContent ContentFlipZ = new GUIContent("Z");
 
         private static readonly ToolTip TooltipFlipZ = new ToolTip(
-            "Flip Z", "Flip the selection in the z direction", Keys.FlipSelectionZ
+            "Flip Z", "Flip the selection in the z direction", Keys.flipSelectionZ
         );
 
         private static readonly GUIContent ContentSnapToGrid = new GUIContent("Snap to grid");
 
         private static readonly ToolTip TooltipSnapToGrid = new ToolTip(
-            ContentSnapToGrid.text, "Snap the selection to the closest grid lines", Keys.SnapToGridKey
+            ContentSnapToGrid.text, "Snap the selection to the closest grid lines", Keys.snapToGridKey
         );
 
         private static readonly GUIContent ContentSelection = new GUIContent("Selection");

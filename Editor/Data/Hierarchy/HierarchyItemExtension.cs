@@ -7,18 +7,16 @@ namespace RealtimeCSG
     internal static class HierarchyItemExtension
     {
         internal static bool FindSiblingIndex(
-            this HierarchyItem self, Transform searchTransform, int siblingIndex, int searchTransformID, out int index
+            this HierarchyItem self, int siblingIndex, int searchTransformID, out int index
         )
         {
-            if(self.ChildNodes == null ||
-               self.ChildNodes.Length == 0)
+            if(self.ChildNodes == null || self.ChildNodes.Length == 0)
             {
                 index = 0;
 
                 return false;
             }
 
-            int checkIndex       = siblingIndex;
             int last             = self.ChildNodes.Length - 1;
             int currentLoopCount = HierarchyItem.CurrentLoopCount;
 
@@ -37,7 +35,7 @@ namespace RealtimeCSG
                 self.ChildNodes[last].LastLoopCount = currentLoopCount;
             }
 
-            if(self.ChildNodes[last].CachedTransformSiblingIndex < checkIndex)
+            if(self.ChildNodes[last].CachedTransformSiblingIndex < siblingIndex)
             {
                 index = self.ChildNodes.Length;
 
@@ -71,14 +69,14 @@ namespace RealtimeCSG
                 int midKey2 = self.ChildNodes[imid].CachedTransformSiblingIndex;
 
                 // determine which subarray to search
-                if(midKey2 < checkIndex)
+                if(midKey2 < siblingIndex)
                 {
                     // change min index to search upper subarray
                     imin = imid + 1;
                 }
                 else
                 {
-                    if(midKey2 == checkIndex)
+                    if(midKey2 == siblingIndex)
                     {
                         // key found at index imid
 
@@ -106,7 +104,7 @@ namespace RealtimeCSG
 
                         int midKey1 = self.ChildNodes[imid - 1].CachedTransformSiblingIndex;
 
-                        if(midKey1 < checkIndex)
+                        if(midKey1 < siblingIndex)
                         {
                             // key found at index imid
                             index = imid;
@@ -127,8 +125,7 @@ namespace RealtimeCSG
 
         internal static bool FindSiblingIndex(this HierarchyItem self, HierarchyItem item, out int index)
         {
-            if(self.ChildNodes == null ||
-               self.ChildNodes.Length == 0)
+            if(self.ChildNodes == null || self.ChildNodes.Length == 0)
             {
                 index = 0;
 
@@ -154,10 +151,8 @@ namespace RealtimeCSG
 
         internal static bool AddChildItem(this HierarchyItem self, HierarchyItem item)
         {
-            int index;
-
-            if(self.FindSiblingIndex(item, out index))
-                // The transform is already in the array?
+            // The transform is already in the array?
+            if(self.FindSiblingIndex(item, out int index))
             {
                 return false;
             }
@@ -170,7 +165,7 @@ namespace RealtimeCSG
                 item.LastLoopCount               = currentLoopCount;
             }
 
-            if(self.FindSiblingIndex(item.Transform, item.CachedTransformSiblingIndex, item.TransformID, out index))
+            if(self.FindSiblingIndex(item.CachedTransformSiblingIndex, item.TransformID, out index))
             {
                 return false;
             }
@@ -179,24 +174,9 @@ namespace RealtimeCSG
             UnityEditor.ArrayUtility.Insert(ref self.ChildNodes, index, item);
             item.SiblingIndex = index;
 
-            /*
-            bool childrenModified = false;
-            for (int i = index + 1; i < ChildNodes.Length; i++)
+            if(self is ParentNodeData parentData)
             {
-                if (ChildNodes[i].SiblingIndex != i)
-                {
-                    ChildNodes[i].SiblingIndex = i;
-                    childrenModified = true;
-                }
-            }
-            if (childrenModified)*/
-            {
-                ParentNodeData parentData = self as ParentNodeData;
-
-                if(parentData != null)
-                {
-                    parentData.ChildrenModified = true;
-                }
+                parentData.ChildrenModified = true;
             }
 
             Debug.Assert(self.ChildNodes[index] == item);
@@ -206,10 +186,8 @@ namespace RealtimeCSG
 
         internal static bool RemoveChildItem(this HierarchyItem self, HierarchyItem item)
         {
-            int index;
-
-            if(!self.FindSiblingIndex(item, out index))
-                // The transform is not in the array?
+            // The transform is not in the array?
+            if(!self.FindSiblingIndex(item, out int index))
             {
                 return false;
             }
@@ -217,28 +195,7 @@ namespace RealtimeCSG
             // make sure item is removed from the array
             UnityEditor.ArrayUtility.RemoveAt(ref self.ChildNodes, index);
 
-            //item.siblingIndex = -1;
             return true;
-        }
-
-        public static IEnumerable<HierarchyItem> IterateChildrenDeep(this HierarchyItem self)
-        {
-            for(int i = 0; i < self.ChildNodes.Length; i++)
-            {
-                HierarchyItem childNode = self.ChildNodes[i];
-
-                yield return childNode;
-
-                if(childNode.ChildNodes.Length == 0)
-                {
-                    continue;
-                }
-
-                foreach(HierarchyItem item in childNode.IterateChildrenDeep())
-                {
-                    yield return item;
-                }
-            }
         }
 
         public static void Init(this HierarchyItem self, CSGNode node, int nodeID)

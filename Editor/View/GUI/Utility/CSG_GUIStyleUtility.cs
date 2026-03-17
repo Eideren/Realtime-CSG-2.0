@@ -129,13 +129,13 @@ namespace RealtimeCSG
 
         public static ToolTip[] operationTooltip = new ToolTip[]
         {
-            new ToolTip("Additive CSG Operation", "Set the selection to be additive", Keys.MakeSelectedAdditiveKey)
+            new ToolTip("Additive CSG Operation", "Set the selection to be additive", Keys.makeSelectedAdditiveKey)
           , new ToolTip(
-                "Subtractive CSG operation", "Set the selection to be subtractive", Keys.MakeSelectedSubtractiveKey
+                "Subtractive CSG operation", "Set the selection to be subtractive", Keys.makeSelectedSubtractiveKey
             )
           , new ToolTip(
                 "Intersecting CSG operation", "Set the selection to be an intersection operation"
-              , Keys.MakeSelectedIntersectingKey
+              , Keys.makeSelectedIntersectingKey
             )
         };
 
@@ -152,7 +152,7 @@ namespace RealtimeCSG
         public static readonly ToolTip passThroughTooltip = new ToolTip(
             "Perform no CSG operation"
           , "No operation is performed. Child nodes act as if there is no operation above it. This is useful to group different kinds of nodes with."
-          , Keys.MakeSelectedPassThroughKey
+          , Keys.makeSelectedPassThroughKey
         );
 
         private static readonly GUIContent proWireframe = IconContent("icon_pro_wireframe");
@@ -227,13 +227,13 @@ namespace RealtimeCSG
             new ToolTip(
                 "Free-draw brush"
               , "Use this to draw a 2D shape and extrude it,\noptionally with curves by double clicking on edges."
-              , Keys.FreeBuilderMode
+              , Keys.freeBuilderMode
             )
-          , new ToolTip("Create Box brush", "Use this to create boxes", Keys.BoxBuilderMode)
-          , new ToolTip("Create (Hemi)Sphere brush", "Use this to create (hemi)spheres", Keys.SphereBuilderMode)
-          , new ToolTip("Create Cylinder brush", "Use this to create cylinders", Keys.CylinderBuilderMode),
+          , new ToolTip("Create Box brush", "Use this to create boxes", Keys.boxBuilderMode)
+          , new ToolTip("Create (Hemi)Sphere brush", "Use this to create (hemi)spheres", Keys.sphereBuilderMode)
+          , new ToolTip("Create Cylinder brush", "Use this to create cylinders", Keys.cylinderBuilderMode),
             //new ToolTip("Create Spiral Stairs", "Use this to create spiral stairs", Keys.SpiralStairsBuilderMode),
-            new ToolTip("Create Linear Stairs", "Use this to create linear stairs", Keys.LinearStairsBuilderMode)
+            new ToolTip("Create Linear Stairs", "Use this to create linear stairs", Keys.linearStairsBuilderMode)
         };
 
         private static readonly GUIContent[] proInActiveClipTypes = new GUIContent[]
@@ -445,20 +445,20 @@ namespace RealtimeCSG
             {
                 new ToolTip(
                     "Place mode", "In this mode you can place, rotate and scale brushes"
-                  , Keys.SwitchToObjectEditMode
+                  , Keys.switchToObjectEditMode
                 )
               , new ToolTip(
                     "Generate mode", "In this mode you can create brushes using several generators"
-                  , Keys.SwitchToGenerateEditMode
+                  , Keys.switchToGenerateEditMode
                 )
               , new ToolTip(
-                    "Edit mode", "In this mode you can edit the shapes of brushes", Keys.SwitchToMeshEditMode
+                    "Edit mode", "In this mode you can edit the shapes of brushes", Keys.switchToMeshEditMode
                 )
-              , new ToolTip("Clip mode", "In this mode you can split or clip brushes", Keys.SwitchToClipEditMode)
+              , new ToolTip("Clip mode", "In this mode you can split or clip brushes", Keys.switchToClipEditMode)
               , new ToolTip(
                     "Surfaces mode"
                   , "In this mode you can modify the texturing and everything else related to brush surfaces"
-                  , Keys.SwitchToSurfaceEditMode
+                  , Keys.switchToSurfaceEditMode
                 )
             };
 

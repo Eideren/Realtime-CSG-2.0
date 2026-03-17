@@ -11,11 +11,11 @@ namespace RealtimeCSG
         private static readonly GUIContent CancelContent = new GUIContent("Cancel");
 
         private static readonly ToolTip CreateTooltip = new ToolTip(
-            "Create your brush", "Create the brush from the current box shape.", Keys.PerformActionKey
+            "Create your brush", "Create the brush from the current box shape.", Keys.performActionKey
         );
 
         private static readonly ToolTip CancelTooltip = new ToolTip(
-            "Cancel brush creation", "Do not generate the brush.", Keys.CancelActionKey
+            "Cancel brush creation", "Do not generate the brush.", Keys.cancelActionKey
         );
 
         private static readonly GUILayoutOption largeLabelWidth = GUILayout.Width(80);

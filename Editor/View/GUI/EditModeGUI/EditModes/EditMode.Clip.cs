@@ -102,7 +102,7 @@ namespace RealtimeCSG
             HashSet<CSGBrush> foundBrushes = filteredSelection.GetAllContainedBrushes();
             clipBrushes          = foundBrushes.ToArray();
             forceWireframeUpdate = true;
-            hideTool             = filteredSelection.NodeTargets.Length > 0;
+            hideTool             = filteredSelection.nodeTargets.Length > 0;
 
             if(!isEnabled)
             {
@@ -1317,7 +1317,7 @@ namespace RealtimeCSG
                         CSGRenderer.DrawSelectedBrushes(
                             zTestLineMeshManager2, noZTestLineMeshManager2,
                             wireframes.ToArray(), transformations.ToArray(),
-                            ColorSettings.SelectedOutlines, GUIConstants.thickLineScale
+                            ColorSettings.SelectedOutlines, GUIConstants.THICK_LINE_SCALE
                         );
                     }
                 }
@@ -1356,7 +1356,7 @@ namespace RealtimeCSG
                         CSGRenderer.DrawSelectedBrushes(
                             zTestLineMeshManager1, noZTestLineMeshManager1,
                             ids.ToArray(), transformations.ToArray(),
-                            ColorSettings.SelectedOutlines, GUIConstants.thickLineScale
+                            ColorSettings.SelectedOutlines, GUIConstants.THICK_LINE_SCALE
                         );
                     }
                 }
@@ -1500,14 +1500,14 @@ namespace RealtimeCSG
                             {
                                 PaintUtility.DiamondDotCap(
                                     -1, intersectionPoint, MathConstants.identityQuaternion
-                                  , handleSize * 1.2f * GUIConstants.handleScale
+                                  , handleSize * 1.2f * GUIConstants.HANDLE_SCALE
                                 );
                             }
                             else
                             {
                                 PaintUtility.SquareDotCap(
                                     -1, intersectionPoint, MathConstants.identityQuaternion
-                                  , handleSize * GUIConstants.handleScale
+                                  , handleSize * GUIConstants.HANDLE_SCALE
                                 );
                             }
 
@@ -1518,7 +1518,7 @@ namespace RealtimeCSG
                     if(visualSnappedLines != null)
                     {
                         PaintUtility.DrawLines(
-                            visualSnappedLines.ToArray(), GUIConstants.oldThinLineScale * 2.0f
+                            visualSnappedLines.ToArray(), GUIConstants.OLD_THIN_LINE_SCALE * 2.0f
                           , ColorSettings.SnappedEdges
                         );
                     }
@@ -1550,7 +1550,7 @@ namespace RealtimeCSG
                 {
                     if(GUIUtility.hotControl == 0)
                     {
-                        if(Keys.CycleClipModes.IsKeyPressed())
+                        if(Keys.cycleClipModes.IsKeyPressed())
                         {
                             Event.current.Use();
 
@@ -1572,7 +1572,7 @@ namespace RealtimeCSG
                 {
                     if(GUIUtility.hotControl == 0)
                     {
-                        if(Keys.CycleClipModes.IsKeyPressed())
+                        if(Keys.cycleClipModes.IsKeyPressed())
                         {
                             CycleClipMode();
                             Event.current.Use();
@@ -1685,7 +1685,7 @@ namespace RealtimeCSG
                             float handleSize = HandleUtility.GetHandleSize(points[0]);
                             float magnitude  = (points[0] - points[1]).magnitude;
 
-                            if(magnitude > handleSize * (GUIConstants.handleScale / 10.0f))
+                            if(magnitude > handleSize * (GUIConstants.HANDLE_SCALE / 10.0f))
                             {
                                 editMode    = EditMode.CreatingPoint2;
                                 pointsUsed  = 3;
@@ -1709,21 +1709,21 @@ namespace RealtimeCSG
                 {
                     if(GUIUtility.hotControl == planeCreationID)
                     {
-                        if(Keys.CancelActionKey.IsKeyPressed())
+                        if(Keys.cancelActionKey.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.PerformActionKey.IsKeyPressed())
+                        if(Keys.performActionKey.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.CycleClipModes.IsKeyPressed())
+                        if(Keys.cycleClipModes.IsKeyPressed())
                         {
                             Event.current.Use();
 
@@ -1745,7 +1745,7 @@ namespace RealtimeCSG
                 {
                     if(GUIUtility.hotControl == planeCreationID)
                     {
-                        if(Keys.CancelActionKey.IsKeyPressed())
+                        if(Keys.cancelActionKey.IsKeyPressed())
                         {
                             GUIUtility.hotControl             = 0;
                             GUIUtility.keyboardControl        = 0;
@@ -1756,7 +1756,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.PerformActionKey.IsKeyPressed())
+                        if(Keys.performActionKey.IsKeyPressed())
                         {
                             GUIUtility.hotControl             = 0;
                             GUIUtility.keyboardControl        = 0;
@@ -1767,7 +1767,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.CycleClipModes.IsKeyPressed())
+                        if(Keys.cycleClipModes.IsKeyPressed())
                         {
                             CycleClipMode();
                             Event.current.Use();
@@ -1797,7 +1797,7 @@ namespace RealtimeCSG
                         if(visualSnappedLines != null)
                         {
                             PaintUtility.DrawLines(
-                                visualSnappedLines.ToArray(), GUIConstants.oldThinLineScale * 2.0f
+                                visualSnappedLines.ToArray(), GUIConstants.OLD_THIN_LINE_SCALE * 2.0f
                               , ColorSettings.SnappedEdges
                             );
                         }
@@ -1817,7 +1817,7 @@ namespace RealtimeCSG
 
                                 PaintUtility.SquareDotCap(
                                     -1, points[i], MathConstants.identityQuaternion
-                                  , handleSize * GUIConstants.handleScale
+                                  , handleSize * GUIConstants.HANDLE_SCALE
                                 );
                             }
 
@@ -1827,7 +1827,7 @@ namespace RealtimeCSG
                         if(visualSnappedLines != null)
                         {
                             PaintUtility.DrawLines(
-                                visualSnappedLines.ToArray(), GUIConstants.oldThinLineScale * 2.0f
+                                visualSnappedLines.ToArray(), GUIConstants.OLD_THIN_LINE_SCALE * 2.0f
                               , ColorSettings.SnappedEdges
                             );
                         }
@@ -1862,7 +1862,7 @@ namespace RealtimeCSG
 
             for(int i = 0; i < 3; i++)
             {
-                sizes[i] = CSG_HandleUtility.GetHandleSize(points[i]) * GUIConstants.handleScale;
+                sizes[i] = CSG_HandleUtility.GetHandleSize(points[i]) * GUIConstants.HANDLE_SCALE;
                 ids[i]   = GUIUtility.GetControlID(SnappedPoint.SnappedPointHash, FocusType.Keyboard);
             }
 
@@ -1980,21 +1980,21 @@ namespace RealtimeCSG
                     {
                         if(GUIUtility.hotControl == 0)
                         {
-                            if(Keys.CancelActionKey.IsKeyPressed())
+                            if(Keys.cancelActionKey.IsKeyPressed())
                             {
                                 Event.current.Use();
 
                                 break;
                             }
 
-                            if(Keys.PerformActionKey.IsKeyPressed())
+                            if(Keys.performActionKey.IsKeyPressed())
                             {
                                 Event.current.Use();
 
                                 break;
                             }
 
-                            if(Keys.CycleClipModes.IsKeyPressed())
+                            if(Keys.cycleClipModes.IsKeyPressed())
                             {
                                 Event.current.Use();
 
@@ -2015,7 +2015,7 @@ namespace RealtimeCSG
                     {
                         if(GUIUtility.hotControl == 0)
                         {
-                            if(Keys.CancelActionKey.IsKeyPressed())
+                            if(Keys.cancelActionKey.IsKeyPressed())
                             {
                                 SelectionUtility.DeselectAll();
                                 Event.current.Use();
@@ -2023,7 +2023,7 @@ namespace RealtimeCSG
                                 break;
                             }
 
-                            if(Keys.PerformActionKey.IsKeyPressed())
+                            if(Keys.performActionKey.IsKeyPressed())
                             {
                                 Commit();
                                 Event.current.Use();
@@ -2031,7 +2031,7 @@ namespace RealtimeCSG
                                 break;
                             }
 
-                            if(Keys.CycleClipModes.IsKeyPressed())
+                            if(Keys.cycleClipModes.IsKeyPressed())
                             {
                                 CycleClipMode();
                                 Event.current.Use();
@@ -2088,7 +2088,7 @@ namespace RealtimeCSG
 
                             PaintUtility.SquareDotCap(
                                 -1, intersectionPoint, MathConstants.identityQuaternion
-                              , handleSize * GUIConstants.handleScale
+                              , handleSize * GUIConstants.HANDLE_SCALE
                             );
 
                             Handles.matrix = tempMatrix;
@@ -2097,7 +2097,7 @@ namespace RealtimeCSG
                         if(visualSnappedLines != null)
                         {
                             PaintUtility.DrawLines(
-                                visualSnappedLines.ToArray(), GUIConstants.oldThinLineScale * 2.0f
+                                visualSnappedLines.ToArray(), GUIConstants.OLD_THIN_LINE_SCALE * 2.0f
                               , ColorSettings.SnappedEdges
                             );
                         }

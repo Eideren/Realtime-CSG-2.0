@@ -43,7 +43,7 @@ namespace RealtimeCSG
             "This is disabled when you have no selection\n" +
             "or when Unity's pivot mode (top left corner)\n" +
             "is set to 'Center'.",
-            Keys.CenterPivot
+            Keys.centerPivot
         );
 
         private static readonly ToolTip PivotVectorTooltip = new ToolTip(

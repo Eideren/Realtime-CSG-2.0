@@ -12,21 +12,21 @@ namespace InternalRealtimeCSG
 
             if(Mathf.Abs(rotationAngle) < MathConstants.EqualityEpsilon)
             {
-                for(int t = 0; t < selection.Transforms.Length; t++)
+                for(int t = 0; t < selection.transforms.Length; t++)
                 {
-                    Transform targetTransform = selection.Transforms[t];
-                    targetTransform.position = selection.BackupPositions[t];
-                    targetTransform.rotation = selection.BackupRotations[t];
+                    Transform targetTransform = selection.transforms[t];
+                    targetTransform.position = selection.backupPositions[t];
+                    targetTransform.rotation = selection.backupRotations[t];
                 }
             }
             else
             {
-                for(int t = 0; t < selection.Transforms.Length; t++)
+                for(int t = 0; t < selection.transforms.Length; t++)
                 {
-                    Transform targetTransform = selection.Transforms[t];
+                    Transform targetTransform = selection.transforms[t];
                     Vector3   originalCenter  = targetTransform.InverseTransformPoint(rotationCenter);
-                    targetTransform.position = selection.BackupPositions[t];
-                    targetTransform.rotation = rotationQuaternion * selection.BackupRotations[t];
+                    targetTransform.position = selection.backupPositions[t];
+                    targetTransform.rotation = rotationQuaternion * selection.backupRotations[t];
                     Vector3 newCenter = targetTransform.TransformPoint(originalCenter);
                     targetTransform.position += rotationCenter - newCenter;
                 }

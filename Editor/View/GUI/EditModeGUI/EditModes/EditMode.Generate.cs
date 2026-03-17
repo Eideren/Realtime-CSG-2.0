@@ -123,7 +123,7 @@ namespace RealtimeCSG
 
         public void SetTargets(FilteredSelection filteredSelection)
         {
-            hideTool = filteredSelection.NodeTargets.Length > 0;
+            hideTool = filteredSelection.nodeTargets.Length > 0;
             brushes  = filteredSelection.GetAllContainedBrushes().ToArray();
             lastLineMeshGeneration--;
 
@@ -296,28 +296,28 @@ namespace RealtimeCSG
             {
                 case EventType.ValidateCommand:
                 {
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedAdditiveKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedSubtractiveKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedIntersectingKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.CancelActionKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -337,28 +337,28 @@ namespace RealtimeCSG
 
                 case EventType.KeyDown:
                 {
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedAdditiveKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedSubtractiveKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedIntersectingKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.CancelActionKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -378,7 +378,7 @@ namespace RealtimeCSG
 
                 case EventType.KeyUp:
                 {
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedAdditiveKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed())
                     {
                         SetOperationType(CSGOperationType.Additive);
                         Event.current.Use();
@@ -386,7 +386,7 @@ namespace RealtimeCSG
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedSubtractiveKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed())
                     {
                         SetOperationType(CSGOperationType.Subtractive);
                         Event.current.Use();
@@ -394,7 +394,7 @@ namespace RealtimeCSG
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.MakeSelectedIntersectingKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed())
                     {
                         SetOperationType(CSGOperationType.Intersecting);
                         Event.current.Use();
@@ -402,7 +402,7 @@ namespace RealtimeCSG
                         break;
                     }
 
-                    if(!EditorGUIUtility.editingTextField && Keys.CancelActionKey.IsKeyPressed())
+                    if(!EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
                     {
                         CurrentGenerator.PerformDeselectAll();
                         Event.current.Use();
@@ -452,7 +452,7 @@ namespace RealtimeCSG
 
                         CSGRenderer.DrawSelectedBrushes(
                             zTestLineMeshManager, noZTestLineMeshManager, brushNodeIDs, brushTransformation,
-                            ColorSettings.SelectedOutlines, GUIConstants.lineScale
+                            ColorSettings.SelectedOutlines, GUIConstants.LINE_SCALE
                         );
                     }
 

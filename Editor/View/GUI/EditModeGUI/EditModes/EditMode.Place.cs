@@ -329,7 +329,7 @@ namespace RealtimeCSG
             worldSpacePivotCenter    = Vector3.zero;
 
             shouldHideTool = (CSGSettings.SnapNonCSGObjects && Tools.current == Tool.Move)
-             || filteredSelection.NodeTargets.Length > 0;
+             || filteredSelection.nodeTargets.Length > 0;
 
             if(toolIsEnabled)
             {
@@ -649,9 +649,9 @@ namespace RealtimeCSG
                     {
                         if(!ortho)
                         {
-                            color1.a   *= GUIConstants.backfaceTransparency;
-                            color2.a   *= GUIConstants.backfaceTransparency;
-                            handleSize *= GUIConstants.backHandleScale;
+                            color1.a   *= GUIConstants.BACKFACE_TRANSPARENCY;
+                            color2.a   *= GUIConstants.BACKFACE_TRANSPARENCY;
+                            handleSize *= GUIConstants.BACK_HANDLE_SCALE;
                         }
                         else
                         {
@@ -660,7 +660,7 @@ namespace RealtimeCSG
                     }
                     else
                     {
-                        handleSize *= GUIConstants.handleScale;
+                        handleSize *= GUIConstants.HANDLE_SCALE;
                     }
 
                     renderLocalCenterPointSizes[i]          = handleSize;
@@ -709,20 +709,20 @@ namespace RealtimeCSG
                         }
                         else
                         {
-                            handleSize *= GUIConstants.handleScale;
+                            handleSize *= GUIConstants.HANDLE_SCALE;
                         }
                     }
                     else
                     {
                         if(backfaced[side1] && backfaced[side2])
                         {
-                            color1.a   *= GUIConstants.backfaceTransparency;
-                            color2.a   *= GUIConstants.backfaceTransparency;
-                            handleSize *= GUIConstants.backHandleScale;
+                            color1.a   *= GUIConstants.BACKFACE_TRANSPARENCY;
+                            color2.a   *= GUIConstants.BACKFACE_TRANSPARENCY;
+                            handleSize *= GUIConstants.BACK_HANDLE_SCALE;
                         }
                         else
                         {
-                            handleSize *= GUIConstants.handleScale;
+                            handleSize *= GUIConstants.HANDLE_SCALE;
                         }
                     }
 
@@ -1130,7 +1130,7 @@ namespace RealtimeCSG
             for(int t = 0; t < transforms.Length; t++)
             {
                 transforms[t].position = GridUtility.CleanPosition(backupPositions[t] + offset);
-                //transforms[t].rotation = backupRotations[t];				
+                //transforms[t].rotation = backupRotations[t];
             }
 
             UpdateTargetBounds();
@@ -1600,7 +1600,7 @@ namespace RealtimeCSG
             rotateCurrentSnappedAngle = rotateStartAngle;
 
             float handleSize = CSG_HandleUtility.GetHandleSize(rotateCenter);
-            float minSize    = 4 * handleSize * GUIConstants.minRotateRadius;
+            float minSize    = 4 * handleSize * GUIConstants.MIN_ROTATE_RADIUS;
             rotateRadius = Math.Max(delta.magnitude, minSize);
 
             rotateAxis = BoundsUtilities.AABBEdgeTangentAxis[hoverOnBoundsEdge];
@@ -1645,7 +1645,7 @@ namespace RealtimeCSG
             Vector3 localPoint2 = targetLocalPoints[BoundsUtilities.AABBEdgeIndices[highlightEdge][1]];
 
             PaintUtility.DrawLine(
-                activeSpaceMatrices.activeLocalToWorld, localPoint1, localPoint2, GUIConstants.oldThickLineScale
+                activeSpaceMatrices.activeLocalToWorld, localPoint1, localPoint2, GUIConstants.OLD_THICK_LINE_SCALE
               , ColorSettings.BoundsEdgeHover
             );
 
@@ -1900,7 +1900,7 @@ namespace RealtimeCSG
 
                         CSGRenderer.DrawSelectedBrushes(
                             zTestLineMeshManager, noZTestLineMeshManager, brushNodeIDs, brushTransformations
-                          , ColorSettings.SelectedOutlines, GUIConstants.lineScale
+                          , ColorSettings.SelectedOutlines, GUIConstants.LINE_SCALE
                         );
                     }
 
@@ -1933,7 +1933,7 @@ namespace RealtimeCSG
                         {
                             PaintUtility.DrawLines(
                                 activeSpaceMatrices.activeLocalToWorld, targetLocalPoints
-                              , BoundsUtilities.AABBLineIndices, GUIConstants.oldLineScale * 2.0f, meshEdgeOutlineColor
+                              , BoundsUtilities.AABBLineIndices, GUIConstants.OLD_LINE_SCALE * 2.0f, meshEdgeOutlineColor
                             );
 
                             PaintUtility.DrawUnoccludedLines(
@@ -1948,7 +1948,7 @@ namespace RealtimeCSG
 
                             PaintUtility.DrawLines(
                                 activeSpaceMatrices.activeLocalToWorld, targetLocalPoints
-                              , BoundsUtilities.AABBLineIndices, GUIConstants.oldLineScale, boundOutlinesColor
+                              , BoundsUtilities.AABBLineIndices, GUIConstants.OLD_LINE_SCALE, boundOutlinesColor
                             );
                         }
 
@@ -2189,7 +2189,7 @@ namespace RealtimeCSG
                 {
                     case EventType.ValidateCommand:
                     {
-                        if(Keys.CloneDragActivate.IsKeyPressed())
+                        if(Keys.cloneDragActivate.IsKeyPressed())
                         {
                             Event.current.Use();
 
@@ -2203,84 +2203,84 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.FlipSelectionX.IsKeyPressed())
+                        if(Keys.flipSelectionX.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.FlipSelectionY.IsKeyPressed())
+                        if(Keys.flipSelectionY.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.FlipSelectionZ.IsKeyPressed())
+                        if(Keys.flipSelectionZ.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.RotateSelectionLeft.IsKeyPressed())
+                        if(Keys.rotateSelectionLeft.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.RotateSelectionRight.IsKeyPressed())
+                        if(Keys.rotateSelectionRight.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionLeft.IsKeyPressed())
+                        if(Keys.moveSelectionLeft.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionRight.IsKeyPressed())
+                        if(Keys.moveSelectionRight.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionBack.IsKeyPressed())
+                        if(Keys.moveSelectionBack.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionForward.IsKeyPressed())
+                        if(Keys.moveSelectionForward.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionDown.IsKeyPressed())
+                        if(Keys.moveSelectionDown.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionUp.IsKeyPressed())
+                        if(Keys.moveSelectionUp.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.CenterPivot.IsKeyPressed())
+                        if(Keys.centerPivot.IsKeyPressed())
                         {
                             Event.current.Use();
 
@@ -2294,7 +2294,7 @@ namespace RealtimeCSG
                     {
                         SceneQueryUtility.ClearDeepClick();
 
-                        if(Tools.viewTool != ViewTool.FPS && Keys.CloneDragActivate.IsKeyPressed())
+                        if(Tools.viewTool != ViewTool.FPS && Keys.cloneDragActivate.IsKeyPressed())
                         {
                             cloneDragKeyPressed = true;
                             Event.current.Use();
@@ -2309,84 +2309,84 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.FlipSelectionX.IsKeyPressed())
+                        if(Keys.flipSelectionX.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.FlipSelectionY.IsKeyPressed())
+                        if(Keys.flipSelectionY.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.FlipSelectionZ.IsKeyPressed())
+                        if(Keys.flipSelectionZ.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.RotateSelectionLeft.IsKeyPressed())
+                        if(Keys.rotateSelectionLeft.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.RotateSelectionRight.IsKeyPressed())
+                        if(Keys.rotateSelectionRight.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionLeft.IsKeyPressed())
+                        if(Keys.moveSelectionLeft.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionRight.IsKeyPressed())
+                        if(Keys.moveSelectionRight.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionBack.IsKeyPressed())
+                        if(Keys.moveSelectionBack.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionForward.IsKeyPressed())
+                        if(Keys.moveSelectionForward.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionDown.IsKeyPressed())
+                        if(Keys.moveSelectionDown.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.MoveSelectionUp.IsKeyPressed())
+                        if(Keys.moveSelectionUp.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.CenterPivot.IsKeyPressed())
+                        if(Keys.centerPivot.IsKeyPressed())
                         {
                             Event.current.Use();
 
@@ -2398,7 +2398,7 @@ namespace RealtimeCSG
 
                     case EventType.KeyUp:
                     {
-                        if(cloneDragKeyPressed && Keys.CloneDragActivate.IsKeyPressed())
+                        if(cloneDragKeyPressed && Keys.cloneDragActivate.IsKeyPressed())
                         {
                             cloneDragKeyPressed = false;
                             haveCloned          = false;
@@ -2414,7 +2414,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.FlipSelectionX.IsKeyPressed())
+                        if(Keys.flipSelectionX.IsKeyPressed())
                         {
                             FlipX();
                             Event.current.Use();
@@ -2422,7 +2422,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.FlipSelectionY.IsKeyPressed())
+                        if(Keys.flipSelectionY.IsKeyPressed())
                         {
                             FlipY();
                             Event.current.Use();
@@ -2430,7 +2430,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.FlipSelectionZ.IsKeyPressed())
+                        if(Keys.flipSelectionZ.IsKeyPressed())
                         {
                             FlipZ();
                             Event.current.Use();
@@ -2438,7 +2438,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.RotateSelectionLeft.IsKeyPressed())
+                        if(Keys.rotateSelectionLeft.IsKeyPressed())
                         {
                             UpdateTargetInfo();
 
@@ -2451,7 +2451,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.RotateSelectionRight.IsKeyPressed())
+                        if(Keys.rotateSelectionRight.IsKeyPressed())
                         {
                             UpdateTargetInfo();
 
@@ -2464,7 +2464,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.MoveSelectionLeft.IsKeyPressed())
+                        if(Keys.moveSelectionLeft.IsKeyPressed())
                         {
                             UpdateTargetInfo();
                             MoveObjects(topTransforms, MathConstants.rightVector3 * CSGSettings.SnapVector.x);
@@ -2473,7 +2473,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.MoveSelectionRight.IsKeyPressed())
+                        if(Keys.moveSelectionRight.IsKeyPressed())
                         {
                             UpdateTargetInfo();
                             MoveObjects(topTransforms, MathConstants.leftVector3 * CSGSettings.SnapVector.x);
@@ -2482,7 +2482,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.MoveSelectionBack.IsKeyPressed())
+                        if(Keys.moveSelectionBack.IsKeyPressed())
                         {
                             UpdateTargetInfo();
                             MoveObjects(topTransforms, MathConstants.forwardVector3 * CSGSettings.SnapVector.z);
@@ -2491,7 +2491,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.MoveSelectionForward.IsKeyPressed())
+                        if(Keys.moveSelectionForward.IsKeyPressed())
                         {
                             UpdateTargetInfo();
                             MoveObjects(topTransforms, MathConstants.backVector3 * CSGSettings.SnapVector.z);
@@ -2500,7 +2500,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.MoveSelectionDown.IsKeyPressed())
+                        if(Keys.moveSelectionDown.IsKeyPressed())
                         {
                             UpdateTargetInfo();
                             MoveObjects(topTransforms, MathConstants.downVector3 * CSGSettings.SnapVector.y);
@@ -2509,7 +2509,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.MoveSelectionUp.IsKeyPressed())
+                        if(Keys.moveSelectionUp.IsKeyPressed())
                         {
                             UpdateTargetInfo();
                             MoveObjects(topTransforms, MathConstants.upVector3 * CSGSettings.SnapVector.y);
@@ -2518,7 +2518,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.CenterPivot.IsKeyPressed())
+                        if(Keys.centerPivot.IsKeyPressed())
                         {
                             RecenterPivot();
 
@@ -2652,10 +2652,10 @@ namespace RealtimeCSG
                                GUIUtility.hotControl == 0)
                             {
                                 //var forward = camera.transform.forward.normalized;
-                                //var view_is_2D = camera.orthographic && 
+                                //var view_is_2D = camera.orthographic &&
                                 //				 (
-                                //					(Mathf.Abs(forward.x) >= 1.0f - MathConstants.EqualityEpsilon) || 
-                                //					(Mathf.Abs(forward.y) >= 1.0f - MathConstants.EqualityEpsilon) || 
+                                //					(Mathf.Abs(forward.x) >= 1.0f - MathConstants.EqualityEpsilon) ||
+                                //					(Mathf.Abs(forward.y) >= 1.0f - MathConstants.EqualityEpsilon) ||
                                 //					(Mathf.Abs(forward.z) >= 1.0f - MathConstants.EqualityEpsilon)
                                 //				 );
 
@@ -2761,7 +2761,7 @@ namespace RealtimeCSG
                                             for(int t = 0; t < targetBoundCenterIDs.Length; t++)
                                             {
                                                 float radius = renderLocalCenterPointSizes[t]
-                                                  * GUIConstants.hoverHandleScale;
+                                                  * GUIConstants.HOVER_HANDLE_SCALE;
 
                                                 if(radius == 0)
                                                 {
@@ -2956,7 +2956,7 @@ namespace RealtimeCSG
                                                                 }
 
                                                                 float radius = renderLocalCenterPointSizes[side]
-                                                                  * GUIConstants.hoverHandleScale;
+                                                                  * GUIConstants.HOVER_HANDLE_SCALE;
 
                                                                 if(radius != 0)
                                                                 {

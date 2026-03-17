@@ -1,7 +1,6 @@
-﻿#if UNITY_EDITOR
-using UnityEngine;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace RealtimeCSG
 {
@@ -149,63 +148,48 @@ namespace RealtimeCSG
             {
                 if(MinY == MaxY)
                 {
-                    if(MinZ == MaxZ)
-                    {
-                        return new Vector3[] { new Vector3(MinX, MinY, MinZ) };
-                    }
-                    else
-                    {
-                        return new Vector3[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ) };
-                    }
+                    return MinZ == MaxZ
+                        ? new[] { new Vector3(MinX, MinY, MinZ) }
+                        : new[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ) };
                 }
-                else
+
+                if(MinZ == MaxZ)
                 {
-                    if(MinZ == MaxZ)
+                    return new[]
                     {
-                        return new Vector3[]
-                        {
-                            new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ)
-                          , new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ)
-                        };
-                    }
-                    else
-                    {
-                        return new Vector3[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ) };
-                    }
-                }
-            }
-            else
-            {
-                if(MinY == MaxY)
-                {
-                    if(MinZ == MaxZ)
-                    {
-                        return new Vector3[] { new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ) };
-                    }
-                    else
-                    {
-                        return new Vector3[]
-                        {
-                            new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ)
-                          , new Vector3(MinX, MaxY, MaxZ), new Vector3(MaxX, MaxY, MaxZ)
-                        };
-                    }
-                }
-                else
-                {
-                    return new Vector3[]
-                    {
-                        new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ)
-                      , new Vector3(MaxX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ)
-                      , new Vector3(MaxX, MaxY, MaxZ), new Vector3(MaxX, MinY, MaxZ)
+                        new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MinX, MinY, MaxZ)
+                      , new Vector3(MinX, MaxY, MaxZ)
                     };
                 }
+
+                return new[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ) };
             }
+
+            if(MinY == MaxY)
+            {
+                if(MinZ == MaxZ)
+                {
+                    return new[] { new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ) };
+                }
+
+                return new[]
+                {
+                    new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ), new Vector3(MinX, MaxY, MaxZ)
+                  , new Vector3(MaxX, MaxY, MaxZ)
+                };
+            }
+
+            return new[]
+            {
+                new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ)
+              , new Vector3(MaxX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ)
+              , new Vector3(MaxX, MaxY, MaxZ), new Vector3(MaxX, MinY, MaxZ)
+            };
         }
 
         public Vector3[] GetAllCorners()
         {
-            return new Vector3[]
+            return new[]
             {
                 new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ)
               , new Vector3(MaxX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ)
@@ -215,8 +199,7 @@ namespace RealtimeCSG
 
         public override string ToString()
         {
-            return new Vector3(MinX, MinY, MinZ).ToString() + " " + new Vector3(MaxX, MaxY, MaxZ).ToString();
+            return $"{new Vector3(MinX, MinY, MinZ)} {new Vector3(MaxX, MaxY, MaxZ)}";
         }
     }
 }
-#endif

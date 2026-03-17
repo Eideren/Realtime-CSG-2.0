@@ -8,26 +8,26 @@ namespace RealtimeCSG
         private static ToolTip showGridTooltip = new ToolTip(
             "Show the grid"
           , "Click this to toggle between showing the grid or hiding it.\nWhen hidden you can still snap against it."
-          , Keys.ToggleShowGridKey
+          , Keys.toggleShowGridKey
         );
 
 //		static ToolTip snapToGridTooltip	    = new ToolTip("Grid snapping", "Click this if you want to turn grid snapping on or off.", Keys.ToggleSnappingKey);
         private static ToolTip gridSnapModeTooltip = new ToolTip(
             "Grid Snapping mode"
           , "Select grid to snap to the grid, relative snapping to snap along a distance from your starting position, or no snapping."
-          , Keys.ToggleSnappingKey
+          , Keys.toggleSnappingKey
         );
 
         private static ToolTip relativeSnapModeTooltip = new ToolTip(
             "Relative Snapping mode"
           , "Select grid to snap to the grid, relative snapping to snap along a distance from your starting position, or no snapping."
-          , Keys.ToggleSnappingKey
+          , Keys.toggleSnappingKey
         );
 
         private static ToolTip noSnappingModeTooltip = new ToolTip(
             "No Snapping mode"
           , "Select grid to snap to the grid, relative snapping to snap along a distance from your starting position, or no snapping."
-          , Keys.ToggleSnappingKey
+          , Keys.toggleSnappingKey
         );
 
         private static ToolTip showWireframeTooltip = new ToolTip(
@@ -64,11 +64,11 @@ namespace RealtimeCSG
         );
 
         private static ToolTip positionPlusTooltip = new ToolTip(
-            "Double grid size", "Multiply the grid size by 2", Keys.DoubleGridSizeKey
+            "Double grid size", "Multiply the grid size by 2", Keys.doubleGridSizeKey
         );
 
         private static ToolTip positionMinnusTooltip = new ToolTip(
-            "Half grid size", "Divide the grid size by 2", Keys.HalfGridSizeKey
+            "Half grid size", "Divide the grid size by 2", Keys.halfGridSizeKey
         );
 
         private static GUIContent scaleLargeLabel = new GUIContent("scale");

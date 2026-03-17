@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RealtimeCSG;
 using UnityEngine;
@@ -10,170 +11,131 @@ namespace InternalRealtimeCSG
 {
     internal class BrushSelection
     {
-        [SerializeField] public CSGBrush[] Brushes = new CSGBrush[0];
-        [SerializeField] public Shape[] Shapes = new Shape[0];
-        [SerializeField] public ControlMesh[] ControlMeshes = new ControlMesh[0];
-        [SerializeField] public ControlMeshState[] States = new ControlMeshState[0];
+        [SerializeField] public CSGBrush[] brushes = Array.Empty<CSGBrush>();
+        [SerializeField] public Shape[] shapes = Array.Empty<Shape>();
+        [SerializeField] public ControlMesh[] controlMeshes = Array.Empty<ControlMesh>();
+        [SerializeField] public ControlMeshState[] states = Array.Empty<ControlMeshState>();
 
-        [SerializeField] public ControlMesh[] BackupControlMeshes = new ControlMesh[0];
-        [SerializeField] public Shape[] BackupShapes = new Shape[0];
-        [SerializeField] public Matrix4x4[] LocalToWorld = new Matrix4x4[0];
-        [SerializeField] public Transform[] ModelTransforms = new Transform[0];
+        [SerializeField] public ControlMesh[] backupControlMeshes = Array.Empty<ControlMesh>();
+        [SerializeField] public Shape[] backupShapes = Array.Empty<Shape>();
+        [SerializeField] public Matrix4x4[] localToWorld = Array.Empty<Matrix4x4>();
+        [SerializeField] public Transform[] modelTransforms = Array.Empty<Transform>();
 
         public bool HaveSelection
         {
             get
             {
-                for(int t = 0; t < Brushes.Length; t++)
+                for(int t = 0; t < brushes.Length; t++)
                 {
-                    if(States[t].HaveSelection)
+                    if(states[t].HaveSelection)
                     {
                         return true;
                     }
                 }
 
                 return false;
-            }
-        }
-
-        private bool HaveEdgeSelection
-        {
-            get
-            {
-                for(int t = 0; t < Brushes.Length; t++)
-                {
-                    if(States[t].HaveEdgeSelection)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
-
-        public void Select(CSGBrush brush, int polygonIndex)
-        {
-            for(int i = Brushes.Length - 1; i >= 0; i--)
-            {
-                if(Brushes[i] == brush)
-                {
-                    SelectState[] polygons = States[i].Selection.Polygons;
-
-                    for(int j = 0; j < polygons.Length; j++)
-                    {
-                        if(j == polygonIndex)
-                        {
-                            polygons[j] = SelectState.Selected;
-                        }
-                        else
-                        {
-                            polygons[j] = SelectState.None;
-                        }
-                    }
-                }
             }
         }
 
         public void Select(HashSet<CSGBrush> foundBrushes)
         {
-            if(Brushes == null || Brushes.Length == 0)
+            if(brushes == null || brushes.Length == 0)
             {
-                Brushes             = foundBrushes.ToArray();
-                Shapes              = new Shape[Brushes.Length];
-                ControlMeshes       = new ControlMesh[Brushes.Length];
-                LocalToWorld        = new Matrix4x4[Brushes.Length];
-                BackupControlMeshes = new ControlMesh[Brushes.Length];
-                BackupShapes        = new Shape[Brushes.Length];
-                States              = new ControlMeshState[Brushes.Length];
-                ModelTransforms     = new Transform[Brushes.Length];
+                brushes             = foundBrushes.ToArray();
+                shapes              = new Shape[brushes.Length];
+                controlMeshes       = new ControlMesh[brushes.Length];
+                localToWorld        = new Matrix4x4[brushes.Length];
+                backupControlMeshes = new ControlMesh[brushes.Length];
+                backupShapes        = new Shape[brushes.Length];
+                states              = new ControlMeshState[brushes.Length];
+                modelTransforms     = new Transform[brushes.Length];
 
                 for(int i = 0; i < foundBrushes.Count; i++)
                 {
-                    LocalToWorld[i] = MathConstants.identityMatrix;
+                    localToWorld[i] = MathConstants.identityMatrix;
                 }
             }
             else
             {
                 // remove brushes that are no longer selected
-                for(int i = Brushes.Length - 1; i >= 0; i--)
+                for(int i = brushes.Length - 1; i >= 0; i--)
                 {
-                    if(foundBrushes.Contains(Brushes[i]))
+                    if(foundBrushes.Contains(brushes[i]))
                     {
                         continue;
                     }
 
-                    ArrayUtility.RemoveAt(ref Brushes, i);
-                    ArrayUtility.RemoveAt(ref Shapes, i);
-                    ArrayUtility.RemoveAt(ref ControlMeshes, i);
-                    ArrayUtility.RemoveAt(ref LocalToWorld, i);
-                    ArrayUtility.RemoveAt(ref BackupControlMeshes, i);
-                    ArrayUtility.RemoveAt(ref BackupShapes, i);
-                    ArrayUtility.RemoveAt(ref States, i);
-                    ArrayUtility.RemoveAt(ref ModelTransforms, i);
+                    ArrayUtility.RemoveAt(ref brushes, i);
+                    ArrayUtility.RemoveAt(ref shapes, i);
+                    ArrayUtility.RemoveAt(ref controlMeshes, i);
+                    ArrayUtility.RemoveAt(ref localToWorld, i);
+                    ArrayUtility.RemoveAt(ref backupControlMeshes, i);
+                    ArrayUtility.RemoveAt(ref backupShapes, i);
+                    ArrayUtility.RemoveAt(ref states, i);
+                    ArrayUtility.RemoveAt(ref modelTransforms, i);
                 }
 
                 // add new brushes that are added to the selection
                 foreach(CSGBrush newBrush in foundBrushes)
                 {
-                    if(Brushes.Contains(newBrush))
+                    if(brushes.Contains(newBrush))
                     {
                         continue;
                     }
 
-                    ArrayUtility.Add(ref Brushes, newBrush);
-                    ArrayUtility.Add(ref Shapes, null);
-                    ArrayUtility.Add(ref ControlMeshes, null);
-                    ArrayUtility.Add(ref LocalToWorld, MathConstants.identityMatrix);
-                    ArrayUtility.Add(ref BackupControlMeshes, null);
-                    ArrayUtility.Add(ref BackupShapes, null);
-                    ArrayUtility.Add(ref States, null);
-                    ArrayUtility.Add(ref ModelTransforms, null);
+                    ArrayUtility.Add(ref brushes, newBrush);
+                    ArrayUtility.Add(ref shapes, null);
+                    ArrayUtility.Add(ref controlMeshes, null);
+                    ArrayUtility.Add(ref localToWorld, MathConstants.identityMatrix);
+                    ArrayUtility.Add(ref backupControlMeshes, null);
+                    ArrayUtility.Add(ref backupShapes, null);
+                    ArrayUtility.Add(ref states, null);
+                    ArrayUtility.Add(ref modelTransforms, null);
                 }
             }
         }
 
         public void ResetSelection()
         {
-            if(Brushes != null && States != null)
+            if(brushes != null && states != null)
             {
-                for(int i = 0; i < Brushes.Length; i++)
+                for(int i = 0; i < brushes.Length; i++)
                 {
-                    States[i] = null;
+                    states[i] = null;
                 }
             }
         }
 
         public void UpdateTargets()
         {
-            for(int i = 0; i < Brushes.Length; i++)
+            for(int i = 0; i < brushes.Length; i++)
             {
-                if(!Brushes[i] ||
-                   Brushes[i].ControlMesh == null)
+                if(!brushes[i] ||
+                   brushes[i].ControlMesh == null)
                 {
                     continue;
                 }
 
-                if(!Brushes[i].ControlMesh.Valid)
+                if(!brushes[i].ControlMesh.Valid)
                 {
-                    Brushes[i].ControlMesh.Valid = ControlMeshUtility.Validate(
-                        Brushes[i].ControlMesh, Brushes[i].Shape
+                    brushes[i].ControlMesh.Valid = ControlMeshUtility.Validate(
+                        brushes[i].ControlMesh, brushes[i].Shape
                     );
                 }
 
-                LocalToWorld[i] = Brushes[i].transform.localToWorldMatrix;
+                localToWorld[i] = brushes[i].transform.localToWorldMatrix;
 
-                if(States[i] != null)
+                if(states[i] != null)
                 {
                     continue;
                 }
 
-                States[i]              = new ControlMeshState(Brushes[i]);
-                BackupControlMeshes[i] = Brushes[i].ControlMesh != null ? Brushes[i].ControlMesh.Clone() : null;
-                BackupShapes[i]        = Brushes[i].Shape != null ? Brushes[i].Shape.Clone() : null;
+                states[i]              = new ControlMeshState(brushes[i]);
+                backupControlMeshes[i] = brushes[i].ControlMesh != null ? brushes[i].ControlMesh.Clone() : null;
+                backupShapes[i]        = brushes[i].Shape != null ? brushes[i].Shape.Clone() : null;
 
-                ControlMeshes[i] = BackupControlMeshes[i];
-                Shapes[i]        = BackupShapes[i];
+                controlMeshes[i] = backupControlMeshes[i];
+                shapes[i]        = backupShapes[i];
             }
 
             UpdateParentModelTransforms();
@@ -181,72 +143,72 @@ namespace InternalRealtimeCSG
 
         public void UpdateParentModelTransforms()
         {
-            for(int i = 0; i < Brushes.Length; i++)
+            for(int i = 0; i < brushes.Length; i++)
             {
-                if(ModelTransforms[i] != null)
+                if(modelTransforms[i] != null)
                 {
                     continue;
                 }
 
-                if(Brushes[i].ChildData == null ||
-                   Brushes[i].ChildData.ModelTransform == null)
+                if(brushes[i].ChildData == null ||
+                   brushes[i].ChildData.ModelTransform == null)
                 {
                     continue;
                 }
 
-                ModelTransforms[i] = Brushes[i].ChildData.ModelTransform;
+                modelTransforms[i] = brushes[i].ChildData.ModelTransform;
             }
         }
 
         public void BackupSelection()
         {
-            for(int t = 0; t < States.Length; t++)
+            for(int t = 0; t < states.Length; t++)
             {
-                if(States[t] == null)
+                if(states[t] == null)
                 {
                     continue;
                 }
 
-                States[t].BackupSelection();
+                states[t].BackupSelection();
             }
         }
 
         public void RevertSelection()
         {
-            for(int t = 0; t < States.Length; t++)
+            for(int t = 0; t < states.Length; t++)
             {
-                if(States[t] == null)
+                if(states[t] == null)
                 {
                     continue;
                 }
 
-                States[t].RevertSelection();
+                states[t].RevertSelection();
             }
         }
 
         public void DestroySelectionBackup()
         {
-            for(int t = 0; t < States.Length; t++)
+            for(int t = 0; t < states.Length; t++)
             {
-                if(States[t] == null)
+                if(states[t] == null)
                 {
                     continue;
                 }
 
-                States[t].DestroySelectionBackup();
+                states[t].DestroySelectionBackup();
             }
         }
 
         public bool HasSelectionChanged()
         {
-            for(int t = 0; t < States.Length; t++)
+            for(int t = 0; t < states.Length; t++)
             {
-                if(States[t] == null)
+                if(states[t] == null)
                 {
                     continue;
                 }
 
-                if(States[t].HasSelectionChanged())
+                if(states[t].HasSelectionChanged())
                 {
                     return true;
                 }
@@ -257,61 +219,61 @@ namespace InternalRealtimeCSG
 
         public void UnHoverAll()
         {
-            for(int t = 0; t < States.Length; t++)
+            for(int t = 0; t < states.Length; t++)
             {
-                if(States[t] == null)
+                if(states[t] == null)
                 {
                     continue;
                 }
 
-                States[t].UnHoverAll();
+                states[t].UnHoverAll();
             }
         }
 
         public void UndoRedoPerformed()
         {
-            for(int t = 0; t < States.Length; t++)
+            for(int t = 0; t < states.Length; t++)
             {
-                if(t >= Brushes.Length ||
-                   States[t] == null ||
-                   !Brushes[t])
+                if(t >= brushes.Length ||
+                   states[t] == null ||
+                   !brushes[t])
                 {
                     continue;
                 }
 
-                ControlMesh      controlMesh = Brushes[t].ControlMesh;
-                ControlMeshState state       = States[t];
+                ControlMesh      controlMesh = brushes[t].ControlMesh;
+                ControlMeshState state       = states[t];
                 state.UpdatePoints(controlMesh);
             }
         }
 
         public bool UpdateWorkControlMesh(bool forceUpdate = false)
         {
-            for(int t = Brushes.Length - 1; t >= 0; t--)
+            for(int t = brushes.Length - 1; t >= 0; t--)
             {
-                if(!Brushes[t])
+                if(!brushes[t])
                 {
-                    ArrayUtility.RemoveAt(ref Brushes, t);
+                    ArrayUtility.RemoveAt(ref brushes, t);
 
                     continue;
                 }
 
                 if(!forceUpdate &&
-                   ControlMeshes[t] != null &&
-                   !ControlMeshes[t].Valid)
+                   controlMeshes[t] != null &&
+                   !controlMeshes[t].Valid)
                 {
                     continue;
                 }
 
-                Shapes[t]              = Brushes[t].Shape.Clone();
-                ControlMeshes[t]       = Brushes[t].ControlMesh.Clone();
-                BackupShapes[t]        = Shapes[t];
-                BackupControlMeshes[t] = ControlMeshes[t];
+                shapes[t]              = brushes[t].Shape.Clone();
+                controlMeshes[t]       = brushes[t].ControlMesh.Clone();
+                backupShapes[t]        = shapes[t];
+                backupControlMeshes[t] = controlMeshes[t];
             }
 
-            for(int i = 0; i < Brushes.Length; i++)
+            for(int i = 0; i < brushes.Length; i++)
             {
-                LocalToWorld[i] = Brushes[i].transform.localToWorldMatrix;
+                localToWorld[i] = brushes[i].transform.localToWorldMatrix;
             }
 
             return true;
@@ -333,16 +295,16 @@ namespace InternalRealtimeCSG
             closestBrushNodeIndex = -1;
             closestSurfaceIndex   = -1;
 
-            for(int t = 0; t < Brushes.Length; t++)
+            for(int t = 0; t < brushes.Length; t++)
             {
-                CSGBrush brush = Brushes[t];
+                CSGBrush brush = brushes[t];
 
-                if(!Brushes[t] || !Brushes[t].isActiveAndEnabled)
+                if(!brushes[t] || !brushes[t].isActiveAndEnabled)
                 {
                     continue;
                 }
 
-                Transform parentModelTransform = ModelTransforms[t];
+                Transform parentModelTransform = modelTransforms[t];
 
                 if(parentModelTransform == null)
                 {
@@ -351,10 +313,8 @@ namespace InternalRealtimeCSG
 
                 Matrix4x4 modelTransformation = parentModelTransform.localToWorldMatrix;
 
-                LegacyBrushIntersection intersection;
-
                 if(!SceneQueryUtility.FindBrushIntersection(
-                       brush, modelTransformation, rayStart, rayEnd, out intersection
+                       brush, modelTransformation, rayStart, rayEnd, out LegacyBrushIntersection intersection
                    ))
                 {
                     continue;
@@ -377,28 +337,28 @@ namespace InternalRealtimeCSG
         {
             HashSet<Vector3> points = new HashSet<Vector3>();
 
-            for(int t = 0; t < States.Length; t++)
+            for(int t = 0; t < states.Length; t++)
             {
-                ControlMeshState meshState         = States[t];
-                Matrix4x4        brushLocalToWorld = LocalToWorld[t];
+                ControlMeshState meshState         = states[t];
+                Matrix4x4        brushLocalToWorld = localToWorld[t];
 
                 if(useBackupPoints)
                 {
-                    if(meshState.BackupPoints == null)
+                    if(meshState.backupPoints == null)
                     {
                         continue;
                     }
 
                     foreach(short index in meshState.GetSelectedPointIndices())
                     {
-                        points.Add(brushLocalToWorld.MultiplyPoint(meshState.BackupPoints[index]));
+                        points.Add(brushLocalToWorld.MultiplyPoint(meshState.backupPoints[index]));
                     }
                 }
                 else
                 {
                     foreach(short index in meshState.GetSelectedPointIndices())
                     {
-                        points.Add(meshState.WorldPoints[index]);
+                        points.Add(meshState.worldPoints[index]);
                     }
                 }
             }
@@ -410,106 +370,67 @@ namespace InternalRealtimeCSG
         {
             AABB newBounds = AABB.Empty;
 
-            for(int t = 0; t < Brushes.Length; t++)
+            for(int t = 0; t < brushes.Length; t++)
             {
-                ControlMeshState meshState = States[t];
+                ControlMeshState meshState = states[t];
 
                 if(meshState == null)
                 {
                     continue;
                 }
 
-                if(meshState.Selection.Points != null)
+                if(meshState.selection.points != null)
                 {
-                    for(int p = 0; p < meshState.Selection.Points.Length; p++)
+                    for(int p = 0; p < meshState.selection.points.Length; p++)
                     {
-                        if((meshState.Selection.Points[p] & SelectState.Selected) != SelectState.Selected)
+                        if((meshState.selection.points[p] & SelectState.Selected) != SelectState.Selected)
                         {
                             continue;
                         }
 
-                        newBounds.Extend(meshState.WorldPoints[p]);
+                        newBounds.Extend(meshState.worldPoints[p]);
                     }
                 }
 
-                if(meshState.Selection.Edges != null)
+                if(meshState.selection.edges != null)
                 {
-                    for(int e = 0; e < meshState.Selection.Edges.Length; e++)
+                    for(int e = 0; e < meshState.selection.edges.Length; e++)
                     {
-                        if((meshState.Selection.Edges[e] & SelectState.Selected) != SelectState.Selected)
+                        if((meshState.selection.edges[e] & SelectState.Selected) != SelectState.Selected)
                         {
                             continue;
                         }
 
-                        int index0 = meshState.Edges[e * 2 + 0];
-                        int index1 = meshState.Edges[e * 2 + 1];
+                        int index0 = meshState.edges[e * 2 + 0];
+                        int index1 = meshState.edges[e * 2 + 1];
 
-                        newBounds.Extend(meshState.WorldPoints[index0]);
-                        newBounds.Extend(meshState.WorldPoints[index1]);
+                        newBounds.Extend(meshState.worldPoints[index0]);
+                        newBounds.Extend(meshState.worldPoints[index1]);
                     }
                 }
 
-                if(meshState.Selection.Polygons != null)
+                if(meshState.selection.polygons != null)
                 {
-                    for(int p = 0; p < meshState.Selection.Polygons.Length; p++)
+                    for(int p = 0; p < meshState.selection.polygons.Length; p++)
                     {
-                        if((meshState.Selection.Polygons[p] & SelectState.Selected) != SelectState.Selected)
+                        if((meshState.selection.polygons[p] & SelectState.Selected) != SelectState.Selected)
                         {
                             continue;
                         }
 
-                        int[] indices = meshState.PolygonPointIndices[p];
+                        int[] indices = meshState.polygonPointIndices[p];
 
                         for(int i = 0; i < indices.Length; i++)
                         {
                             int index = indices[i];
 
-                            newBounds.Extend(meshState.WorldPoints[index]);
+                            newBounds.Extend(meshState.worldPoints[index]);
                         }
                     }
                 }
             }
 
             return newBounds;
-        }
-
-        internal void DebugLogData()
-        {
-            int pointCount   = 0;
-            int polygonCount = 0;
-            int edgeCount    = 0;
-
-            for(int t = 0; t < States.Length; t++)
-            {
-                ControlMeshState     state     = States[t];
-                ControlMeshSelection selection = state.Selection;
-
-                for(int p = 0; p < selection.Points.Length; p++)
-                {
-                    if((selection.Points[p] & SelectState.Selected) == SelectState.Selected)
-                    {
-                        pointCount++;
-                    }
-                }
-
-                for(int e = 0; e < selection.Edges.Length; e++)
-                {
-                    if((selection.Edges[e] & SelectState.Selected) == SelectState.Selected)
-                    {
-                        edgeCount++;
-                    }
-                }
-
-                for(int e = 0; e < selection.Polygons.Length; e++)
-                {
-                    if((selection.Polygons[e] & SelectState.Selected) == SelectState.Selected)
-                    {
-                        polygonCount++;
-                    }
-                }
-            }
-
-            Debug.Log(pointCount + " " + edgeCount + " " + polygonCount);
         }
     }
 }

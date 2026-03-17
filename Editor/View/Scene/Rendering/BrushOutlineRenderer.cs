@@ -45,35 +45,35 @@ namespace RealtimeCSG
 
                 ControlMeshState meshState = meshStates[t];
 
-                if(meshState.WorldPoints.Length == 0 &&
-                   meshState.Edges.Length == 0)
+                if(meshState.worldPoints.Length == 0 &&
+                   meshState.edges.Length == 0)
                 {
                     continue;
                 }
 
-                if(!meshState.UpdateColors(camera, brush, controlMeshes[t]))
+                if(!meshState.UpdateColors(camera, controlMeshes[t]))
                 {
                     continue;
                 }
 
                 _outlinesManager.DrawLines(
-                    meshState.WorldPoints, meshState.Edges, ColorSettings.MeshEdgeOutline, 1.0f
+                    meshState.worldPoints, meshState.edges, ColorSettings.MeshEdgeOutline, 1.0f
                 ); //, zTest: false);
 
                 _edgeColorsManager.DrawLines(
-                    meshState.WorldPoints, meshState.Edges, meshState.EdgeColors, 1.0f
+                    meshState.worldPoints, meshState.edges, meshState.edgeColors, 1.0f
                 ); //, zTest: false);
 
-                for(int p = 0; p < meshState.PolygonPointIndices.Length; p++)
+                for(int p = 0; p < meshState.polygonPointIndices.Length; p++)
                 {
-                    if(meshState.PolygonColors[p].a < 1.0f / 255.0f)
+                    if(meshState.polygonColors[p].a < 1.0f / 255.0f)
                     {
                         continue;
                     }
 
-                    Color color         = meshState.PolygonColors[p];
-                    int[] polygonPoints = meshState.PolygonPointIndices[p];
-                    _polygonManager.DrawPolygon(meshState.WorldPoints, polygonPoints, color);
+                    Color color         = meshState.polygonColors[p];
+                    int[] polygonPoints = meshState.polygonPointIndices[p];
+                    _polygonManager.DrawPolygon(meshState.worldPoints, polygonPoints, color);
                 }
             }
 
@@ -92,19 +92,19 @@ namespace RealtimeCSG
 
             MaterialUtility.LineAlphaMultiplier     = 0.75f;
             MaterialUtility.LineDashMultiplier      = 4.0f;
-            MaterialUtility.LineThicknessMultiplier = GUIConstants.thickLineScale * 2.0f;
+            MaterialUtility.LineThicknessMultiplier = GUIConstants.THICK_LINE_SCALE * 2.0f;
             _outlinesManager.Render(noZTestGenericLineMaterial);
 
             MaterialUtility.LineDashMultiplier      = 0.0f;
-            MaterialUtility.LineThicknessMultiplier = GUIConstants.thickLineScale * 2.0f;
+            MaterialUtility.LineThicknessMultiplier = GUIConstants.THICK_LINE_SCALE * 2.0f;
             _outlinesManager.Render(zTestGenericLineMaterial);
 
             MaterialUtility.LineDashMultiplier      = 4.0f;
-            MaterialUtility.LineThicknessMultiplier = GUIConstants.thickLineScale;
+            MaterialUtility.LineThicknessMultiplier = GUIConstants.THICK_LINE_SCALE;
             _edgeColorsManager.Render(noZTestGenericLineMaterial);
 
             MaterialUtility.LineDashMultiplier      = 0.0f;
-            MaterialUtility.LineThicknessMultiplier = GUIConstants.thickLineScale;
+            MaterialUtility.LineThicknessMultiplier = GUIConstants.THICK_LINE_SCALE;
             _edgeColorsManager.Render(zTestGenericLineMaterial);
 
             MaterialUtility.LineAlphaMultiplier = 1.0f;

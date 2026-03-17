@@ -326,7 +326,7 @@ namespace RealtimeCSG
                 editorOnly
             );
 
-            if(!CSGProjectSettings.Instance.SaveMeshesInSceneFiles)
+            if(!CSGProjectSettings.Instance.saveMeshesInSceneFiles)
             {
                 // If is prefab scene, allow save
                 if(string.IsNullOrEmpty(model.gameObject.scene.path) && sharedMesh != null)

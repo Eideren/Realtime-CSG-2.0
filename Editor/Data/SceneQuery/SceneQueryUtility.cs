@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-using UnityEngine.SceneManagement;
-using UnityEditor;
 using RealtimeCSG;
-using RealtimeCSG.Legacy;
 using RealtimeCSG.Components;
+using RealtimeCSG.Legacy;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace InternalRealtimeCSG
@@ -15,12 +15,12 @@ namespace InternalRealtimeCSG
     {
         public PointSelection(int brushNodeID, int pointIndex)
         {
-            BrushNodeID = brushNodeID;
-            PointIndex  = pointIndex;
+            this.brushNodeID = brushNodeID;
+            this.pointIndex  = pointIndex;
         }
 
-        public readonly int BrushNodeID;
-        public readonly int PointIndex;
+        public readonly int brushNodeID;
+        public readonly int pointIndex;
     }
 
     internal static class SceneQueryUtility
@@ -79,36 +79,6 @@ namespace InternalRealtimeCSG
 
 #endregion
 
-#region GetFirstGameObjectInSceneWithName
-
-        public static GameObject GetFirstGameObjectInSceneWithName(Scene scene, string name)
-        {
-            foreach(GameObject root in scene.GetRootGameObjects())
-            {
-                if(!root)
-                {
-                    continue;
-                }
-
-                if(root.name == name)
-                {
-                    return root;
-                }
-
-                foreach(Transform transform in root.GetComponentsInChildren<Transform>(true))
-                {
-                    if(transform.name == name)
-                    {
-                        return transform.gameObject;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-#endregion
-
 #region GetUniqueHiddenGameObjectInSceneWithName
 
         internal static GameObject GetUniqueHiddenGameObjectInSceneWithName(Scene scene, string name)
@@ -149,11 +119,6 @@ namespace InternalRealtimeCSG
                 {
                     Transform child = rootChildren[j];
 
-                    if(child == root)
-                    {
-                        continue;
-                    }
-
                     if(!child)
                     {
                         continue;
@@ -177,29 +142,6 @@ namespace InternalRealtimeCSG
             }
 
             return foundRoot;
-        }
-
-#endregion
-
-#region GetGroupObjectIfObjectIsPartOfGroup
-
-        public static GameObject GetGroupGameObjectIfObjectIsPartOfGroup(GameObject gameObject)
-        {
-            if(gameObject == null)
-            {
-                return null;
-            }
-
-            CSGNode node = gameObject.GetComponentInChildren<CSGNode>();
-
-            if(!node)
-            {
-                return gameObject;
-            }
-
-            CSGOperation operation = GetGroupOperationForNode(node);
-
-            return operation == null ? gameObject : operation.gameObject;
         }
 
 #endregion
@@ -235,14 +177,12 @@ namespace InternalRealtimeCSG
                 return null;
             }
 
-#if UNITY_2018_3_OR_NEWER
             Transform prefabBase = null;
 
             if(PrefabUtility.IsPartOfNonAssetPrefabInstance(go))
             {
                 prefabBase = PrefabUtility.GetOutermostPrefabInstanceRoot(go).transform;
             }
-#endif
 
             GameObject group          = null;
             Transform  groupTransform = null;
@@ -259,12 +199,11 @@ namespace InternalRealtimeCSG
 
             while(tr != null)
             {
-#if UNITY_2018_3_OR_NEWER
                 if(tr == prefabBase)
                 {
                     return tr.gameObject;
                 }
-#endif
+
                 if(tr == groupTransform)
                 {
                     return group;
@@ -303,9 +242,7 @@ namespace InternalRealtimeCSG
 
                 CSGOperation parentOp = parent.GetComponent<CSGOperation>();
 
-                if(parentOp &&
-                   //!parentOp.PassThrough &&
-                   parentOp.HandleAsOne)
+                if(parentOp && parentOp.HandleAsOne)
                 {
                     return parentOp;
                 }
@@ -402,14 +339,7 @@ namespace InternalRealtimeCSG
 
                 GameObject childGameObject = childTransform.gameObject;
 
-                if(!childTransform.gameObject.activeInHierarchy)
-                {
-                    objectsInFrustum.Remove(childGameObject);
-
-                    continue;
-                }
-
-                if(objectsInFrustum.Contains(childGameObject))
+                if(!childTransform.gameObject.activeInHierarchy || objectsInFrustum.Contains(childGameObject))
                 {
                     objectsInFrustum.Remove(childGameObject);
 
@@ -418,8 +348,7 @@ namespace InternalRealtimeCSG
 
                 CSGOperation childOperation = childNode as CSGOperation;
 
-                if(childOperation == null ||
-                   !childOperation.PassThrough)
+                if(childOperation == null || !childOperation.PassThrough)
                 {
                     objectsInFrustum.Remove(childGameObject);
                     allChildrenSelected = false;
@@ -553,14 +482,14 @@ namespace InternalRealtimeCSG
 
                 SceneMeshState cameraState = targetMeshState.GetCameraState(camera, false);
 
-                for(int p = 0; p < targetMeshState.WorldPoints.Length; p++)
+                for(int p = 0; p < targetMeshState.worldPoints.Length; p++)
                 {
-                    if(ignoreHiddenPoints && cameraState.WorldPointBackfaced[p])
+                    if(ignoreHiddenPoints && cameraState.worldPointBackfaced[p])
                     {
                         continue;
                     }
 
-                    Vector3 point = targetMeshState.WorldPoints[p];
+                    Vector3 point = targetMeshState.worldPoints[p];
                     bool    found = true;
 
                     for(int i = 0; i < 6; i++)
@@ -589,10 +518,10 @@ namespace InternalRealtimeCSG
 
 #region DeepSelection (private)
 
-        private static List<GameObject> deepClickIgnoreGameObjectList = new List<GameObject>();
-        private static List<CSGBrush> deepClickIgnoreBrushList = new List<CSGBrush>();
-        private static Vector2 _prevSceenPos = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
-        private static Camera _prevCamera;
+        private static readonly List<GameObject> deepClickIgnoreGameObjectList = new List<GameObject>();
+        private static readonly List<CSGBrush> deepClickIgnoreBrushList = new List<CSGBrush>();
+        private static Vector2 m_PrevSceenPos = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+        private static Camera m_PrevCamera;
 
         private static void ResetDeepClick(bool resetPosition = true)
         {
@@ -601,8 +530,8 @@ namespace InternalRealtimeCSG
 
             if(resetPosition)
             {
-                _prevSceenPos = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
-                _prevCamera   = null;
+                m_PrevSceenPos = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+                m_PrevCamera   = null;
             }
         }
 
@@ -695,19 +624,7 @@ namespace InternalRealtimeCSG
                 return null;
             }
 
-            if(state.generatedComponents == null)
-            {
-                return null;
-            }
-
-            CSGModel model;
-
-            if(state.generatedComponents.TryGetValue(pickedObject, out model))
-            {
-                return model;
-            }
-
-            return null;
+            return state.generatedComponents == null ? null : state.generatedComponents.GetValueOrDefault(pickedObject);
         }
 
         private static GameObject FindFirstWorldIntersection(
@@ -752,22 +669,20 @@ namespace InternalRealtimeCSG
                 }
                 else
                 {
-                    LegacyBrushIntersection[] _deepClickIntersections;
-
                     CSGBrush[] ignoreBrushesArray = ignoreGameObjects == null || ignoreGameObjects.Count == 0
                         ? null
                         : ignoreBrushes.ToArray();
 
                     if(FindWorldIntersection(
-                           model, worldRayStart, worldRayEnd, out _deepClickIntersections
+                           model, worldRayStart, worldRayEnd, out LegacyBrushIntersection[] deepClickIntersections
                          , ignoreInvisibleSurfaces && !wireframeShown, !wireframeShown, ignoreBrushesArray
                        ))
                     {
                         int visibleLayers = Tools.visibleLayers;
 
-                        for(int i = 0; i < _deepClickIntersections.Length; i++)
+                        for(int i = 0; i < deepClickIntersections.Length; i++)
                         {
-                            gameObject = _deepClickIntersections[i].gameObject;
+                            gameObject = deepClickIntersections[i].gameObject;
 
                             if(((1 << gameObject.layer) & visibleLayers) == 0)
                             {
@@ -832,11 +747,8 @@ namespace InternalRealtimeCSG
           , bool ignoreDeepClick = false
         )
         {
-            MeshRenderer meshRenderer  = null;
-            int          materialIndex = 0;
-
             return FindClickWorldIntersection(
-                camera, screenPos, out foundObject, out meshRenderer, out materialIndex, ignoreInvisibleSurfaces
+                camera, screenPos, out foundObject, out MeshRenderer _, out int _, ignoreInvisibleSurfaces
               , ignoreDeepClick
             );
         }
@@ -846,7 +758,7 @@ namespace InternalRealtimeCSG
             clearDeepClick = true;
         }
 
-        private static bool clearDeepClick = false;
+        private static bool clearDeepClick;
 
         public static bool FindClickWorldIntersection(
             Camera camera, Vector2 screenPos, out GameObject foundObject, out MeshRenderer meshRenderer
@@ -868,8 +780,8 @@ namespace InternalRealtimeCSG
             Vector3 worldRayEnd    = worldRayStart + worldRayVector;
 
             // If we moved our mouse, reset our ignore list
-            if(_prevSceenPos != screenPos ||
-               _prevCamera != camera ||
+            if(m_PrevSceenPos != screenPos ||
+               m_PrevCamera != camera ||
                ignoreDeepClick ||
                clearDeepClick)
             {
@@ -877,8 +789,8 @@ namespace InternalRealtimeCSG
                 clearDeepClick = false;
             }
 
-            _prevSceenPos = screenPos;
-            _prevCamera   = camera;
+            m_PrevSceenPos = screenPos;
+            m_PrevCamera   = camera;
 
             // Get the first click that is not in our ignore list
             foundObject = FindFirstWorldIntersection(
@@ -917,13 +829,11 @@ namespace InternalRealtimeCSG
 
                     return false;
                 }
-                else
-                {
-                    // Reset our list so we only skip our current selection on the next click
-                    ResetDeepClick(
-                        false // But make sure we remember our current mouse position
-                    );
-                }
+
+                // Reset our list so we only skip our current selection on the next click
+                ResetDeepClick(
+                    false // But make sure we remember our current mouse position
+                );
             }
 
             // Remember our gameobject/brush so we don't select it on the next click
@@ -981,9 +891,9 @@ namespace InternalRealtimeCSG
                 break;
             }
 
-            LegacyBrushIntersection intersection;
-
-            if(FindWorldIntersection(camera, worldRay, out intersection, ignoreBrushes: ignoreBrushes))
+            if(FindWorldIntersection(
+                   camera, worldRay, out LegacyBrushIntersection intersection, ignoreBrushes: ignoreBrushes
+               ))
             {
                 return intersection;
             }
@@ -1041,10 +951,9 @@ namespace InternalRealtimeCSG
 
             CSGModel intersectionModel = null;
 
-            LegacyBrushIntersection[] intersections;
-
             if(FindMultiWorldIntersection(
-                   worldRayStart, worldRayEnd, out intersections, ignoreInvisibleSurfaces && !wireframeShown
+                   worldRayStart, worldRayEnd, out LegacyBrushIntersection[] intersections
+                 , ignoreInvisibleSurfaces && !wireframeShown
                ))
             {
                 int visibleLayers = Tools.visibleLayers;
@@ -1061,23 +970,6 @@ namespace InternalRealtimeCSG
                     break;
                 }
             }
-            /*
-            GameObject[] modelMeshes = null;
-            HideFlags[] hideFlags = null;
-            if (intersectionModel != null)
-            {
-                modelMeshes = CSGModelManager.GetModelMeshes(intersectionModel);
-                if (modelMeshes != null)
-                {
-                    hideFlags = new HideFlags[modelMeshes.Length];
-                    for (var i = 0; i < modelMeshes.Length; i++)
-                    {
-                        hideFlags[i] = modelMeshes[i].hideFlags;
-                        modelMeshes[i].hideFlags = HideFlags.None;
-                    }
-                }
-            }
-            */
 
             CSGModel       foundModel;
             GameObject     gameObject = null;
@@ -1097,24 +989,6 @@ namespace InternalRealtimeCSG
                 return false;
             }
 
-            /*
-            var gameObject = HandleUtility.PickGameObject(screenPos, false);
-
-            if (modelMeshes != null)
-            {
-                for (var i = 0; i < modelMeshes.Length; i++)
-                {
-                    var modelMesh = modelMeshes[i];
-                    if (!modelMesh)
-                        continue;
-
-                    if (gameObject == modelMesh)
-                        gameObject = null;
-
-                    modelMesh.hideFlags = hideFlags[i];
-                }
-            }
-            */
             if(!gameObject ||
                gameObject.GetComponent<Canvas>() ||
                gameObject.GetComponent<CSGModel>() ||
@@ -1161,7 +1035,7 @@ namespace InternalRealtimeCSG
             );
         }
 
-        private static CSGModel[] __foundModels = new CSGModel[0];
+        private static CSGModel[] m_FoundModels = Array.Empty<CSGModel>();
 
         public static bool FindWorldIntersection(
             Vector3 rayStart, Vector3 rayEnd, out LegacyBrushIntersection intersection
@@ -1178,12 +1052,11 @@ namespace InternalRealtimeCSG
 
             bool forceIgnoreInvisibleSurfaces = ignoreInvisibleSurfaces && !CSGSettings.ShowCulledSurfaces;
 
-            int visibleLayers   = Tools.visibleLayers;
             int foundModelCount = 0;
 
-            if(__foundModels.Length < InternalCSGModelManager.Models.Length)
+            if(m_FoundModels.Length < InternalCSGModelManager.Models.Length)
             {
-                __foundModels = new CSGModel[InternalCSGModelManager.Models.Length];
+                m_FoundModels = new CSGModel[InternalCSGModelManager.Models.Length];
             }
 
             for(int g = 0; g < InternalCSGModelManager.Models.Length; g++)
@@ -1201,7 +1074,7 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                __foundModels[foundModelCount] = model;
+                m_FoundModels[foundModelCount] = model;
                 foundModelCount++;
             }
 
@@ -1210,15 +1083,13 @@ namespace InternalRealtimeCSG
                 return false;
             }
 
-            LegacyBrushIntersection[] modelIntersections;
-
             if(!InternalCSGModelManager.External.rayCastMulti(
                    foundModelCount,
-                   __foundModels,
+                   m_FoundModels,
                    rayStart,
                    rayEnd,
                    forceIgnoreInvisibleSurfaces,
-                   out modelIntersections,
+                   out LegacyBrushIntersection[] modelIntersections,
                    ignoreBrushes
                ))
             {
@@ -1249,12 +1120,7 @@ namespace InternalRealtimeCSG
                 intersection = modelIntersection;
             }
 
-            if(intersection == null)
-            {
-                return false;
-            }
-
-            return true;
+            return intersection != null;
         }
 
 #endregion
@@ -1277,7 +1143,6 @@ namespace InternalRealtimeCSG
             Dictionary<CSGNode, LegacyBrushIntersection> foundIntersections =
                 new Dictionary<CSGNode, LegacyBrushIntersection>();
 
-            int visibleLayers = Tools.visibleLayers;
             ignoreInvisibleSurfaces = ignoreInvisibleSurfaces && !CSGSettings.ShowCulledSurfaces;
 
             if(!ModelTraits.IsModelSelectable(model))
@@ -1291,14 +1156,12 @@ namespace InternalRealtimeCSG
                 return false;
             }
 
-            LegacyBrushIntersection[] modelIntersections;
-
             if(!InternalCSGModelManager.External.rayCastIntoModelMulti(
                    model,
                    worldRayStart,
                    worldRayEnd,
                    ignoreInvisibleSurfaces,
-                   out modelIntersections,
+                   out LegacyBrushIntersection[] modelIntersections,
                    ignoreBrushes
                ))
             {
@@ -1317,10 +1180,9 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                CSGNode                 currentNode = GetTopMostGroupForNode(brush);
-                LegacyBrushIntersection other;
+                CSGNode currentNode = GetTopMostGroupForNode(brush);
 
-                if(foundIntersections.TryGetValue(currentNode, out other)
+                if(foundIntersections.TryGetValue(currentNode, out LegacyBrushIntersection other)
                 && other.distance <= intersection.distance)
                 {
                     continue;
@@ -1365,7 +1227,6 @@ namespace InternalRealtimeCSG
             Dictionary<CSGNode, LegacyBrushIntersection> foundIntersections =
                 new Dictionary<CSGNode, LegacyBrushIntersection>();
 
-            int visibleLayers = Tools.visibleLayers;
             ignoreInvisibleSurfaces = ignoreInvisibleSurfaces && !CSGSettings.ShowCulledSurfaces;
 
             for(int g = 0; g < InternalCSGModelManager.Models.Length; g++)
@@ -1383,14 +1244,12 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                LegacyBrushIntersection[] modelIntersections;
-
                 if(!InternalCSGModelManager.External.rayCastIntoModelMulti(
                        model,
                        worldRayStart,
                        worldRayEnd,
                        ignoreInvisibleSurfaces,
-                       out modelIntersections,
+                       out LegacyBrushIntersection[] modelIntersections,
                        ignoreBrushes
                    ))
                 {
@@ -1409,10 +1268,9 @@ namespace InternalRealtimeCSG
                         continue;
                     }
 
-                    CSGNode                 currentNode = GetTopMostGroupForNode(brush);
-                    LegacyBrushIntersection other;
+                    CSGNode currentNode = GetTopMostGroupForNode(brush);
 
-                    if(foundIntersections.TryGetValue(currentNode, out other)
+                    if(foundIntersections.TryGetValue(currentNode, out LegacyBrushIntersection other)
                     && other.distance <= intersection.distance)
                     {
                         continue;
@@ -1466,12 +1324,9 @@ namespace InternalRealtimeCSG
                 return false;
             }
 
-            if(BrushTraits.IsSurfaceUnselectable(brush, intersection.surfaceIndex, brush.ChildData.Model.IsTrigger))
-            {
-                return false;
-            }
-
-            return true;
+            return !BrushTraits.IsSurfaceUnselectable(
+                brush, intersection.surfaceIndex, brush.ChildData.Model.IsTrigger
+            );
         }
 
 #endregion
@@ -1508,12 +1363,7 @@ namespace InternalRealtimeCSG
                 return false;
             }
 
-            if(BrushTraits.IsSurfaceUnselectable(brush, surfaceIndex, brush.ChildData.Model.IsTrigger))
-            {
-                return false;
-            }
-
-            return true;
+            return !BrushTraits.IsSurfaceUnselectable(brush, surfaceIndex, brush.ChildData.Model.IsTrigger);
         }
 
 #endregion

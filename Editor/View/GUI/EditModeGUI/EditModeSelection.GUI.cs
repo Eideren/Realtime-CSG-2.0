@@ -336,10 +336,10 @@ namespace RealtimeCSG
                 }
 
                 FilteredSelection filteredSelection = EditModeManager.FilteredSelection;
-                CSGNode[]         targetNodes       = filteredSelection.NodeTargets;
-                CSGModel[]        targetModels      = filteredSelection.ModelTargets;
-                CSGBrush[]        targetBrushes     = filteredSelection.BrushTargets;
-                CSGOperation[]    targetOperations  = filteredSelection.OperationTargets;
+                CSGNode[]         targetNodes       = filteredSelection.nodeTargets;
+                CSGModel[]        targetModels      = filteredSelection.modelTargets;
+                CSGBrush[]        targetBrushes     = filteredSelection.brushTargets;
+                CSGOperation[]    targetOperations  = filteredSelection.operationTargets;
 
                 if(targetNodes == null)
                 {

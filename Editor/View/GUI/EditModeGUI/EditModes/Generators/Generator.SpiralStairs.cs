@@ -19,7 +19,7 @@ using RealtimeCSG.Components;
 
 */
 
-// TODO: 
+// TODO:
 //	test on non straight walls/floors
 //  optional one step less in height (so that the last step is on the wall it's put against
 //	make it possible to move steps in slope direction
@@ -435,7 +435,7 @@ namespace RealtimeCSG
 
                 CSGPlane worldPlane = new CSGPlane(normal, point0);
 
-                // note, we use 'inverse' of the worldToLocalMatrix because to transform a plane we'd need to do an inverse, 
+                // note, we use 'inverse' of the worldToLocalMatrix because to transform a plane we'd need to do an inverse,
                 // and using the already inversed matrix we don't need to do a costly inverse.
                 CSGPlane localPlane = GeometryUtility.InverseTransformPlane(
                     firstSnappedBrush.transform.localToWorldMatrix, worldPlane
@@ -515,7 +515,7 @@ namespace RealtimeCSG
             );
 
             PaintUtility.DrawLines(
-                localToWorld, volume, BoundsUtilities.AABBLineIndices, GUIConstants.oldLineScale, boundOutlinesColor
+                localToWorld, volume, BoundsUtilities.AABBLineIndices, GUIConstants.OLD_LINE_SCALE, boundOutlinesColor
             );
 
             PaintUtility.RenderBoundsSizes(
@@ -539,7 +539,7 @@ namespace RealtimeCSG
 
                 {
                     float handleSize       = CSG_HandleUtility.GetHandleSize(worldPosition);
-                    float scaledHandleSize = handleSize * GUIConstants.handleScale;
+                    float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
                     PaintUtility.SquareDotCap(id, worldPosition, rotation, scaledHandleSize);
                 }
 
@@ -551,7 +551,7 @@ namespace RealtimeCSG
                     for(int i = 0; i < settings.vertices.Length; i++)
                     {
                         float handleSize       = CSG_HandleUtility.GetHandleSize(settings.vertices[i]);
-                        float scaledHandleSize = handleSize * GUIConstants.handleScale;
+                        float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
                         PaintUtility.SquareDotCap(id, settings.vertices[i], rotation, scaledHandleSize);
                     }
 
@@ -701,7 +701,7 @@ namespace RealtimeCSG
 
                 Color topColor = ColorSettings.PointInnerStateColor[(int)topSelectState];
 
-                PaintUtility.DrawLine(localToWorld, topFrom, topTo, GUIConstants.oldThickLineScale, topColor);
+                PaintUtility.DrawLine(localToWorld, topFrom, topTo, GUIConstants.OLD_THICK_LINE_SCALE, topColor);
 
                 SelectState bottomSelectState = hotControl == bottomSlopeLeftID || hotControl == bottomSlopeRightID
                     ?
@@ -712,14 +712,14 @@ namespace RealtimeCSG
                         : SelectState.None;
 
                 Color bottomColor = ColorSettings.PointInnerStateColor[(int)bottomSelectState];
-                PaintUtility.DrawLine(localToWorld, bottomFrom, bottomTo, GUIConstants.oldThickLineScale, bottomColor);
+                PaintUtility.DrawLine(localToWorld, bottomFrom, bottomTo, GUIConstants.OLD_THICK_LINE_SCALE, bottomColor);
 
                 PaintUtility.DrawLine(
-                    localToWorld, topFrom, bottomFrom, GUIConstants.oldThickLineScale, ColorSettings.MeshEdgeOutline
+                    localToWorld, topFrom, bottomFrom, GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.MeshEdgeOutline
                 );
 
                 PaintUtility.DrawLine(
-                    localToWorld, topTo, bottomTo, GUIConstants.oldThickLineScale, ColorSettings.MeshEdgeOutline
+                    localToWorld, topTo, bottomTo, GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.MeshEdgeOutline
                 );
 
                 PaintUtility.DrawDottedLine(localToWorld, topFrom, bottomFrom, ColorSettings.MeshEdgeOutline, 4.0f);
@@ -1060,9 +1060,9 @@ namespace RealtimeCSG
                 {
                     if(GUIUtility.hotControl == shapeId)
                     {
-                        if(Keys.PerformActionKey.IsKeyPressed() ||
-                           Keys.DeleteSelectionKey.IsKeyPressed() ||
-                           Keys.CancelActionKey.IsKeyPressed())
+                        if(Keys.performActionKey.IsKeyPressed() ||
+                           Keys.deleteSelectionKey.IsKeyPressed() ||
+                           Keys.cancelActionKey.IsKeyPressed())
                         {
                             Event.current.Use();
                         }
@@ -1074,8 +1074,8 @@ namespace RealtimeCSG
                 {
                     if(GUIUtility.hotControl == shapeId)
                     {
-                        if(Keys.CylinderBuilderMode.IsKeyPressed() ||
-                           Keys.PerformActionKey.IsKeyPressed())
+                        if(Keys.cylinderBuilderMode.IsKeyPressed() ||
+                           Keys.performActionKey.IsKeyPressed())
                         {
                             HotKeyReleased();
                             Event.current.Use();
@@ -1083,8 +1083,8 @@ namespace RealtimeCSG
                             return;
                         }
 
-                        if(Keys.DeleteSelectionKey.IsKeyPressed() ||
-                           Keys.CancelActionKey.IsKeyPressed())
+                        if(Keys.deleteSelectionKey.IsKeyPressed() ||
+                           Keys.cancelActionKey.IsKeyPressed())
                         {
                             Cancel();
                             Event.current.Use();

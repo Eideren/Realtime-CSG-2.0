@@ -820,7 +820,7 @@ namespace RealtimeCSG
                             {
                                 PaintUtility.DrawLine(
                                     poly2dToWorldMatrix, outlineVertices[i - 1], outlineVertices[i]
-                                  , GUIConstants.oldLineScale, topWireframeColor
+                                  , GUIConstants.OLD_LINE_SCALE, topWireframeColor
                                 );
 
                                 PaintUtility.DrawDottedLine(
@@ -831,7 +831,7 @@ namespace RealtimeCSG
 
                             PaintUtility.DrawLine(
                                 poly2dToWorldMatrix, outlineVertices[outlineVertices.Length - 1], outlineVertices[0]
-                              , GUIConstants.oldLineScale, topWireframeColor
+                              , GUIConstants.OLD_LINE_SCALE, topWireframeColor
                             );
 
                             PaintUtility.DrawDottedLine(
@@ -851,7 +851,7 @@ namespace RealtimeCSG
                                 {
                                     Vector3 from = prevPoly2dToWorldMatrix.MultiplyPoint(outlineVertices[i]);
                                     Vector3 to   = poly2dToWorldMatrix.MultiplyPoint(outlineVertices[i]);
-                                    PaintUtility.DrawLine(from, to, GUIConstants.oldLineScale, wireframeColor);
+                                    PaintUtility.DrawLine(from, to, GUIConstants.OLD_LINE_SCALE, wireframeColor);
                                     PaintUtility.DrawDottedLine(from, to, wireframeColor, 4.0f);
                                 }
                             }
@@ -865,7 +865,7 @@ namespace RealtimeCSG
                         }
 
                         float handleSize       = CSG_HandleUtility.GetHandleSize(extrusionPoints[p].Position);
-                        float scaledHandleSize = handleSize * GUIConstants.handleScale;
+                        float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
 
                         if(p > 0)
                         {
@@ -943,7 +943,7 @@ namespace RealtimeCSG
                         Matrix4x4 origMatrix = Handles.matrix;
                         Handles.matrix = MathConstants.identityMatrix;
                         float handleSize       = CSG_HandleUtility.GetHandleSize(extrusionPoints[p].Position);
-                        float scaledHandleSize = handleSize * GUIConstants.handleScale * handle_extension;
+                        float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE * handle_extension;
 
                         float distanceToCircle = HandleUtility.DistanceToCircle(
                             extrusionPoints[p].Position, scaledHandleSize

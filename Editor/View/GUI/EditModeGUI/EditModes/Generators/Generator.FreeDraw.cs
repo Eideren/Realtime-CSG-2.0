@@ -911,7 +911,7 @@ namespace RealtimeCSG
                 for(int i = 1; i < curvedVertices.Length; i++)
                 {
                     PaintUtility.DrawLine(
-                        curvedVertices[i - 1], curvedVertices[i], GUIConstants.oldLineScale, wireframeColor
+                        curvedVertices[i - 1], curvedVertices[i], GUIConstants.OLD_LINE_SCALE, wireframeColor
                     );
 
                     PaintUtility.DrawDottedLine(curvedVertices[i - 1], curvedVertices[i], wireframeColor, 4.0f);
@@ -920,7 +920,7 @@ namespace RealtimeCSG
                 if(curvedVertices.Length > 3)
                 {
                     PaintUtility.DrawLine(
-                        curvedVertices[curvedVertices.Length - 1], curvedVertices[0], GUIConstants.oldLineScale
+                        curvedVertices[curvedVertices.Length - 1], curvedVertices[0], GUIConstants.OLD_LINE_SCALE
                       , wireframeColor
                     );
 
@@ -937,7 +937,7 @@ namespace RealtimeCSG
                     //GUIUtility.hotControl == id || GUIUtility.hotControl == 0)
                 {
                     PaintUtility.DrawLine(
-                        realVertices[realVertices.Length - 2], worldPosition, GUIConstants.oldLineScale
+                        realVertices[realVertices.Length - 2], worldPosition, GUIConstants.OLD_LINE_SCALE
                       , topWireframeColor
                     );
 
@@ -1024,7 +1024,7 @@ namespace RealtimeCSG
                 for(int i = 0; i < realVertices.Length; i++)
                 {
                     float handleSize       = CSG_HandleUtility.GetHandleSize(realVertices[i]);
-                    float scaledHandleSize = handleSize * GUIConstants.handleScale;
+                    float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
                     PaintUtility.SquareDotCap(id, realVertices[i], rotation, scaledHandleSize);
                 }
             }
@@ -1036,7 +1036,7 @@ namespace RealtimeCSG
                 //if ((camera != null) && camera.pixelRect.Contains(Event.current.mousePosition))
                 {
                     float handleSize       = CSG_HandleUtility.GetHandleSize(worldPosition);
-                    float scaledHandleSize = handleSize * GUIConstants.handleScale;
+                    float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
                     PaintUtility.SquareDotCap(id, worldPosition, rotation, scaledHandleSize);
                 }
             }
@@ -1305,9 +1305,9 @@ namespace RealtimeCSG
                         return;
                     }
 
-                    if(Keys.PerformActionKey.IsKeyPressed() ||
-                       Keys.DeleteSelectionKey.IsKeyPressed() ||
-                       Keys.CancelActionKey.IsKeyPressed())
+                    if(Keys.performActionKey.IsKeyPressed() ||
+                       Keys.deleteSelectionKey.IsKeyPressed() ||
+                       Keys.cancelActionKey.IsKeyPressed())
                     {
                         Event.current.Use();
                     }
@@ -1321,8 +1321,8 @@ namespace RealtimeCSG
                         return;
                     }
 
-                    if(Keys.FreeBuilderMode.IsKeyPressed() ||
-                       Keys.PerformActionKey.IsKeyPressed())
+                    if(Keys.freeBuilderMode.IsKeyPressed() ||
+                       Keys.performActionKey.IsKeyPressed())
                     {
                         HotKeyReleased();
                         Event.current.Use();
@@ -1330,8 +1330,8 @@ namespace RealtimeCSG
                         return;
                     }
 
-                    if(Keys.DeleteSelectionKey.IsKeyPressed() ||
-                       Keys.CancelActionKey.IsKeyPressed())
+                    if(Keys.deleteSelectionKey.IsKeyPressed() ||
+                       Keys.cancelActionKey.IsKeyPressed())
                     {
                         PerformDeselectAll();
                         Event.current.Use();
@@ -1515,7 +1515,7 @@ namespace RealtimeCSG
                         Handles.color = ColorSettings.AlignedCurveStateColor[colorState];
 
                         PaintUtility.CircleDotCap(
-                            id, vertices[i], rotation, handleSize * GUIConstants.handleScale * 1.25f
+                            id, vertices[i], rotation, handleSize * GUIConstants.HANDLE_SCALE * 1.25f
                         );
                     }
                     else
@@ -1523,14 +1523,14 @@ namespace RealtimeCSG
                         Handles.color = ColorSettings.BrokenCurveStateColor[colorState];
 
                         PaintUtility.DiamondDotCap(
-                            id, vertices[i], rotation, handleSize * GUIConstants.handleScale * 1.25f
+                            id, vertices[i], rotation, handleSize * GUIConstants.HANDLE_SCALE * 1.25f
                         );
                     }
                 }
                 else
                 {
                     Handles.color = ColorSettings.PointInnerStateColor[colorState];
-                    PaintUtility.SquareDotCap(id, vertices[i], rotation, handleSize * GUIConstants.handleScale);
+                    PaintUtility.SquareDotCap(id, vertices[i], rotation, handleSize * GUIConstants.HANDLE_SCALE);
                 }
             }
         }
@@ -1559,7 +1559,7 @@ namespace RealtimeCSG
                         Handles.color = ColorSettings.AlignedCurveStateColor[colorState];
 
                         PaintUtility.CircleDotCap(
-                            id, vertices[i], rotation, handleSize * GUIConstants.handleScale * 1.25f
+                            id, vertices[i], rotation, handleSize * GUIConstants.HANDLE_SCALE * 1.25f
                         );
                     }
                     else
@@ -1567,14 +1567,14 @@ namespace RealtimeCSG
                         Handles.color = ColorSettings.BrokenCurveStateColor[colorState];
 
                         PaintUtility.DiamondDotCap(
-                            id, vertices[i], rotation, handleSize * GUIConstants.handleScale * 1.25f
+                            id, vertices[i], rotation, handleSize * GUIConstants.HANDLE_SCALE * 1.25f
                         );
                     }
                 }
                 else
                 {
                     Handles.color = ColorSettings.PointInnerStateColor[colorState];
-                    PaintUtility.SquareDotCap(id, vertices[i], rotation, handleSize * GUIConstants.handleScale);
+                    PaintUtility.SquareDotCap(id, vertices[i], rotation, handleSize * GUIConstants.HANDLE_SCALE);
                 }
             }
         }
@@ -1726,7 +1726,7 @@ namespace RealtimeCSG
                 if(visualSnappedEdges != null)
                 {
                     PaintUtility.DrawLines(
-                        visualSnappedEdges.ToArray(), GUIConstants.oldThickLineScale, ColorSettings.SnappedEdges
+                        visualSnappedEdges.ToArray(), GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.SnappedEdges
                     );
                 }
 
@@ -1784,7 +1784,7 @@ namespace RealtimeCSG
                         Vector3 vertex1 = curvedVertices[index0];
                         Vector3 vertex2 = curvedVertices[index1];
 
-                        PaintUtility.DrawLine(vertex1, vertex2, GUIConstants.oldLineScale, wireframeColor);
+                        PaintUtility.DrawLine(vertex1, vertex2, GUIConstants.OLD_LINE_SCALE, wireframeColor);
                         PaintUtility.DrawDottedLine(vertex1, vertex2, wireframeColor, 4.0f);
                     }
                 }
@@ -1909,7 +1909,7 @@ namespace RealtimeCSG
                 if(visualSnappedEdges != null)
                 {
                     PaintUtility.DrawLines(
-                        visualSnappedEdges.ToArray(), GUIConstants.oldThickLineScale, ColorSettings.SnappedEdges
+                        visualSnappedEdges.ToArray(), GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.SnappedEdges
                     );
                 }
 
@@ -2117,7 +2117,7 @@ namespace RealtimeCSG
                 {
                     //if (GUIUtility.hotControl != base.shapeId)
                     //	return;
-                    if(Keys.InsertPoint.IsKeyPressed())
+                    if(Keys.insertPoint.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -2130,7 +2130,7 @@ namespace RealtimeCSG
                 {
                     //if (GUIUtility.hotControl != base.shapeId)
                     //	return;
-                    if(Keys.InsertPoint.IsKeyPressed())
+                    if(Keys.insertPoint.IsKeyPressed())
                     {
                         SplitSelectedEdge();
                         Event.current.Use();
@@ -2271,7 +2271,7 @@ namespace RealtimeCSG
                     {
                         if(GUIUtility.hotControl == id)
                         {
-                            if(Keys.CancelActionKey.IsKeyPressed())
+                            if(Keys.cancelActionKey.IsKeyPressed())
                             {
                                 Event.current.Use();
 
@@ -2285,7 +2285,7 @@ namespace RealtimeCSG
                     {
                         if(GUIUtility.hotControl == id)
                         {
-                            if(Keys.CancelActionKey.IsKeyPressed())
+                            if(Keys.cancelActionKey.IsKeyPressed())
                             {
                                 GUIUtility.hotControl             = 0;
                                 GUIUtility.keyboardControl        = 0;
@@ -2423,7 +2423,7 @@ namespace RealtimeCSG
                                     }
 
                                     float handleSize = CSG_HandleUtility.GetHandleSize(settings.backupCurve.points[p]);
-                                    float scaledHandleSize = handleSize * GUIConstants.handleScale * handle_extension;
+                                    float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE * handle_extension;
 
                                     float distance = GeometryUtility.DistancePointToCircle(
                                         sceneView, movedVertex1, settings.backupCurve.points[p], scaledHandleSize
@@ -2608,7 +2608,7 @@ namespace RealtimeCSG
                             Vector3 tangent          = settings.curve.tangents[i].tangent;
                             Vector3 vertex           = settings.curve.points[i / 2] - tangent;
                             float   handleSize       = CSG_HandleUtility.GetHandleSize(vertex);
-                            float   scaledHandleSize = handleSize * GUIConstants.handleScale * handle_extension;
+                            float   scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE * handle_extension;
                             HandleUtility.AddControl(id, HandleUtility.DistanceToCircle(vertex, scaledHandleSize));
                             Handles.matrix = origMatrix;
 
@@ -2620,7 +2620,7 @@ namespace RealtimeCSG
                         {
                             if(GUIUtility.hotControl == id)
                             {
-                                if(Keys.CancelActionKey.IsKeyPressed())
+                                if(Keys.cancelActionKey.IsKeyPressed())
                                 {
                                     Event.current.Use();
 
@@ -2634,7 +2634,7 @@ namespace RealtimeCSG
                         {
                             if(GUIUtility.hotControl == id)
                             {
-                                if(Keys.CancelActionKey.IsKeyPressed())
+                                if(Keys.cancelActionKey.IsKeyPressed())
                                 {
                                     GUIUtility.hotControl             = 0;
                                     GUIUtility.keyboardControl        = 0;
@@ -2829,7 +2829,7 @@ namespace RealtimeCSG
                         Matrix4x4 origMatrix = Handles.matrix;
                         Handles.matrix = MathConstants.identityMatrix;
                         float handleSize       = CSG_HandleUtility.GetHandleSize(settings.GetPosition(i));
-                        float scaledHandleSize = handleSize * GUIConstants.handleScale * handle_extension;
+                        float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE * handle_extension;
 
                         HandleUtility.AddControl(
                             id, HandleUtility.DistanceToCircle(settings.GetPosition(i), scaledHandleSize)
@@ -2845,7 +2845,7 @@ namespace RealtimeCSG
                     {
                         if(GUIUtility.hotControl == id)
                         {
-                            if(Keys.CancelActionKey.IsKeyPressed())
+                            if(Keys.cancelActionKey.IsKeyPressed())
                             {
                                 Event.current.Use();
 
@@ -2859,7 +2859,7 @@ namespace RealtimeCSG
                     {
                         if(GUIUtility.hotControl == id)
                         {
-                            if(Keys.CancelActionKey.IsKeyPressed())
+                            if(Keys.cancelActionKey.IsKeyPressed())
                             {
                                 GUIUtility.hotControl             = 0;
                                 GUIUtility.keyboardControl        = 0;
@@ -2979,7 +2979,7 @@ namespace RealtimeCSG
                                     }
 
                                     float handleSize = CSG_HandleUtility.GetHandleSize(settings.backupCurve.points[p]);
-                                    float scaledHandleSize = handleSize * GUIConstants.handleScale * handle_extension;
+                                    float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE * handle_extension;
 
                                     float distance = HandleUtility.DistanceToCircle(
                                         settings.backupCurve.points[p], scaledHandleSize

@@ -174,7 +174,7 @@ namespace RealtimeCSG
         public static void OnEnterPlayMode()
         {
             // If saving meshes to scene files, we don't need to dynamically rebuild on scene changes
-            if(CSGProjectSettings.Instance.SaveMeshesInSceneFiles)
+            if(CSGProjectSettings.Instance.saveMeshesInSceneFiles)
             {
                 return;
             }

@@ -8,11 +8,8 @@ namespace RealtimeCSG
     internal static class SnappedPoint
     {
         internal static int SnappedPointHash = "SnappedPoint".GetHashCode();
-        private static Vector2 startMousePosition;
-
-        private static CSGPlane movePlane;
-//		private static Vector2 currentMousePosition;
-//		private static Vector3 startPosition;
+        private static Vector2 m_StartMousePosition;
+        private static CSGPlane m_MovePlane;
 
         public delegate void DrawCapFunction(int controlID, Vector3 position, Quaternion rotation, float size);
         public delegate Vector3 SnapFunction(Vector2 startMousePosition, Vector2 currentMousePosition);
@@ -59,12 +56,10 @@ namespace RealtimeCSG
                         GUIUtility.keyboardControl        = id;
                         EditorGUIUtility.editingTextField = false;
 
-                        movePlane = CSGGrid.CurrentGridPlane;
-                        movePlane = new CSGPlane(movePlane.normal, position);
+                        m_MovePlane = CSGGrid.CurrentGridPlane;
+                        m_MovePlane = new CSGPlane(m_MovePlane.normal, position);
 
-                        startMousePosition = Event.current.mousePosition;
-//						currentMousePosition = startMousePosition;
-//						startPosition = position;
+                        m_StartMousePosition = Event.current.mousePosition;
 
                         Event.current.Use();
                         EditorGUIUtility.SetWantsMouseJumping(1);
@@ -81,11 +76,11 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        position = snapFunction(startMousePosition, Event.current.mousePosition);
+                        position = snapFunction(m_StartMousePosition, Event.current.mousePosition);
 
                         if(camera != null && camera.orthographic)
                         {
-                            position = movePlane.Project(position);
+                            position = m_MovePlane.Project(position);
                         }
 
                         GUI.changed = true;
@@ -112,14 +107,7 @@ namespace RealtimeCSG
                     bool  isSelected = id == GUIUtility.keyboardControl || id == GUIUtility.hotControl;
                     Color temp       = Handles.color;
 
-                    if(isSelected)
-                    {
-                        Handles.color = Handles.selectedColor; // Why U not work?
-                    }
-                    else
-                    {
-                        Handles.color = Color.gray;
-                    }
+                    Handles.color = isSelected ? Handles.selectedColor : Color.gray; // Why U not work?
 
                     Handles.matrix = MathConstants.identityMatrix;
                     capFunc(id, worldPosition, camera.transform.rotation, size);

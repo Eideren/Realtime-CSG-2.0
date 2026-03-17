@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using InternalRealtimeCSG;
+using RealtimeCSG.Components;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using InternalRealtimeCSG;
-using RealtimeCSG.Components;
 
 namespace RealtimeCSG
 {
@@ -14,11 +14,11 @@ namespace RealtimeCSG
       , Additive
       , Subtractive
       , Toggle
-    };
+    }
 
     internal static class SelectionUtility
     {
-        private static CSGModel lastUsedModelInstance = null;
+        private static CSGModel lastUsedModelInstance;
 
         internal static CSGModel LastUsedModel
         {
@@ -210,14 +210,14 @@ namespace RealtimeCSG
             }
         }
 
-        private static bool shiftPressed = false;
-        private static bool actionKeyPressed = false;
-        private static EventModifiers currentModifiers = EventModifiers.None;
+        private static bool m_ShiftPressed;
+        private static bool m_ActionKeyPressed;
+        private static EventModifiers m_CurrentModifiers = EventModifiers.None;
 
         public static EventModifiers CurrentModifiers
         {
-            get => currentModifiers;
-            internal set => currentModifiers = value;
+            get => m_CurrentModifiers;
+            internal set => m_CurrentModifiers = value;
         }
 
         public static void HandleEvents()
@@ -234,10 +234,10 @@ namespace RealtimeCSG
                 case EventType.ExecuteCommand:
                 case EventType.Repaint:
                 {
-                    shiftPressed     = Event.current.shift;
-                    actionKeyPressed = EditorGUI.actionKey;
+                    m_ShiftPressed     = Event.current.shift;
+                    m_ActionKeyPressed = EditorGUI.actionKey;
 
-                    currentModifiers = Event.current.modifiers & (EventModifiers.Alt | EventModifiers.Control
+                    m_CurrentModifiers = Event.current.modifiers & (EventModifiers.Alt | EventModifiers.Control
                       | EventModifiers.Shift | EventModifiers.Command);
 
                     break;
@@ -247,8 +247,7 @@ namespace RealtimeCSG
 
         public static void HideObjectsRemoteOnly(List<GameObject> gameObjects)
         {
-            if(gameObjects == null ||
-               gameObjects.Count == 0)
+            if(gameObjects == null || gameObjects.Count == 0)
             {
                 return;
             }
@@ -268,8 +267,7 @@ namespace RealtimeCSG
 
         public static void ShowObjectsAndUpdate(List<GameObject> gameObjects)
         {
-            if(gameObjects == null ||
-               gameObjects.Count == 0)
+            if(gameObjects == null || gameObjects.Count == 0)
             {
                 return;
             }
@@ -290,27 +288,22 @@ namespace RealtimeCSG
 
         public static bool IsSnappingToggled
         {
-            get => actionKeyPressed;
+            get => m_ActionKeyPressed;
         }
 
         public static SelectionType GetEventSelectionType()
         {
-            if(shiftPressed && actionKeyPressed)
+            if(m_ShiftPressed && m_ActionKeyPressed)
             {
                 return SelectionType.Subtractive;
             }
 
-            if(actionKeyPressed)
+            if(m_ActionKeyPressed)
             {
                 return SelectionType.Toggle;
             }
 
-            if(shiftPressed)
-            {
-                return SelectionType.Additive;
-            }
-
-            return SelectionType.Replace;
+            return m_ShiftPressed ? SelectionType.Additive : SelectionType.Replace;
         }
 
         public static void DeselectAll()
@@ -331,7 +324,7 @@ namespace RealtimeCSG
         public static void ToggleSelectedObjectVisibility()
         {
             Undo.IncrementCurrentGroup();
-            int undo_group_index = Undo.GetCurrentGroup();
+            int undoGroupIndex = Undo.GetCurrentGroup();
 
             GameObject[] selected = Selection.gameObjects.ToArray();
             Undo.RecordObjects(selected, "Toggle Object Visibility");
@@ -357,13 +350,13 @@ namespace RealtimeCSG
                 }
             }
 
-            Undo.CollapseUndoOperations(undo_group_index);
+            Undo.CollapseUndoOperations(undoGroupIndex);
         }
 
         public static void HideSelectedObjects()
         {
             Undo.IncrementCurrentGroup();
-            int undo_group_index = Undo.GetCurrentGroup();
+            int undoGroupIndex = Undo.GetCurrentGroup();
 
             GameObject[] selected = Selection.gameObjects.ToArray();
             Undo.RecordObjects(selected, "Hiding Objects");
@@ -373,13 +366,13 @@ namespace RealtimeCSG
                 selected[i].SetActive(false);
             }
 
-            Undo.CollapseUndoOperations(undo_group_index);
+            Undo.CollapseUndoOperations(undoGroupIndex);
         }
 
         public static void UnHideAll()
         {
             Undo.IncrementCurrentGroup();
-            int undo_group_index = Undo.GetCurrentGroup();
+            int undoGroupIndex = Undo.GetCurrentGroup();
 
             for(int sceneIndex = 0; sceneIndex < SceneManager.sceneCount; sceneIndex++)
             {
@@ -406,7 +399,7 @@ namespace RealtimeCSG
                 }
             }
 
-            Undo.CollapseUndoOperations(undo_group_index);
+            Undo.CollapseUndoOperations(undoGroupIndex);
         }
 
         public static void HideUnselectedObjects()
@@ -416,8 +409,7 @@ namespace RealtimeCSG
 
             List<GameObject> selected    = Selection.gameObjects.ToList();
             HashSet<int>     selectedIDs = new HashSet<int>();
-
-            CSGModel[] models = InternalCSGModelManager.Models;
+            CSGModel[]       models      = InternalCSGModelManager.Models;
 
             for(int i = 0; i < models.Length; i++)
             {
@@ -441,9 +433,8 @@ namespace RealtimeCSG
                 }
             }
 
-            for(int i = 0
-                ; i < selected.Count
-                ; i++) // we keep adding parents, and their parents until we hit the root-objects
+            // we keep adding parents, and their parents until we hit the root-objects
+            for(int i = 0; i < selected.Count; i++)
             {
                 selectedIDs.Add(selected[i].GetInstanceID());
                 Transform transform = selected[i].transform;
@@ -494,11 +485,10 @@ namespace RealtimeCSG
 
         public static void DoSelectionClick(SceneView sceneView, bool ignoreInvisibleSurfaces = true)
         {
-            Camera     camera = sceneView.camera;
-            GameObject gameobject;
+            Camera camera = sceneView.camera;
 
             SceneQueryUtility.FindClickWorldIntersection(
-                camera, Event.current.mousePosition, out gameobject, ignoreInvisibleSurfaces
+                camera, Event.current.mousePosition, out GameObject gameobject, ignoreInvisibleSurfaces
             );
 
             gameobject = SceneQueryUtility.FindSelectionBase(gameobject);
@@ -565,8 +555,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = item as CSGBrush;
 
-                    if(brush.ChildData == null ||
-                       !ModelTraits.IsModelEditable(brush.ChildData.Model))
+                    if(brush.ChildData == null || !ModelTraits.IsModelEditable(brush.ChildData.Model))
                     {
                         continue;
                     }
@@ -582,8 +571,7 @@ namespace RealtimeCSG
 
                 if(brush != null)
                 {
-                    if(brush.ChildData == null ||
-                       !ModelTraits.IsModelEditable(brush.ChildData.Model))
+                    if(brush.ChildData == null || !ModelTraits.IsModelEditable(brush.ChildData.Model))
                     {
                         return;
                     }
@@ -591,30 +579,6 @@ namespace RealtimeCSG
                     LastUsedModel = brush.ChildData.Model;
                 }
             }
-        }
-
-#endregion
-
-#region DoesSelectionContainCSGNodes
-
-        public static bool DoesSelectionContainCSGNodes()
-        {
-            GameObject[] gameObjects = Selection.gameObjects;
-
-            if(gameObjects == null)
-            {
-                return false;
-            }
-
-            foreach(GameObject gameObject in gameObjects)
-            {
-                if(gameObject.GetComponentInChildren<CSGNode>())
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
 #endregion

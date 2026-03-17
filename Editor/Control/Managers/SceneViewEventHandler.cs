@@ -28,9 +28,9 @@ namespace RealtimeCSG
 
             if(!CSGSettings.EnableRealtimeCSG)
             {
-                ColorSettings.isInitialized = false;
+                ColorSettings.IsInitialized = false;
             }
-            else if(!ColorSettings.isInitialized)
+            else if(!ColorSettings.IsInitialized)
             {
                 if(Event.current.type == EventType.Repaint)
                 {

@@ -5,22 +5,22 @@ namespace RealtimeCSG
 {
     internal sealed class SelectedBrushSurface
     {
-        public SelectedBrushSurface(CSGBrush _brush, int _surfaceIndex, CSGPlane _surfacePlane)
+        public SelectedBrushSurface(CSGBrush brush, int surfaceIndex, CSGPlane surfacePlane)
         {
-            brush        = _brush;
-            surfaceIndex = _surfaceIndex;
-            surfacePlane = _surfacePlane;
+            this.brush        = brush;
+            this.surfaceIndex = surfaceIndex;
+            this.surfacePlane = surfacePlane;
         }
 
-        public SelectedBrushSurface(CSGBrush _brush, int _surfaceIndex, CSGPlane? _surfacePlane = null)
+        public SelectedBrushSurface(CSGBrush brush, int surfaceIndex, CSGPlane? surfacePlane = null)
         {
-            brush        = _brush;
-            surfaceIndex = _surfaceIndex;
-            surfacePlane = _surfacePlane;
+            this.brush        = brush;
+            this.surfaceIndex = surfaceIndex;
+            this.surfacePlane = surfacePlane;
         }
 
         public CSGBrush brush;
-        public int surfaceIndex;
+        public readonly int surfaceIndex;
         public CSGPlane? surfacePlane;
     }
 }

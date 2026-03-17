@@ -2279,10 +2279,10 @@ namespace RealtimeCSG
                 Color originalColor = Handles.color;
 
                 Handles.color = color;
-                DrawFilledCameraAlignedCircle(camera, center, handleSize * GUIConstants.handleScale * 1.00f);
+                DrawFilledCameraAlignedCircle(camera, center, handleSize * GUIConstants.HANDLE_SCALE * 1.00f);
 
                 DrawCameraAlignedCircle(
-                    camera, center, handleSize * GUIConstants.handleScale * 4.0f, Color.white, Color.black
+                    camera, center, handleSize * GUIConstants.HANDLE_SCALE * 4.0f, Color.white, Color.black
                 );
 
                 Handles.color = originalColor;
@@ -2344,7 +2344,7 @@ namespace RealtimeCSG
             Color originalColor = Handles.color;
 
             Handles.color = color;
-            DrawFilledCameraAlignedCircle(camera, center, handleSize * GUIConstants.handleScale * 1.00f);
+            DrawFilledCameraAlignedCircle(camera, center, handleSize * GUIConstants.HANDLE_SCALE * 1.00f);
 
             Handles.color = originalColor;
         }
@@ -2474,13 +2474,13 @@ namespace RealtimeCSG
 
                     Handles.color = colorHatch;
                     Handles.DrawAAPolyLine(vectora, vectorO1);
-                    DrawLine(vectorO0, vectorO2, GUIConstants.oldThinLineScale, colorOuter);
-                    DrawLine(vectorO2, vectorO1, GUIConstants.oldThinLineScale, colorOuter);
+                    DrawLine(vectorO0, vectorO2, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
+                    DrawLine(vectorO2, vectorO1, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
 
-                    DrawLine(vectorI0, vectorI2, GUIConstants.oldThinLineScale, colorOuter);
-                    DrawLine(vectorI2, vectorI1, GUIConstants.oldThinLineScale, colorOuter);
+                    DrawLine(vectorI0, vectorI2, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
+                    DrawLine(vectorI2, vectorI1, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
 
-                    DrawLine(vectora, vectorO1, GUIConstants.oldThinLineScale, colorHatch);
+                    DrawLine(vectora, vectorO1, GUIConstants.OLD_THIN_LINE_SCALE, colorHatch);
 
                     vertices.Add(vectorI2);
                     vertices.Add(vectorI0);
@@ -2523,8 +2523,8 @@ namespace RealtimeCSG
                     Vector3 vectorI2 = center + Quaternion.AngleAxis(angleOffset - a, normal) * innerDistance;
                     Vector3 vectorO2 = center + Quaternion.AngleAxis(angleOffset - a, normal) * outerDistance;
 
-                    DrawLine(vectorI1, vectorO1, GUIConstants.oldThinLineScale, colorOuter);
-                    DrawLine(vectorI2, vectorO2, GUIConstants.oldThinLineScale, colorOuter);
+                    DrawLine(vectorI1, vectorO1, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
+                    DrawLine(vectorI2, vectorO2, GUIConstants.OLD_THIN_LINE_SCALE, colorOuter);
                 }
 
                 if(centerText)

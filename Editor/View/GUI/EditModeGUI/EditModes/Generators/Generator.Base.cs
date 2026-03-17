@@ -274,7 +274,7 @@ namespace RealtimeCSG
             if(visualSnappedEdges != null)
             {
                 PaintUtility.DrawLines(
-                    visualSnappedEdges.ToArray(), GUIConstants.oldThickLineScale, ColorSettings.SnappedEdges
+                    visualSnappedEdges.ToArray(), GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.SnappedEdges
                 );
             }
 
@@ -297,7 +297,7 @@ namespace RealtimeCSG
 
                     CSGRenderer.DrawOutlines(
                         visualSnappedBrush.brushNodeID, brush_transformation,
-                        color, color, color, color, GUIConstants.oldThickLineScale
+                        color, color, color, color, GUIConstants.OLD_THICK_LINE_SCALE
                     );
                 }
             }
@@ -365,9 +365,9 @@ namespace RealtimeCSG
                 {
                     SceneQueryUtility.ClearDeepClick();
 
-                    if(Keys.PerformActionKey.IsKeyPressed() ||
-                       Keys.DeleteSelectionKey.IsKeyPressed() ||
-                       Keys.CancelActionKey.IsKeyPressed())
+                    if(Keys.performActionKey.IsKeyPressed() ||
+                       Keys.deleteSelectionKey.IsKeyPressed() ||
+                       Keys.cancelActionKey.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -378,21 +378,21 @@ namespace RealtimeCSG
                 }
                 case EventType.KeyUp:
                 {
-                    if(Keys.PerformActionKey.IsKeyPressed())
+                    if(Keys.performActionKey.IsKeyPressed())
                     {
                         Commit(camera);
                         Event.current.Use();
 
                         break;
                     }
-                    else if(Keys.CancelActionKey.IsKeyPressed())
+                    else if(Keys.cancelActionKey.IsKeyPressed())
                     {
                         PerformDeselectAll();
                         Event.current.Use();
 
                         break;
                     }
-                    else if(Keys.DeleteSelectionKey.IsKeyPressed())
+                    else if(Keys.deleteSelectionKey.IsKeyPressed())
                     {
                         PerformDelete();
                         Event.current.Use();

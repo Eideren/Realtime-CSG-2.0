@@ -101,7 +101,7 @@ namespace RealtimeCSG
 
         public static Vector3 CleanPosition(Vector3 position)
         {
-            if(CSGProjectSettings.Instance.SnapEverythingTo0001Grid)
+            if(CSGProjectSettings.Instance.snapEverythingTo0001Grid)
             {
                 float signX = Mathf.Sign(position.x);
                 float signY = Mathf.Sign(position.y);

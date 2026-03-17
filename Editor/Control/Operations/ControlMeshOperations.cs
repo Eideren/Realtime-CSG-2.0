@@ -10,13 +10,13 @@ namespace InternalRealtimeCSG
     {
         public static void TranslateControlPoints(this BrushSelection selection, Vector3 translation)
         {
-            for(int t = 0; t < selection.Brushes.Length; t++)
+            for(int t = 0; t < selection.brushes.Length; t++)
             {
-                ControlMesh targetControlMesh = selection.BackupControlMeshes[t].Clone();
+                ControlMesh targetControlMesh = selection.backupControlMeshes[t].Clone();
 
                 if(!targetControlMesh.Valid)
                 {
-                    targetControlMesh.Valid = ControlMeshUtility.Validate(targetControlMesh, selection.Shapes[t]);
+                    targetControlMesh.Valid = ControlMeshUtility.Validate(targetControlMesh, selection.shapes[t]);
                 }
 
                 if(!targetControlMesh.Valid)
@@ -24,21 +24,21 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                CSGBrush         targetBrush     = selection.Brushes[t];
-                ControlMeshState targetMeshState = selection.States[t];
+                CSGBrush         targetBrush     = selection.brushes[t];
+                ControlMeshState targetMeshState = selection.states[t];
 
-                if(targetMeshState.BackupPoints == null)
+                if(targetMeshState.backupPoints == null)
                 {
                     continue;
                 }
 
-                Shape targetShape = selection.Shapes[t].Clone();
-                Matrix4x4 worldToLocalMatrix = targetMeshState.BrushTransform.worldToLocalMatrix;
+                Shape targetShape = selection.shapes[t].Clone();
+                Matrix4x4 worldToLocalMatrix = targetMeshState.brushTransform.worldToLocalMatrix;
                 Vector3 localDeltaMovement = GridUtility.CleanPosition(worldToLocalMatrix.MultiplyVector(translation));
 
                 HashSet<short> selectedIndices = targetMeshState.GetSelectedPointIndices();
 
-                for(int p = 0; p < targetMeshState.WorldPoints.Length; p++)
+                for(int p = 0; p < targetMeshState.worldPoints.Length; p++)
                 {
                     if(!selectedIndices.Contains((short)p))
                     {
@@ -46,23 +46,23 @@ namespace InternalRealtimeCSG
                     }
 
                     targetControlMesh.Vertices[p] =
-                        GridUtility.CleanPosition(targetMeshState.BackupPoints[p] + localDeltaMovement);
+                        GridUtility.CleanPosition(targetMeshState.backupPoints[p] + localDeltaMovement);
                 }
 
                 ControlMeshUtility.RebuildShapeFrom(targetBrush, targetControlMesh, targetShape);
-                selection.ControlMeshes[t] = targetControlMesh;
+                selection.controlMeshes[t] = targetControlMesh;
             }
         }
 
         public static void TransformControlPoints(this BrushSelection selection, Matrix4x4 transform)
         {
-            for(int t = 0; t < selection.Brushes.Length; t++)
+            for(int t = 0; t < selection.brushes.Length; t++)
             {
-                ControlMesh targetControlMesh = selection.BackupControlMeshes[t].Clone();
+                ControlMesh targetControlMesh = selection.backupControlMeshes[t].Clone();
 
                 if(!targetControlMesh.Valid)
                 {
-                    targetControlMesh.Valid = ControlMeshUtility.Validate(targetControlMesh, selection.Shapes[t]);
+                    targetControlMesh.Valid = ControlMeshUtility.Validate(targetControlMesh, selection.shapes[t]);
                 }
 
                 if(!targetControlMesh.Valid)
@@ -70,17 +70,17 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                CSGBrush         targetBrush     = selection.Brushes[t];
-                ControlMeshState targetMeshState = selection.States[t];
+                CSGBrush         targetBrush     = selection.brushes[t];
+                ControlMeshState targetMeshState = selection.states[t];
 
-                if(targetMeshState.BackupPoints == null)
+                if(targetMeshState.backupPoints == null)
                 {
                     continue;
                 }
 
-                Shape     targetShape        = selection.Shapes[t].Clone();
-                Matrix4x4 localToWorldMatrix = targetMeshState.BrushTransform.localToWorldMatrix;
-                Matrix4x4 worldToLocalMatrix = targetMeshState.BrushTransform.worldToLocalMatrix;
+                Shape     targetShape        = selection.shapes[t].Clone();
+                Matrix4x4 localToWorldMatrix = targetMeshState.brushTransform.localToWorldMatrix;
+                Matrix4x4 worldToLocalMatrix = targetMeshState.brushTransform.worldToLocalMatrix;
 
                 Matrix4x4 localCombinedMatrix = worldToLocalMatrix *
                     transform *
@@ -88,21 +88,21 @@ namespace InternalRealtimeCSG
 
                 HashSet<short> selectedIndices = targetMeshState.GetSelectedPointIndices();
 
-                for(int p = 0; p < targetMeshState.BackupPoints.Length; p++)
+                for(int p = 0; p < targetMeshState.backupPoints.Length; p++)
                 {
                     if(!selectedIndices.Contains((short)p))
                     {
                         continue;
                     }
 
-                    Vector3 point = targetMeshState.BackupPoints[p];
+                    Vector3 point = targetMeshState.backupPoints[p];
 
                     point = localCombinedMatrix.MultiplyPoint(point);
 
                     targetControlMesh.Vertices[p] = GridUtility.CleanPosition(point);
                 }
 
-                selection.ControlMeshes[t] = targetControlMesh;
+                selection.controlMeshes[t] = targetControlMesh;
 
                 // This might create new controlmesh / shape
                 ControlMeshUtility.MergeDuplicatePoints(targetBrush, ref targetControlMesh, ref targetShape);
@@ -187,9 +187,9 @@ namespace InternalRealtimeCSG
         {
             bool brushModified = false;
 
-            for(int t = 0; t < selection.States.Length; t++)
+            for(int t = 0; t < selection.states.Length; t++)
             {
-                CSGBrush brush = selection.Brushes[t];
+                CSGBrush brush = selection.brushes[t];
 
                 if(!brush)
                 {
@@ -232,16 +232,16 @@ namespace InternalRealtimeCSG
         {
             Vector3 minWorldDeltaMovement = MathConstants.PositiveInfinityVector3;
 
-            for(int t = 0; t < selection.States.Length; t++)
+            for(int t = 0; t < selection.states.Length; t++)
             {
-                CSGBrush brush = selection.Brushes[t];
+                CSGBrush brush = selection.brushes[t];
 
                 if(!brush)
                 {
                     continue;
                 }
 
-                ControlMeshState controlMeshState  = selection.States[t];
+                ControlMeshState controlMeshState  = selection.states[t];
                 Transform        brushTransform    = brush.GetComponent<Transform>();
                 Matrix4x4        brushLocalToWorld = brushTransform.localToWorldMatrix;
                 Matrix4x4        brushWorldToLocal = brushTransform.worldToLocalMatrix;
@@ -287,16 +287,16 @@ namespace InternalRealtimeCSG
 
             bool brushModified = false;
 
-            for(int t = 0; t < selection.States.Length; t++)
+            for(int t = 0; t < selection.states.Length; t++)
             {
-                CSGBrush brush = selection.Brushes[t];
+                CSGBrush brush = selection.brushes[t];
 
                 if(!brush)
                 {
                     continue;
                 }
 
-                ControlMeshState controlMeshState = selection.States[t];
+                ControlMeshState controlMeshState = selection.states[t];
 
                 Transform brushTransform    = brush.GetComponent<Transform>();
                 Matrix4x4 brushLocalToWorld = brushTransform.localToWorldMatrix;

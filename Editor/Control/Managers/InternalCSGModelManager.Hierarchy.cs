@@ -263,7 +263,7 @@ namespace RealtimeCSG
                 return null;
             }
 
-            Component currentNodeObj = iterator.GetComponent(TypeConstants.CSGNodeType);
+            Component currentNodeObj = iterator.GetComponent(TypeConstants.csgNodeType);
 
             if(currentNodeObj)
             {
@@ -279,7 +279,7 @@ namespace RealtimeCSG
 
             while(iterator)
             {
-                currentNodeObj = iterator.GetComponent(TypeConstants.CSGNodeType);
+                currentNodeObj = iterator.GetComponent(TypeConstants.csgNodeType);
 
                 if(currentNodeObj)
                 {
@@ -300,7 +300,7 @@ namespace RealtimeCSG
 
         public static Transform FindModelTransform(Transform childTransform)
         {
-            Component currentNodeObj = childTransform.GetComponent(TypeConstants.CSGNodeType);
+            Component currentNodeObj = childTransform.GetComponent(TypeConstants.csgNodeType);
 
             if(currentNodeObj)
             {
@@ -330,7 +330,7 @@ namespace RealtimeCSG
 
             while(iterator)
             {
-                Component currentModelObj = iterator.GetComponent(TypeConstants.CSGModelType);
+                Component currentModelObj = iterator.GetComponent(TypeConstants.csgModelType);
 
                 if(currentModelObj)
                 {
@@ -353,7 +353,7 @@ namespace RealtimeCSG
 
             while(iterator)
             {
-                Component currentNodeObj = iterator.GetComponent(TypeConstants.CSGNodeType);
+                Component currentNodeObj = iterator.GetComponent(TypeConstants.csgNodeType);
 
                 if(currentNodeObj)
                 {
@@ -388,7 +388,7 @@ namespace RealtimeCSG
 
                 while(iterator)
                 {
-                    Component currentNodeObj = iterator.GetComponent(TypeConstants.CSGOperationType);
+                    Component currentNodeObj = iterator.GetComponent(TypeConstants.csgOperationType);
 
                     if(currentNodeObj)
                     {
@@ -426,7 +426,7 @@ namespace RealtimeCSG
 
             while(iterator)
             {
-                Component currentNodeObj = iterator.GetComponent(TypeConstants.CSGModelType);
+                Component currentNodeObj = iterator.GetComponent(TypeConstants.csgModelType);
 
                 if(currentNodeObj)
                 {
@@ -461,7 +461,7 @@ namespace RealtimeCSG
 
             while(iterator)
             {
-                Component currentNodeObj = iterator.GetComponent(TypeConstants.CSGNodeType);
+                Component currentNodeObj = iterator.GetComponent(TypeConstants.csgNodeType);
 
                 if(currentNodeObj)
                 {
@@ -492,7 +492,7 @@ namespace RealtimeCSG
 
             while(iterator)
             {
-                Component currentNodeObj = iterator.GetComponent(TypeConstants.CSGModelType);
+                Component currentNodeObj = iterator.GetComponent(TypeConstants.csgModelType);
 
                 if(currentNodeObj)
                 {
@@ -580,7 +580,7 @@ namespace RealtimeCSG
             for(int i = 0; i < container.childCount; i++)
             {
                 Transform child   = container.GetChild(i);
-                Component nodeObj = child.GetComponent(TypeConstants.CSGNodeType);
+                Component nodeObj = child.GetComponent(TypeConstants.csgNodeType);
 
                 if(nodeObj)
                 {
@@ -657,7 +657,7 @@ namespace RealtimeCSG
             for(int i = 0; i < container.childCount; i++)
             {
                 Transform child   = container.GetChild(i);
-                Component nodeObj = child.GetComponent(TypeConstants.CSGNodeType);
+                Component nodeObj = child.GetComponent(TypeConstants.csgNodeType);
 
                 if(nodeObj)
                 {

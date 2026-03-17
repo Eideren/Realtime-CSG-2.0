@@ -6,34 +6,34 @@ namespace InternalRealtimeCSG
     [Serializable]
     internal class TransformSelection
     {
-        [SerializeField] public Transform[] Transforms = new Transform[0];        // all transforms
-        [SerializeField] public Vector3[] BackupPositions = new Vector3[0];       // all transforms
-        [SerializeField] public Quaternion[] BackupRotations = new Quaternion[0]; // all transforms
+        [SerializeField] public Transform[] transforms = Array.Empty<Transform>();        // all transforms
+        [SerializeField] public Vector3[] backupPositions = Array.Empty<Vector3>();       // all transforms
+        [SerializeField] public Quaternion[] backupRotations = Array.Empty<Quaternion>(); // all transforms
 
         public void Select(Transform[] transforms)
         {
-            Transforms      = transforms;
-            BackupPositions = new Vector3[Transforms.Length];
-            BackupRotations = new Quaternion[Transforms.Length];
+            this.transforms = transforms;
+            backupPositions = new Vector3[this.transforms.Length];
+            backupRotations = new Quaternion[this.transforms.Length];
 
-            for(int i = 0; i < Transforms.Length; i++)
+            for(int i = 0; i < this.transforms.Length; i++)
             {
-                BackupPositions[i] = Transforms[i].position;
-                BackupRotations[i] = Transforms[i].rotation;
+                backupPositions[i] = this.transforms[i].position;
+                backupRotations[i] = this.transforms[i].rotation;
             }
         }
 
         public void Update()
         {
-            for(int t = 0; t < Transforms.Length; t++)
+            for(int t = 0; t < transforms.Length; t++)
             {
-                if(!Transforms[t])
+                if(!transforms[t])
                 {
                     continue;
                 }
 
-                BackupPositions[t] = Transforms[t].position;
-                BackupRotations[t] = Transforms[t].rotation;
+                backupPositions[t] = transforms[t].position;
+                backupRotations[t] = transforms[t].rotation;
             }
         }
     }

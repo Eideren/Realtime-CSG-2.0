@@ -4355,7 +4355,7 @@ namespace RealtimeCSG
             ControlMesh controlMesh = brush.ControlMesh;
             Shape       shape       = brush.Shape;
 
-            int halfEdgeIndex = controlMeshState.EdgeStateToHalfEdge[edgeIndex];
+            int halfEdgeIndex = controlMeshState.edgeStateToHalfEdge[edgeIndex];
             int twinEdgeIndex = controlMesh.GetTwinEdgeIndex(halfEdgeIndex);
 
             short vertexIndex1 = controlMesh.Edges[halfEdgeIndex].VertexIndex;
@@ -4410,14 +4410,14 @@ namespace RealtimeCSG
 
                 HashSet<short> deletePoints = new HashSet<short>();
 
-                for(int e = meshState.Selection.Edges.Length - 1; e >= 0; e--)
+                for(int e = meshState.selection.edges.Length - 1; e >= 0; e--)
                 {
-                    if((meshState.Selection.Edges[e] & SelectState.Selected) != SelectState.Selected)
+                    if((meshState.selection.edges[e] & SelectState.Selected) != SelectState.Selected)
                     {
                         continue;
                     }
 
-                    int halfEdgeIndex = meshState.EdgeStateToHalfEdge[e];
+                    int halfEdgeIndex = meshState.edgeStateToHalfEdge[e];
                     int twinEdgeIndex = controlMesh.GetTwinEdgeIndex(halfEdgeIndex);
 
                     short vertexIndex1 = controlMesh.Edges[halfEdgeIndex].VertexIndex;

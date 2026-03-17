@@ -347,8 +347,8 @@ namespace RealtimeCSG
 
             if(newTool == instance.activeTool)
             {
-                if(instance.filteredSelection.NodeTargets != null &&
-                   instance.filteredSelection.NodeTargets.Length > 0)
+                if(instance.filteredSelection.nodeTargets != null &&
+                   instance.filteredSelection.nodeTargets.Length > 0)
                 {
                     OnEnableTool(instance.activeTool);
                 }
@@ -535,7 +535,7 @@ namespace RealtimeCSG
                 case EventType.KeyDown:
                 {
                     if(GUIUtility.hotControl == 0 &&
-                       Keys.FreeBuilderMode.IsKeyPressed() && !instance.generateMode)
+                       Keys.freeBuilderMode.IsKeyPressed() && !instance.generateMode)
                     {
                         EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
                         generateBrushTool.BuilderMode = ShapeMode.FreeDraw;
@@ -545,7 +545,7 @@ namespace RealtimeCSG
                         return true;
                     }
 
-                    if(Keys.CylinderBuilderMode.IsKeyPressed() && !instance.generateMode)
+                    if(Keys.cylinderBuilderMode.IsKeyPressed() && !instance.generateMode)
                     {
                         EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
                         generateBrushTool.BuilderMode = ShapeMode.Cylinder;
@@ -555,7 +555,7 @@ namespace RealtimeCSG
                         return true;
                     }
 
-                    if(Keys.BoxBuilderMode.IsKeyPressed() && !instance.generateMode)
+                    if(Keys.boxBuilderMode.IsKeyPressed() && !instance.generateMode)
                     {
                         EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
                         generateBrushTool.BuilderMode = ShapeMode.Box;
@@ -565,7 +565,7 @@ namespace RealtimeCSG
                         return true;
                     }
 
-                    if(Keys.SphereBuilderMode.IsKeyPressed() && !instance.generateMode)
+                    if(Keys.sphereBuilderMode.IsKeyPressed() && !instance.generateMode)
                     {
                         EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
                         generateBrushTool.BuilderMode = ShapeMode.Sphere;
@@ -574,31 +574,31 @@ namespace RealtimeCSG
 
                         return true;
                     }
-                    else if(Keys.SwitchToObjectEditMode.IsKeyPressed())
+                    else if(Keys.switchToObjectEditMode.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         return true;
                     }
-                    else if(Keys.SwitchToGenerateEditMode.IsKeyPressed())
+                    else if(Keys.switchToGenerateEditMode.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         return true;
                     }
-                    else if(Keys.SwitchToMeshEditMode.IsKeyPressed())
+                    else if(Keys.switchToMeshEditMode.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         return true;
                     }
-                    else if(Keys.SwitchToClipEditMode.IsKeyPressed())
+                    else if(Keys.switchToClipEditMode.IsKeyPressed())
                     {
                         Event.current.Use();
 
                         return true;
                     }
-                    else if(Keys.SwitchToSurfaceEditMode.IsKeyPressed())
+                    else if(Keys.switchToSurfaceEditMode.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -610,10 +610,10 @@ namespace RealtimeCSG
                 case EventType.KeyUp:
                 {
                     if(instance.generateMode &&
-                       (Keys.FreeBuilderMode.IsKeyPressed() ||
-                           Keys.CylinderBuilderMode.IsKeyPressed() ||
-                           Keys.BoxBuilderMode.IsKeyPressed() ||
-                           Keys.SphereBuilderMode.IsKeyPressed()))
+                       (Keys.freeBuilderMode.IsKeyPressed() ||
+                           Keys.cylinderBuilderMode.IsKeyPressed() ||
+                           Keys.boxBuilderMode.IsKeyPressed() ||
+                           Keys.sphereBuilderMode.IsKeyPressed()))
                     {
                         Event.current.Use();
                         EditModeGenerate generateBrushTool = brushTools[(int)ToolEditMode.Generate] as EditModeGenerate;
@@ -623,7 +623,7 @@ namespace RealtimeCSG
                             instance.generateMode = false;
                         }
                     }
-                    else if(Keys.SwitchToObjectEditMode.IsKeyPressed())
+                    else if(Keys.switchToObjectEditMode.IsKeyPressed())
                     {
                         InitTools();
                         EditMode = ToolEditMode.Place;
@@ -631,7 +631,7 @@ namespace RealtimeCSG
 
                         return true;
                     }
-                    else if(Keys.SwitchToGenerateEditMode.IsKeyPressed())
+                    else if(Keys.switchToGenerateEditMode.IsKeyPressed())
                     {
                         InitTools();
                         EditMode = ToolEditMode.Generate;
@@ -639,7 +639,7 @@ namespace RealtimeCSG
 
                         return true;
                     }
-                    else if(Keys.SwitchToMeshEditMode.IsKeyPressed())
+                    else if(Keys.switchToMeshEditMode.IsKeyPressed())
                     {
                         InitTools();
                         EditMode = ToolEditMode.Edit;
@@ -647,7 +647,7 @@ namespace RealtimeCSG
 
                         return true;
                     }
-                    else if(Keys.SwitchToClipEditMode.IsKeyPressed())
+                    else if(Keys.switchToClipEditMode.IsKeyPressed())
                     {
                         InitTools();
                         EditMode = ToolEditMode.Clip;
@@ -655,7 +655,7 @@ namespace RealtimeCSG
 
                         return true;
                     }
-                    else if(Keys.SwitchToSurfaceEditMode.IsKeyPressed())
+                    else if(Keys.switchToSurfaceEditMode.IsKeyPressed())
                     {
                         InitTools();
                         EditMode = ToolEditMode.Surfaces;
@@ -668,15 +668,15 @@ namespace RealtimeCSG
                 }
                 case EventType.ValidateCommand:
                 {
-                    if((GUIUtility.hotControl == 0 && Keys.FreeBuilderMode.IsKeyPressed()) ||
-                       Keys.CylinderBuilderMode.IsKeyPressed() ||
-                       Keys.SphereBuilderMode.IsKeyPressed() ||
-                       Keys.BoxBuilderMode.IsKeyPressed() ||
-                       Keys.SwitchToObjectEditMode.IsKeyPressed() ||
-                       Keys.SwitchToGenerateEditMode.IsKeyPressed() ||
-                       Keys.SwitchToMeshEditMode.IsKeyPressed() ||
-                       Keys.SwitchToClipEditMode.IsKeyPressed() ||
-                       Keys.SwitchToSurfaceEditMode.IsKeyPressed())
+                    if((GUIUtility.hotControl == 0 && Keys.freeBuilderMode.IsKeyPressed()) ||
+                       Keys.cylinderBuilderMode.IsKeyPressed() ||
+                       Keys.sphereBuilderMode.IsKeyPressed() ||
+                       Keys.boxBuilderMode.IsKeyPressed() ||
+                       Keys.switchToObjectEditMode.IsKeyPressed() ||
+                       Keys.switchToGenerateEditMode.IsKeyPressed() ||
+                       Keys.switchToMeshEditMode.IsKeyPressed() ||
+                       Keys.switchToClipEditMode.IsKeyPressed() ||
+                       Keys.switchToSurfaceEditMode.IsKeyPressed())
                     {
                         Event.current.Use();
 
@@ -748,7 +748,7 @@ namespace RealtimeCSG
                     {
                         if(Event.current.type == EventType.Repaint)
                         {
-                            CSGBrush[]              brushes         = instance.filteredSelection.BrushTargets;
+                            CSGBrush[]              brushes         = instance.filteredSelection.brushTargets;
                             List<GeometryWireframe> wireframes      = new List<GeometryWireframe>(brushes.Length);
                             List<Matrix4x4>         transformations = new List<Matrix4x4>(brushes.Length);
 
@@ -778,7 +778,7 @@ namespace RealtimeCSG
                                 CSGRenderer.DrawSelectedBrushes(
                                     instance.zTestLineMeshManager, instance.noZTestLineMeshManager,
                                     wireframes.ToArray(), transformations.ToArray(),
-                                    ColorSettings.SelectedOutlines, GUIConstants.thickLineScale
+                                    ColorSettings.SelectedOutlines, GUIConstants.THICK_LINE_SCALE
                                 );
                             }
 
@@ -855,7 +855,7 @@ namespace RealtimeCSG
 
         public static Transform[] CloneTargets(SetTransformation setTransform = null)
         {
-            if(instance.filteredSelection.NodeTargets.Length == 0)
+            if(instance.filteredSelection.nodeTargets.Length == 0)
             {
                 return new Transform[0];
             }
@@ -863,12 +863,12 @@ namespace RealtimeCSG
             int groupId = Undo.GetCurrentGroup();
             //Undo.IncrementCurrentGroup();
 
-            GameObject[] newTargets    = new GameObject[instance.filteredSelection.NodeTargets.Length];
-            Transform[]  newTransforms = new Transform[instance.filteredSelection.NodeTargets.Length];
+            GameObject[] newTargets    = new GameObject[instance.filteredSelection.nodeTargets.Length];
+            Transform[]  newTransforms = new Transform[instance.filteredSelection.nodeTargets.Length];
 
-            for(int i = 0; i < instance.filteredSelection.NodeTargets.Length; i++)
+            for(int i = 0; i < instance.filteredSelection.nodeTargets.Length; i++)
             {
-                GameObject originalGameObject = instance.filteredSelection.NodeTargets[i].gameObject;
+                GameObject originalGameObject = instance.filteredSelection.nodeTargets[i].gameObject;
                 Transform  originalTransform  = originalGameObject.GetComponent<Transform>();
 
                 newTargets[i] = CSGPrefabUtility.Instantiate(originalGameObject);

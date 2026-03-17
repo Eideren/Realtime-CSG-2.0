@@ -131,7 +131,7 @@ namespace RealtimeCSG
                 ArrayUtility.Add(ref surfaceStates, texGenState);
             }
 
-            hideTool = filteredSelection.NodeTargets.Length > 0;
+            hideTool = filteredSelection.nodeTargets.Length > 0;
 
             if(isEnabled)
             {
@@ -958,7 +958,7 @@ namespace RealtimeCSG
                         visibleInnerColor, visibleOuterColor, visibleOuterline,
                         invisibleInnerColor, invisibleOuterColor, invisibleOuterline,
                         surfaceColor,
-                        GUIConstants.thickLineScale
+                        GUIConstants.THICK_LINE_SCALE
                     );
 
                     selectedVisiblePolygonMeshManager.End();
@@ -1072,7 +1072,7 @@ namespace RealtimeCSG
                         visibleInnerColor, visibleOuterColor, visibleOuterline,
                         invisibleInnerColor, invisibleOuterColor, invisibleOuterline,
                         surfaceColor,
-                        GUIConstants.lineScale
+                        GUIConstants.LINE_SCALE
                     );
 
                     hoverVisiblePolygonMeshManager.End();
@@ -1355,14 +1355,14 @@ namespace RealtimeCSG
                     {
                         SceneQueryUtility.ClearDeepClick();
 
-                        if(Keys.CancelActionKey.IsKeyPressed())
+                        if(Keys.cancelActionKey.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.CopyMaterialTexGen.IsKeyPressed())
+                        if(Keys.copyMaterialTexGen.IsKeyPressed())
                         {
                             if(dragMode == DragMode.None)
                             {
@@ -1386,7 +1386,7 @@ namespace RealtimeCSG
 
                     case EventType.KeyUp:
                     {
-                        if(Keys.CancelActionKey.IsKeyPressed())
+                        if(Keys.cancelActionKey.IsKeyPressed())
                         {
                             SelectionUtility.DeselectAll();
                             Event.current.Use();
@@ -1394,7 +1394,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(Keys.CopyMaterialTexGen.IsKeyPressed())
+                        if(Keys.copyMaterialTexGen.IsKeyPressed())
                         {
                             if(dragMode == DragMode.TextureCopy)
                             {
@@ -1418,14 +1418,14 @@ namespace RealtimeCSG
 
                     case EventType.ValidateCommand:
                     {
-                        if(Keys.CancelActionKey.IsKeyPressed())
+                        if(Keys.cancelActionKey.IsKeyPressed())
                         {
                             Event.current.Use();
 
                             break;
                         }
 
-                        if(Keys.CopyMaterialTexGen.IsKeyPressed())
+                        if(Keys.copyMaterialTexGen.IsKeyPressed())
                         {
                             Event.current.Use();
 

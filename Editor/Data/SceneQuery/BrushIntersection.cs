@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using System;
+﻿using System;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using RealtimeCSG.Legacy;
@@ -36,4 +35,3 @@ namespace RealtimeCSG
         public float distance;
     };
 }
-#endif

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -8,11 +7,11 @@ namespace RealtimeCSG
 {
     internal struct KeyCodeWithModifier
     {
-        public KeyCodeWithModifier(KeyCode _code, EventModifiers _modifier = EventModifiers.None, bool _hold = false)
+        public KeyCodeWithModifier(KeyCode code, EventModifiers modifier = EventModifiers.None, bool hold = false)
         {
-            keyCode   = _code;
-            modifiers = _modifier;
-            hold      = _hold;
+            keyCode   = code;
+            modifiers = modifier;
+            this.hold = hold;
         }
 
         public KeyCode keyCode;
@@ -20,7 +19,7 @@ namespace RealtimeCSG
         public readonly bool hold;
 
         public bool IsKeyPressed()
-        { //EditorGUIUtility.editingTextField && 
+        {
             return Event.current.keyCode == keyCode
              && (Event.current.modifiers & ~EventModifiers.FunctionKey) == modifiers;
         }
@@ -86,32 +85,32 @@ namespace RealtimeCSG
     }
 
     // TODO: ability to connect "keyEvent" with delegate
-    // TODO: ability to connect list of "keyevent"/"delegate" combo with controlid 
+    // TODO: ability to connect list of "keyevent"/"delegate" combo with controlid
 
     internal class KeyEvent
     {
         public KeyEvent(KeyCode code)
         {
-            keys        = new KeyCodeWithModifier[1] { new KeyCodeWithModifier(code, EventModifiers.None, false) };
-            defaultKeys = keys.ToList().ToArray();
+            keys        = new[] { new KeyCodeWithModifier(code) };
+            defaultKeys = keys;
         }
 
         public KeyEvent(KeyCode code, bool hold)
         {
-            keys        = new KeyCodeWithModifier[1] { new KeyCodeWithModifier(code, EventModifiers.None, hold) };
-            defaultKeys = keys.ToList().ToArray();
+            keys        = new[] { new KeyCodeWithModifier(code, EventModifiers.None, hold) };
+            defaultKeys = keys;
         }
 
         public KeyEvent(KeyCode code, EventModifiers modifier)
         {
-            keys        = new KeyCodeWithModifier[1] { new KeyCodeWithModifier(code, modifier, false) };
-            defaultKeys = keys.ToList().ToArray();
+            keys        = new[] { new KeyCodeWithModifier(code, modifier) };
+            defaultKeys = keys;
         }
 
         public KeyEvent(KeyCode code, EventModifiers modifier, bool hold)
         {
-            keys        = new KeyCodeWithModifier[1] { new KeyCodeWithModifier(code, modifier, hold) };
-            defaultKeys = keys.ToList().ToArray();
+            keys        = new[] { new KeyCodeWithModifier(code, modifier, hold) };
+            defaultKeys = keys;
         }
 
         public KeyEvent(params KeyCode[] keyCodes)
@@ -120,16 +119,16 @@ namespace RealtimeCSG
 
             for(int i = 0; i < keyCodes.Length; i++)
             {
-                keys[i] = new KeyCodeWithModifier(keyCodes[i], EventModifiers.None);
+                keys[i] = new KeyCodeWithModifier(keyCodes[i]);
             }
 
-            defaultKeys = keys.ToList().ToArray();
+            defaultKeys = keys;
         }
 
-        public KeyEvent(params KeyCodeWithModifier[] _keys)
+        public KeyEvent(params KeyCodeWithModifier[] keys)
         {
-            keys        = _keys;
-            defaultKeys = _keys.ToList().ToArray();
+            this.keys        = keys;
+            defaultKeys = keys;
         }
 
         public readonly KeyCodeWithModifier[] defaultKeys;
@@ -187,63 +186,63 @@ namespace RealtimeCSG
 
         public static string CodeToString(KeyCode code)
         {
-            switch(code)
+            return code switch
             {
-                case KeyCode.Exclaim:        return "!";
-                case KeyCode.DoubleQuote:    return "\"";
-                case KeyCode.Hash:           return "#";
-                case KeyCode.Dollar:         return "$";
-                case KeyCode.Ampersand:      return "&";
-                case KeyCode.Quote:          return "\'";
-                case KeyCode.LeftParen:      return "(";
-                case KeyCode.RightParen:     return ")";
-                case KeyCode.Asterisk:       return "*";
-                case KeyCode.Plus:           return "+";
-                case KeyCode.Comma:          return ",";
-                case KeyCode.Minus:          return "-";
-                case KeyCode.Period:         return ".";
-                case KeyCode.Slash:          return "/";
-                case KeyCode.Alpha0:         return "0";
-                case KeyCode.Alpha1:         return "1";
-                case KeyCode.Alpha2:         return "2";
-                case KeyCode.Alpha3:         return "3";
-                case KeyCode.Alpha4:         return "4";
-                case KeyCode.Alpha5:         return "5";
-                case KeyCode.Alpha6:         return "6";
-                case KeyCode.Alpha7:         return "7";
-                case KeyCode.Alpha8:         return "8";
-                case KeyCode.Alpha9:         return "9";
-                case KeyCode.Colon:          return ":";
-                case KeyCode.Semicolon:      return ";";
-                case KeyCode.Less:           return "<";
-                case KeyCode.Equals:         return "=";
-                case KeyCode.Greater:        return ">";
-                case KeyCode.Question:       return "?";
-                case KeyCode.At:             return "@";
-                case KeyCode.LeftBracket:    return "[";
-                case KeyCode.Backslash:      return "\\";
-                case KeyCode.RightBracket:   return "]";
-                case KeyCode.Caret:          return "^";
-                case KeyCode.Underscore:     return "_";
-                case KeyCode.BackQuote:      return "`";
-                case KeyCode.KeypadPeriod:   return "Keypad '.'";
-                case KeyCode.KeypadDivide:   return "Keypad '/'";
-                case KeyCode.KeypadMultiply: return "Keypad '*'";
-                case KeyCode.KeypadMinus:    return "Keypad '-'";
-                case KeyCode.KeypadPlus:     return "Keypad '+'";
-                case KeyCode.KeypadEquals:   return "Keypad '='";
-                default:                     return ObjectNames.NicifyVariableName(code.ToString());
-            }
+                KeyCode.Exclaim        => "!"
+              , KeyCode.DoubleQuote    => "\""
+              , KeyCode.Hash           => "#"
+              , KeyCode.Dollar         => "$"
+              , KeyCode.Ampersand      => "&"
+              , KeyCode.Quote          => "\'"
+              , KeyCode.LeftParen      => "("
+              , KeyCode.RightParen     => ")"
+              , KeyCode.Asterisk       => "*"
+              , KeyCode.Plus           => "+"
+              , KeyCode.Comma          => ","
+              , KeyCode.Minus          => "-"
+              , KeyCode.Period         => "."
+              , KeyCode.Slash          => "/"
+              , KeyCode.Alpha0         => "0"
+              , KeyCode.Alpha1         => "1"
+              , KeyCode.Alpha2         => "2"
+              , KeyCode.Alpha3         => "3"
+              , KeyCode.Alpha4         => "4"
+              , KeyCode.Alpha5         => "5"
+              , KeyCode.Alpha6         => "6"
+              , KeyCode.Alpha7         => "7"
+              , KeyCode.Alpha8         => "8"
+              , KeyCode.Alpha9         => "9"
+              , KeyCode.Colon          => ":"
+              , KeyCode.Semicolon      => ";"
+              , KeyCode.Less           => "<"
+              , KeyCode.Equals         => "="
+              , KeyCode.Greater        => ">"
+              , KeyCode.Question       => "?"
+              , KeyCode.At             => "@"
+              , KeyCode.LeftBracket    => "["
+              , KeyCode.Backslash      => "\\"
+              , KeyCode.RightBracket   => "]"
+              , KeyCode.Caret          => "^"
+              , KeyCode.Underscore     => "_"
+              , KeyCode.BackQuote      => "`"
+              , KeyCode.KeypadPeriod   => "Keypad '.'"
+              , KeyCode.KeypadDivide   => "Keypad '/'"
+              , KeyCode.KeypadMultiply => "Keypad '*'"
+              , KeyCode.KeypadMinus    => "Keypad '-'"
+              , KeyCode.KeypadPlus     => "Keypad '+'"
+              , KeyCode.KeypadEquals   => "Keypad '='"
+              , _                      => ObjectNames.NicifyVariableName(code.ToString())
+            };
         }
     }
 
     internal class KeyDescription : Attribute
     {
-        public KeyDescription(string name, string description = null)
+        public KeyDescription(string name)
         {
-            Name = name;
+            this.name = name;
         }
 
-        public string Name;
+        public readonly string name;
     }
 }

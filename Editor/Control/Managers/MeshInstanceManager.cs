@@ -926,7 +926,7 @@ namespace InternalRealtimeCSG
 
             if(!recreateMeshes && sharedMesh)
             {
-                if(!CSGProjectSettings.Instance.SaveMeshesInSceneFiles)
+                if(!CSGProjectSettings.Instance.saveMeshesInSceneFiles)
                 {
                     sharedMesh.hideFlags |= HideFlags.DontSaveInEditor;
                 }
@@ -945,7 +945,7 @@ namespace InternalRealtimeCSG
                 sharedMesh.hideFlags = HideFlags.DontSaveInBuild;
             }
 
-            if(!CSGProjectSettings.Instance.SaveMeshesInSceneFiles)
+            if(!CSGProjectSettings.Instance.saveMeshesInSceneFiles)
             {
                 sharedMesh.hideFlags |= HideFlags.DontSaveInEditor;
             }

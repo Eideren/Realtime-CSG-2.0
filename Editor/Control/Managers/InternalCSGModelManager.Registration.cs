@@ -1443,7 +1443,7 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        Component parentNodeObj = parent.GetComponent(TypeConstants.CSGNodeType);
+                        Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
                         foundPrefabs.Add(parent);
 
                         if(!parentNodeObj)
@@ -1490,7 +1490,7 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        Component parentNodeObj = parent.GetComponent(TypeConstants.CSGNodeType);
+                        Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
                         foundPrefabs.Add(parent);
 
                         if(!parentNodeObj)
@@ -1537,7 +1537,7 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        Component parentNodeObj = parent.GetComponent(TypeConstants.CSGNodeType);
+                        Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
                         foundPrefabs.Add(parent);
 
                         if(!parentNodeObj)

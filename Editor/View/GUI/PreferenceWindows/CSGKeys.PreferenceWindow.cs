@@ -89,7 +89,7 @@ namespace RealtimeCSG
 
                     if(attribute != null)
                     {
-                        pref.name = attribute.Name;
+                        pref.name = attribute.name;
                     }
                     else
                     {

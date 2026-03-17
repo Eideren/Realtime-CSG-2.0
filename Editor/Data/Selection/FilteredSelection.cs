@@ -1,38 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using RealtimeCSG.Components;
 using UnityEditor;
 using UnityEngine;
-using RealtimeCSG.Components;
+using UnityEngine.Serialization;
 
 namespace RealtimeCSG
 {
     [Serializable]
-    internal sealed class FilteredSelection // : ScriptableObject
+    internal sealed class FilteredSelection
     {
-        [SerializeField] public Transform[] OtherTargets = new Transform[0];
-        [SerializeField] public CSGNode[] NodeTargets = new CSGNode[0];
-        [SerializeField] public CSGBrush[] BrushTargets = new CSGBrush[0];
-        [SerializeField] public CSGOperation[] OperationTargets = new CSGOperation[0];
-        [SerializeField] public CSGModel[] ModelTargets = new CSGModel[0];
+        [FormerlySerializedAs("OtherTargets"), SerializeField]
+        public Transform[] otherTargets = Array.Empty<Transform>();
 
-        [SerializeField] public CSGNode[] RemovedNodes = new CSGNode[0];
-        [SerializeField] public Transform[] RemovedOthers = new Transform[0];
+        [FormerlySerializedAs("NodeTargets"), SerializeField]
+        public CSGNode[] nodeTargets = Array.Empty<CSGNode>();
 
-        [SerializeField] public CSGNode[] AddedNodes = new CSGNode[0];
-        [SerializeField] public Transform[] AddedOthers = new Transform[0];
+        [FormerlySerializedAs("BrushTargets"), SerializeField]
+        public CSGBrush[] brushTargets = Array.Empty<CSGBrush>();
+
+        [FormerlySerializedAs("OperationTargets"), SerializeField]
+        public CSGOperation[] operationTargets = Array.Empty<CSGOperation>();
+
+        [FormerlySerializedAs("ModelTargets"), SerializeField]
+        public CSGModel[] modelTargets = Array.Empty<CSGModel>();
+
+        [FormerlySerializedAs("RemovedNodes"), SerializeField]
+        public CSGNode[] removedNodes = Array.Empty<CSGNode>();
+
+        [FormerlySerializedAs("RemovedOthers"), SerializeField]
+        public Transform[] removedOthers = Array.Empty<Transform>();
+
+        [FormerlySerializedAs("AddedNodes"), SerializeField]
+        public CSGNode[] addedNodes = Array.Empty<CSGNode>();
+
+        [FormerlySerializedAs("AddedOthers"), SerializeField]
+        public Transform[] addedOthers = Array.Empty<Transform>();
 
         public HashSet<CSGBrush> GetAllContainedBrushes()
         {
             HashSet<CSGBrush> brushes = new HashSet<CSGBrush>();
 
-            if(BrushTargets != null &&
-               BrushTargets.Length > 0)
+            if(brushTargets != null && brushTargets.Length > 0)
             {
-                CSGBrush[] brush_targets = BrushTargets;
+                CSGBrush[] targets = brushTargets;
 
-                for(int i = 0; i < brush_targets.Length; i++)
+                for(int i = 0; i < targets.Length; i++)
                 {
-                    CSGBrush brush = brush_targets[i];
+                    CSGBrush brush = targets[i];
 
                     if((brush.Flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
                     {
@@ -51,19 +66,18 @@ namespace RealtimeCSG
                 }
             }
 
-            if(OperationTargets != null &&
-               OperationTargets.Length > 0)
+            if(operationTargets != null && operationTargets.Length > 0)
             {
-                CSGOperation[] operation_targets = OperationTargets;
+                CSGOperation[] targets = operationTargets;
 
-                for(int i = 0; i < operation_targets.Length; i++)
+                for(int i = 0; i < targets.Length; i++)
                 {
-                    CSGOperation operation         = operation_targets[i];
-                    CSGBrush[]   operation_brushes = operation.GetComponentsInChildren<CSGBrush>();
+                    CSGOperation operation        = targets[i];
+                    CSGBrush[]   operationBrushes = operation.GetComponentsInChildren<CSGBrush>();
 
-                    for(int j = 0; j < operation_brushes.Length; j++)
+                    for(int j = 0; j < operationBrushes.Length; j++)
                     {
-                        CSGBrush brush = operation_brushes[j];
+                        CSGBrush brush = operationBrushes[j];
 
                         if((brush.Flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
                         {
@@ -83,19 +97,18 @@ namespace RealtimeCSG
                 }
             }
 
-            if(ModelTargets != null &&
-               ModelTargets.Length > 0)
+            if(modelTargets != null && modelTargets.Length > 0)
             {
-                CSGModel[] model_targets = ModelTargets;
+                CSGModel[] targets = modelTargets;
 
-                for(int i = 0; i < model_targets.Length; i++)
+                for(int i = 0; i < targets.Length; i++)
                 {
-                    CSGModel   model         = model_targets[i];
-                    CSGBrush[] model_brushes = model.GetComponentsInChildren<CSGBrush>();
+                    CSGModel   model        = targets[i];
+                    CSGBrush[] modelBrushes = model.GetComponentsInChildren<CSGBrush>();
 
-                    for(int j = 0; j < model_brushes.Length; j++)
+                    for(int j = 0; j < modelBrushes.Length; j++)
                     {
-                        CSGBrush brush = model_brushes[j];
+                        CSGBrush brush = modelBrushes[j];
 
                         if((brush.Flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
                         {
@@ -122,37 +135,33 @@ namespace RealtimeCSG
         {
             List<Transform> transforms = new List<Transform>();
 
-            if(BrushTargets != null &&
-               BrushTargets.Length > 0)
+            if(brushTargets != null && brushTargets.Length > 0)
             {
-                foreach(CSGBrush brush in BrushTargets)
+                foreach(CSGBrush brush in brushTargets)
                 {
                     transforms.Add(brush.transform);
                 }
             }
 
-            if(OperationTargets != null &&
-               OperationTargets.Length > 0)
+            if(operationTargets != null && operationTargets.Length > 0)
             {
-                foreach(CSGOperation operation in OperationTargets)
+                foreach(CSGOperation operation in operationTargets)
                 {
                     transforms.Add(operation.transform);
                 }
             }
 
-            if(ModelTargets != null &&
-               ModelTargets.Length > 0)
+            if(modelTargets != null && modelTargets.Length > 0)
             {
-                foreach(CSGModel model in ModelTargets)
+                foreach(CSGModel model in modelTargets)
                 {
                     transforms.Add(model.transform);
                 }
             }
 
-            if(OtherTargets != null &&
-               OtherTargets.Length > 0)
+            if(otherTargets != null && otherTargets.Length > 0)
             {
-                transforms.AddRange(OtherTargets);
+                transforms.AddRange(otherTargets);
             }
 
             for(int i = transforms.Count - 1; i >= 0; i--)
@@ -185,96 +194,91 @@ namespace RealtimeCSG
         {
             bool modified = false;
 
-            if(OtherTargets != null &&
-               OtherTargets.Length > 0)
+            if(otherTargets != null && otherTargets.Length > 0)
             {
-                for(int i = OtherTargets.Length - 1; i >= 0; i--)
+                for(int i = otherTargets.Length - 1; i >= 0; i--)
                 {
-                    if(!OtherTargets[i])
+                    if(!otherTargets[i])
                     {
-                        ArrayUtility.RemoveAt(ref OtherTargets, i);
+                        ArrayUtility.RemoveAt(ref otherTargets, i);
                         modified = true;
                     }
                 }
 
-                if(OtherTargets.Length == 0)
+                if(otherTargets.Length == 0)
                 {
-                    OtherTargets = new Transform[0];
+                    otherTargets = Array.Empty<Transform>();
                 }
             }
 
-            if(NodeTargets != null &&
-               NodeTargets.Length > 0)
+            if(nodeTargets != null && nodeTargets.Length > 0)
             {
-                for(int i = NodeTargets.Length - 1; i >= 0; i--)
+                for(int i = nodeTargets.Length - 1; i >= 0; i--)
                 {
-                    if(!NodeTargets[i])
+                    if(!nodeTargets[i])
                     {
-                        ArrayUtility.RemoveAt(ref NodeTargets, i);
+                        ArrayUtility.RemoveAt(ref nodeTargets, i);
                         modified = true;
                     }
                 }
 
-                if(NodeTargets.Length == 0)
+                if(nodeTargets.Length == 0)
                 {
-                    NodeTargets      = new CSGNode[0];
-                    ModelTargets     = new CSGModel[0];
-                    BrushTargets     = new CSGBrush[0];
-                    OperationTargets = new CSGOperation[0];
+                    nodeTargets      = Array.Empty<CSGNode>();
+                    modelTargets     = Array.Empty<CSGModel>();
+                    brushTargets     = Array.Empty<CSGBrush>();
+                    operationTargets = Array.Empty<CSGOperation>();
                 }
                 else
                 {
-                    if(BrushTargets != null &&
-                       BrushTargets.Length > 0)
+                    if(brushTargets != null && brushTargets.Length > 0)
                     {
-                        for(int i = BrushTargets.Length - 1; i >= 0; i--)
+                        for(int i = brushTargets.Length - 1; i >= 0; i--)
                         {
-                            if(!BrushTargets[i])
+                            if(!brushTargets[i])
                             {
-                                ArrayUtility.RemoveAt(ref BrushTargets, i);
+                                ArrayUtility.RemoveAt(ref brushTargets, i);
                                 modified = true;
                             }
                         }
 
-                        if(BrushTargets.Length == 0)
+                        if(brushTargets.Length == 0)
                         {
-                            BrushTargets = new CSGBrush[0];
+                            brushTargets = Array.Empty<CSGBrush>();
                         }
                     }
 
-                    if(OperationTargets != null &&
-                       OperationTargets.Length > 0)
+                    if(operationTargets != null && operationTargets.Length > 0)
                     {
-                        for(int i = OperationTargets.Length - 1; i >= 0; i--)
+                        for(int i = operationTargets.Length - 1; i >= 0; i--)
                         {
-                            if(!OperationTargets[i])
+                            if(!operationTargets[i])
                             {
-                                ArrayUtility.RemoveAt(ref OperationTargets, i);
+                                ArrayUtility.RemoveAt(ref operationTargets, i);
                                 modified = true;
                             }
                         }
 
-                        if(OperationTargets.Length == 0)
+                        if(operationTargets.Length == 0)
                         {
-                            OperationTargets = new CSGOperation[0];
+                            operationTargets = Array.Empty<CSGOperation>();
                         }
                     }
 
-                    if(ModelTargets != null &&
-                       ModelTargets.Length > 0)
+                    if(modelTargets != null && modelTargets.Length > 0)
                     {
-                        for(int i = ModelTargets.Length - 1; i >= 0; i--)
+                        for(int i = modelTargets.Length - 1; i >= 0; i--)
                         {
-                            if(!ModelTargets[i])
+                            if(!modelTargets[i])
                             {
-                                ArrayUtility.RemoveAt(ref ModelTargets, i);
+                                ArrayUtility.RemoveAt(ref modelTargets, i);
                                 modified = true;
                             }
                         }
 
-                        if(ModelTargets.Length == 0)
+                        if(modelTargets.Length == 0)
                         {
-                            ModelTargets = new CSGModel[0];
+                            modelTargets = Array.Empty<CSGModel>();
                         }
                     }
                 }
@@ -295,29 +299,27 @@ namespace RealtimeCSG
                 newTargetOthers = new HashSet<Transform>();
             }
 
-            RemovedNodes  = null;
-            RemovedOthers = null;
+            removedNodes  = null;
+            removedOthers = null;
 
-            AddedNodes  = null;
-            AddedOthers = null;
+            addedNodes  = null;
+            addedOthers = null;
 
             List<CSGNode> foundRemovedNodes = new List<CSGNode>();
 
-            if(NodeTargets != null &&
-               NodeTargets.Length > 0)
+            if(nodeTargets != null && nodeTargets.Length > 0)
             {
                 if(newTargetNodes.Count == 0)
                 {
-                    foundRemovedNodes.AddRange(NodeTargets);
+                    foundRemovedNodes.AddRange(nodeTargets);
                 }
                 else
                 {
-                    for(int i = 0; i < NodeTargets.Length; i++)
+                    for(int i = 0; i < nodeTargets.Length; i++)
                     {
-                        if(!NodeTargets[i] ||
-                           !newTargetNodes.Contains(NodeTargets[i]))
+                        if(!nodeTargets[i] || !newTargetNodes.Contains(nodeTargets[i]))
                         {
-                            foundRemovedNodes.Add(NodeTargets[i]);
+                            foundRemovedNodes.Add(nodeTargets[i]);
                         }
                     }
                 }
@@ -325,28 +327,26 @@ namespace RealtimeCSG
 
             List<Transform> foundRemovedOthers = new List<Transform>();
 
-            if(OtherTargets != null &&
-               OtherTargets.Length > 0)
+            if(otherTargets != null && otherTargets.Length > 0)
             {
                 if(newTargetOthers.Count == 0)
                 {
-                    foundRemovedOthers.AddRange(OtherTargets);
+                    foundRemovedOthers.AddRange(otherTargets);
                 }
                 else
                 {
-                    for(int i = 0; i < OtherTargets.Length; i++)
+                    for(int i = 0; i < otherTargets.Length; i++)
                     {
-                        if(!OtherTargets[i] ||
-                           !newTargetOthers.Contains(OtherTargets[i]))
+                        if(!otherTargets[i] || !newTargetOthers.Contains(otherTargets[i]))
                         {
-                            foundRemovedOthers.Add(OtherTargets[i]);
+                            foundRemovedOthers.Add(otherTargets[i]);
                         }
                     }
                 }
             }
 
-            int originalTargetNodeCount  = NodeTargets == null ? 0 : NodeTargets.Length;
-            int originalTargetOtherCount = OtherTargets == null ? 0 : OtherTargets.Length;
+            int originalTargetNodeCount  = nodeTargets == null ? 0 : nodeTargets.Length;
+            int originalTargetOtherCount = otherTargets == null ? 0 : otherTargets.Length;
 
             // If our counts are the same and nothing is removed (and nothing could've been added), nothing has changed.
             if(newTargetNodes.Count == originalTargetNodeCount &&
@@ -361,13 +361,13 @@ namespace RealtimeCSG
 
             foreach(CSGNode node in foundRemovedNodes)
             {
-                ArrayUtility.Remove(ref NodeTargets, node);
+                ArrayUtility.Remove(ref nodeTargets, node);
 
                 CSGBrush brush = node as CSGBrush;
 
                 if(brush != null)
                 {
-                    ArrayUtility.Remove(ref BrushTargets, brush);
+                    ArrayUtility.Remove(ref brushTargets, brush);
 
                     continue;
                 }
@@ -376,7 +376,7 @@ namespace RealtimeCSG
 
                 if(node is CSGOperation)
                 {
-                    ArrayUtility.Remove(ref OperationTargets, operation);
+                    ArrayUtility.Remove(ref operationTargets, operation);
 
                     continue;
                 }
@@ -385,34 +385,32 @@ namespace RealtimeCSG
 
                 if(node is CSGModel)
                 {
-                    ArrayUtility.Remove(ref ModelTargets, model);
-
-                    continue;
+                    ArrayUtility.Remove(ref modelTargets, model);
                 }
             }
 
             foreach(Transform other in foundRemovedOthers)
             {
-                ArrayUtility.Remove(ref OtherTargets, other);
+                ArrayUtility.Remove(ref otherTargets, other);
             }
 
             List<CSGNode> foundAddedNodes = new List<CSGNode>();
 
             foreach(CSGNode node in newTargetNodes)
             {
-                if(NodeTargets != null &&
-                   ArrayUtility.Contains(NodeTargets, node))
+                if(nodeTargets != null &&
+                   ArrayUtility.Contains(nodeTargets, node))
                 {
                     continue;
                 }
 
-                if(NodeTargets == null)
+                if(nodeTargets == null)
                 {
-                    NodeTargets = new CSGNode[] { node };
+                    nodeTargets = new[] { node };
                 }
                 else
                 {
-                    ArrayUtility.Add(ref NodeTargets, node);
+                    ArrayUtility.Add(ref nodeTargets, node);
                 }
 
                 foundAddedNodes.Add(node);
@@ -426,13 +424,13 @@ namespace RealtimeCSG
 
                 if(brush != null)
                 {
-                    if(BrushTargets == null)
+                    if(brushTargets == null)
                     {
-                        BrushTargets = new CSGBrush[] { brush };
+                        brushTargets = new[] { brush };
                     }
                     else
                     {
-                        ArrayUtility.Add(ref BrushTargets, brush);
+                        ArrayUtility.Add(ref brushTargets, brush);
                     }
 
                     continue;
@@ -442,13 +440,13 @@ namespace RealtimeCSG
 
                 if(node is CSGOperation)
                 {
-                    if(OperationTargets == null)
+                    if(operationTargets == null)
                     {
-                        OperationTargets = new CSGOperation[] { operation };
+                        operationTargets = new[] { operation };
                     }
                     else
                     {
-                        ArrayUtility.Add(ref OperationTargets, operation);
+                        ArrayUtility.Add(ref operationTargets, operation);
                     }
 
                     continue;
@@ -458,16 +456,14 @@ namespace RealtimeCSG
 
                 if(node is CSGModel)
                 {
-                    if(ModelTargets == null)
+                    if(modelTargets == null)
                     {
-                        ModelTargets = new CSGModel[] { model };
+                        modelTargets = new[] { model };
                     }
                     else
                     {
-                        ArrayUtility.Add(ref ModelTargets, model);
+                        ArrayUtility.Add(ref modelTargets, model);
                     }
-
-                    continue;
                 }
             }
 
@@ -475,19 +471,18 @@ namespace RealtimeCSG
 
             foreach(Transform other in newTargetOthers)
             {
-                if(OtherTargets != null &&
-                   ArrayUtility.Contains(OtherTargets, other))
+                if(otherTargets != null && ArrayUtility.Contains(otherTargets, other))
                 {
                     continue;
                 }
 
-                if(OtherTargets == null)
+                if(otherTargets == null)
                 {
-                    OtherTargets = new Transform[] { other };
+                    otherTargets = new[] { other };
                 }
                 else
                 {
-                    ArrayUtility.Add(ref OtherTargets, other);
+                    ArrayUtility.Add(ref otherTargets, other);
                 }
 
                 foundAddedOthers.Add(other);
@@ -500,8 +495,7 @@ namespace RealtimeCSG
 
                 if(brush != null)
                 {
-                    if(brush.ChildData == null ||
-                       brush.ChildData.Model == null)
+                    if(brush.ChildData == null || brush.ChildData.Model == null)
                     {
                         continue;
                     }
@@ -520,8 +514,7 @@ namespace RealtimeCSG
 
                 if(operation != null)
                 {
-                    if(operation.ChildData == null ||
-                       operation.ChildData.Model == null)
+                    if(operation.ChildData == null || operation.ChildData.Model == null)
                     {
                         continue;
                     }
@@ -541,11 +534,11 @@ namespace RealtimeCSG
                 }
             }
 
-            RemovedNodes  = foundRemovedNodes.ToArray();
-            RemovedOthers = foundRemovedOthers.ToArray();
+            removedNodes  = foundRemovedNodes.ToArray();
+            removedOthers = foundRemovedOthers.ToArray();
 
-            AddedNodes  = foundAddedNodes.ToArray();
-            AddedOthers = foundAddedOthers.ToArray();
+            addedNodes  = foundAddedNodes.ToArray();
+            addedOthers = foundAddedOthers.ToArray();
 
             return foundAddedNodes.Count > 0 || foundRemovedNodes.Count > 0 || foundAddedOthers.Count > 0
              || foundRemovedOthers.Count > 0;

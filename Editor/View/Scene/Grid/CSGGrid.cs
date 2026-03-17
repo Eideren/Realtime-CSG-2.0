@@ -169,11 +169,11 @@ namespace RealtimeCSG
             gridMaterial.SetFloat(gridSizeID, Mathf.Max(0, gridLevelPow));
             gridMaterial.SetVector(gridSpacingID, CSGSettings.SnapVector);
 
-            Color gridColor = ColorSettings.gridColorW;
+            Color gridColor = ColorSettings.GridColorW;
             gridColor.a *= alpha;
             gridMaterial.SetColor(gridCenterColorID, gridColor);
 
-            gridColor   =  ColorSettings.gridColor1W;
+            gridColor   =  ColorSettings.GridColor1W;
             gridColor.a *= alpha;
             gridMaterial.SetColor(gridColorID, gridColor);
 

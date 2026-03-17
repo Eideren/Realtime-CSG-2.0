@@ -226,7 +226,7 @@ namespace RealtimeCSG
 
             try
             {
-                if(!ColorSettings.isInitialized)
+                if(!ColorSettings.IsInitialized)
                 {
                     ColorSettings.Update();
                 }

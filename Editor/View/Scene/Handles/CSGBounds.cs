@@ -214,7 +214,7 @@ namespace RealtimeCSG.Helpers
             );
 
             PaintUtility.DrawLines(
-                localToWorld, cornerPoints, BoundsUtilities.AABBLineIndices, GUIConstants.oldLineScale
+                localToWorld, cornerPoints, BoundsUtilities.AABBLineIndices, GUIConstants.OLD_LINE_SCALE
               , boundOutlinesColor
             );
 
@@ -272,9 +272,9 @@ namespace RealtimeCSG.Helpers
                 {
                     if(!isOrtho)
                     {
-                        color1.a        *= GUIConstants.backfaceTransparency;
-                        color2.a        *= GUIConstants.backfaceTransparency;
-                        pointHandleSize *= GUIConstants.backHandleScale;
+                        color1.a        *= GUIConstants.BACKFACE_TRANSPARENCY;
+                        color2.a        *= GUIConstants.BACKFACE_TRANSPARENCY;
+                        pointHandleSize *= GUIConstants.BACK_HANDLE_SCALE;
                     }
                     else
                     {
@@ -283,7 +283,7 @@ namespace RealtimeCSG.Helpers
                 }
                 else
                 {
-                    pointHandleSize *= GUIConstants.handleScale;
+                    pointHandleSize *= GUIConstants.HANDLE_SCALE;
                 }
 
                 sidePointSizes[i]     = pointHandleSize;
@@ -341,20 +341,20 @@ namespace RealtimeCSG.Helpers
                         }
                         else
                         {
-                            pointHandleSize *= GUIConstants.handleScale;
+                            pointHandleSize *= GUIConstants.HANDLE_SCALE;
                         }
                     }
                     else
                     {
                         if(sideBackfaced[side1] && sideBackfaced[side2])
                         {
-                            color1.a        *= GUIConstants.backfaceTransparency;
-                            color2.a        *= GUIConstants.backfaceTransparency;
-                            pointHandleSize *= GUIConstants.backHandleScale;
+                            color1.a        *= GUIConstants.BACKFACE_TRANSPARENCY;
+                            color2.a        *= GUIConstants.BACKFACE_TRANSPARENCY;
+                            pointHandleSize *= GUIConstants.BACK_HANDLE_SCALE;
                         }
                         else
                         {
-                            pointHandleSize *= GUIConstants.handleScale;
+                            pointHandleSize *= GUIConstants.HANDLE_SCALE;
                         }
                     }
 

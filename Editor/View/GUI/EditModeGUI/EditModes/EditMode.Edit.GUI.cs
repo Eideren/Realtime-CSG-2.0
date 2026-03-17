@@ -142,40 +142,40 @@ namespace RealtimeCSG
         )
         {
             bool operations_enabled = tool != null &&
-                filteredSelection.NodeTargets.Length > 0 && filteredSelection.ModelTargets.Length == 0;
+                filteredSelection.nodeTargets.Length > 0 && filteredSelection.modelTargets.Length == 0;
 
             EditorGUI.BeginDisabledGroup(!operations_enabled);
 
             {
-                bool mixedValues = tool == null || (filteredSelection.BrushTargets.Length == 0
-                 && filteredSelection.OperationTargets.Length == 0);
+                bool mixedValues = tool == null || (filteredSelection.brushTargets.Length == 0
+                 && filteredSelection.operationTargets.Length == 0);
 
                 CSGOperationType operationType = CSGOperationType.Additive;
 
                 if(tool != null)
                 {
-                    if(filteredSelection.BrushTargets.Length > 0)
+                    if(filteredSelection.brushTargets.Length > 0)
                     {
-                        operationType = filteredSelection.BrushTargets[0].OperationType;
+                        operationType = filteredSelection.brushTargets[0].OperationType;
 
-                        for(int i = 1; i < filteredSelection.BrushTargets.Length; i++)
+                        for(int i = 1; i < filteredSelection.brushTargets.Length; i++)
                         {
-                            if(filteredSelection.BrushTargets[i].OperationType != operationType)
+                            if(filteredSelection.brushTargets[i].OperationType != operationType)
                             {
                                 mixedValues = true;
                             }
                         }
                     }
-                    else if(filteredSelection.OperationTargets.Length > 0)
+                    else if(filteredSelection.operationTargets.Length > 0)
                     {
-                        operationType = filteredSelection.OperationTargets[0].OperationType;
+                        operationType = filteredSelection.operationTargets[0].OperationType;
                     }
 
-                    if(filteredSelection.OperationTargets.Length > 0)
+                    if(filteredSelection.operationTargets.Length > 0)
                     {
-                        for(int i = 0; i < filteredSelection.OperationTargets.Length; i++)
+                        for(int i = 0; i < filteredSelection.operationTargets.Length; i++)
                         {
-                            if(filteredSelection.OperationTargets[i].OperationType != operationType)
+                            if(filteredSelection.operationTargets[i].OperationType != operationType)
                             {
                                 mixedValues = true;
                             }
@@ -190,16 +190,16 @@ namespace RealtimeCSG
 
                     if(tool != null &&
                        //filteredSelection.BrushTargets.Length == 0 &&
-                       filteredSelection.OperationTargets.Length > 0 &&
-                       filteredSelection.OperationTargets.Length
-                    == filteredSelection.NodeTargets.Length) // only operations
+                       filteredSelection.operationTargets.Length > 0 &&
+                       filteredSelection.operationTargets.Length
+                    == filteredSelection.nodeTargets.Length) // only operations
                     {
-                        bool? passThrough = filteredSelection.OperationTargets[0].PassThrough;
+                        bool? passThrough = filteredSelection.operationTargets[0].PassThrough;
 
-                        for(int i = 1; i < filteredSelection.OperationTargets.Length; i++)
+                        for(int i = 1; i < filteredSelection.operationTargets.Length; i++)
                         {
                             if(passThrough.HasValue
-                            && passThrough.Value != filteredSelection.OperationTargets[i].PassThrough)
+                            && passThrough.Value != filteredSelection.operationTargets[i].PassThrough)
                             {
                                 passThrough = null;
 
@@ -214,9 +214,9 @@ namespace RealtimeCSG
 
                         if(CSG_EditorGUIUtility.PassThroughButton(passThroughValue, ptMixedValues))
                         {
-                            Undo.RecordObjects(filteredSelection.OperationTargets, "Changed CSG operation of nodes");
+                            Undo.RecordObjects(filteredSelection.operationTargets, "Changed CSG operation of nodes");
 
-                            foreach(CSGOperation operation in filteredSelection.OperationTargets)
+                            foreach(CSGOperation operation in filteredSelection.operationTargets)
                             {
                                 operation.PassThrough = true;
                             }
@@ -239,17 +239,17 @@ namespace RealtimeCSG
 
                     if(EditorGUI.EndChangeCheck() && tool != null)
                     {
-                        Undo.RecordObjects(filteredSelection.NodeTargets, "Changed CSG operation of nodes");
+                        Undo.RecordObjects(filteredSelection.nodeTargets, "Changed CSG operation of nodes");
 
-                        for(int i = 0; i < filteredSelection.BrushTargets.Length; i++)
+                        for(int i = 0; i < filteredSelection.brushTargets.Length; i++)
                         {
-                            filteredSelection.BrushTargets[i].OperationType = operationType;
+                            filteredSelection.brushTargets[i].OperationType = operationType;
                         }
 
-                        for(int i = 0; i < filteredSelection.OperationTargets.Length; i++)
+                        for(int i = 0; i < filteredSelection.operationTargets.Length; i++)
                         {
-                            filteredSelection.OperationTargets[i].PassThrough   = false;
-                            filteredSelection.OperationTargets[i].OperationType = operationType;
+                            filteredSelection.operationTargets[i].PassThrough   = false;
+                            filteredSelection.operationTargets[i].OperationType = operationType;
                         }
 
                         InternalCSGModelManager.CheckForChanges();
@@ -398,7 +398,7 @@ namespace RealtimeCSG
                         GUILayout.EndVertical();
                     }
 
-                    bool have_nodes = tool != null && filteredSelection.NodeTargets.Length > 0;
+                    bool have_nodes = tool != null && filteredSelection.nodeTargets.Length > 0;
 
                     GUILayout.BeginVertical(CSG_GUIStyleUtility.ContentEmpty);
 

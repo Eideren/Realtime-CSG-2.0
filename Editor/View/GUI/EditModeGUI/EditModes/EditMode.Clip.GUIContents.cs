@@ -19,12 +19,12 @@ namespace RealtimeCSG
         private static readonly ToolTip CommitTooltip = new ToolTip(
             "Commit your changes"
           , "Split the selected brush(es) with the current clipping plane. This makes your changes final."
-          , Keys.PerformActionKey
+          , Keys.performActionKey
         );
 
         private static readonly ToolTip CancelTooltip = new ToolTip(
             "Cancel your changes", "Do not clip your selected brushes and return them to their original state."
-          , Keys.CancelActionKey
+          , Keys.cancelActionKey
         );
 
         private static readonly GUILayoutOption largeLabelWidth = GUILayout.Width(80);

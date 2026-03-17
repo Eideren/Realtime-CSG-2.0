@@ -793,7 +793,7 @@ namespace RealtimeCSG
                             brush_transformation, highlight_surface,
                             ColorSettings.SurfaceInnerStateColor[2],
                             ColorSettings.SurfaceOuterStateColor[2],
-                            GUIConstants.oldThinLineScale
+                            GUIConstants.OLD_THIN_LINE_SCALE
                         );
                     }
                 }
@@ -813,14 +813,14 @@ namespace RealtimeCSG
                     {
                         CSGRenderer.DrawSelectedBrush(
                             brush.brushNodeID, brush.Shape, brush_transformation, ColorSettings.WireframeOutline, 0
-                          , selectAllSurfaces, GUIConstants.oldLineScale
+                          , selectAllSurfaces, GUIConstants.OLD_LINE_SCALE
                         );
                     }
                     else
                     {
                         CSGRenderer.DrawSelectedBrush(
                             brush.brushNodeID, brush.Shape, brush_transformation, ColorSettings.WireframeOutline
-                          , highlight_surface, selectAllSurfaces, GUIConstants.oldLineScale
+                          , highlight_surface, selectAllSurfaces, GUIConstants.OLD_LINE_SCALE
                         );
                     }
                 }

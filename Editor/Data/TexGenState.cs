@@ -11,10 +11,8 @@ namespace RealtimeCSG
     {
         [SerializeField] public int[] surfaceControlID;
         [SerializeField] public SelectState[] surfaceSelectState;
-//		[SerializeField] public Color[]			surfaceColors;
 
         [NonSerialized] public TexGen[] backupTexGens;
-
         [NonSerialized] public Vector3 rayIntersectionWorldPoint;
         [NonSerialized] public Vector2 rayIntersectionSurfacePoint;
 
@@ -61,7 +59,6 @@ namespace RealtimeCSG
         {
             surfaceControlID   = new int[surfaceCount];
             surfaceSelectState = new SelectState[surfaceCount];
-//			surfaceColors		= new Color[surfaceCount * 2];
         }
 
         public void UpdateLayout(CSGBrush brush)
@@ -75,18 +72,6 @@ namespace RealtimeCSG
             }
         }
 
-        /*
-        public void UpdateColors(CSGBrush brush)
-        {
-            int surfaceCount = surfaceSelectState.Length;
-            for (int s = 0, c = 0; s < surfaceCount; s++, c += 2)
-            {
-                var state = (int)surfaceSelectState[s];
-                surfaceColors[c + 0] = ColorSettings.SurfaceInnerStateColor[state];
-                surfaceColors[c + 1] = ColorSettings.SurfaceOuterStateColor[state];
-            }
-        }
-        */
         public bool HaveSurfaceSelection
         {
             get
@@ -129,41 +114,41 @@ namespace RealtimeCSG
 
         public bool IsSurfaceSelected(int surfaceIndex)
         {
-            SelectState new_state = surfaceSelectState[surfaceIndex];
+            SelectState newState = surfaceSelectState[surfaceIndex];
 
-            return (new_state & SelectState.Selected) == SelectState.Selected;
+            return (newState & SelectState.Selected) == SelectState.Selected;
         }
 
         public bool SelectSurface(int surfaceIndex, SelectionType selectionType)
         {
-            SelectState old_state = surfaceSelectState[surfaceIndex];
+            SelectState oldState = surfaceSelectState[surfaceIndex];
 
-            if((old_state & SelectState.Hovering) != SelectState.Hovering)
+            if((oldState & SelectState.Hovering) != SelectState.Hovering)
             {
                 return false;
             }
 
-            SelectState new_state = old_state;
+            SelectState newState = oldState;
 
             if(selectionType == SelectionType.Subtractive)
             {
-                new_state &= ~SelectState.Selected;
+                newState &= ~SelectState.Selected;
             }
             else if(selectionType == SelectionType.Toggle)
             {
-                new_state ^= SelectState.Selected;
+                newState ^= SelectState.Selected;
             }
             else
             {
-                new_state |= SelectState.Selected;
+                newState |= SelectState.Selected;
             }
 
-            if(old_state == new_state)
+            if(oldState == newState)
             {
                 return false;
             }
 
-            surfaceSelectState[surfaceIndex] = new_state;
+            surfaceSelectState[surfaceIndex] = newState;
 
             return true;
         }

@@ -153,7 +153,7 @@ namespace InternalRealtimeCSG
                     }
                 }
 
-                if(CSGProjectSettings.Instance.SaveMeshesInSceneFiles
+                if(CSGProjectSettings.Instance.saveMeshesInSceneFiles
                 || !EditorApplication.isPlayingOrWillChangePlaymode)
                 {
                     Object.DestroyImmediate(meshContainer);
@@ -171,7 +171,7 @@ namespace InternalRealtimeCSG
             {
                 if(meshInstance)
                 {
-                    if(CSGProjectSettings.Instance.SaveMeshesInSceneFiles
+                    if(CSGProjectSettings.Instance.saveMeshesInSceneFiles
                     || !EditorApplication.isPlayingOrWillChangePlaymode)
                     {
                         Object.DestroyImmediate(meshInstance);
@@ -223,7 +223,7 @@ namespace InternalRealtimeCSG
 
                 if(csgnode)
                 {
-                    if(CSGProjectSettings.Instance.SaveMeshesInSceneFiles
+                    if(CSGProjectSettings.Instance.saveMeshesInSceneFiles
                     || !EditorApplication.isPlayingOrWillChangePlaymode)
                     {
                         Object.DestroyImmediate(csgnode);
@@ -240,7 +240,7 @@ namespace InternalRealtimeCSG
                 GameObject gameObject = removableGameObjects[i];
                 Transform  transform  = gameObject.transform;
 
-                if(CSGProjectSettings.Instance.SaveMeshesInSceneFiles
+                if(CSGProjectSettings.Instance.saveMeshesInSceneFiles
                 || !EditorApplication.isPlayingOrWillChangePlaymode)
                 {
                     RemoveWithChildrenIfPossible(transform);
