@@ -148,18 +148,12 @@ namespace RealtimeCSG
             {
                 if(MinY == MaxY)
                 {
-                    return MinZ == MaxZ
-                        ? new[] { new Vector3(MinX, MinY, MinZ) }
-                        : new[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ) };
+                    return MinZ == MaxZ ? new[] { new Vector3(MinX, MinY, MinZ) } : new[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ) };
                 }
 
                 if(MinZ == MaxZ)
                 {
-                    return new[]
-                    {
-                        new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MinX, MinY, MaxZ)
-                      , new Vector3(MinX, MaxY, MaxZ)
-                    };
+                    return new[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ) };
                 }
 
                 return new[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ) };
@@ -172,29 +166,15 @@ namespace RealtimeCSG
                     return new[] { new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ) };
                 }
 
-                return new[]
-                {
-                    new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ), new Vector3(MinX, MaxY, MaxZ)
-                  , new Vector3(MaxX, MaxY, MaxZ)
-                };
+                return new[] { new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ), new Vector3(MinX, MaxY, MaxZ), new Vector3(MaxX, MaxY, MaxZ) };
             }
 
-            return new[]
-            {
-                new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ)
-              , new Vector3(MaxX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ)
-              , new Vector3(MaxX, MaxY, MaxZ), new Vector3(MaxX, MinY, MaxZ)
-            };
+            return new[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ), new Vector3(MaxX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ), new Vector3(MaxX, MaxY, MaxZ), new Vector3(MaxX, MinY, MaxZ) };
         }
 
         public Vector3[] GetAllCorners()
         {
-            return new[]
-            {
-                new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ)
-              , new Vector3(MaxX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ)
-              , new Vector3(MaxX, MaxY, MaxZ), new Vector3(MaxX, MinY, MaxZ)
-            };
+            return new[] { new Vector3(MinX, MinY, MinZ), new Vector3(MinX, MaxY, MinZ), new Vector3(MaxX, MaxY, MinZ), new Vector3(MaxX, MinY, MinZ), new Vector3(MinX, MinY, MaxZ), new Vector3(MinX, MaxY, MaxZ), new Vector3(MaxX, MaxY, MaxZ), new Vector3(MaxX, MinY, MaxZ) };
         }
 
         public override string ToString()

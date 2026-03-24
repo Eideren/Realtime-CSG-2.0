@@ -31,7 +31,7 @@ namespace RealtimeCSG.Legacy
         // Do not use this anymore, it's deprecated
         [FormerlySerializedAs("LegacyMaterials"), Obsolete("Materials are now stored in TexGens"), HideInInspector
        , SerializeField]
-         internal Material[] Materials = new Material[0];
+        internal Material[] Materials = new Material[0];
 
 #if UNITY_EDITOR
         /// <summary>Constructor for an unintialized <see cref="RealtimeCSG.Legacy.Shape"/></summary>

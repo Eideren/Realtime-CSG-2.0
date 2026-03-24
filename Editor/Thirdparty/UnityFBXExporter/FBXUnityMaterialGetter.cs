@@ -256,9 +256,7 @@ namespace UnityFBXExporter
                 string textureObjects;
                 string textureConnections;
 
-                SerializedTextures(
-                    gameObj, newPath, mat, materialName, copyTextures, out textureObjects, out textureConnections
-                );
+                SerializedTextures(gameObj, newPath, mat, materialName, copyTextures, out textureObjects, out textureConnections);
 
                 tempObjectSb.Append(textureObjects);
                 tempConnectionsSb.Append(textureConnections);
@@ -371,13 +369,9 @@ namespace UnityFBXExporter
             string fullDataFolderPath      = Application.dataPath;
             string textureFilePathFullName = originalAssetPath;
 
-            string textureFileName = originalAssetPath.Remove(
-                0, originalAssetPath.LastIndexOf('/') + 1
-            ); // Removes the path and gives the file name
+            string textureFileName = originalAssetPath.Remove(0, originalAssetPath.LastIndexOf('/') + 1); // Removes the path and gives the file name
 
-            string textureName = textureFileName.Remove(
-                textureFileName.LastIndexOf('.'), textureFileName.Length - textureFileName.LastIndexOf('.')
-            );
+            string textureName = textureFileName.Remove(textureFileName.LastIndexOf('.'), textureFileName.Length - textureFileName.LastIndexOf('.'));
 
             string textureExtension = textureFileName.Remove(0, textureFileName.LastIndexOf('.'));
 
@@ -386,13 +380,9 @@ namespace UnityFBXExporter
             {
                 int indexOfAssetsFolder = fullDataFolderPath.LastIndexOf("/Assets");
 
-                fullDataFolderPath = fullDataFolderPath.Remove(
-                    indexOfAssetsFolder, fullDataFolderPath.Length - indexOfAssetsFolder
-                );
+                fullDataFolderPath = fullDataFolderPath.Remove(indexOfAssetsFolder, fullDataFolderPath.Length - indexOfAssetsFolder);
 
-                string newPathFolder = newPath.Remove(
-                    newPath.LastIndexOf('/') + 1, newPath.Length - newPath.LastIndexOf('/') - 1
-                );
+                string newPathFolder = newPath.Remove(newPath.LastIndexOf('/') + 1, newPath.Length - newPath.LastIndexOf('/') - 1);
 
                 textureName = gameObj.name + "_" + material.name + unityExtension;
 
@@ -426,24 +416,18 @@ namespace UnityFBXExporter
                 objectsSb.AppendLine("\t\tRelativeFilename: \"/Textures/" + textureName + textureExtension + "\"");
             }
 
-            objectsSb.AppendLine(
-                "\t\tModelUVTranslation: 0,0"
-            ); // TODO: Figure out how to get the UV translation into here
+            objectsSb.AppendLine("\t\tModelUVTranslation: 0,0"); // TODO: Figure out how to get the UV translation into here
 
             objectsSb.AppendLine("\t\tModelUVScaling: 1,1"); // TODO: Figure out how to get the UV scaling into here
 
-            objectsSb.AppendLine(
-                "\t\tTexture_Alpha_Source: \"None\""
-            ); // TODO: Add alpha source here if the file is a cutout.
+            objectsSb.AppendLine("\t\tTexture_Alpha_Source: \"None\""); // TODO: Add alpha source here if the file is a cutout.
 
             objectsSb.AppendLine("\t\tCropping: 0,0,0,0");
             objectsSb.AppendLine("\t}");
 
             connectionsSb.AppendLine("\t;Texture::" + textureName + ", Material::" + materialName + "\"");
 
-            connectionsSb.AppendLine(
-                "\tC: \"OP\"," + textureReference + "," + materialId + ", \"" + textureType + "\""
-            );
+            connectionsSb.AppendLine("\tC: \"OP\"," + textureReference + "," + materialId + ", \"" + textureType + "\"");
 
             connectionsSb.AppendLine();
 

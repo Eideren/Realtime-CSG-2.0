@@ -96,9 +96,7 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                dragGameObjectBounds.Add(
-                    BoundsUtilities.GetLocalBounds(brushes, gameObject.transform.worldToLocalMatrix)
-                );
+                dragGameObjectBounds.Add(BoundsUtilities.GetLocalBounds(brushes, gameObject.transform.worldToLocalMatrix));
             }
 
             if(!dragGameObjectBounds.Valid)
@@ -166,15 +164,12 @@ namespace RealtimeCSG
 
         private void EnableVisualObjects()
         {
-            if(_visualDragGameObject == null ||
-               _visualDragGameObject.Count != _dragGameObjects.Count)
+            if(_visualDragGameObject == null || _visualDragGameObject.Count != _dragGameObjects.Count)
             {
                 CreateVisualObjects();
             }
 
-            Transform realParent = !_hoverParent || CSGPrefabUtility.IsPrefabAsset(_hoverParent.gameObject)
-                ? null
-                : _hoverParent;
+            Transform realParent = !_hoverParent || CSGPrefabUtility.IsPrefabAsset(_hoverParent.gameObject) ? null : _hoverParent;
 
             int counter = 0;
 
@@ -320,10 +315,7 @@ namespace RealtimeCSG
 
                 _hoverBrushSurface = null;
                 _hoverParent       = !transformInInspector ? null : transformInInspector.parent;
-
-                _hoverSiblingIndex = !transformInInspector
-                    ? int.MaxValue
-                    : transformInInspector.transform.GetSiblingIndex();
+                _hoverSiblingIndex = !transformInInspector ? int.MaxValue : transformInInspector.transform.GetSiblingIndex();
 
                 float middle = (selectionRect.yMax + selectionRect.yMin) * 0.5f;
 
@@ -354,25 +346,16 @@ namespace RealtimeCSG
             try
             {
                 DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-
                 Camera camera = sceneView.camera;
 
-                LegacyBrushIntersection intersection = SceneQueryUtility.FindMeshIntersection(
-                    camera, Event.current.mousePosition, _ignoreBrushes, _ignoreTransforms
-                );
+                LegacyBrushIntersection intersection = SceneQueryUtility.FindMeshIntersection(camera, Event.current.mousePosition, _ignoreBrushes, _ignoreTransforms);
 
                 Vector3 normal = intersection.worldPlane.normal;
 
-                _hoverPosition = intersection.worldIntersection;
-                _hoverParent   = SelectionUtility.FindParentToAssignTo(intersection);
-
-                _hoverBrushSurface = intersection.brush
-                    ? new SelectedBrushSurface(intersection.brush, intersection.surfaceIndex)
-                    : null;
-
-                _hoverRotation = SelectionUtility.FindDragOrientation(
-                    sceneView, normal, _sourceSurfaceAlignment, _destinationSurfaceAlignment
-                );
+                _hoverPosition     = intersection.worldIntersection;
+                _hoverParent       = SelectionUtility.FindParentToAssignTo(intersection);
+                _hoverBrushSurface = intersection.brush ? new SelectedBrushSurface(intersection.brush, intersection.surfaceIndex) : null;
+                _hoverRotation     = SelectionUtility.FindDragOrientation(sceneView, normal, _sourceSurfaceAlignment, _destinationSurfaceAlignment);
 
                 _haveNoParent      = !_hoverParent;
                 _hoverSiblingIndex = int.MaxValue;
@@ -389,9 +372,7 @@ namespace RealtimeCSG
 
                     for(int i = 0; i < localPoints.Length; i++)
                     {
-                        localPoints[i] = GeometryUtility.ProjectPointOnPlane(
-                            localPlane, _hoverRotation * _projectedBounds[i] + _hoverPosition
-                        );
+                        localPoints[i] = GeometryUtility.ProjectPointOnPlane(localPlane, _hoverRotation * _projectedBounds[i] + _hoverPosition);
                     }
 
                     _hoverPosition += CSGGrid.SnapDeltaToGrid(camera, MathConstants.zeroVector3, localPoints);
@@ -547,9 +528,10 @@ namespace RealtimeCSG
             finally
             {
                 InternalCSGModelManager.SkipCheckForChanges = false;
-                CSGGrid.ForcedGridCenter                    = _prevForcedGridCenter;
-                CSGGrid.ForcedGridRotation                  = _prevForcedGridRotation;
-                CSGGrid.ForceGrid                           = false;
+
+                CSGGrid.ForcedGridCenter   = _prevForcedGridCenter;
+                CSGGrid.ForcedGridRotation = _prevForcedGridRotation;
+                CSGGrid.ForceGrid          = false;
             }
         }
 
@@ -576,12 +558,7 @@ namespace RealtimeCSG
             int       highlightSurface    = _hoverBrushSurface.surfaceIndex;
             Matrix4x4 brushTransformation = brush.compareTransformation.localToWorldMatrix;
 
-            CSGRenderer.DrawSelectedBrush(
-                brush.brushNodeID, brush.Shape,
-                brushTransformation, ColorSettings.WireframeOutline,
-                highlightSurface,
-                false, GUIConstants.OLD_LINE_SCALE
-            );
+            CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline, highlightSurface, false, GUIConstants.OLD_LINE_SCALE);
         }
 
 #endregion

@@ -4,9 +4,7 @@ namespace InternalRealtimeCSG
 {
     internal static class TransformOperations
     {
-        public static void Rotate(
-            this TransformSelection selection, Vector3 rotationCenter, Vector3 rotationAxis, float rotationAngle
-        )
+        public static void Rotate(this TransformSelection selection, Vector3 rotationCenter, Vector3 rotationAxis, float rotationAngle)
         {
             Quaternion rotationQuaternion = Quaternion.AngleAxis(rotationAngle, rotationAxis);
 

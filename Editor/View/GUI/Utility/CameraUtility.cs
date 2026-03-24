@@ -61,6 +61,7 @@ namespace RealtimeCSG
             start.y = Mathf.Max(start.y, 0);
             end.x   = Mathf.Max(end.x, 0);
             end.y   = Mathf.Max(end.y, 0);
+
             Rect r = new Rect(start.x, start.y, end.x - start.x, end.y - start.y);
 
             if(r.width < 0)
@@ -118,16 +119,12 @@ namespace RealtimeCSG
             float viewportX  = m_CameraViewport.x;
             float viewportY  = m_CameraViewport.y;
 
-            m_WorldToScreenPointMatrix = Matrix4x4.TRS(
-                    new Vector3(viewportX, viewportY, 0), Quaternion.identity, Vector3.one
-                ) *
+            m_WorldToScreenPointMatrix = Matrix4x4.TRS(new Vector3(viewportX, viewportY, 0), Quaternion.identity, Vector3.one) *
                 Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(halfWidth, halfHeight, 1)) *
                 Matrix4x4.TRS(new Vector3(1, 1, 0), Quaternion.identity, Vector3.one) *
                 m_WorldToClipMatrix;
 
-            m_LocalToGUIPointMatrix = Matrix4x4.TRS(
-                    new Vector3(-m_PhysicalOffset.x, -m_PhysicalOffset.y, 1), Quaternion.identity, Vector3.one
-                ) *
+            m_LocalToGUIPointMatrix = Matrix4x4.TRS(new Vector3(-m_PhysicalOffset.x, -m_PhysicalOffset.y, 1), Quaternion.identity, Vector3.one) *
                 m_GUIInverseMatrix *
                 Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(m_PixelsPerPoint, m_PixelsPerPoint, 1)) *
                 Matrix4x4.TRS(new Vector3(0, m_ScreenHeight, 0), Quaternion.identity, Vector3.one) *
@@ -156,9 +153,7 @@ namespace RealtimeCSG
                 point2 = cameraPlane.LineIntersection(point1, point2);
             }
 
-            float value = DistancePointLine(mousePoint, point1, point2) / 2.5f;
-
-            return value;
+            return DistancePointLine(mousePoint, point1, point2) / 2.5f;
         }
 
         private static Vector3 ProjectPointLine(Vector3 point, Vector3 lineStart, Vector3 lineEnd)
@@ -215,8 +210,7 @@ namespace RealtimeCSG
 
         public static float DistancePointLine(Vector3 point, Vector3 p1, Vector3 p2)
         {
-            float retval =
-                Vector3.Magnitude(ProjectPointLine(point, p1, p2) - point);
+            float retval = Vector3.Magnitude(ProjectPointLine(point, p1, p2) - point);
 
             if(retval < 0)
             {
@@ -288,9 +282,7 @@ namespace RealtimeCSG
             pos.x *= m_PixelsPerPoint;
             pos.y *= m_PixelsPerPoint;
 
-            PerspectiveMultiplyPoint2(
-                m_GUIInverseMatrix, new Vector3(pos.x, pos.y, 0.0F), out Vector2 transformedPoint
-            );
+            PerspectiveMultiplyPoint2(m_GUIInverseMatrix, new Vector3(pos.x, pos.y, 0.0F), out Vector2 transformedPoint);
 
             return transformedPoint - m_PhysicalOffset;
         }

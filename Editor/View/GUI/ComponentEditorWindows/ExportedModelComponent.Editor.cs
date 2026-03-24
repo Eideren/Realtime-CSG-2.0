@@ -18,79 +18,72 @@ namespace RealtimeCSG
 
             GUILayout.BeginVertical(GUI.skin.box);
 
+            GUILayout.Label("A hidden CSG model, and all it's brushes and operations, is contained by this object. This will automatically be removed at build time.", CsgguiStyleUtility.WrapLabel);
+
+            GUILayout.Space(10);
+
+            if(GUILayout.Button("Revert back to CSG model"))
             {
-                GUILayout.Label(
-                    "A hidden CSG model, and all it's brushes and operations, is contained by this object. This will automatically be removed at build time."
-                  , CsgguiStyleUtility.WrapLabel
-                );
+                Undo.IncrementCurrentGroup();
+                int groupIndex = Undo.GetCurrentGroup();
+                Undo.SetCurrentGroupName("Reverted to former CSG model");
 
-                GUILayout.Space(10);
-
-                if(GUILayout.Button("Revert back to CSG model"))
+                try
                 {
-                    Undo.IncrementCurrentGroup();
-                    int groupIndex = Undo.GetCurrentGroup();
-                    Undo.SetCurrentGroupName("Reverted to former CSG model");
+                    List<Object>   selection    = new List<Object>();
+                    HashSet<Scene> updateScenes = new HashSet<Scene>();
 
-                    try
+                    foreach(Object o in targets)
                     {
-                        List<Object>   selection    = new List<Object>();
-                        HashSet<Scene> updateScenes = new HashSet<Scene>();
+                        CSGModelExported exportedModel = o as CSGModelExported;
 
-                        foreach(Object o in targets)
+                        if(!exportedModel)
                         {
-                            CSGModelExported exportedModel = o as CSGModelExported;
-
-                            if(!exportedModel)
-                            {
-                                continue;
-                            }
-
-                            exportedModel.disarm    = true;
-                            exportedModel.hideFlags = HideFlags.DontSaveInBuild;
-                            updateScenes.Add(exportedModel.gameObject.scene);
-
-                            if(exportedModel.containedModel)
-                            {
-                                Undo.RecordObject(exportedModel.containedModel, "Revert model");
-                                selection.Add(exportedModel.containedModel.gameObject);
-                                exportedModel.containedModel.transform.SetParent(exportedModel.transform.parent, true);
-
-                                exportedModel.containedModel.transform.SetSiblingIndex(
-                                    exportedModel.transform.GetSiblingIndex()
-                                );
-
-                                exportedModel.containedModel.gameObject.SetActive(true);
-                                exportedModel.containedModel.gameObject.hideFlags = HideFlags.None;
-                                EditorUtility.SetDirty(exportedModel.containedModel);
-                            }
-                            else
-                            {
-                                MeshInstanceManager.ReverseExport(exportedModel);
-                                selection.Add(exportedModel.gameObject);
-                                EditorUtility.SetDirty(exportedModel);
-                            }
-
-                            Undo.DestroyObjectImmediate(exportedModel);
+                            continue;
                         }
 
-                        Selection.objects = selection.ToArray();
+                        exportedModel.disarm    = true;
+                        exportedModel.hideFlags = HideFlags.DontSaveInBuild;
+                        updateScenes.Add(exportedModel.gameObject.scene);
 
-                        InternalCSGModelManager.SkipCheckForChanges = true;
-
-                        BrushOutlineManager.ClearOutlines();
-                        InternalCSGModelManager.ForceRebuildAll();
-
-                        foreach(Scene scene in updateScenes)
+                        if(exportedModel.containedModel)
                         {
-                            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+                            Undo.RecordObject(exportedModel.containedModel, "Revert model");
+                            selection.Add(exportedModel.containedModel.gameObject);
+                            exportedModel.containedModel.transform.SetParent(exportedModel.transform.parent, true);
+
+                            exportedModel.containedModel.transform.SetSiblingIndex(exportedModel.transform.GetSiblingIndex());
+
+                            exportedModel.containedModel.gameObject.SetActive(true);
+                            exportedModel.containedModel.gameObject.hideFlags = HideFlags.None;
+                            EditorUtility.SetDirty(exportedModel.containedModel);
                         }
+                        else
+                        {
+                            MeshInstanceManager.ReverseExport(exportedModel);
+                            selection.Add(exportedModel.gameObject);
+                            EditorUtility.SetDirty(exportedModel);
+                        }
+
+                        Undo.DestroyObjectImmediate(exportedModel);
                     }
-                    finally
+
+                    Selection.objects = selection.ToArray();
+
+                    InternalCSGModelManager.SkipCheckForChanges = true;
+
+                    BrushOutlineManager.ClearOutlines();
+                    InternalCSGModelManager.ForceRebuildAll();
+
+                    foreach(Scene scene in updateScenes)
                     {
-                        InternalCSGModelManager.SkipCheckForChanges = false;
-                        Undo.CollapseUndoOperations(groupIndex);
+                        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
                     }
+                }
+                finally
+                {
+                    InternalCSGModelManager.SkipCheckForChanges = false;
+                    Undo.CollapseUndoOperations(groupIndex);
                 }
             }
 

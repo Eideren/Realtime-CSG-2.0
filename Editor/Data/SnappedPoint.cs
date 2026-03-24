@@ -7,7 +7,7 @@ namespace RealtimeCSG
 {
     internal static class SnappedPoint
     {
-        internal static int SnappedPointHash = "SnappedPoint".GetHashCode();
+        internal static readonly int snappedPointHash = "SnappedPoint".GetHashCode();
         private static Vector2 m_StartMousePosition;
         private static CSGPlane m_MovePlane;
 
@@ -16,18 +16,14 @@ namespace RealtimeCSG
 
         public static SnapFunction snapFunction = null;
 
-        public static Vector3 FreeMoveHandle(
-            Camera camera, Vector3 position, Quaternion rotation, float size, DrawCapFunction capFunc = null
-        )
+        public static Vector3 FreeMoveHandle(Camera camera, Vector3 position, Quaternion rotation, float size, DrawCapFunction capFunc = null)
         {
-            int id = GUIUtility.GetControlID(SnappedPointHash, FocusType.Keyboard);
+            int id = GUIUtility.GetControlID(snappedPointHash, FocusType.Keyboard);
 
             return FreeMoveHandle(camera, id, position, rotation, size, capFunc);
         }
 
-        public static Vector3 FreeMoveHandle(
-            Camera camera, int id, Vector3 position, Quaternion rotation, float size, DrawCapFunction capFunc = null
-        )
+        public static Vector3 FreeMoveHandle(Camera camera, int id, Vector3 position, Quaternion rotation, float size, DrawCapFunction capFunc = null)
         {
             if(capFunc == null)
             {
@@ -49,8 +45,7 @@ namespace RealtimeCSG
                 }
                 case EventType.MouseDown:
                 {
-                    if(GUIUtility.hotControl == 0 &&
-                       HandleUtility.nearestControl == id && Event.current.button == 0)
+                    if(GUIUtility.hotControl == 0 && HandleUtility.nearestControl == id && Event.current.button == 0)
                     {
                         GUIUtility.hotControl             = id;
                         GUIUtility.keyboardControl        = id;

@@ -11,15 +11,15 @@ namespace InternalRealtimeCSG
 {
     internal class BrushSelection
     {
-        [SerializeField] public CSGBrush[] brushes = Array.Empty<CSGBrush>();
-        [SerializeField] public Shape[] shapes = Array.Empty<Shape>();
-        [SerializeField] public ControlMesh[] controlMeshes = Array.Empty<ControlMesh>();
-        [SerializeField] public ControlMeshState[] states = Array.Empty<ControlMeshState>();
+        public CSGBrush[] brushes = Array.Empty<CSGBrush>();
+        public Shape[] shapes = Array.Empty<Shape>();
+        public ControlMesh[] controlMeshes = Array.Empty<ControlMesh>();
+        public ControlMeshState[] states = Array.Empty<ControlMeshState>();
 
-        [SerializeField] public ControlMesh[] backupControlMeshes = Array.Empty<ControlMesh>();
-        [SerializeField] public Shape[] backupShapes = Array.Empty<Shape>();
-        [SerializeField] public Matrix4x4[] localToWorld = Array.Empty<Matrix4x4>();
-        [SerializeField] public Transform[] modelTransforms = Array.Empty<Transform>();
+        public ControlMesh[] backupControlMeshes = Array.Empty<ControlMesh>();
+        public Shape[] backupShapes = Array.Empty<Shape>();
+        public Matrix4x4[] localToWorld = Array.Empty<Matrix4x4>();
+        public Transform[] modelTransforms = Array.Empty<Transform>();
 
         public bool HaveSelection
         {
@@ -110,17 +110,14 @@ namespace InternalRealtimeCSG
         {
             for(int i = 0; i < brushes.Length; i++)
             {
-                if(!brushes[i] ||
-                   brushes[i].ControlMesh == null)
+                if(!brushes[i] || brushes[i].ControlMesh == null)
                 {
                     continue;
                 }
 
                 if(!brushes[i].ControlMesh.Valid)
                 {
-                    brushes[i].ControlMesh.Valid = ControlMeshUtility.Validate(
-                        brushes[i].ControlMesh, brushes[i].Shape
-                    );
+                    brushes[i].ControlMesh.Valid = ControlMeshUtility.Validate(brushes[i].ControlMesh, brushes[i].Shape);
                 }
 
                 localToWorld[i] = brushes[i].transform.localToWorldMatrix;
@@ -150,8 +147,7 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                if(brushes[i].ChildData == null ||
-                   brushes[i].ChildData.ModelTransform == null)
+                if(brushes[i].ChildData == null || brushes[i].ChildData.ModelTransform == null)
                 {
                     continue;
                 }
@@ -234,9 +230,7 @@ namespace InternalRealtimeCSG
         {
             for(int t = 0; t < states.Length; t++)
             {
-                if(t >= brushes.Length ||
-                   states[t] == null ||
-                   !brushes[t])
+                if(t >= brushes.Length || states[t] == null || !brushes[t])
                 {
                     continue;
                 }
@@ -258,9 +252,7 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                if(!forceUpdate &&
-                   controlMeshes[t] != null &&
-                   !controlMeshes[t].Valid)
+                if(!forceUpdate && controlMeshes[t] != null && !controlMeshes[t].Valid)
                 {
                     continue;
                 }
@@ -279,15 +271,11 @@ namespace InternalRealtimeCSG
             return true;
         }
 
-        public void FindClosestIntersection(
-            SceneView sceneView, out int closestBrushNodeIndex, out int closestSurfaceIndex
-        )
+        public void FindClosestIntersection(SceneView sceneView, out int closestBrushNodeIndex, out int closestSurfaceIndex)
         {
             Ray     mouseWorldRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
             Vector3 rayStart      = mouseWorldRay.origin;
-
-            Vector3 rayVector = mouseWorldRay.direction
-              * (sceneView.camera.farClipPlane - sceneView.camera.nearClipPlane);
+            Vector3 rayVector     = mouseWorldRay.direction * (sceneView.camera.farClipPlane - sceneView.camera.nearClipPlane);
 
             Vector3 rayEnd = rayStart + rayVector;
 
@@ -313,9 +301,7 @@ namespace InternalRealtimeCSG
 
                 Matrix4x4 modelTransformation = parentModelTransform.localToWorldMatrix;
 
-                if(!SceneQueryUtility.FindBrushIntersection(
-                       brush, modelTransformation, rayStart, rayEnd, out LegacyBrushIntersection intersection
-                   ))
+                if(!SceneQueryUtility.FindBrushIntersection(brush, modelTransformation, rayStart, rayEnd, out LegacyBrushIntersection intersection))
                 {
                     continue;
                 }

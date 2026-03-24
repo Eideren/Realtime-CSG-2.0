@@ -19,15 +19,8 @@
         public readonly string contents;
         public readonly KeyEvent key;
 
-        public string TitleString()
-        {
-            return $"<size=13><color=white><b>{title}</b></color></size>";
-        }
-
-        public string ContentsString()
-        {
-            return $"<size=12><color=white>{contents}</color></size>";
-        }
+        public string TitleString() => $"<size=13><color=white><b>{title}</b></color></size>";
+        public string ContentsString() => $"<size=12><color=white>{contents}</color></size>";
 
         public string KeyString()
         {
@@ -39,9 +32,6 @@
             return $"<color=white><size=11><b>hotkey:</b> <i>{key}</i></size></color>";
         }
 
-        public override string ToString()
-        {
-            return TitleString() + ContentsString() + KeyString();
-        }
+        public override string ToString() => TitleString() + ContentsString() + KeyString();
     }
 }

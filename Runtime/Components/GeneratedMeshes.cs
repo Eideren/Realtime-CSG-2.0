@@ -76,7 +76,7 @@ namespace InternalRealtimeCSG
 #if UNITY_EDITOR
         public CSGModel owner;
 
-        [NonSerialized, HideInInspector]  public Rigidbody CachedRigidBody;
+        [NonSerialized, HideInInspector] public Rigidbody CachedRigidBody;
 
         [NonSerialized] private GeneratedMeshInstance[] meshInstances;
         [SerializeField] private HelperSurfaceDescription[] helperSurfaces;
@@ -454,7 +454,7 @@ namespace InternalRealtimeCSG
         void Awake()
 		{
 			//this.hideFlags = HideFlags.DontSaveInBuild;
-			this.gameObject.tag = "EditorOnly"; 
+			this.gameObject.tag = "EditorOnly";
 		}
 #endif
     }

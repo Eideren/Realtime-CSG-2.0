@@ -120,10 +120,7 @@ namespace RealtimeCSG.Foundation
 
             if(children.Length + arrayIndex < childCount)
             {
-                throw new ArgumentException(
-                    $"The array does not have enough elements, its length is {children.Length} and needs at least {childCount}"
-                  , nameof(children)
-                );
+                throw new ArgumentException($"The array does not have enough elements, its length is {children.Length} and needs at least {childCount}", nameof(children));
             }
 
             return CopyToUnsafe(nodeID, childCount, children, arrayIndex);

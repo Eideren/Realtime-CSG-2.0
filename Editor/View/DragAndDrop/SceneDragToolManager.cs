@@ -76,9 +76,7 @@ namespace RealtimeCSG
             }
         }
 
-        internal static void OnHandleDragAndDrop(
-            SceneView sceneView, Transform transformInInspector = null, Rect? selectionRect = null
-        )
+        internal static void OnHandleDragAndDrop(SceneView sceneView, Transform transformInInspector = null, Rect? selectionRect = null)
         {
             switch(Event.current.type)
             {
@@ -118,9 +116,7 @@ namespace RealtimeCSG
                             }
                             else
                             {
-                                if(selectionRect != null && m_CurrentDragTool.DragUpdated(
-                                       sceneView, transformInInspector, selectionRect.Value
-                                   ))
+                                if(selectionRect != null && m_CurrentDragTool.DragUpdated(sceneView, transformInInspector, selectionRect.Value))
                                 {
                                     CSGEditorGUIUtility.RepaintAll();
                                 }

@@ -15,9 +15,7 @@ namespace RealtimeCSG
         private static bool IsObsolete(Enum value)
         {
             FieldInfo fi = value.GetType().GetField(value.ToString());
-
-            ObsoleteAttribute[] attributes = (ObsoleteAttribute[])
-                fi.GetCustomAttributes(typeof(ObsoleteAttribute), false);
+            ObsoleteAttribute[] attributes = (ObsoleteAttribute[])fi.GetCustomAttributes(typeof(ObsoleteAttribute), false);
 
             return attributes.Length > 0;
         }
@@ -35,16 +33,15 @@ namespace RealtimeCSG
             string       majorVersionPart   = lowerPart.Remove(1);
             string       minorVersionPart   = lowerPart.Substring(1);
 
-            string release_version = REAL_TIME_CSG_DEFINE + "_" + releaseVersionPart;
-            string major_version   = release_version + "_" + majorVersionPart;
-            string minor_version   = major_version + "_" + minorVersionPart;
+            string releaseVersion = $"{REAL_TIME_CSG_DEFINE}_{releaseVersionPart}";
+            string majorVersion   = $"{releaseVersion}_{majorVersionPart}";
+            string minorVersion   = $"{majorVersion}_{minorVersionPart}";
 
-            requiredDefines.Add(release_version);
-            requiredDefines.Add(major_version);
-            requiredDefines.Add(minor_version);
+            requiredDefines.Add(releaseVersion);
+            requiredDefines.Add(majorVersion);
+            requiredDefines.Add(minorVersion);
 
-            BuildTargetGroup[] targetGroups =
-                Enum.GetValues(typeof(BuildTargetGroup)).Cast<BuildTargetGroup>().ToArray();
+            BuildTargetGroup[] targetGroups = Enum.GetValues(typeof(BuildTargetGroup)).Cast<BuildTargetGroup>().ToArray();
 
             foreach(BuildTargetGroup targetGroup in targetGroups)
             {
@@ -58,8 +55,7 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                string symbolString =
-                    PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup));
+                string symbolString = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup));
 
                 if(symbolString == null)
                 {
@@ -134,9 +130,7 @@ namespace RealtimeCSG
 
                 if(newSymbolString != symbolString)
                 {
-                    PlayerSettings.SetScriptingDefineSymbols(
-                        NamedBuildTarget.FromBuildTargetGroup(targetGroup), newSymbolString
-                    );
+                    PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup), newSymbolString);
                 }
             }
         }

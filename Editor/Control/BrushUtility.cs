@@ -9,11 +9,9 @@ namespace InternalRealtimeCSG
     [Serializable]
     internal enum HandleConstraints
     {
-        Straight
-      , // Tangents are ignored (used for straight lines)
-        Broken
-      ,          // Both tangents are assumed to go in different directions
-        Mirrored // Both tangents are aligned and mirror each other
+        Straight // Tangents are ignored (used for straight lines)
+      , Broken   // Both tangents are assumed to go in different directions
+      , Mirrored // Both tangents are aligned and mirror each other
     }
 
     [Serializable]
@@ -70,9 +68,7 @@ namespace InternalRealtimeCSG
 
         public static void TranslatePivot(CSGBrush[] brushes, Vector3 offset)
         {
-            if(brushes == null ||
-               brushes.Length == 0 ||
-               offset.magnitude < MathConstants.ConsideredZero)
+            if(brushes == null || brushes.Length == 0 || offset.magnitude < MathConstants.ConsideredZero)
             {
                 return;
             }

@@ -29,8 +29,7 @@ namespace RealtimeCSG
         {
             Reset();
 
-            if(DragAndDrop.objectReferences == null ||
-               DragAndDrop.objectReferences.Length == 0)
+            if(DragAndDrop.objectReferences == null || DragAndDrop.objectReferences.Length == 0)
             {
                 _dragMaterials = null;
 
@@ -76,10 +75,7 @@ namespace RealtimeCSG
 
             Camera camera = sceneView.camera;
 
-            if(!SceneQueryUtility.FindClickWorldIntersection(
-                   camera, Event.current.mousePosition, out GameObject foundObject, out _hoverOverMeshRenderer
-                 , out _hoverMaterialIndex, ignoreDeepClick: true
-               ))
+            if(!SceneQueryUtility.FindClickWorldIntersection(camera, Event.current.mousePosition, out GameObject foundObject, out _hoverOverMeshRenderer, out _hoverMaterialIndex, ignoreDeepClick: true))
             {
                 return false;
             }
@@ -112,12 +108,7 @@ namespace RealtimeCSG
 
         public bool DragUpdated(SceneView sceneView, Transform transformInInspector, Rect selectionRect)
         {
-            if(_hoverOverMeshRenderer != null)
-            {
-                return DragUpdated(sceneView);
-            }
-
-            return BrushDragUpdated(transformInInspector);
+            return _hoverOverMeshRenderer != null ? DragUpdated(sceneView) : BrushDragUpdated(transformInInspector);
         }
 
         private void ApplyMeshMaterial()
@@ -137,8 +128,7 @@ namespace RealtimeCSG
                     Undo.RecordObject(_hoverOverMeshRenderer, "Modified material");
                     sharedMaterials[_hoverMaterialIndex] = material;
 
-                    _hoverOverMeshRenderer.sharedMaterials =
-                        sharedMaterials.ToArray(); // ToArray forces Undo to recognize the change
+                    _hoverOverMeshRenderer.sharedMaterials = sharedMaterials.ToArray(); // ToArray forces Undo to recognize the change
                 }
             }
         }
@@ -208,8 +198,7 @@ namespace RealtimeCSG
 
                         for(int j = 0; j < _hoverBrushSurfaces.Length; j++)
                         {
-                            if(_hoverBrushSurfaces[j].surfaceIndex == -1 &&
-                               _hoverBrushSurfaces[j].brush == findBrush)
+                            if(_hoverBrushSurfaces[j].surfaceIndex == -1 && _hoverBrushSurfaces[j].brush == findBrush)
                             {
                                 found = true;
 
@@ -276,9 +265,7 @@ namespace RealtimeCSG
             int      highlightSurface;
             CSGBrush highlightBrush;
 
-            if(!SceneQueryUtility.FindWorldIntersection(
-                   camera, Event.current.mousePosition, out LegacyBrushIntersection intersection
-               ))
+            if(!SceneQueryUtility.FindWorldIntersection(camera, Event.current.mousePosition, out LegacyBrushIntersection intersection))
             {
                 highlightBrush   = null;
                 highlightSurface = -1;
@@ -295,8 +282,7 @@ namespace RealtimeCSG
             {
                 for(int i = 0; i < _hoverBrushSurfaces.Length; i++)
                 {
-                    if(_hoverBrushSurfaces[i].brush == highlightBrush &&
-                       _hoverBrushSurfaces[i].surfaceIndex == highlightSurface)
+                    if(_hoverBrushSurfaces[i].brush == highlightBrush && _hoverBrushSurfaces[i].surfaceIndex == highlightSurface)
                     {
                         modified = false;
 
@@ -385,8 +371,7 @@ namespace RealtimeCSG
             {
                 SceneView sceneview = SceneView.sceneViews[i] as SceneView;
 
-                if(sceneview == null ||
-                   sceneview.camera == null)
+                if(sceneview == null || sceneview.camera == null)
                 {
                     continue;
                 }
@@ -419,8 +404,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = _hoverBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null ||
-                       brush.ChildData.Model == null)
+                    if(brush.ChildData == null || brush.ChildData.Model == null)
                     {
                         continue;
                     }
@@ -479,9 +463,7 @@ namespace RealtimeCSG
         {
             _hoverOnSelectedSurfaces = false;
 
-            if(hoverBrushes == null ||
-               hoverBrushes.Length == 0 ||
-               hoverBrushes[0] == null)
+            if(hoverBrushes == null || hoverBrushes.Length == 0 || hoverBrushes[0] == null)
             {
                 return null;
             }
@@ -494,13 +476,11 @@ namespace RealtimeCSG
 
                 for(int i = 0; i < selectedBrushSurfaces.Length; i++)
                 {
-                    if(selectedBrushSurfaces[i].surfaceIndex == surfaceIndex &&
-                       ArrayUtility.Contains(hoverBrushes, selectedBrushSurfaces[i].brush))
+                    if(selectedBrushSurfaces[i].surfaceIndex == surfaceIndex && ArrayUtility.Contains(hoverBrushes, selectedBrushSurfaces[i].brush))
                     {
                         if(i != 0 && selectedBrushSurfaces.Length > 1)
                         {
-                            (selectedBrushSurfaces[0], selectedBrushSurfaces[i]) =
-                                (selectedBrushSurfaces[i], selectedBrushSurfaces[0]);
+                            (selectedBrushSurfaces[0], selectedBrushSurfaces[i]) = (selectedBrushSurfaces[i], selectedBrushSurfaces[0]);
                         }
 
                         _hoverOnSelectedSurfaces = true;
@@ -583,8 +563,7 @@ namespace RealtimeCSG
             {
                 CSGBrush brush = hoverBrushSurfaces[i].brush;
 
-                if(brush.ChildData == null ||
-                   brush.ChildData.Model == null)
+                if(brush.ChildData == null || brush.ChildData.Model == null)
                 {
                     continue;
                 }
@@ -601,12 +580,7 @@ namespace RealtimeCSG
 
         private Material GetMaterial()
         {
-            if(_dragMaterials.Count > 1)
-            {
-                return _dragMaterials[Random.Range(0, _dragMaterials.Count)];
-            }
-
-            return _dragMaterials[0];
+            return _dragMaterials.Count > 1 ? _dragMaterials[Random.Range(0, _dragMaterials.Count)] : _dragMaterials[0];
         }
 
 #region ApplyMaterial
@@ -627,8 +601,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = hoverBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null ||
-                       brush.ChildData.Model == null)
+                    if(brush.ChildData == null || brush.ChildData.Model == null)
                     {
                         continue;
                     }
@@ -682,7 +655,8 @@ namespace RealtimeCSG
                                     Undo.RecordObject(brush, "Modifying material");
                                 }
 
-                                modified                                = true;
+                                modified = true;
+
                                 texGens[highlightTEXGen].RenderMaterial = material;
                             }
                         }
@@ -728,13 +702,7 @@ namespace RealtimeCSG
                         int       highlightSurface    = selectedBrushSurfaces[i].surfaceIndex;
                         Matrix4x4 brushTransformation = brush.compareTransformation.localToWorldMatrix;
 
-                        CSGRenderer.DrawSurfaceOutlines(
-                            brush.brushNodeID, brush.Shape,
-                            brushTransformation, highlightSurface,
-                            ColorSettings.SurfaceInnerStateColor[2],
-                            ColorSettings.SurfaceOuterStateColor[2],
-                            GUIConstants.OLD_THIN_LINE_SCALE
-                        );
+                        CSGRenderer.DrawSurfaceOutlines(brush.brushNodeID, brush.Shape, brushTransformation, highlightSurface, ColorSettings.SurfaceInnerStateColor[2], ColorSettings.SurfaceOuterStateColor[2], GUIConstants.OLD_THIN_LINE_SCALE);
                     }
                 }
             }
@@ -751,17 +719,11 @@ namespace RealtimeCSG
 
                     if(highlightSurface == -1 || _selectAllSurfaces)
                     {
-                        CSGRenderer.DrawSelectedBrush(
-                            brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline, 0
-                          , _selectAllSurfaces, GUIConstants.OLD_LINE_SCALE
-                        );
+                        CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline, 0, _selectAllSurfaces, GUIConstants.OLD_LINE_SCALE);
                     }
                     else
                     {
-                        CSGRenderer.DrawSelectedBrush(
-                            brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline
-                          , highlightSurface, _selectAllSurfaces, GUIConstants.OLD_LINE_SCALE
-                        );
+                        CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline, highlightSurface, _selectAllSurfaces, GUIConstants.OLD_LINE_SCALE);
                     }
                 }
             }

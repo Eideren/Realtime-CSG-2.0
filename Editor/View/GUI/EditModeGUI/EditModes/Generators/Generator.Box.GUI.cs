@@ -13,121 +13,92 @@ namespace RealtimeCSG
 
             GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(heightContent, width65);
+
+            float height = generator.HaveHeight ? generator.Height : GeometryUtility.CleanLength(generator.DefaultHeight);
+
+            EditorGUI.BeginChangeCheck();
+
+            height = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, height)));
+
+            if(EditorGUI.EndChangeCheck())
             {
+                if(generator.HaveHeight)
                 {
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                    {
-                        GUILayout.Label(heightContent, width65);
-
-                        float height = generator.HaveHeight
-                            ? generator.Height
-                            : GeometryUtility.CleanLength(generator.DefaultHeight);
-
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            height = Units.DistanceUnitToUnity(
-                                distanceUnit
-                              , EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, height))
-                            );
-                        }
-
-                        if(EditorGUI.EndChangeCheck())
-                        {
-                            if(generator.HaveHeight)
-                            {
-                                generator.Height = height;
-                            }
-                            else
-                            {
-                                generator.DefaultHeight = height;
-                            }
-                        }
-
-                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
-                        {
-                            distanceUnit             = nextUnit;
-                            CSGSettings.DistanceUnit = distanceUnit;
-                            CSGSettings.UpdateSnapSettings();
-                            CSGSettings.Save();
-                            CSGEditorGUIUtility.RepaintAll();
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(heightTooltip);
+                    generator.Height = height;
                 }
-
-                EditorGUI.BeginDisabledGroup(!generator.CanCommit);
-
+                else
                 {
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                    {
-                        GUILayout.Label(lengthContent, width65);
-                        float width = generator.Width;
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            width = Units.DistanceUnitToUnity(
-                                distanceUnit
-                              , EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, width))
-                            );
-                        }
-
-                        if(EditorGUI.EndChangeCheck())
-                        {
-                            generator.Width = width;
-                        }
-
-                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
-                        {
-                            distanceUnit             = nextUnit;
-                            CSGSettings.DistanceUnit = distanceUnit;
-                            CSGSettings.UpdateSnapSettings();
-                            CSGSettings.Save();
-                            CSGEditorGUIUtility.RepaintAll();
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(lengthTooltip);
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                    {
-                        GUILayout.Label(widthContent, width65);
-                        float length = generator.Length;
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            length = Units.DistanceUnitToUnity(
-                                distanceUnit
-                              , EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, length))
-                            );
-                        }
-
-                        if(EditorGUI.EndChangeCheck())
-                        {
-                            generator.Length = length;
-                        }
-
-                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
-                        {
-                            distanceUnit             = nextUnit;
-                            CSGSettings.DistanceUnit = distanceUnit;
-                            CSGSettings.UpdateSnapSettings();
-                            CSGSettings.Save();
-                            CSGEditorGUIUtility.RepaintAll();
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(widthTooltip);
+                    generator.DefaultHeight = height;
                 }
-
-                EditorGUI.EndDisabledGroup();
             }
+
+            if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
+            {
+                distanceUnit             = nextUnit;
+                CSGSettings.DistanceUnit = distanceUnit;
+                CSGSettings.UpdateSnapSettings();
+                CSGSettings.Save();
+                CSGEditorGUIUtility.RepaintAll();
+            }
+
+            GUILayout.EndHorizontal();
+            TooltipUtility.SetToolTip(heightTooltip);
+
+            EditorGUI.BeginDisabledGroup(!generator.CanCommit);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(lengthContent, width65);
+            float width = generator.Width;
+            EditorGUI.BeginChangeCheck();
+
+            width = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, width)));
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.Width = width;
+            }
+
+            if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
+            {
+                distanceUnit             = nextUnit;
+                CSGSettings.DistanceUnit = distanceUnit;
+                CSGSettings.UpdateSnapSettings();
+                CSGSettings.Save();
+                CSGEditorGUIUtility.RepaintAll();
+            }
+
+            GUILayout.EndHorizontal();
+            TooltipUtility.SetToolTip(lengthTooltip);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(widthContent, width65);
+            float length = generator.Length;
+            EditorGUI.BeginChangeCheck();
+
+            length = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, length)));
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.Length = length;
+            }
+
+            if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
+            {
+                distanceUnit             = nextUnit;
+                CSGSettings.DistanceUnit = distanceUnit;
+                CSGSettings.UpdateSnapSettings();
+                CSGSettings.Save();
+                CSGEditorGUIUtility.RepaintAll();
+            }
+
+            GUILayout.EndHorizontal();
+            TooltipUtility.SetToolTip(widthTooltip);
+
+            EditorGUI.EndDisabledGroup();
 
             GUILayout.EndVertical();
         }

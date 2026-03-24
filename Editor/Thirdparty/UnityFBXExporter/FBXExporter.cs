@@ -338,9 +338,7 @@ namespace UnityFBXExporter
         /// <param name="material">Material.</param>
         /// <param name="textureShaderName">Texture shader name.</param>
         /// <param name="newPath">New path.</param>
-        private static void GetTextureUpdateMaterialWithPath(
-            Material material, string textureShaderName, string newPath
-        )
+        private static void GetTextureUpdateMaterialWithPath(Material material, string textureShaderName, string newPath)
         {
             Texture textureInQ = material.GetTexture(textureShaderName);
 

@@ -81,7 +81,7 @@ namespace RealtimeCSG.Legacy
     {
         /// <value>Vertices that are used by this <see cref="RealtimeCSG.Legacy.ControlMesh"/></value>
         [FormerlySerializedAs("points"), FormerlySerializedAs("vertices")]
-		 public Vector3[] Vertices;
+        public Vector3[] Vertices;
 
         /// <value><see cref="RealtimeCSG.Legacy.HalfEdge"/>s that are used by this <see cref="RealtimeCSG.Legacy.ControlMesh"/></value>
         [FormerlySerializedAs("edges")] public HalfEdge[] Edges;

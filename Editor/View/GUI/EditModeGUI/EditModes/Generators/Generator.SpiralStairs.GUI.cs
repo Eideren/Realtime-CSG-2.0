@@ -13,41 +13,37 @@ namespace RealtimeCSG
             float newValue;
             EditorGUI.BeginChangeCheck();
 
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(content, width80);
+
+            if(isSceneGUI)
             {
-                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+                TooltipUtility.SetToolTip(tooltip);
+            }
 
-                {
-                    GUILayout.Label(content, width80);
+            newValue = Units.DistanceUnitToUnity(
+                distanceUnit
+              , !isSceneGUI
+                    ? EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, value))
+                    : EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, value), width65)
+            );
 
-                    if(isSceneGUI)
-                    {
-                        TooltipUtility.SetToolTip(tooltip);
-                    }
+            if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
+            {
+                distanceUnit = Units.CycleToNextUnit(distanceUnit);
 
-                    newValue = Units.DistanceUnitToUnity(
-                        distanceUnit
-                      , !isSceneGUI
-                            ? EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, value))
-                            : EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, value), width65)
-                    );
+                CSGSettings.DistanceUnit = distanceUnit;
+                CSGSettings.UpdateSnapSettings();
+                CSGSettings.Save();
+                CSGEditorGUIUtility.RepaintAll();
+            }
 
-                    if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
-                    {
-                        distanceUnit = Units.CycleToNextUnit(distanceUnit);
+            GUILayout.EndHorizontal();
 
-                        CSGSettings.DistanceUnit = distanceUnit;
-                        CSGSettings.UpdateSnapSettings();
-                        CSGSettings.Save();
-                        CSGEditorGUIUtility.RepaintAll();
-                    }
-                }
-
-                GUILayout.EndHorizontal();
-
-                if(!isSceneGUI)
-                {
-                    TooltipUtility.SetToolTip(tooltip);
-                }
+            if(!isSceneGUI)
+            {
+                TooltipUtility.SetToolTip(tooltip);
             }
 
             return EditorGUI.EndChangeCheck() ? newValue : value;
@@ -58,142 +54,105 @@ namespace RealtimeCSG
             int newValue;
             EditorGUI.BeginChangeCheck();
 
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(content, width80);
+
+            if(isSceneGUI)
             {
-                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                {
-                    GUILayout.Label(content, width80);
-
-                    if(isSceneGUI)
-                    {
-                        TooltipUtility.SetToolTip(tooltip);
-                    }
-
-                    if(!isSceneGUI)
-                    {
-                        newValue = EditorGUILayout.IntField(value);
-                    }
-                    else
-                    {
-                        newValue = EditorGUILayout.IntField(value, width65);
-                    }
-                }
-
-                GUILayout.EndHorizontal();
-
-                if(!isSceneGUI)
-                {
-                    TooltipUtility.SetToolTip(tooltip);
-                }
+                TooltipUtility.SetToolTip(tooltip);
             }
 
-            if(EditorGUI.EndChangeCheck())
+            newValue = !isSceneGUI ? EditorGUILayout.IntField(value) : EditorGUILayout.IntField(value, width65);
+
+            GUILayout.EndHorizontal();
+
+            if(!isSceneGUI)
             {
-                return newValue;
+                TooltipUtility.SetToolTip(tooltip);
             }
 
-            return value;
+            return EditorGUI.EndChangeCheck() ? newValue : value;
         }
 
         private static void OnGUIContents(GeneratorSpiralStairs generator, bool isSceneGUI)
         {
             GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
+            EditorGUI.BeginChangeCheck();
+
+            int totalSteps = Mathf.Max(IntValueSettings(generator.TotalSteps, totalStepsContent, totalStepsTooltip, isSceneGUI), 1);
+
+            if(EditorGUI.EndChangeCheck())
             {
-                EditorGUI.BeginChangeCheck();
+                generator.TotalSteps = totalSteps;
+            }
 
-                int totalSteps = Mathf.Max(
-                    IntValueSettings(generator.TotalSteps, totalStepsContent, totalStepsTooltip, isSceneGUI), 1
-                );
+            EditorGUI.BeginChangeCheck();
 
-                if(EditorGUI.EndChangeCheck())
-                {
-                    generator.TotalSteps = totalSteps;
-                }
+            float stepDepth = Mathf.Max(FloatUnitsSettings(generator.StepDepth, stepDepthContent, stepDepthTooltip, isSceneGUI), GeneratorSpiralStairsSettings.MIN_STEP_DEPTH);
 
-                EditorGUI.BeginChangeCheck();
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.StepDepth = stepDepth;
+            }
 
-                float stepDepth = Mathf.Max(
-                    FloatUnitsSettings(generator.StepDepth, stepDepthContent, stepDepthTooltip, isSceneGUI)
-                  , GeneratorSpiralStairsSettings.MIN_STEP_DEPTH
-                );
+            EditorGUI.BeginChangeCheck();
 
-                if(EditorGUI.EndChangeCheck())
-                {
-                    generator.StepDepth = stepDepth;
-                }
+            float stepHeight = Mathf.Max(FloatUnitsSettings(generator.StepHeight, stepHeightContent, stepHeightTooltip, isSceneGUI), GeneratorSpiralStairsSettings.MIN_STEP_HEIGHT);
 
-                EditorGUI.BeginChangeCheck();
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.StepHeight = stepHeight;
+            }
 
-                float stepHeight = Mathf.Max(
-                    FloatUnitsSettings(generator.StepHeight, stepHeightContent, stepHeightTooltip, isSceneGUI)
-                  , GeneratorSpiralStairsSettings.MIN_STEP_HEIGHT
-                );
+            GUILayout.Space(4);
 
-                if(EditorGUI.EndChangeCheck())
-                {
-                    generator.StepHeight = stepHeight;
-                }
+            EditorGUI.BeginChangeCheck();
 
-                GUILayout.Space(4);
+            float stairsWidth = Mathf.Max(FloatUnitsSettings(generator.StairsWidth, stairsWidthContent, stairsWidthTooltip, isSceneGUI), 0.01f);
 
-                EditorGUI.BeginChangeCheck();
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.StairsWidth = stairsWidth;
+            }
 
-                float stairsWidth = Mathf.Max(
-                    FloatUnitsSettings(generator.StairsWidth, stairsWidthContent, stairsWidthTooltip, isSceneGUI), 0.01f
-                );
+            EditorGUI.BeginChangeCheck();
 
-                if(EditorGUI.EndChangeCheck())
-                {
-                    generator.StairsWidth = stairsWidth;
-                }
+            float stairsHeight = Mathf.Max(FloatUnitsSettings(generator.StairsHeight, stairsHeightContent, stairsHeightTooltip, isSceneGUI), 0.01f);
 
-                EditorGUI.BeginChangeCheck();
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.StairsHeight = stairsHeight;
+            }
 
-                float stairsHeight = Mathf.Max(
-                    FloatUnitsSettings(generator.StairsHeight, stairsHeightContent, stairsHeightTooltip, isSceneGUI)
-                  , 0.01f
-                );
+            EditorGUI.BeginChangeCheck();
 
-                if(EditorGUI.EndChangeCheck())
-                {
-                    generator.StairsHeight = stairsHeight;
-                }
+            float stairsDepth = Mathf.Max(FloatUnitsSettings(generator.StairsDepth, stairsDepthContent, stairsDepthTooltip, isSceneGUI), 0.01f);
 
-                EditorGUI.BeginChangeCheck();
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.StairsDepth = stairsDepth;
+            }
 
-                float stairsDepth = Mathf.Max(
-                    FloatUnitsSettings(generator.StairsDepth, stairsDepthContent, stairsDepthTooltip, isSceneGUI), 0.01f
-                );
+            GUILayout.Space(4);
 
-                if(EditorGUI.EndChangeCheck())
-                {
-                    generator.StairsDepth = stairsDepth;
-                }
+            EditorGUI.BeginChangeCheck();
 
-                GUILayout.Space(4);
+            float extraDepth = Mathf.Max(FloatUnitsSettings(generator.ExtraDepth, extraDepthContent, extraDepthTooltip, isSceneGUI), 0);
 
-                EditorGUI.BeginChangeCheck();
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.ExtraDepth = extraDepth;
+            }
 
-                float extraDepth = Mathf.Max(
-                    FloatUnitsSettings(generator.ExtraDepth, extraDepthContent, extraDepthTooltip, isSceneGUI), 0
-                );
+            EditorGUI.BeginChangeCheck();
 
-                if(EditorGUI.EndChangeCheck())
-                {
-                    generator.ExtraDepth = extraDepth;
-                }
+            float extraHeight = Mathf.Max(FloatUnitsSettings(generator.ExtraHeight, extraHeightContent, extraHeightTooltip, isSceneGUI), 0);
 
-                EditorGUI.BeginChangeCheck();
-
-                float extraHeight = Mathf.Max(
-                    FloatUnitsSettings(generator.ExtraHeight, extraHeightContent, extraHeightTooltip, isSceneGUI), 0
-                );
-
-                if(EditorGUI.EndChangeCheck())
-                {
-                    generator.ExtraHeight = extraHeight;
-                }
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.ExtraHeight = extraHeight;
             }
 
             GUILayout.EndVertical();

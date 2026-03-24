@@ -143,9 +143,7 @@ namespace RealtimeCSG
                 {
                     SceneMeshState sceneMeshState = _cameraStates[i];
 
-                    if(sceneMeshState == null ||
-                       ReferenceEquals(sceneMeshState.camera, null) ||
-                       !sceneMeshState.camera)
+                    if(sceneMeshState == null || ReferenceEquals(sceneMeshState.camera, null) || !sceneMeshState.camera)
                     {
                         ArrayUtility.RemoveAt(ref _cameraStates, i);
 
@@ -195,11 +193,7 @@ namespace RealtimeCSG
 
         public void UpdateMesh(ControlMesh controlMesh, Vector3[] vertices = null)
         {
-            if(controlMesh == null ||
-               controlMesh.Vertices == null ||
-               controlMesh.Edges == null ||
-               controlMesh.Polygons == null ||
-               polygonPointIndices == null)
+            if(controlMesh == null || controlMesh.Vertices == null || controlMesh.Edges == null || controlMesh.Polygons == null || polygonPointIndices == null)
             {
                 return;
             }
@@ -247,8 +241,8 @@ namespace RealtimeCSG
 
                 int twin = controlMesh.Edges[e].TwinIndex;
 
-                if(twin < e || // if it's less than e then we've already handled our twin
-                   twin >= controlMesh.Edges.Length)
+                // if it's less than e then we've already handled our twin
+                if(twin < e || twin >= controlMesh.Edges.Length)
                 {
                     continue;
                 }
@@ -270,8 +264,7 @@ namespace RealtimeCSG
                 short vertexIndex1 = controlMesh.Edges[e].VertexIndex;
                 short vertexIndex2 = controlMesh.Edges[twin].VertexIndex;
 
-                if(vertexIndex1 < 0 || vertexIndex1 >= selection.points.Length ||
-                   vertexIndex2 < 0 || vertexIndex2 >= selection.points.Length)
+                if(vertexIndex1 < 0 || vertexIndex1 >= selection.points.Length || vertexIndex2 < 0 || vertexIndex2 >= selection.points.Length)
                 {
                     continue;
                 }
@@ -314,11 +307,7 @@ namespace RealtimeCSG
 
         public void UpdatePoints(ControlMesh controlMesh, Vector3[] vertices = null)
         {
-            if(controlMesh == null ||
-               controlMesh.Vertices == null ||
-               controlMesh.Edges == null ||
-               controlMesh.Polygons == null ||
-               polygonPointIndices == null)
+            if(controlMesh == null || controlMesh.Vertices == null || controlMesh.Edges == null || controlMesh.Polygons == null || polygonPointIndices == null)
             {
                 return;
             }
@@ -378,8 +367,7 @@ namespace RealtimeCSG
 
                 int[] edgeIndices = polygon.EdgeIndices;
 
-                if(edgeIndices == null ||
-                   edgeIndices.Length == 0)
+                if(edgeIndices == null || edgeIndices.Length == 0)
                 {
                     continue;
                 }
@@ -400,8 +388,7 @@ namespace RealtimeCSG
 
                 Vector3 vertex0 = vertices[vertexIndex0];
 
-                if(polygonPointIndices[p] == null ||
-                   polygonPointIndices[p].Length != edgeIndices.Length)
+                if(polygonPointIndices[p] == null || polygonPointIndices[p].Length != edgeIndices.Length)
                 {
                     polygonPointIndices[p] = new int[edgeIndices.Length];
                 }
@@ -412,16 +399,14 @@ namespace RealtimeCSG
                 {
                     int halfEdgeIndex1 = edgeIndices[i];
 
-                    if(halfEdgeIndex1 < 0 ||
-                       halfEdgeIndex1 >= controlMesh.Edges.Length)
+                    if(halfEdgeIndex1 < 0 || halfEdgeIndex1 >= controlMesh.Edges.Length)
                     {
                         continue;
                     }
 
                     short vertexIndex1 = controlMesh.Edges[halfEdgeIndex1].VertexIndex;
 
-                    if(vertexIndex1 < 0 ||
-                       vertexIndex1 >= vertices.Length)
+                    if(vertexIndex1 < 0 || vertexIndex1 >= vertices.Length)
                     {
                         continue;
                     }
@@ -437,9 +422,7 @@ namespace RealtimeCSG
                     vertex0 = vertex1;
                 }
 
-                Vector3 worldCenterPoint = Mathf.Abs(totalLength) < MathConstants.EqualityEpsilon
-                    ? localToWorldMatrix.MultiplyPoint(vertex0)
-                    : localToWorldMatrix.MultiplyPoint(localCenterPoint / totalLength);
+                Vector3 worldCenterPoint = Mathf.Abs(totalLength) < MathConstants.EqualityEpsilon ? localToWorldMatrix.MultiplyPoint(vertex0) : localToWorldMatrix.MultiplyPoint(localCenterPoint / totalLength);
 
                 brushCenter            += localCenterPoint;
                 polygonCenterPoints[p] =  worldCenterPoint;
@@ -521,11 +504,7 @@ namespace RealtimeCSG
 
         public void UpdateHandles(Camera camera, ControlMesh controlMesh)
         {
-            if(controlMesh == null ||
-               controlMesh.Vertices == null ||
-               controlMesh.Edges == null ||
-               controlMesh.Polygons == null ||
-               polygonPointIndices == null)
+            if(controlMesh == null || controlMesh.Vertices == null || controlMesh.Edges == null || controlMesh.Polygons == null || polygonPointIndices == null)
             {
                 return;
             }
@@ -569,8 +548,7 @@ namespace RealtimeCSG
                 {
                     handleSize *= GUIConstants.HANDLE_SCALE;
 
-                    if(polygonPointIndices != null &&
-                       p < polygonPointIndices.Length)
+                    if(polygonPointIndices != null && p < polygonPointIndices.Length)
                     {
                         int[] indices = polygonPointIndices[p];
 
@@ -782,19 +760,19 @@ namespace RealtimeCSG
 
             for(int p = 0; p < selection.points.Length; p++)
             {
-                hadSelection = hadSelection || (selection.points[p] & SelectState.Selected) != SelectState.Selected;
+                hadSelection        =  hadSelection || (selection.points[p] & SelectState.Selected) != SelectState.Selected;
                 selection.points[p] |= SelectState.Selected;
             }
 
             for(int e = 0; e < selection.edges.Length; e++)
             {
-                hadSelection = hadSelection || (selection.edges[e] & SelectState.Selected) != SelectState.Selected;
+                hadSelection       =  hadSelection || (selection.edges[e] & SelectState.Selected) != SelectState.Selected;
                 selection.edges[e] |= SelectState.Selected;
             }
 
             for(int p = 0; p < selection.polygons.Length; p++)
             {
-                hadSelection = hadSelection || (selection.polygons[p] & SelectState.Selected) != SelectState.Selected;
+                hadSelection          =  hadSelection || (selection.polygons[p] & SelectState.Selected) != SelectState.Selected;
                 selection.polygons[p] |= SelectState.Selected;
             }
 
@@ -807,19 +785,19 @@ namespace RealtimeCSG
 
             for(int p = 0; p < selection.points.Length; p++)
             {
-                hadSelection = hadSelection || (selection.points[p] & SelectState.Selected) == SelectState.Selected;
+                hadSelection        =  hadSelection || (selection.points[p] & SelectState.Selected) == SelectState.Selected;
                 selection.points[p] &= ~SelectState.Selected;
             }
 
             for(int e = 0; e < selection.edges.Length; e++)
             {
-                hadSelection = hadSelection || (selection.edges[e] & SelectState.Selected) == SelectState.Selected;
+                hadSelection       =  hadSelection || (selection.edges[e] & SelectState.Selected) == SelectState.Selected;
                 selection.edges[e] &= ~SelectState.Selected;
             }
 
             for(int p = 0; p < selection.polygons.Length; p++)
             {
-                hadSelection = hadSelection || (selection.polygons[p] & SelectState.Selected) == SelectState.Selected;
+                hadSelection          =  hadSelection || (selection.polygons[p] & SelectState.Selected) == SelectState.Selected;
                 selection.polygons[p] &= ~SelectState.Selected;
             }
 
@@ -900,8 +878,7 @@ namespace RealtimeCSG
                 int pointIndex1 = edges[e2 + 0];
                 int pointIndex2 = edges[e2 + 1];
 
-                if(pointIndex1 == pointIndex ||
-                   pointIndex2 == pointIndex)
+                if(pointIndex1 == pointIndex || pointIndex2 == pointIndex)
                 {
                     return true;
                 }
@@ -920,8 +897,7 @@ namespace RealtimeCSG
             int pointIndex1 = edges[edgeIndex * 2 + 0];
             int pointIndex2 = edges[edgeIndex * 2 + 1];
 
-            if((selection.points[pointIndex1] & SelectState.Selected) == SelectState.Selected ||
-               (selection.points[pointIndex2] & SelectState.Selected) == SelectState.Selected)
+            if((selection.points[pointIndex1] & SelectState.Selected) == SelectState.Selected || (selection.points[pointIndex2] & SelectState.Selected) == SelectState.Selected)
             {
                 return true;
             }
@@ -929,18 +905,12 @@ namespace RealtimeCSG
             int polygonIndex1 = edgeSurfaces[edgeIndex * 2 + 0];
             int polygonIndex2 = edgeSurfaces[edgeIndex * 2 + 1];
 
-            return (selection.polygons[polygonIndex1] & SelectState.Selected) == SelectState.Selected ||
-                (selection.polygons[polygonIndex2] & SelectState.Selected) == SelectState.Selected;
+            return (selection.polygons[polygonIndex1] & SelectState.Selected) == SelectState.Selected || (selection.polygons[polygonIndex2] & SelectState.Selected) == SelectState.Selected;
         }
 
         public bool IsPolygonSelectedIndirectly(int polygonIndex)
         {
-            if((selection.polygons[polygonIndex] & SelectState.Selected) == SelectState.Selected)
-            {
-                return true;
-            }
-
-            return false;
+            return (selection.polygons[polygonIndex] & SelectState.Selected) == SelectState.Selected;
         }
 
         public int PolygonCount
@@ -982,12 +952,7 @@ namespace RealtimeCSG
 
         public bool SelectPoint(int pointIndex, SelectionType selectionType, bool onlyOnHover = true)
         {
-            if(pointIndex >= selection.points.Length)
-            {
-                return false;
-            }
-
-            return Select(ref selection.points[pointIndex], selectionType, onlyOnHover);
+            return pointIndex < selection.points.Length && Select(ref selection.points[pointIndex], selectionType, onlyOnHover);
         }
 
         public bool SelectEdge(int edgeIndex, SelectionType selectionType, bool onlyOnHover = true)
@@ -997,9 +962,7 @@ namespace RealtimeCSG
 
         public bool SelectPolygon(int polygonIndex, SelectionType selectionType, bool onlyOnHover = true)
         {
-            return polygonPointIndices[polygonIndex] != null && Select(
-                ref selection.polygons[polygonIndex], selectionType, onlyOnHover
-            );
+            return polygonPointIndices[polygonIndex] != null && Select(ref selection.polygons[polygonIndex], selectionType, onlyOnHover);
         }
 
         public static bool DeselectAll(ControlMeshState[] controlMeshStates)
@@ -1026,10 +989,7 @@ namespace RealtimeCSG
             return hadSelection;
         }
 
-        public static void SelectFrustumPoints(
-            ControlMeshState[] controlMeshStates, PointSelection[] selectedPoints, SelectionType selectionType
-          , bool onlyOnHover = true
-        )
+        public static void SelectFrustumPoints(ControlMeshState[] controlMeshStates, PointSelection[] selectedPoints, SelectionType selectionType, bool onlyOnHover = true)
         {
             if(selectionType == SelectionType.Replace)
             {
@@ -1098,8 +1058,7 @@ namespace RealtimeCSG
                         int pointIndex1 = meshState.edges[e + 0];
                         int pointIndex2 = meshState.edges[e + 1];
 
-                        if(foundPoints[pointIndex1] == 1 &&
-                           foundPoints[pointIndex2] == 1)
+                        if(foundPoints[pointIndex1] == 1 && foundPoints[pointIndex2] == 1)
                         {
                             meshState.SelectEdge(e / 2, selectionType, onlyOnHover);
                         }

@@ -14,14 +14,14 @@ namespace RealtimeCSG
 
             public int VertexCount
             {
-                get => vertexCount;
+                get => _vertexCount;
             }
 
-            public Vector3[] vertices = new Vector3[MAX_VERTEX_COUNT];
-            public Color[] colors = new Color [MAX_VERTEX_COUNT];
-            public int[] indices = new int [MAX_INDEX_COUNT];
-            public int vertexCount;
-            public int indexCount;
+            private Vector3[] _vertices = new Vector3[MAX_VERTEX_COUNT];
+            private Color[] _colors = new Color [MAX_VERTEX_COUNT];
+            private int[] _indices = new int [MAX_INDEX_COUNT];
+            private int _vertexCount;
+            private int _indexCount;
 
             private Mesh _mesh;
 
@@ -32,53 +32,52 @@ namespace RealtimeCSG
 
             public void Clear()
             {
-                vertexCount = 0;
-                indexCount  = 0;
+                _vertexCount = 0;
+                _indexCount  = 0;
             }
 
             public void AddTriangles(Matrix4x4 matrix, Vector3[] triangleVertices, int[] triangleIndices, Color color)
             {
-                if(triangleIndices.Length < 3 ||
-                   triangleIndices.Length % 3 != 0)
+                if(triangleIndices.Length < 3 || triangleIndices.Length % 3 != 0)
                 {
                     return;
                 }
 
-                int startIndex = vertexCount;
+                int startIndex = _vertexCount;
 
                 if(matrix.isIdentity)
                 {
-                    int v = vertexCount;
+                    int v = _vertexCount;
 
                     for(int t = 0; t < triangleVertices.Length; t++, v++)
                     {
-                        vertices[v] = triangleVertices[t];
-                        colors[v]   = color;
+                        _vertices[v] = triangleVertices[t];
+                        _colors[v]   = color;
                     }
 
-                    vertexCount = v;
+                    _vertexCount = v;
                 }
                 else
                 {
-                    int v = vertexCount;
+                    int v = _vertexCount;
 
                     for(int t = 0; t < triangleVertices.Length; t++, v++)
                     {
-                        vertices[v] = matrix.MultiplyPoint(triangleVertices[t]);
-                        colors[v]   = color;
+                        _vertices[v] = matrix.MultiplyPoint(triangleVertices[t]);
+                        _colors[v]   = color;
                     }
 
-                    vertexCount = v;
+                    _vertexCount = v;
                 }
 
-                int i = indexCount;
+                int i = _indexCount;
 
                 for(int t = 0; t < triangleIndices.Length; t++, i++)
                 {
-                    indices[i] = triangleIndices[t] + startIndex;
+                    _indices[i] = triangleIndices[t] + startIndex;
                 }
 
-                indexCount = i;
+                _indexCount = i;
             }
 
             public void AddPolygon(Matrix4x4 matrix, Vector3[] polyVertices, int[] polyIndices, Color color)
@@ -88,33 +87,33 @@ namespace RealtimeCSG
                     return;
                 }
 
-                int startIndex = vertexCount;
+                int startIndex = _vertexCount;
 
                 if(matrix.isIdentity)
                 {
                     for(int i = 0; i < polyIndices.Length; i++)
                     {
-                        vertices[vertexCount] = polyVertices[polyIndices[i]];
-                        colors[vertexCount]   = color;
-                        vertexCount++;
+                        _vertices[_vertexCount] = polyVertices[polyIndices[i]];
+                        _colors[_vertexCount]   = color;
+                        _vertexCount++;
                     }
                 }
                 else
                 {
                     for(int i = 0; i < polyIndices.Length; i++)
                     {
-                        vertices[vertexCount] = matrix.MultiplyPoint(polyVertices[polyIndices[i]]);
-                        colors[vertexCount]   = color;
-                        vertexCount++;
+                        _vertices[_vertexCount] = matrix.MultiplyPoint(polyVertices[polyIndices[i]]);
+                        _colors[_vertexCount]   = color;
+                        _vertexCount++;
                     }
                 }
 
                 for(int i = 2; i < polyIndices.Length; i++)
                 {
-                    indices[indexCount + 0] =  startIndex + 0;
-                    indices[indexCount + 1] =  startIndex + i - 1;
-                    indices[indexCount + 2] =  startIndex + i;
-                    indexCount              += 3;
+                    _indices[_indexCount + 0] =  startIndex + 0;
+                    _indices[_indexCount + 1] =  startIndex + i - 1;
+                    _indices[_indexCount + 2] =  startIndex + i;
+                    _indexCount               += 3;
                 }
             }
 
@@ -125,27 +124,27 @@ namespace RealtimeCSG
                     return;
                 }
 
-                int startIndex = vertexCount;
+                int startIndex = _vertexCount;
 
                 for(int i = 0; i < polyIndices.Length; i++)
                 {
-                    vertices[vertexCount] = polyVertices[polyIndices[i]];
-                    colors[vertexCount]   = color;
-                    vertexCount++;
+                    _vertices[_vertexCount] = polyVertices[polyIndices[i]];
+                    _colors[_vertexCount]   = color;
+                    _vertexCount++;
                 }
 
                 for(int i = 2; i < polyIndices.Length; i++)
                 {
-                    indices[indexCount + 0] =  startIndex + 0;
-                    indices[indexCount + 1] =  startIndex + i - 1;
-                    indices[indexCount + 2] =  startIndex + i;
-                    indexCount              += 3;
+                    _indices[_indexCount + 0] =  startIndex + 0;
+                    _indices[_indexCount + 1] =  startIndex + i - 1;
+                    _indices[_indexCount + 2] =  startIndex + i;
+                    _indexCount               += 3;
                 }
             }
 
             public void CommitMesh()
             {
-                if(vertexCount == 0)
+                if(_vertexCount == 0)
                 {
                     if(_mesh != null && _mesh.vertexCount != 0)
                     {
@@ -169,18 +168,18 @@ namespace RealtimeCSG
                 Vector3[] newVertices;
                 Color[]   newColors;
 
-                if(vertexCount == MAX_VERTEX_COUNT)
+                if(_vertexCount == MAX_VERTEX_COUNT)
                 {
-                    newVertices = vertices;
-                    newColors   = colors;
+                    newVertices = _vertices;
+                    newColors   = _colors;
                 }
                 else
                 {
-                    newVertices = vertices.Take(vertexCount).ToArray();
-                    newColors   = colors.Take(vertexCount).ToArray();
+                    newVertices = _vertices.Take(_vertexCount).ToArray();
+                    newColors   = _colors.Take(_vertexCount).ToArray();
                 }
 
-                int[] newIndices = indexCount == MAX_INDEX_COUNT ? indices : indices.Take(indexCount).ToArray();
+                int[] newIndices = _indexCount == MAX_INDEX_COUNT ? _indices : _indices.Take(_indexCount).ToArray();
 
                 _mesh.vertices = newVertices;
                 _mesh.colors   = newColors;
@@ -191,7 +190,7 @@ namespace RealtimeCSG
 
             public void Draw()
             {
-                if(vertexCount == 0 || _mesh == null)
+                if(_vertexCount == 0 || _mesh == null)
                 {
                     return;
                 }
@@ -206,12 +205,12 @@ namespace RealtimeCSG
                     Object.DestroyImmediate(_mesh);
                 }
 
-                _mesh       = null;
-                vertices    = null;
-                colors      = null;
-                indices     = null;
-                vertexCount = 0;
-                indexCount  = 0;
+                _mesh        = null;
+                _vertices    = null;
+                _colors      = null;
+                _indices     = null;
+                _vertexCount = 0;
+                _indexCount  = 0;
             }
         }
 
@@ -252,8 +251,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(genericMaterial &&
-               genericMaterial.SetPass(0))
+            if(genericMaterial && genericMaterial.SetPass(0))
             {
                 int max = Mathf.Min(_currentTriangleMesh, _triangleMeshes.Count - 1);
 

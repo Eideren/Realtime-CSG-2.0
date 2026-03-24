@@ -60,50 +60,18 @@ namespace RealtimeCSG
             }
 
             m_UnityRectSelectionType = types.FirstOrDefault(t => t.FullName == "UnityEditor.RectSelection");
-
-            m_UnityEnumSelectionType =
-                types.FirstOrDefault(t => t.FullName == "UnityEditor.RectSelection+SelectionType");
-
-            if(m_UnitySceneViewType != null)
-            {
-                m_RectSelection_Field = m_UnitySceneViewType.GetField(
-                    "m_RectSelection", BindingFlags.NonPublic | BindingFlags.Instance
-                );
-            }
-            else
-            {
-                m_RectSelection_Field = null;
-            }
+            m_UnityEnumSelectionType = types.FirstOrDefault(t => t.FullName == "UnityEditor.RectSelection+SelectionType");
+            m_RectSelection_Field    = m_UnitySceneViewType != null ? m_UnitySceneViewType.GetField("m_RectSelection", BindingFlags.NonPublic | BindingFlags.Instance) : null;
 
             if(m_UnityRectSelectionType != null)
             {
-                m_RectSelecting_Field = m_UnityRectSelectionType.GetField(
-                    "m_RectSelecting", BindingFlags.NonPublic | BindingFlags.Instance
-                );
-
-                m_RectSelectionID_Field = m_UnityRectSelectionType.GetField(
-                    "s_RectSelectionID", BindingFlags.NonPublic | BindingFlags.Static
-                );
-
-                m_SelectStartPoint_Field = m_UnityRectSelectionType.GetField(
-                    "m_SelectStartPoint", BindingFlags.NonPublic | BindingFlags.Instance
-                );
-
-                m_SelectionStart_Field = m_UnityRectSelectionType.GetField(
-                    "m_SelectionStart", BindingFlags.NonPublic | BindingFlags.Instance
-                );
-
-                m_LastSelection_Field = m_UnityRectSelectionType.GetField(
-                    "m_LastSelection", BindingFlags.NonPublic | BindingFlags.Instance
-                );
-
-                m_CurrentSelection_Field = m_UnityRectSelectionType.GetField(
-                    "m_CurrentSelection", BindingFlags.NonPublic | BindingFlags.Instance
-                );
-
-                m_SelectMousePoint_Field = m_UnityRectSelectionType.GetField(
-                    "m_SelectMousePoint", BindingFlags.NonPublic | BindingFlags.Instance
-                );
+                m_RectSelecting_Field    = m_UnityRectSelectionType.GetField("m_RectSelecting", BindingFlags.NonPublic | BindingFlags.Instance);
+                m_RectSelectionID_Field  = m_UnityRectSelectionType.GetField("s_RectSelectionID", BindingFlags.NonPublic | BindingFlags.Static);
+                m_SelectStartPoint_Field = m_UnityRectSelectionType.GetField("m_SelectStartPoint", BindingFlags.NonPublic | BindingFlags.Instance);
+                m_SelectionStart_Field   = m_UnityRectSelectionType.GetField("m_SelectionStart", BindingFlags.NonPublic | BindingFlags.Instance);
+                m_LastSelection_Field    = m_UnityRectSelectionType.GetField("m_LastSelection", BindingFlags.NonPublic | BindingFlags.Instance);
+                m_CurrentSelection_Field = m_UnityRectSelectionType.GetField("m_CurrentSelection", BindingFlags.NonPublic | BindingFlags.Instance);
+                m_SelectMousePoint_Field = m_UnityRectSelectionType.GetField("m_SelectMousePoint", BindingFlags.NonPublic | BindingFlags.Instance);
 
                 if(m_UnityEnumSelectionType != null)
                 {
@@ -111,21 +79,16 @@ namespace RealtimeCSG
                     m_SelectionType_Subtractive = Enum.Parse(m_UnityEnumSelectionType, "Subtractive");
                     m_SelectionType_Normal      = Enum.Parse(m_UnityEnumSelectionType, "Normal");
 
-                    m_UpdateSelection_Method = m_UnityRectSelectionType.GetMethod(
-                        "UpdateSelection", BindingFlags.NonPublic | BindingFlags.Static,
-                        null,
-                        new[] { typeof(Object[]), typeof(Object[]), m_UnityEnumSelectionType, typeof(bool) },
-                        null
-                    );
+                    m_UpdateSelection_Method = m_UnityRectSelectionType.GetMethod("UpdateSelection", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(Object[]), typeof(Object[]), m_UnityEnumSelectionType, typeof(bool) }, null);
                 }
             }
 
-            m_ReflectionSucceeded = m_RectSelectionID_Field != null &&
-                m_RectSelection_Field != null &&
-                m_RectSelecting_Field != null &&
-                m_SelectStartPoint_Field != null &&
-                m_SelectMousePoint_Field != null &&
-                m_UpdateSelection_Method != null;
+            m_ReflectionSucceeded = m_RectSelectionID_Field != null
+             && m_RectSelection_Field != null
+             && m_RectSelecting_Field != null
+             && m_SelectStartPoint_Field != null
+             && m_SelectMousePoint_Field != null
+             && m_UpdateSelection_Method != null;
         }
 
         private static readonly HashSet<GameObject> rectFoundGameObjects = new HashSet<GameObject>();
@@ -165,8 +128,7 @@ namespace RealtimeCSG
             {
                 EventType typeForControl = Event.current.GetTypeForControl(rectSelectionIDInstance);
 
-                if(typeForControl == EventType.Used ||
-                   Event.current.commandName == "ModifierKeysChanged")
+                if(typeForControl == EventType.Used || Event.current.commandName == "ModifierKeysChanged")
                 {
                     // m_RectSelection field of SceneView
                     object rectSelectionInstance = m_RectSelection_Field.GetValue(sceneView);
@@ -177,12 +139,10 @@ namespace RealtimeCSG
                     if(rectSelectingInstance)
                     {
                         // m_SelectStartPoint of RectSelection instance
-                        Vector2 selectStartPointInstance =
-                            (Vector2)m_SelectStartPoint_Field.GetValue(rectSelectionInstance);
+                        Vector2 selectStartPointInstance = (Vector2)m_SelectStartPoint_Field.GetValue(rectSelectionInstance);
 
                         // m_SelectMousePoint of RectSelection instance
-                        Vector2 selectMousePointInstance =
-                            (Vector2)m_SelectMousePoint_Field.GetValue(rectSelectionInstance);
+                        Vector2 selectMousePointInstance = (Vector2)m_SelectMousePoint_Field.GetValue(rectSelectionInstance);
 
                         // determine if our frustum changed since the last time
                         bool modified   = false;
@@ -217,8 +177,7 @@ namespace RealtimeCSG
                                 }
                                 else
                                 {
-                                    if(rectFoundGameObjects != null &&
-                                       rectFoundGameObjects.Count > 0)
+                                    if(rectFoundGameObjects != null && rectFoundGameObjects.Count > 0)
                                     {
                                         rectFoundGameObjects.Clear();
                                         modified = true;
@@ -229,18 +188,14 @@ namespace RealtimeCSG
 
                         GameObject[] currentSelection = null;
 
-                        Dictionary<GameObject, bool> lastSelectionInstance =
-                            (Dictionary<GameObject, bool>)m_LastSelection_Field.GetValue(rectSelectionInstance);
-
-                        Object[] selectionStartInstance =
-                            (Object[])m_SelectionStart_Field.GetValue(rectSelectionInstance);
+                        Dictionary<GameObject, bool> lastSelectionInstance  = (Dictionary<GameObject, bool>)m_LastSelection_Field.GetValue(rectSelectionInstance);
+                        Object[]                     selectionStartInstance = (Object[])m_SelectionStart_Field.GetValue(rectSelectionInstance);
 
                         if(modified && rectFoundGameObjects != null && rectFoundGameObjects.Count > 0)
                         {
                             if(EditModeManager.ActiveTool == null)
                             {
-                                if(EditModeManager.EditMode != ToolEditMode.Place ||
-                                   EditModeManager.EditMode != ToolEditMode.Edit)
+                                if(EditModeManager.EditMode != ToolEditMode.Place || EditModeManager.EditMode != ToolEditMode.Edit)
                                 {
                                     EditModeManager.EditMode = ToolEditMode.Place;
                                 }
@@ -259,10 +214,7 @@ namespace RealtimeCSG
                                 {
                                     GameObject modelObj = model.gameObject;
 
-                                    if(model != null &&
-                                       modelObj != obj &&
-                                       lastSelectionInstance.ContainsKey(modelObj) &&
-                                       !ArrayUtility.Contains(selectionStartInstance, modelObj))
+                                    if(model != null && modelObj != obj && lastSelectionInstance.ContainsKey(modelObj) && !ArrayUtility.Contains(selectionStartInstance, modelObj))
                                     {
                                         lastSelectionInstance.Remove(modelObj);
                                         modified = true;
@@ -326,10 +278,7 @@ namespace RealtimeCSG
                             }
 
                             // calling static method UpdateSelection of RectSelection
-                            m_UpdateSelection_Method.Invoke(
-                                null,
-                                new[] { selectionStartInstance, found, selectionTypeNormal, rectSelectingInstance }
-                            );
+                            m_UpdateSelection_Method.Invoke(null, new[] { selectionStartInstance, found, selectionTypeNormal, rectSelectingInstance });
                         }
                     }
                 }
@@ -346,8 +295,7 @@ namespace RealtimeCSG
 
             int hotControl = GUIUtility.hotControl;
 
-            if(hotControl == rectSelectionIDInstance &&
-               EditModeManager.ActiveTool.IgnoreUnityRect)
+            if(hotControl == rectSelectionIDInstance && EditModeManager.ActiveTool.IgnoreUnityRect)
             {
                 hotControl            = 0;
                 GUIUtility.hotControl = 0;
@@ -367,9 +315,7 @@ namespace RealtimeCSG
                         GameObject gameObject = obj as GameObject;
                         Transform  transform  = obj as Transform;
 
-                        if(!(component && component.GetComponent<GeneratedMeshes>()) &&
-                           !(gameObject && gameObject.GetComponent<GeneratedMeshes>()) &&
-                           !(transform && transform.GetComponent<Transform>()))
+                        if(!(component && component.GetComponent<GeneratedMeshes>()) && !(gameObject && gameObject.GetComponent<GeneratedMeshes>()) && !(transform && transform.GetComponent<Transform>()))
                         {
                             foundObjects.Add(obj);
                         }
@@ -381,12 +327,6 @@ namespace RealtimeCSG
                     break;
                 }
                 case EventType.MouseUp:
-                {
-                    m_RectClickDown = false;
-                    foundObjects.Clear();
-
-                    break;
-                }
                 case EventType.MouseMove:
                 {
                     m_RectClickDown = false;
@@ -401,8 +341,7 @@ namespace RealtimeCSG
                         m_MouseDragged = true;
                     }
 
-                    if(!m_MouseDragged && m_RectClickDown &&
-                       Event.current.button == 0)
+                    if(!m_MouseDragged && m_RectClickDown && Event.current.button == 0)
                     {
                         // m_RectSelection field of SceneView
                         object rectSelectionInstance = m_RectSelection_Field.GetValue(sceneView);
@@ -464,8 +403,7 @@ namespace RealtimeCSG
                             {
                                 foreach(Transform transform in gameObject.GetComponentsInChildren<Transform>())
                                 {
-                                    if((transform.hideFlags & (HideFlags.NotEditable | HideFlags.HideInHierarchy))
-                                    == (HideFlags.NotEditable | HideFlags.HideInHierarchy))
+                                    if((transform.hideFlags & (HideFlags.NotEditable | HideFlags.HideInHierarchy)) == (HideFlags.NotEditable | HideFlags.HideInHierarchy))
                                     {
                                         continue;
                                     }

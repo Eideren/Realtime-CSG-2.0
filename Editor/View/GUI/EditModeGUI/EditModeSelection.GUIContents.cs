@@ -6,9 +6,7 @@ namespace RealtimeCSG
     {
         private static readonly GUIContent contentTitleLabel = new GUIContent("Realtime CSG");
 
-        private static readonly GUIContent handleAsOneLabel = new GUIContent(
-            "Handle as one object", "Select this operation when a child is selected"
-        );
+        private static readonly GUIContent handleAsOneLabel = new GUIContent("Handle as one object", "Select this operation when a child is selected");
 
         private static readonly GUIContent prefabLabelContent = new GUIContent("Drag & drop behaviour");
         private static readonly GUIContent raySnappingLabelContent = new GUIContent("Ray snapping behaviour");
@@ -42,10 +40,7 @@ namespace RealtimeCSG
         );
 
         private static readonly GUIContent versionLabel = new GUIContent(Foundation.CSGManager.VersionName);
-
-        private static readonly GUIContent disabledLabelContent =
-            new GUIContent("Realtime CSG is disabled, press control-F3 to enable");
-
+        private static readonly GUIContent disabledLabelContent = new GUIContent("Realtime CSG is disabled, press control-F3 to enable");
         private static readonly GUIContent enableRealtimeCSGContent = new GUIContent("Enable Realtime-CSG");
     }
 }

@@ -51,9 +51,9 @@ Shader "Hidden/CSG/internal/ZTestGenericLine_old"
             //float4 _MainTex_ST;
 
             v2f vert(float4 vertex1 : POSITION,
-                                    float3 vertex2 : TEXCOORD0, // second vertex to compute angle with
-                                    float4 offset : TEXCOORD1,
-                                    fixed4 color : COLOR0)
+                     float3 vertex2 : TEXCOORD0, // second vertex to compute angle with
+                     float4 offset : TEXCOORD1,
+                     fixed4 color : COLOR0)
             {
                 v2f o;
 

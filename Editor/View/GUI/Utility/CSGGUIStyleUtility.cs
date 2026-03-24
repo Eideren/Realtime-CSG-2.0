@@ -62,39 +62,19 @@ namespace RealtimeCSG
         private const string CSG_SUBTRACTION_TOOLTIP = "Subtraction";
         private const string CSG_INTERSECTION_TOOLTIP = "Intersection";
 
-        private static readonly GUIContent[] proInActiveOperationTypes =
-        {
-            IconContent("icon_pro_csg_addition_small"), IconContent("icon_pro_csg_subtraction_small")
-          , IconContent("icon_pro_csg_intersection_small")
-        };
+        private static readonly GUIContent[] proInActiveOperationTypes = { IconContent("icon_pro_csg_addition_small"), IconContent("icon_pro_csg_subtraction_small"), IconContent("icon_pro_csg_intersection_small") };
 
-        private static readonly GUIContent[] proActiveOperationTypes =
-        {
-            IconContent("icon_pro_csg_addition_small_on"), IconContent("icon_pro_csg_subtraction_small_on")
-          , IconContent("icon_pro_csg_intersection_small_on")
-        };
+        private static readonly GUIContent[] proActiveOperationTypes = { IconContent("icon_pro_csg_addition_small_on"), IconContent("icon_pro_csg_subtraction_small_on"), IconContent("icon_pro_csg_intersection_small_on") };
 
-        private static readonly GUIContent[] personalInActiveOperationTypes =
-        {
-            IconContent("icon_pers_csg_addition_small"), IconContent("icon_pers_csg_subtraction_small")
-          , IconContent("icon_pers_csg_intersection_small")
-        };
+        private static readonly GUIContent[] personalInActiveOperationTypes = { IconContent("icon_pers_csg_addition_small"), IconContent("icon_pers_csg_subtraction_small"), IconContent("icon_pers_csg_intersection_small") };
 
-        private static readonly GUIContent[] personalActiveOperationTypes =
-        {
-            IconContent("icon_pers_csg_addition_small_on"), IconContent("icon_pers_csg_subtraction_small_on")
-          , IconContent("icon_pers_csg_intersection_small_on")
-        };
+        private static readonly GUIContent[] personalActiveOperationTypes = { IconContent("icon_pers_csg_addition_small_on"), IconContent("icon_pers_csg_subtraction_small_on"), IconContent("icon_pers_csg_intersection_small_on") };
 
         private static readonly string[] operationText = { " Addition", " Subtraction", " Intersection" };
 
         public static readonly ToolTip[] operationTooltip =
         {
-            new ToolTip("Additive CSG Operation", "Set the selection to be additive", Keys.makeSelectedAdditiveKey)
-          , new ToolTip(
-                "Subtractive CSG operation", "Set the selection to be subtractive", Keys.makeSelectedSubtractiveKey
-            )
-          , new ToolTip(
+            new ToolTip("Additive CSG Operation", "Set the selection to be additive", Keys.makeSelectedAdditiveKey), new ToolTip("Subtractive CSG operation", "Set the selection to be subtractive", Keys.makeSelectedSubtractiveKey), new ToolTip(
                 "Intersecting CSG operation", "Set the selection to be an intersection operation"
               , Keys.makeSelectedIntersectingKey
             )
@@ -104,7 +84,6 @@ namespace RealtimeCSG
 
         private static readonly GUIContent proPassThrough = IconContent("icon_pro_pass_through");
         private static readonly GUIContent proPassThroughOn = IconContent("icon_pro_pass_through_on");
-
         private static readonly GUIContent personalPassThrough = IconContent("icon_pers_pass_through");
         private static readonly GUIContent personalPassThroughOn = IconContent("icon_pers_pass_through_on");
 
@@ -118,31 +97,15 @@ namespace RealtimeCSG
 
         private static readonly GUIContent proWireframe = IconContent("icon_pro_wireframe");
         private static readonly GUIContent proWireframeOn = IconContent("icon_pro_wireframe_on");
-
         private static readonly GUIContent personalWireframe = IconContent("icon_pers_wireframe");
         private static readonly GUIContent personalWireframeOn = IconContent("icon_pers_wireframe_on");
 
         private static readonly string wireframeTooltip = "Show/Hide brush wireframe";
 
-        private static readonly GUIContent[] proInActiveShapeModes =
-        {
-            GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none
-        };
-
-        private static readonly GUIContent[] proActiveShapeModes =
-        {
-            GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none
-        };
-
-        private static readonly GUIContent[] personalInActiveShapeModes =
-        {
-            GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none
-        };
-
-        private static readonly GUIContent[] personalActiveShapeModes =
-        {
-            GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none
-        };
+        private static readonly GUIContent[] proInActiveShapeModes = { GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none };
+        private static readonly GUIContent[] proActiveShapeModes = { GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none };
+        private static readonly GUIContent[] personalInActiveShapeModes = { GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none };
+        private static readonly GUIContent[] personalActiveShapeModes = { GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none, GUIContent.none };
 
         private static readonly string[] shapeModeText = { "Free-draw", "Box", "Sphere", "Cylinder", "Linear Stairs" };
 
@@ -153,35 +116,13 @@ namespace RealtimeCSG
               , "Use this to draw a 2D shape and extrude it,\noptionally with curves by double clicking on edges."
               , Keys.freeBuilderMode
             )
-          , new ToolTip("Create Box brush", "Use this to create boxes", Keys.boxBuilderMode)
-          , new ToolTip("Create (Hemi)Sphere brush", "Use this to create (hemi)spheres", Keys.sphereBuilderMode)
-          , new ToolTip("Create Cylinder brush", "Use this to create cylinders", Keys.cylinderBuilderMode)
-          , new ToolTip("Create Linear Stairs", "Use this to create linear stairs", Keys.linearStairsBuilderMode)
+          , new ToolTip("Create Box brush", "Use this to create boxes", Keys.boxBuilderMode), new ToolTip("Create (Hemi)Sphere brush", "Use this to create (hemi)spheres", Keys.sphereBuilderMode), new ToolTip("Create Cylinder brush", "Use this to create cylinders", Keys.cylinderBuilderMode), new ToolTip("Create Linear Stairs", "Use this to create linear stairs", Keys.linearStairsBuilderMode)
         };
 
-        private static readonly GUIContent[] proInActiveClipTypes =
-        {
-            IconContent("icon_pro_remove_front"), IconContent("icon_pro_remove_behind")
-          , IconContent("icon_pro_split")
-        };
-
-        private static readonly GUIContent[] proActiveClipTypes =
-        {
-            IconContent("icon_pro_remove_front_on"), IconContent("icon_pro_remove_behind_on")
-          , IconContent("icon_pro_split_on")
-        };
-
-        private static readonly GUIContent[] personalInActiveClipTypes =
-        {
-            IconContent("icon_pers_remove_front"), IconContent("icon_pers_remove_behind")
-          , IconContent("icon_pers_split")
-        };
-
-        private static readonly GUIContent[] personalActiveClipTypes =
-        {
-            IconContent("icon_pers_remove_front_on"), IconContent("icon_pers_remove_behind_on")
-          , IconContent("icon_pers_split_on")
-        };
+        private static readonly GUIContent[] proInActiveClipTypes = { IconContent("icon_pro_remove_front"), IconContent("icon_pro_remove_behind"), IconContent("icon_pro_split") };
+        private static readonly GUIContent[] proActiveClipTypes = { IconContent("icon_pro_remove_front_on"), IconContent("icon_pro_remove_behind_on"), IconContent("icon_pro_split_on") };
+        private static readonly GUIContent[] personalInActiveClipTypes = { IconContent("icon_pers_remove_front"), IconContent("icon_pers_remove_behind"), IconContent("icon_pers_split") };
+        private static readonly GUIContent[] personalActiveClipTypes = { IconContent("icon_pers_remove_front_on"), IconContent("icon_pers_remove_behind_on"), IconContent("icon_pers_split_on") };
 
         private static readonly string[] clipText = { " Remove in front", " Remove behind", " Split" };
 
@@ -191,8 +132,7 @@ namespace RealtimeCSG
                 "Remove in front"
               , "Remove the area in front of the created clipping plane from the selected brushes"
             )
-          , new ToolTip("Remove behind", "Remove the area behind the created clipping plane from the selected brushes")
-          , new ToolTip("Split", "Split the selected brushes with the created splitting plane")
+          , new ToolTip("Remove behind", "Remove the area behind the created clipping plane from the selected brushes"), new ToolTip("Split", "Split the selected brushes with the created splitting plane")
         };
 
         private static readonly GUIContent proRebuildIcon = IconContent("icon_pro_rebuild");
@@ -278,80 +218,38 @@ namespace RealtimeCSG
 
             GUIStyle redToolbarDropDown = GetStyle("toolbarDropDown");
 
-            proSkin.redToolbarDropDown = new GUIStyle(redToolbarDropDown);
+            proSkin.redToolbarDropDown                    = new GUIStyle(redToolbarDropDown);
+            proSkin.redToolbarDropDown.normal.textColor   = Color.Lerp(Color.red, redToolbarDropDown.normal.textColor, 0.5f);
+            proSkin.redToolbarDropDown.onNormal.textColor = Color.Lerp(Color.red, redToolbarDropDown.onNormal.textColor, 0.125f);
 
-            proSkin.redToolbarDropDown.normal.textColor = Color.Lerp(
-                Color.red, redToolbarDropDown.normal.textColor, 0.5f
-            );
-
-            proSkin.redToolbarDropDown.onNormal.textColor = Color.Lerp(
-                Color.red, redToolbarDropDown.onNormal.textColor, 0.125f
-            );
-
-            personalSkin.redToolbarDropDown = new GUIStyle(redToolbarDropDown);
-
-            personalSkin.redToolbarDropDown.normal.textColor = Color.Lerp(
-                Color.red, redToolbarDropDown.normal.textColor, 0.5f
-            );
-
-            personalSkin.redToolbarDropDown.onNormal.textColor = Color.Lerp(
-                Color.red, redToolbarDropDown.onNormal.textColor, 0.125f
-            );
+            personalSkin.redToolbarDropDown                    = new GUIStyle(redToolbarDropDown);
+            personalSkin.redToolbarDropDown.normal.textColor   = Color.Lerp(Color.red, redToolbarDropDown.normal.textColor, 0.5f);
+            personalSkin.redToolbarDropDown.onNormal.textColor = Color.Lerp(Color.red, redToolbarDropDown.onNormal.textColor, 0.125f);
 
             proSkin.menuItem      = GetStyle("MenuItem");
             personalSkin.menuItem = GetStyle("MenuItem");
 
-            proSkin.lockedBackgroundColor = Color.Lerp(Color.white, Color.red, 0.5f);
+            proSkin.lockedBackgroundColor             = Color.Lerp(Color.white, Color.red, 0.5f);
+            proSkin.xToolbarButton                    = new GUIStyle(EditorStyles.toolbarButton);
+            proSkin.xToolbarButton.normal.textColor   = Color.Lerp(Handles.xAxisColor, Color.gray, 0.75f);
+            proSkin.xToolbarButton.onNormal.textColor = Color.Lerp(Handles.xAxisColor, Color.white, 0.125f);
+            proSkin.yToolbarButton                    = new GUIStyle(EditorStyles.toolbarButton);
+            proSkin.yToolbarButton.normal.textColor   = Color.Lerp(Handles.yAxisColor, Color.gray, 0.75f);
+            proSkin.yToolbarButton.onNormal.textColor = Color.Lerp(Handles.yAxisColor, Color.white, 0.125f);
+            proSkin.zToolbarButton                    = new GUIStyle(EditorStyles.toolbarButton);
+            proSkin.zToolbarButton.normal.textColor   = Color.Lerp(Handles.zAxisColor, Color.gray, 0.75f);
+            proSkin.zToolbarButton.onNormal.textColor = Color.Lerp(Handles.zAxisColor, Color.white, 0.125f);
 
-            proSkin.xToolbarButton = new GUIStyle(EditorStyles.toolbarButton);
-
-            proSkin.xToolbarButton.normal.textColor =
-                Color.Lerp(Handles.xAxisColor, Color.gray, 0.75f);
-
-            proSkin.xToolbarButton.onNormal.textColor =
-                Color.Lerp(Handles.xAxisColor, Color.white, 0.125f);
-
-            proSkin.yToolbarButton = new GUIStyle(EditorStyles.toolbarButton);
-
-            proSkin.yToolbarButton.normal.textColor =
-                Color.Lerp(Handles.yAxisColor, Color.gray, 0.75f);
-
-            proSkin.yToolbarButton.onNormal.textColor =
-                Color.Lerp(Handles.yAxisColor, Color.white, 0.125f);
-
-            proSkin.zToolbarButton = new GUIStyle(EditorStyles.toolbarButton);
-
-            proSkin.zToolbarButton.normal.textColor =
-                Color.Lerp(Handles.zAxisColor, Color.gray, 0.75f);
-
-            proSkin.zToolbarButton.onNormal.textColor =
-                Color.Lerp(Handles.zAxisColor, Color.white, 0.125f);
-
-            personalSkin.lockedBackgroundColor = Color.Lerp(Color.black, Color.red, 0.5f);
-
-            personalSkin.xToolbarButton = new GUIStyle(EditorStyles.toolbarButton);
-
-            personalSkin.xToolbarButton.normal.textColor =
-                Color.Lerp(Handles.xAxisColor, Color.white, 0.75f);
-
-            personalSkin.xToolbarButton.onNormal.textColor =
-                Color.Lerp(Handles.xAxisColor, Color.black, 0.25f);
-
-            personalSkin.yToolbarButton = new GUIStyle(EditorStyles.toolbarButton);
-
-            personalSkin.yToolbarButton.normal.textColor =
-                Color.Lerp(Handles.yAxisColor, Color.white, 0.75f);
-
-            personalSkin.yToolbarButton.onNormal.textColor =
-                Color.Lerp(Handles.yAxisColor, Color.black, 0.25f);
-
-            personalSkin.zToolbarButton = new GUIStyle(EditorStyles.toolbarButton);
-
-            personalSkin.zToolbarButton.normal.textColor =
-                Color.Lerp(Handles.zAxisColor, Color.white, 0.75f);
-
-            personalSkin.zToolbarButton.onNormal.textColor =
-                Color.Lerp(Handles.zAxisColor, Color.black, 0.25f);
+            personalSkin.lockedBackgroundColor             = Color.Lerp(Color.black, Color.red, 0.5f);
+            personalSkin.xToolbarButton                    = new GUIStyle(EditorStyles.toolbarButton);
+            personalSkin.xToolbarButton.normal.textColor   = Color.Lerp(Handles.xAxisColor, Color.white, 0.75f);
+            personalSkin.xToolbarButton.onNormal.textColor = Color.Lerp(Handles.xAxisColor, Color.black, 0.25f);
+            personalSkin.yToolbarButton                    = new GUIStyle(EditorStyles.toolbarButton);
+            personalSkin.yToolbarButton.normal.textColor   = Color.Lerp(Handles.yAxisColor, Color.white, 0.75f);
+            personalSkin.yToolbarButton.onNormal.textColor = Color.Lerp(Handles.yAxisColor, Color.black, 0.25f);
+            personalSkin.zToolbarButton                    = new GUIStyle(EditorStyles.toolbarButton);
+            personalSkin.zToolbarButton.normal.textColor   = Color.Lerp(Handles.zAxisColor, Color.white, 0.75f);
+            personalSkin.zToolbarButton.onNormal.textColor = Color.Lerp(Handles.zAxisColor, Color.black, 0.25f);
 
             RedTextArea                  = new GUIStyle(GUI.skin.textArea);
             RedTextArea.normal.textColor = Color.red;
@@ -375,11 +273,7 @@ namespace RealtimeCSG
 
             BottomToolBarStyle = new GUIStyle(EditorStyles.toolbar);
 
-            BrushEditModeContent = new[]
-            {
-                new GUIContent("Place"), new GUIContent("Generate"), new GUIContent("Edit"), new GUIContent("Clip")
-              , new GUIContent("Surfaces")
-            };
+            BrushEditModeContent = new[] { new GUIContent("Place"), new GUIContent("Generate"), new GUIContent("Edit"), new GUIContent("Clip"), new GUIContent("Surfaces") };
 
             BrushEditModeTooltips = new[]
             {
@@ -391,9 +285,7 @@ namespace RealtimeCSG
                     "Generate mode", "In this mode you can create brushes using several generators"
                   , Keys.switchToGenerateEditMode
                 )
-              , new ToolTip("Edit mode", "In this mode you can edit the shapes of brushes", Keys.switchToMeshEditMode)
-              , new ToolTip("Clip mode", "In this mode you can split or clip brushes", Keys.switchToClipEditMode)
-              , new ToolTip(
+              , new ToolTip("Edit mode", "In this mode you can edit the shapes of brushes", Keys.switchToMeshEditMode), new ToolTip("Clip mode", "In this mode you can split or clip brushes", Keys.switchToClipEditMode), new ToolTip(
                     "Surfaces mode"
                   , "In this mode you can modify the texturing and everything else related to brush surfaces"
                   , Keys.switchToSurfaceEditMode
@@ -402,9 +294,7 @@ namespace RealtimeCSG
 
             Type enumType = typeof(ToolEditMode);
 
-            BrushEditModeNames = (from name in Enum.GetNames(enumType) select ObjectNames.NicifyVariableName(name))
-               .ToArray();
-
+            BrushEditModeNames  = (from name in Enum.GetNames(enumType) select ObjectNames.NicifyVariableName(name)).ToArray();
             BrushEditModeValues = Enum.GetValues(enumType).Cast<ToolEditMode>().ToArray();
 
             for(int i = 0; i < BrushEditModeNames.Length; i++)
@@ -550,9 +440,7 @@ namespace RealtimeCSG
 
         public static void SetDefaultGUISkin()
         {
-            GUI.skin = EditorGUIUtility.GetBuiltinSkin(
-                EditorGUIUtility.isProSkin ? EditorSkin.Scene : EditorSkin.Inspector
-            );
+            GUI.skin = EditorGUIUtility.GetBuiltinSkin(EditorGUIUtility.isProSkin ? EditorSkin.Scene : EditorSkin.Inspector);
         }
 
         private static GUIContent IconContent(string name)

@@ -17,9 +17,7 @@ namespace RealtimeCSG
             _polygonManager.Destroy();
         }
 
-        public void Update(
-            Camera camera, CSGBrush[] brushes, ControlMesh[] controlMeshes, ControlMeshState[] meshStates
-        )
+        public void Update(Camera camera, CSGBrush[] brushes, ControlMesh[] controlMeshes, ControlMeshState[] meshStates)
         {
             if(brushes.Length == 0)
             {
@@ -45,8 +43,7 @@ namespace RealtimeCSG
 
                 ControlMeshState meshState = meshStates[t];
 
-                if(meshState.worldPoints.Length == 0 &&
-                   meshState.edges.Length == 0)
+                if(meshState.worldPoints.Length == 0 && meshState.edges.Length == 0)
                 {
                     continue;
                 }

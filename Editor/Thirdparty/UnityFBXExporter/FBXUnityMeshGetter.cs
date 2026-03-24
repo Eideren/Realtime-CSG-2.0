@@ -138,9 +138,7 @@ namespace UnityFBXExporter
             tempObjectSb.Append("\t\t\tP: \"Lcl Translation\", \"Lcl Translation\", \"\", \"A+\",");
 
             // Append the X Y Z coords to the system
-            tempObjectSb.AppendFormat(
-                CultureInfo.InvariantCulture, "{0},{1},{2}", position.x * -1, position.y, position.z
-            );
+            tempObjectSb.AppendFormat(CultureInfo.InvariantCulture, "{0},{1},{2}", position.x * -1, position.y, position.z);
 
             tempObjectSb.AppendLine();
 
@@ -198,9 +196,7 @@ namespace UnityFBXExporter
                     }
 
                     // Points in the vertices. We also reverse the x value because Unity has a reverse X coordinate
-                    tempObjectSb.AppendFormat(
-                        CultureInfo.InvariantCulture, "{0},{1},{2}", vertices[i].x * -1, vertices[i].y, vertices[i].z
-                    );
+                    tempObjectSb.AppendFormat(CultureInfo.InvariantCulture, "{0},{1},{2}", vertices[i].x * -1, vertices[i].y, vertices[i].z);
                 }
 
                 tempObjectSb.AppendLine();

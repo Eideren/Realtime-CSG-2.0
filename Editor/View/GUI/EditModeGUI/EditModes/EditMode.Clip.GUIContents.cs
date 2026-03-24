@@ -6,10 +6,7 @@ namespace RealtimeCSG
     {
         private static GUIContent m_ContentClipLabel;
 
-        private static readonly ClipMode[] clipModeValues =
-        {
-            ClipMode.RemovePositive, ClipMode.RemoveNegative, ClipMode.Split
-        };
+        private static readonly ClipMode[] clipModeValues = { ClipMode.RemovePositive, ClipMode.RemoveNegative, ClipMode.Split };
 
         private static readonly GUIContent contentDefaultMaterial = new GUIContent("Default");
         private static readonly GUIContent contentCommit = new GUIContent("Commit");

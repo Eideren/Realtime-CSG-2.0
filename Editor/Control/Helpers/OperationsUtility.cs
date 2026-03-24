@@ -112,8 +112,7 @@ namespace RealtimeCSG
         {
             Transform parent = null;
 
-            if(command != null &&
-               command.context != null)
+            if(command != null && command.context != null)
             {
                 GameObject parentGameObject = command.context as GameObject;
 
@@ -185,8 +184,7 @@ namespace RealtimeCSG
         {
             Transform parent = GetTransformForMenu(command);
 
-            Transform lastUsedModelTransform =
-                !SelectionUtility.LastUsedModel ? null : SelectionUtility.LastUsedModel.transform;
+            Transform lastUsedModelTransform = !SelectionUtility.LastUsedModel ? null : SelectionUtility.LastUsedModel.transform;
 
             if(lastUsedModelTransform == null && !parent)
             {
@@ -199,7 +197,7 @@ namespace RealtimeCSG
             }
 
             string name = GameObjectUtility.GetUniqueNameForSibling(parent, "Operation");
-            ;
+
             GameObject gameObject = new GameObject(name);
             gameObject.transform.SetParent(parent, true);
             CSGOperation operation = gameObject.AddComponent<CSGOperation>();
@@ -217,8 +215,7 @@ namespace RealtimeCSG
         {
             Transform parent = GetTransformForMenu(command);
 
-            Transform lastUsedModelTransform =
-                !SelectionUtility.LastUsedModel ? null : SelectionUtility.LastUsedModel.transform;
+            Transform lastUsedModelTransform = !SelectionUtility.LastUsedModel ? null : SelectionUtility.LastUsedModel.transform;
 
             if(lastUsedModelTransform == null && !parent)
             {

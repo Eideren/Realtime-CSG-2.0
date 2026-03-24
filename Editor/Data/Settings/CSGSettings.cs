@@ -193,11 +193,7 @@ namespace RealtimeCSG
 
         private static List<SceneView> SortedSceneViews()
         {
-            IOrderedEnumerable<SceneView> list = from item in SceneView.sceneViews.Cast<SceneView>()
-                orderby item.position.y, item.position.x
-                select item;
-
-            return list.ToList();
+            return SceneView.sceneViews.Cast<SceneView>().OrderBy(item => item.position.y).ThenBy(item => item.position.x).ToList();
         }
 
         public const HelperSurfaceFlags DEFAULT_HELPER_SURFACE_FLAGS = HelperSurfaceFlags.ShowVisibleSurfaces;
@@ -314,9 +310,7 @@ namespace RealtimeCSG
 
         public static bool AutoRigidbody
         {
-            get =>
-                (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody)
-             == ModelSettingsFlags.AutoUpdateRigidBody;
+            get => (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody;
             set
             {
                 if(value)
@@ -365,7 +359,6 @@ namespace RealtimeCSG
         internal static void UpdateSnapSettings()
         {
             // get our snapping values from the EditorPrefs ...
-
             Vector3 moveSnapVector = SnapVector;
             float   rotationSnap   = SnapRotation;
 
@@ -392,18 +385,12 @@ namespace RealtimeCSG
 
             if(m_UnitySnapType == null)
             {
-                m_UnitySnapType = types!
-                   .FirstOrDefault(t => t.FullName == "UnityEditor.SnapSettings");
+                m_UnitySnapType = types!.FirstOrDefault(t => t.FullName == "UnityEditor.SnapSettings");
 
                 if(m_UnitySnapType != null)
                 {
-                    m_UnitySnapTypeMoveProperty = m_UnitySnapType.GetProperty(
-                        "move", BindingFlags.Public | BindingFlags.Static
-                    );
-
-                    m_UnitySnapTypeRotateProperty = m_UnitySnapType.GetProperty(
-                        "rotate", BindingFlags.Public | BindingFlags.Static
-                    );
+                    m_UnitySnapTypeMoveProperty   = m_UnitySnapType.GetProperty("move", BindingFlags.Public | BindingFlags.Static);
+                    m_UnitySnapTypeRotateProperty = m_UnitySnapType.GetProperty("rotate", BindingFlags.Public | BindingFlags.Static);
                 }
                 else
                 {
@@ -514,9 +501,7 @@ namespace RealtimeCSG
                 string   item    = items[j];
                 string[] subItem = item.Split(':');
 
-                if(subItem.Length != 2 ||
-                   !int.TryParse(subItem[0], out int id) ||
-                   !bool.TryParse(subItem[1], out bool isEnabled))
+                if(subItem.Length != 2 || !int.TryParse(subItem[0], out int id) || !bool.TryParse(subItem[1], out bool isEnabled))
                 {
                     ids[j]     = 0;
                     enabled[j] = false;
@@ -694,9 +679,7 @@ namespace RealtimeCSG
 
             GridVisible = EditorPrefs.GetBool("ShowGrid", true);
 
-            SnapMode = (SnapMode)EditorPrefs.GetInt(
-                "SnapMode", (int)(EditorPrefs.GetBool("ForceSnapToGrid", true) ? SnapMode.GridSnapping : SnapMode.None)
-            );
+            SnapMode = (SnapMode)EditorPrefs.GetInt("SnapMode", (int)(EditorPrefs.GetBool("ForceSnapToGrid", true) ? SnapMode.GridSnapping : SnapMode.None));
 
             VisibleHelperSurfaces = GetEnum("HelperSurfaces", DEFAULT_HELPER_SURFACE_FLAGS);
 
@@ -715,18 +698,11 @@ namespace RealtimeCSG
             SelectionSurface = EditorPrefs.GetBool("SelectionSurface", true);
 
             HiddenSurfacesNotSelectable = EditorPrefs.GetBool("HiddenSurfacesNotSelectable", true);
-            ShowTooltips = EditorPrefs.GetBool("ShowTooltips", true);
+            ShowTooltips                = EditorPrefs.GetBool("ShowTooltips", true);
 
-            AutoRigidbody = EditorPrefs.GetBool(
-                "AutoRigidbody"
-              , (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody)
-             == ModelSettingsFlags.AutoUpdateRigidBody
-            );
+            AutoRigidbody = EditorPrefs.GetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 
-            DefaultPreserveUVs = EditorPrefs.GetBool(
-                "DefaultPreserveUVs"
-              , (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs
-            );
+            DefaultPreserveUVs = EditorPrefs.GetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
 
             SnapNonCSGObjects = EditorPrefs.GetBool("SnapNonCSGObjects", true);
 
@@ -816,16 +792,9 @@ namespace RealtimeCSG
 
             EditorPrefs.SetBool("ShowTooltips", ShowTooltips);
 
-            EditorPrefs.SetBool(
-                "AutoRigidbody"
-              , (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody)
-             == ModelSettingsFlags.AutoUpdateRigidBody
-            );
+            EditorPrefs.SetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 
-            EditorPrefs.SetBool(
-                "DefaultPreserveUVs"
-              , (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs
-            );
+            EditorPrefs.SetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
 
             EditorPrefs.SetBool("SnapNonCSGObjects", SnapNonCSGObjects);
 

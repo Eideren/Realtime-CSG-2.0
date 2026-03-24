@@ -33,24 +33,13 @@ namespace RealtimeCSG
         );
 
         private static readonly GUIContent offsetContent = new GUIContent("Angle");
-
-        private static readonly ToolTip offsetTooltip = new ToolTip(
-            "Offset angle", "Set the offset angle at which the cylinder starts."
-        );
-
+        private static readonly ToolTip offsetTooltip = new ToolTip("Offset angle", "Set the offset angle at which the cylinder starts.");
         private static readonly GUIContent sidesContent = new GUIContent("Sides");
-
-        private static readonly ToolTip sidesTooltip = new ToolTip(
-            "Number of sides", "Set the number of sides the cylinder has when generated."
-        );
-
+        private static readonly ToolTip sidesTooltip = new ToolTip("Number of sides", "Set the number of sides the cylinder has when generated.");
         private static readonly GUIContent heightContent = new GUIContent("Height");
         private static readonly ToolTip heightTooltip = new ToolTip("Height", "Set the height of the cylinder.");
         private static readonly GUIContent radiusContent = new GUIContent("Radius");
-
-        private static readonly ToolTip radiusTooltip = new ToolTip(
-            "Radius", "Set the radius of the cylinder. The radius is half of the width of a cylinder."
-        );
+        private static readonly ToolTip radiusTooltip = new ToolTip("Radius", "Set the radius of the cylinder. The radius is half of the width of a cylinder.");
 
         private static readonly GUILayoutOption width25 = GUILayout.Width(25);
         private static readonly GUILayoutOption width65 = GUILayout.Width(65);

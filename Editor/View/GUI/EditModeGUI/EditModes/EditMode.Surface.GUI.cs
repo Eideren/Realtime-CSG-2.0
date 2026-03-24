@@ -47,108 +47,98 @@ namespace RealtimeCSG
         {
             GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
+            if(!isSceneGUI)
             {
-                if(!isSceneGUI)
-                {
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-                    EditorGUILayout.LabelField(contentJustifyLabel, largeLabelWidth);
-                }
-                else
-                {
-                    GUILayout.Label(contentJustifyLabel);
-                }
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+                EditorGUILayout.LabelField(contentJustifyLabel, largeLabelWidth);
+            }
+            else
+            {
+                GUILayout.Label(contentJustifyLabel);
+            }
 
-                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
-                {
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
-                    {
-                        if(GUILayout.Button(contentJustifyUpLeft, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1, -1);
-                        }
+            if(GUILayout.Button(contentJustifyUpLeft, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1, -1);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyUpLeft);
+            TooltipUtility.SetToolTip(toolTipJustifyUpLeft);
 
-                        if(GUILayout.Button(contentJustifyUp, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayoutY(selectedBrushSurfaces, -1);
-                        }
+            if(GUILayout.Button(contentJustifyUp, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayoutY(selectedBrushSurfaces, -1);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyUp);
+            TooltipUtility.SetToolTip(toolTipJustifyUp);
 
-                        if(GUILayout.Button(contentJustifyUpRight, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 1, -1);
-                        }
+            if(GUILayout.Button(contentJustifyUpRight, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 1, -1);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyUpRight);
-                    }
+            TooltipUtility.SetToolTip(toolTipJustifyUpRight);
 
-                    GUILayout.EndHorizontal();
+            GUILayout.EndHorizontal();
 
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
-                    {
-                        if(GUILayout.Button(contentJustifyLeft, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayoutX(selectedBrushSurfaces, -1);
-                        }
+            if(GUILayout.Button(contentJustifyLeft, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayoutX(selectedBrushSurfaces, -1);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyLeft);
+            TooltipUtility.SetToolTip(toolTipJustifyLeft);
 
-                        if(GUILayout.Button(contentJustifyCenter, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 0, 0);
-                        }
+            if(GUILayout.Button(contentJustifyCenter, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 0, 0);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyCenter);
+            TooltipUtility.SetToolTip(toolTipJustifyCenter);
 
-                        if(GUILayout.Button(contentJustifyRight, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayoutX(selectedBrushSurfaces, 1);
-                        }
+            if(GUILayout.Button(contentJustifyRight, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayoutX(selectedBrushSurfaces, 1);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyRight);
-                    }
+            TooltipUtility.SetToolTip(toolTipJustifyRight);
 
-                    GUILayout.EndHorizontal();
+            GUILayout.EndHorizontal();
 
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
-                    {
-                        if(GUILayout.Button(contentJustifyDownLeft, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1, 1);
-                        }
+            if(GUILayout.Button(contentJustifyDownLeft, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1, 1);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyDownLeft);
+            TooltipUtility.SetToolTip(toolTipJustifyDownLeft);
 
-                        if(GUILayout.Button(contentJustifyDown, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayoutY(selectedBrushSurfaces, 1);
-                        }
+            if(GUILayout.Button(contentJustifyDown, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayoutY(selectedBrushSurfaces, 1);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyDown);
+            TooltipUtility.SetToolTip(toolTipJustifyDown);
 
-                        if(GUILayout.Button(contentJustifyDownRight, justifyButtonLayout))
-                        {
-                            SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 1, 1);
-                        }
+            if(GUILayout.Button(contentJustifyDownRight, justifyButtonLayout))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 1, 1);
+            }
 
-                        TooltipUtility.SetToolTip(toolTipJustifyDownRight);
-                    }
+            TooltipUtility.SetToolTip(toolTipJustifyDownRight);
 
-                    GUILayout.EndHorizontal();
-                }
+            GUILayout.EndHorizontal();
 
-                GUILayout.EndVertical();
+            GUILayout.EndVertical();
 
-                if(!isSceneGUI)
-                {
-                    GUILayout.EndHorizontal();
-                }
+            if(!isSceneGUI)
+            {
+                GUILayout.EndHorizontal();
             }
 
             GUILayout.EndVertical();
@@ -163,129 +153,115 @@ namespace RealtimeCSG
             tempRect.height = 16;
             GUI.Label(tempRect, contentJustifyLabel);
 
+            tempRect.width  = 20;
+            tempRect.height = 23;
+
+            tempRect.y = rect.y + 20;
+
+            tempRect.x = rect.x + 4;
+
+            if(GUI.Button(tempRect, contentJustifyUpLeft))
             {
-                tempRect.width  = 20;
-                tempRect.height = 23;
-
-                {
-                    tempRect.y = rect.y + 20;
-
-                    tempRect.x = rect.x + 4;
-
-                    if(GUI.Button(tempRect, contentJustifyUpLeft))
-                    {
-                        SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1, -1);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyUpLeft, tempRect);
-
-                    tempRect.x = rect.x + 30;
-
-                    if(GUI.Button(tempRect, contentJustifyUp))
-                    {
-                        SurfaceUtility.JustifyLayoutY(selectedBrushSurfaces, -1);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyUp, tempRect);
-
-                    tempRect.x = rect.x + 56;
-
-                    if(GUI.Button(tempRect, contentJustifyUpRight))
-                    {
-                        SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 1, -1);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyUpRight, tempRect);
-                }
-
-                {
-                    tempRect.y = rect.y + 45;
-
-                    tempRect.x = rect.x + 4;
-
-                    if(GUI.Button(tempRect, contentJustifyLeft))
-                    {
-                        SurfaceUtility.JustifyLayoutX(selectedBrushSurfaces, -1);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyLeft, tempRect);
-
-                    tempRect.x = rect.x + 30;
-
-                    if(GUI.Button(tempRect, contentJustifyCenter))
-                    {
-                        SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 0, 0);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyCenter, tempRect);
-
-                    tempRect.x = rect.x + 56;
-
-                    if(GUI.Button(tempRect, contentJustifyRight))
-                    {
-                        SurfaceUtility.JustifyLayoutX(selectedBrushSurfaces, 1);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyRight, tempRect);
-                }
-
-                {
-                    tempRect.y = rect.y + 70;
-
-                    tempRect.x = rect.x + 4;
-
-                    if(GUI.Button(tempRect, contentJustifyDownLeft))
-                    {
-                        SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1, 1);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyDownLeft, tempRect);
-
-                    tempRect.x = rect.x + 30;
-
-                    if(GUI.Button(tempRect, contentJustifyDown))
-                    {
-                        SurfaceUtility.JustifyLayoutY(selectedBrushSurfaces, 1);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyDown, tempRect);
-
-                    tempRect.x = rect.x + 56;
-
-                    if(GUI.Button(tempRect, contentJustifyDownRight))
-                    {
-                        SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 1, 1);
-                    }
-
-                    TooltipUtility.SetToolTip(toolTipJustifyDownRight, tempRect);
-                }
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1, -1);
             }
+
+            TooltipUtility.SetToolTip(toolTipJustifyUpLeft, tempRect);
+
+            tempRect.x = rect.x + 30;
+
+            if(GUI.Button(tempRect, contentJustifyUp))
+            {
+                SurfaceUtility.JustifyLayoutY(selectedBrushSurfaces, -1);
+            }
+
+            TooltipUtility.SetToolTip(toolTipJustifyUp, tempRect);
+
+            tempRect.x = rect.x + 56;
+
+            if(GUI.Button(tempRect, contentJustifyUpRight))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 1, -1);
+            }
+
+            TooltipUtility.SetToolTip(toolTipJustifyUpRight, tempRect);
+
+            tempRect.y = rect.y + 45;
+
+            tempRect.x = rect.x + 4;
+
+            if(GUI.Button(tempRect, contentJustifyLeft))
+            {
+                SurfaceUtility.JustifyLayoutX(selectedBrushSurfaces, -1);
+            }
+
+            TooltipUtility.SetToolTip(toolTipJustifyLeft, tempRect);
+
+            tempRect.x = rect.x + 30;
+
+            if(GUI.Button(tempRect, contentJustifyCenter))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 0, 0);
+            }
+
+            TooltipUtility.SetToolTip(toolTipJustifyCenter, tempRect);
+
+            tempRect.x = rect.x + 56;
+
+            if(GUI.Button(tempRect, contentJustifyRight))
+            {
+                SurfaceUtility.JustifyLayoutX(selectedBrushSurfaces, 1);
+            }
+
+            TooltipUtility.SetToolTip(toolTipJustifyRight, tempRect);
+
+            tempRect.y = rect.y + 70;
+
+            tempRect.x = rect.x + 4;
+
+            if(GUI.Button(tempRect, contentJustifyDownLeft))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, -1, 1);
+            }
+
+            TooltipUtility.SetToolTip(toolTipJustifyDownLeft, tempRect);
+
+            tempRect.x = rect.x + 30;
+
+            if(GUI.Button(tempRect, contentJustifyDown))
+            {
+                SurfaceUtility.JustifyLayoutY(selectedBrushSurfaces, 1);
+            }
+
+            TooltipUtility.SetToolTip(toolTipJustifyDown, tempRect);
+
+            tempRect.x = rect.x + 56;
+
+            if(GUI.Button(tempRect, contentJustifyDownRight))
+            {
+                SurfaceUtility.JustifyLayout(selectedBrushSurfaces, 1, 1);
+            }
+
+            TooltipUtility.SetToolTip(toolTipJustifyDownRight, tempRect);
         }
 
-        private static void OnGUIContentsMaterialImage(
-            bool isSceneGUI, Material material, bool mixedValues, SelectedBrushSurface[] selectedBrushSurfaces
-        )
+        private static void OnGUIContentsMaterialImage(Material material, bool mixedValues, SelectedBrushSurface[] selectedBrushSurfaces)
         {
             GUILayout.BeginHorizontal(materialWidth, materialHeight);
 
-            {
-                Editor editor = m_MaterialEditor;
-                Editor.CreateCachedEditor(material, typeof(MaterialEditor), ref editor);
-                m_MaterialEditor = editor as MaterialEditor;
+            Editor editor = m_MaterialEditor;
+            Editor.CreateCachedEditor(material, typeof(MaterialEditor), ref editor);
+            m_MaterialEditor = editor as MaterialEditor;
 
-                if(m_MaterialEditor != null)
-                {
-                    Rect rect = GUILayoutUtility.GetRect(MATERIAL_SIZE, MATERIAL_SIZE);
-                    EditorGUI.showMixedValue = mixedValues;
-                    m_MaterialEditor.OnPreviewGUI(rect, GUIStyle.none);
-                    EditorGUI.showMixedValue = false;
-                }
-                else
-                {
-                    GUILayout.Box(
-                        new GUIContent(), CsgguiStyleUtility.EmptyMaterialStyle, materialWidth, materialHeight
-                    );
-                }
+            if(m_MaterialEditor != null)
+            {
+                Rect rect = GUILayoutUtility.GetRect(MATERIAL_SIZE, MATERIAL_SIZE);
+                EditorGUI.showMixedValue = mixedValues;
+                m_MaterialEditor.OnPreviewGUI(rect, GUIStyle.none);
+                EditorGUI.showMixedValue = false;
+            }
+            else
+            {
+                GUILayout.Box(new GUIContent(), CsgguiStyleUtility.EmptyMaterialStyle, materialWidth, materialHeight);
             }
 
             GUILayout.EndHorizontal();
@@ -294,8 +270,7 @@ namespace RealtimeCSG
 
             if(currentArea.Contains(currentPoint))
             {
-                if(Event.current.type == EventType.DragUpdated &&
-                   GetDragMaterial())
+                if(Event.current.type == EventType.DragUpdated && GetDragMaterial())
                 {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Generic;
                     Event.current.Use();
@@ -317,35 +292,28 @@ namespace RealtimeCSG
             }
         }
 
-        private static void OnGUIContentsMaterialImage(
-            Rect currentArea, Material material, bool mixedValues, SelectedBrushSurface[] selectedBrushSurfaces
-        )
+        private static void OnGUIContentsMaterialImage(Rect currentArea, Material material, bool mixedValues, SelectedBrushSurface[] selectedBrushSurfaces)
         {
-            {
-                {
-                    Editor editor = m_MaterialEditor;
-                    Editor.CreateCachedEditor(material, typeof(MaterialEditor), ref editor);
-                    m_MaterialEditor = editor as MaterialEditor;
-                }
+            Editor editor = m_MaterialEditor;
+            Editor.CreateCachedEditor(material, typeof(MaterialEditor), ref editor);
+            m_MaterialEditor = editor as MaterialEditor;
 
-                if(m_MaterialEditor != null)
-                {
-                    EditorGUI.showMixedValue = mixedValues;
-                    m_MaterialEditor.OnPreviewGUI(currentArea, GUIStyle.none);
-                    EditorGUI.showMixedValue = false;
-                }
-                else
-                {
-                    GUI.Box(currentArea, GUIContent.none, CsgguiStyleUtility.EmptyMaterialStyle);
-                }
+            if(m_MaterialEditor != null)
+            {
+                EditorGUI.showMixedValue = mixedValues;
+                m_MaterialEditor.OnPreviewGUI(currentArea, GUIStyle.none);
+                EditorGUI.showMixedValue = false;
+            }
+            else
+            {
+                GUI.Box(currentArea, GUIContent.none, CsgguiStyleUtility.EmptyMaterialStyle);
             }
 
             Vector2 currentPoint = Event.current.mousePosition;
 
             if(currentArea.Contains(currentPoint))
             {
-                if(Event.current.type == EventType.DragUpdated &&
-                   GetDragMaterial())
+                if(Event.current.type == EventType.DragUpdated && GetDragMaterial())
                 {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Generic;
                     Event.current.Use();
@@ -392,8 +360,7 @@ namespace RealtimeCSG
             public bool canUnSmooth;
             public SelectedBrushSurface[] selectedBrushSurfaces;
 
-            public readonly EditModeCommonGUI.SurfaceFlagState surfaceFlagState =
-                new EditModeCommonGUI.SurfaceFlagState();
+            public readonly EditModeCommonGUI.SurfaceFlagState surfaceFlagState = new EditModeCommonGUI.SurfaceFlagState();
 
             public void Init(EditModeSurface tool)
             {
@@ -558,11 +525,8 @@ namespace RealtimeCSG
                             {
                                 Vector2 translation = brush.Shape.TexGens[texGenIndex].Translation;
 
-                                multipleTranslationX =
-                                    multipleTranslationX || currentTexGen.Translation.x != translation.x;
-
-                                multipleTranslationY =
-                                    multipleTranslationY || currentTexGen.Translation.y != translation.y;
+                                multipleTranslationX = multipleTranslationX || currentTexGen.Translation.x != translation.x;
+                                multipleTranslationY = multipleTranslationY || currentTexGen.Translation.y != translation.y;
                             }
 
                             if(!multipleRotationAngle)
@@ -575,9 +539,7 @@ namespace RealtimeCSG
 
                     if(foundHelperMaterial && !firstMaterial)
                     {
-                        firstMaterial = firstRenderSurfaceType.HasValue
-                            ? MaterialUtility.GetSurfaceMaterial(firstRenderSurfaceType.Value)
-                            : MaterialUtility.HiddenMaterial;
+                        firstMaterial = firstRenderSurfaceType.HasValue ? MaterialUtility.GetSurfaceMaterial(firstRenderSurfaceType.Value) : MaterialUtility.HiddenMaterial;
                     }
                 }
 
@@ -618,14 +580,14 @@ namespace RealtimeCSG
 
         private const int SURFACE_EDIT_TITLE_HEIGHT = 16;
 
-        private const int SURFACE_EDIT_WINDOW_HEIGHT = SURFACE_EDIT_TITLE_HEIGHT +
-            MATERIAL_VIEW_BOX_HEIGHT + BOX_OFFSET +
-            TEXTURE_LOCKED_BOX_HEIGHT + BOX_OFFSET +
-            SELECTION_BOX_HEIGHT + BOX_OFFSET +
-            TRANSFORMATION_BOX_HEIGHT + BOX_OFFSET +
-            UV_COMMANDS_BOX_HEIGHT + BOX_OFFSET +
-            SURFACE_FLAGS_BOX_HEIGHT + BOX_OFFSET +
-            13;
+        private const int SURFACE_EDIT_WINDOW_HEIGHT = SURFACE_EDIT_TITLE_HEIGHT
+          + MATERIAL_VIEW_BOX_HEIGHT + BOX_OFFSET
+          + TEXTURE_LOCKED_BOX_HEIGHT + BOX_OFFSET
+          + SELECTION_BOX_HEIGHT + BOX_OFFSET
+          + TRANSFORMATION_BOX_HEIGHT + BOX_OFFSET
+          + UV_COMMANDS_BOX_HEIGHT + BOX_OFFSET
+          + SURFACE_FLAGS_BOX_HEIGHT + BOX_OFFSET
+          + 13;
 
         private static void OnGUIContents(Rect rect, EditModeSurface tool, bool needLightmapUVUpdate)
         {
@@ -649,433 +611,332 @@ namespace RealtimeCSG
             Rect tempRect = rect;
             int  offset   = 0;
 
+            tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, MATERIAL_VIEW_BOX_HEIGHT + uvButtonOffset);
+
+            GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
+
+            if(needLightmapUVUpdate)
             {
-                {
-                    tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, MATERIAL_VIEW_BOX_HEIGHT + uvButtonOffset);
-
-                    GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
-
-                    {
-                        if(needLightmapUVUpdate)
-                        {
-                            tempRect.Set(rect.x + 8, rect.y + offset + 4, 204, 16);
-                            EditModeCommonGUI.UpdateLightmapUVButton(ref tempRect);
-                            rect.y += uvButtonOffset;
-                        }
-                    }
-
-                    EditorGUI.BeginDisabledGroup(!m_SurfaceState.enabled);
-
-                    {
-                        {
-                            Material newMaterial;
-                            EditorGUI.BeginChangeCheck();
-
-                            {
-                                EditorGUI.showMixedValue = m_SurfaceState.multipleMaterials;
-                                tempRect.Set(rect.x + 8, rect.y + offset + 4, 204, 16);
-
-                                newMaterial = EditorGUI.ObjectField(
-                                    tempRect, m_SurfaceState.material, typeof(Material), true
-                                ) as Material;
-
-                                EditorGUI.showMixedValue = false;
-                            }
-
-                            if(EditorGUI.EndChangeCheck())
-                            {
-                                if(newMaterial)
-                                {
-                                    SurfaceUtility.SetMaterials(m_SurfaceState.selectedBrushSurfaces, newMaterial);
-                                    CSGSettings.DefaultMaterial = newMaterial;
-                                    CSGSettings.Save();
-                                }
-                            }
-                        }
-
-                        {
-                            tempRect.Set(rect.x + 9, rect.y + offset + 26, 100, 100);
-
-                            OnGUIContentsMaterialImage(
-                                tempRect, m_SurfaceState.firstMaterial, m_SurfaceState.multipleMaterials
-                              , m_SurfaceState.selectedBrushSurfaces
-                            );
-
-                            tempRect.Set(rect.x + 131 - 9, rect.y + offset + 28, 74, 91);
-                            OnGUIContentsJustifyScene(tempRect, m_SurfaceState.selectedBrushSurfaces);
-                        }
-
-                        rect.y -= uvButtonOffset;
-                    }
-
-                    EditorGUI.EndDisabledGroup();
-                    offset += MATERIAL_VIEW_BOX_HEIGHT + uvButtonOffset;
-                }
+                tempRect.Set(rect.x + 8, rect.y + offset + 4, 204, 16);
+                EditModeCommonGUI.UpdateLightmapUVButton(ref tempRect);
+                rect.y += uvButtonOffset;
             }
 
             EditorGUI.BeginDisabledGroup(!m_SurfaceState.enabled);
 
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleMaterials;
+            tempRect.Set(rect.x + 8, rect.y + offset + 4, 204, 16);
+
+            Material newMaterial = EditorGUI.ObjectField(tempRect, m_SurfaceState.material, typeof(Material), true) as Material;
+
+            EditorGUI.showMixedValue = false;
+
+            if(EditorGUI.EndChangeCheck())
             {
+                if(newMaterial)
                 {
-                    offset += BOX_OFFSET;
-                    tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, TEXTURE_LOCKED_BOX_HEIGHT); //138
-                    GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
-
-                    {
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            EditorGUI.showMixedValue = !m_SurfaceState.textureLocked.HasValue;
-                            tempRect.Set(rect.x + 8, rect.y + offset + 3, 205, 16);
-
-                            m_SurfaceState.textureLocked = EditorGUI.ToggleLeft(
-                                tempRect, contentLockTexture
-                              , m_SurfaceState.textureLocked.HasValue && m_SurfaceState.textureLocked.Value
-                            );
-
-                            TooltipUtility.SetToolTip(toolTipLockTexture, tempRect);
-                        }
-
-                        if(EditorGUI.EndChangeCheck())
-                        {
-                            SurfaceUtility.SetTextureLock(
-                                m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.textureLocked.Value
-                            );
-                        }
-                    }
-
-                    offset += TEXTURE_LOCKED_BOX_HEIGHT;
-
-                    offset += BOX_OFFSET;
-                    tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, SELECTION_BOX_HEIGHT);
-                    GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
-
-                    {
-                        tempRect.Set(rect.x + 8, rect.y + offset + 3, 205, 16);
-                        bool clicked = GUI.Button(tempRect, contentSelectAllSurfaces);
-                        TooltipUtility.SetToolTip(tooltipSelectAllSurfaces, tempRect);
-
-                        if(clicked)
-                        {
-                            tool.SelectAllSurfacesOfSelectedBrushes();
-                        }
-                    }
-
-                    offset += SELECTION_BOX_HEIGHT;
-
-                    offset += BOX_OFFSET;
-                    tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, TRANSFORMATION_BOX_HEIGHT); //164
-                    GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
-
-                    {
-                        {
-                            tempRect.Set(rect.x + 8, rect.y + offset + 3, 56, 16);
-                            EditorGUI.LabelField(tempRect, contentUVScale, EditorStyles.miniLabel);
-                            TooltipUtility.SetToolTip(toolTipScaleUV, tempRect);
-
-                            {
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleScaleX;
-                                    tempRect.Set(rect.x + 68, rect.y + offset + 3, 70, 16);
-
-                                    m_SurfaceState.currentTexGen.Scale.x = EditorGUI.FloatField(
-                                        tempRect, m_SurfaceState.currentTexGen.Scale.x
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetScaleX(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Scale.x
-                                    );
-                                }
-
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleScaleY;
-                                    tempRect.Set(rect.x + 142, rect.y + offset + 3, 70, 16);
-
-                                    m_SurfaceState.currentTexGen.Scale.y = EditorGUI.FloatField(
-                                        tempRect, m_SurfaceState.currentTexGen.Scale.y
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetScaleY(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Scale.y
-                                    );
-                                }
-                            }
-                        }
-
-                        {
-                            tempRect.Set(rect.x + 8, rect.y + offset + 21, 56, 16);
-                            EditorGUI.LabelField(tempRect, EditModeSurfaceGUI.contentOffset, EditorStyles.miniLabel);
-                            TooltipUtility.SetToolTip(toolTipOffsetUV, tempRect);
-
-                            {
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleTranslationX;
-                                    tempRect.Set(rect.x + 68, rect.y + offset + 21, 70, 16);
-
-                                    m_SurfaceState.currentTexGen.Translation.x = EditorGUI.FloatField(
-                                        tempRect, m_SurfaceState.currentTexGen.Translation.x
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetTranslationX(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Translation.x
-                                    );
-                                }
-
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleTranslationY;
-                                    tempRect.Set(rect.x + 142, rect.y + offset + 21, 70, 16);
-
-                                    m_SurfaceState.currentTexGen.Translation.y = EditorGUI.FloatField(
-                                        tempRect, m_SurfaceState.currentTexGen.Translation.y
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetTranslationY(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Translation.y
-                                    );
-                                }
-                            }
-                        }
-
-                        {
-                            tempRect.Set(rect.x + 8, rect.y + offset + 39, 56, 16);
-                            EditorGUI.LabelField(tempRect, contentRotate, EditorStyles.miniLabel);
-                            TooltipUtility.SetToolTip(toolTipRotation, tempRect);
-
-                            {
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleRotationAngle;
-                                    tempRect.Set(rect.x + 68, rect.y + offset + 39, 57, 16);
-
-                                    m_SurfaceState.currentTexGen.RotationAngle = EditorGUI.FloatField(
-                                        tempRect, m_SurfaceState.currentTexGen.RotationAngle
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetRotationAngle(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.RotationAngle
-                                    );
-                                }
-                            }
-
-                            {
-                                tempRect.Set(rect.x + 129, rect.y + offset + 39, 42, 15);
-
-                                if(GUI.Button(tempRect, contentRotate90Negative, leftStyle))
-                                {
-                                    SurfaceUtility.AddRotationAngle(m_SurfaceState.selectedBrushSurfaces, -90.0f);
-                                }
-
-                                TooltipUtility.SetToolTip(toolTipRotate90Negative, tempRect);
-
-                                tempRect.x = rect.x + 171;
-
-                                if(GUI.Button(tempRect, contentRotate90Positive, rightStyle))
-                                {
-                                    SurfaceUtility.AddRotationAngle(m_SurfaceState.selectedBrushSurfaces, +90.0f);
-                                }
-
-                                TooltipUtility.SetToolTip(toolTipRotate90Positive, tempRect);
-                            }
-                        }
-                    }
-
-                    offset += TRANSFORMATION_BOX_HEIGHT;
-
-                    offset += BOX_OFFSET;
-                    tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, UV_COMMANDS_BOX_HEIGHT);
-                    GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
-
-                    {
-                        {
-                            tempRect.Set(rect.x + 8, rect.y + offset + 3, 45, 16);
-                            GUI.Label(tempRect, contentFit, EditorStyles.miniLabel);
-
-                            tempRect.Set(rect.x + 57, rect.y + offset + 3, 49, 15);
-
-                            if(GUI.Button(tempRect, contentFitX, leftStyle))
-                            {
-                                SurfaceUtility.FitSurfaceX(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFitX, tempRect);
-
-                            tempRect.Set(rect.x + 106, rect.y + offset + 3, 57, 15);
-
-                            if(GUI.Button(tempRect, contentFitXY, middleStyle))
-                            {
-                                SurfaceUtility.FitSurface(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFitXY, tempRect);
-
-                            tempRect.Set(rect.x + 164, rect.y + offset + 3, 49, 15);
-
-                            if(GUI.Button(tempRect, contentFitY, rightStyle))
-                            {
-                                SurfaceUtility.FitSurfaceY(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFitY, tempRect);
-                        }
-
-                        {
-                            tempRect.Set(rect.x + 8, rect.y + offset + 21, 45, 16);
-                            GUI.Label(tempRect, contentReset, EditorStyles.miniLabel);
-
-                            tempRect.Set(rect.x + 57, rect.y + offset + 21, 50, 15);
-
-                            if(GUI.Button(tempRect, contentResetX, leftStyle))
-                            {
-                                SurfaceUtility.ResetSurfaceX(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipResetX, tempRect);
-
-                            tempRect.Set(rect.x + 107, rect.y + offset + 21, 58, 15);
-
-                            if(GUI.Button(tempRect, contentResetXY, rightStyle))
-                            {
-                                SurfaceUtility.ResetSurface(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipResetXY, tempRect);
-
-                            tempRect.Set(rect.x + 164, rect.y + offset + 21, 49, 15);
-
-                            if(GUI.Button(tempRect, contentResetY, rightStyle))
-                            {
-                                SurfaceUtility.ResetSurfaceY(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipResetY, tempRect);
-                        }
-
-                        {
-                            tempRect.Set(rect.x + 8, rect.y + offset + 39, 45, 16);
-                            GUI.Label(tempRect, contentFlip, EditorStyles.miniLabel);
-
-                            tempRect.Set(rect.x + 57, rect.y + offset + 39, 49, 15);
-
-                            if(GUI.Button(tempRect, contentFlipX, leftStyle))
-                            {
-                                SurfaceUtility.FlipX(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFlipX, tempRect);
-
-                            tempRect.Set(rect.x + 106, rect.y + offset + 39, 57, 15);
-
-                            if(GUI.Button(tempRect, contentFlipXY, middleStyle))
-                            {
-                                SurfaceUtility.FlipXY(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFlipXY, tempRect);
-
-                            tempRect.Set(rect.x + 164, rect.y + offset + 39, 49, 15);
-
-                            if(GUI.Button(tempRect, contentFlipY, rightStyle))
-                            {
-                                SurfaceUtility.FlipY(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFlipY, tempRect);
-                        }
-
-                        {
-                            tempRect.Set(rect.x + 8, rect.y + offset + 57, 45, 16);
-                            GUI.Label(tempRect, contentScale, EditorStyles.miniLabel);
-
-                            tempRect.Set(rect.x + 57, rect.y + offset + 57, 79, 15);
-
-                            if(GUI.Button(tempRect, contentDoubleScale, leftStyle))
-                            {
-                                SurfaceUtility.MultiplyScale(m_SurfaceState.selectedBrushSurfaces, 2.0f);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipDoubleScale, tempRect);
-
-                            tempRect.Set(rect.x + 136, rect.y + offset + 57, 77, 15);
-
-                            if(GUI.Button(tempRect, contentHalfScale, rightStyle))
-                            {
-                                SurfaceUtility.MultiplyScale(m_SurfaceState.selectedBrushSurfaces, 0.5f);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipHalfScale, tempRect);
-                        }
-                    }
-
-                    offset += UV_COMMANDS_BOX_HEIGHT;
-
-                    offset += BOX_OFFSET;
-                    tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, SURFACE_FLAGS_BOX_HEIGHT);
-                    GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
-
-                    {
-                        tempRect.Set(rect.x + 8 - 4, rect.y + offset + 2, 205, 15);
-
-                        EditModeCommonGUI.OnSurfaceFlagButtons(
-                            tempRect, m_SurfaceState.surfaceFlagState, m_SurfaceState.selectedBrushSurfaces
-                        );
-
-                        {
-                            EditorGUI.BeginDisabledGroup(!m_SurfaceState.canSmooth);
-
-                            {
-                                tempRect.Set(rect.x + 8, rect.y + offset + 38, 94, 15);
-
-                                if(GUI.Button(tempRect, contentSmoothSurfaces, leftStyle))
-                                {
-                                    SurfaceUtility.Smooth(m_SurfaceState.selectedBrushSurfaces);
-                                }
-
-                                TooltipUtility.SetToolTip(toolTipSmoothSurfaces, tempRect);
-                            }
-
-                            EditorGUI.EndDisabledGroup();
-                            EditorGUI.BeginDisabledGroup(!m_SurfaceState.canUnSmooth);
-
-                            {
-                                tempRect.Set(rect.x + 102, rect.y + offset + 38, 112, 15);
-
-                                if(GUI.Button(tempRect, contentUnSmoothSurfaces, rightStyle))
-                                {
-                                    SurfaceUtility.UnSmooth(m_SurfaceState.selectedBrushSurfaces);
-                                }
-
-                                TooltipUtility.SetToolTip(toolTipUnSmoothSurfaces, tempRect);
-                            }
-
-                            EditorGUI.EndDisabledGroup();
-                        }
-                    }
+                    SurfaceUtility.SetMaterials(m_SurfaceState.selectedBrushSurfaces, newMaterial);
+                    CSGSettings.DefaultMaterial = newMaterial;
+                    CSGSettings.Save();
                 }
             }
+
+            tempRect.Set(rect.x + 9, rect.y + offset + 26, 100, 100);
+
+            OnGUIContentsMaterialImage(tempRect, m_SurfaceState.firstMaterial, m_SurfaceState.multipleMaterials, m_SurfaceState.selectedBrushSurfaces);
+
+            tempRect.Set(rect.x + 131 - 9, rect.y + offset + 28, 74, 91);
+            OnGUIContentsJustifyScene(tempRect, m_SurfaceState.selectedBrushSurfaces);
+
+            rect.y -= uvButtonOffset;
+
+            EditorGUI.EndDisabledGroup();
+            offset += MATERIAL_VIEW_BOX_HEIGHT + uvButtonOffset;
+
+            EditorGUI.BeginDisabledGroup(!m_SurfaceState.enabled);
+
+            offset += BOX_OFFSET;
+            tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, TEXTURE_LOCKED_BOX_HEIGHT); //138
+            GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = !m_SurfaceState.textureLocked.HasValue;
+            tempRect.Set(rect.x + 8, rect.y + offset + 3, 205, 16);
+
+            m_SurfaceState.textureLocked = EditorGUI.ToggleLeft(tempRect, contentLockTexture, m_SurfaceState.textureLocked.HasValue && m_SurfaceState.textureLocked.Value);
+
+            TooltipUtility.SetToolTip(toolTipLockTexture, tempRect);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetTextureLock(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.textureLocked.Value);
+            }
+
+            offset += TEXTURE_LOCKED_BOX_HEIGHT;
+
+            offset += BOX_OFFSET;
+            tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, SELECTION_BOX_HEIGHT);
+            GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 3, 205, 16);
+            bool clicked = GUI.Button(tempRect, contentSelectAllSurfaces);
+            TooltipUtility.SetToolTip(tooltipSelectAllSurfaces, tempRect);
+
+            if(clicked)
+            {
+                tool.SelectAllSurfacesOfSelectedBrushes();
+            }
+
+            offset += SELECTION_BOX_HEIGHT;
+            offset += BOX_OFFSET;
+
+            tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, TRANSFORMATION_BOX_HEIGHT); //164
+            GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 3, 56, 16);
+            EditorGUI.LabelField(tempRect, contentUVScale, EditorStyles.miniLabel);
+            TooltipUtility.SetToolTip(toolTipScaleUV, tempRect);
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleScaleX;
+            tempRect.Set(rect.x + 68, rect.y + offset + 3, 70, 16);
+
+            m_SurfaceState.currentTexGen.Scale.x = EditorGUI.FloatField(tempRect, m_SurfaceState.currentTexGen.Scale.x);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetScaleX(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Scale.x);
+            }
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleScaleY;
+            tempRect.Set(rect.x + 142, rect.y + offset + 3, 70, 16);
+
+            m_SurfaceState.currentTexGen.Scale.y = EditorGUI.FloatField(tempRect, m_SurfaceState.currentTexGen.Scale.y);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetScaleY(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Scale.y);
+            }
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 21, 56, 16);
+            EditorGUI.LabelField(tempRect, contentOffset, EditorStyles.miniLabel);
+            TooltipUtility.SetToolTip(toolTipOffsetUV, tempRect);
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleTranslationX;
+            tempRect.Set(rect.x + 68, rect.y + offset + 21, 70, 16);
+
+            m_SurfaceState.currentTexGen.Translation.x = EditorGUI.FloatField(tempRect, m_SurfaceState.currentTexGen.Translation.x);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetTranslationX(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Translation.x);
+            }
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleTranslationY;
+            tempRect.Set(rect.x + 142, rect.y + offset + 21, 70, 16);
+
+            m_SurfaceState.currentTexGen.Translation.y = EditorGUI.FloatField(tempRect, m_SurfaceState.currentTexGen.Translation.y);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetTranslationY(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Translation.y);
+            }
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 39, 56, 16);
+            EditorGUI.LabelField(tempRect, contentRotate, EditorStyles.miniLabel);
+            TooltipUtility.SetToolTip(toolTipRotation, tempRect);
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleRotationAngle;
+            tempRect.Set(rect.x + 68, rect.y + offset + 39, 57, 16);
+
+            m_SurfaceState.currentTexGen.RotationAngle = EditorGUI.FloatField(tempRect, m_SurfaceState.currentTexGen.RotationAngle);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetRotationAngle(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.RotationAngle);
+            }
+
+            tempRect.Set(rect.x + 129, rect.y + offset + 39, 42, 15);
+
+            if(GUI.Button(tempRect, contentRotate90Negative, leftStyle))
+            {
+                SurfaceUtility.AddRotationAngle(m_SurfaceState.selectedBrushSurfaces, -90.0f);
+            }
+
+            TooltipUtility.SetToolTip(toolTipRotate90Negative, tempRect);
+
+            tempRect.x = rect.x + 171;
+
+            if(GUI.Button(tempRect, contentRotate90Positive, rightStyle))
+            {
+                SurfaceUtility.AddRotationAngle(m_SurfaceState.selectedBrushSurfaces, +90.0f);
+            }
+
+            TooltipUtility.SetToolTip(toolTipRotate90Positive, tempRect);
+
+            offset += TRANSFORMATION_BOX_HEIGHT;
+
+            offset += BOX_OFFSET;
+            tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, UV_COMMANDS_BOX_HEIGHT);
+            GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 3, 45, 16);
+            GUI.Label(tempRect, contentFit, EditorStyles.miniLabel);
+
+            tempRect.Set(rect.x + 57, rect.y + offset + 3, 49, 15);
+
+            if(GUI.Button(tempRect, contentFitX, leftStyle))
+            {
+                SurfaceUtility.FitSurfaceX(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFitX, tempRect);
+
+            tempRect.Set(rect.x + 106, rect.y + offset + 3, 57, 15);
+
+            if(GUI.Button(tempRect, contentFitXY, middleStyle))
+            {
+                SurfaceUtility.FitSurface(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFitXY, tempRect);
+
+            tempRect.Set(rect.x + 164, rect.y + offset + 3, 49, 15);
+
+            if(GUI.Button(tempRect, contentFitY, rightStyle))
+            {
+                SurfaceUtility.FitSurfaceY(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFitY, tempRect);
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 21, 45, 16);
+            GUI.Label(tempRect, contentReset, EditorStyles.miniLabel);
+
+            tempRect.Set(rect.x + 57, rect.y + offset + 21, 50, 15);
+
+            if(GUI.Button(tempRect, contentResetX, leftStyle))
+            {
+                SurfaceUtility.ResetSurfaceX(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipResetX, tempRect);
+
+            tempRect.Set(rect.x + 107, rect.y + offset + 21, 58, 15);
+
+            if(GUI.Button(tempRect, contentResetXY, rightStyle))
+            {
+                SurfaceUtility.ResetSurface(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipResetXY, tempRect);
+
+            tempRect.Set(rect.x + 164, rect.y + offset + 21, 49, 15);
+
+            if(GUI.Button(tempRect, contentResetY, rightStyle))
+            {
+                SurfaceUtility.ResetSurfaceY(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipResetY, tempRect);
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 39, 45, 16);
+            GUI.Label(tempRect, contentFlip, EditorStyles.miniLabel);
+
+            tempRect.Set(rect.x + 57, rect.y + offset + 39, 49, 15);
+
+            if(GUI.Button(tempRect, contentFlipX, leftStyle))
+            {
+                SurfaceUtility.FlipX(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFlipX, tempRect);
+
+            tempRect.Set(rect.x + 106, rect.y + offset + 39, 57, 15);
+
+            if(GUI.Button(tempRect, contentFlipXY, middleStyle))
+            {
+                SurfaceUtility.FlipXY(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFlipXY, tempRect);
+
+            tempRect.Set(rect.x + 164, rect.y + offset + 39, 49, 15);
+
+            if(GUI.Button(tempRect, contentFlipY, rightStyle))
+            {
+                SurfaceUtility.FlipY(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFlipY, tempRect);
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 57, 45, 16);
+            GUI.Label(tempRect, contentScale, EditorStyles.miniLabel);
+
+            tempRect.Set(rect.x + 57, rect.y + offset + 57, 79, 15);
+
+            if(GUI.Button(tempRect, contentDoubleScale, leftStyle))
+            {
+                SurfaceUtility.MultiplyScale(m_SurfaceState.selectedBrushSurfaces, 2.0f);
+            }
+
+            TooltipUtility.SetToolTip(toolTipDoubleScale, tempRect);
+
+            tempRect.Set(rect.x + 136, rect.y + offset + 57, 77, 15);
+
+            if(GUI.Button(tempRect, contentHalfScale, rightStyle))
+            {
+                SurfaceUtility.MultiplyScale(m_SurfaceState.selectedBrushSurfaces, 0.5f);
+            }
+
+            TooltipUtility.SetToolTip(toolTipHalfScale, tempRect);
+
+            offset += UV_COMMANDS_BOX_HEIGHT;
+
+            offset += BOX_OFFSET;
+            tempRect.Set(rect.x + 4, rect.y + offset, BOX_WIDTH, SURFACE_FLAGS_BOX_HEIGHT);
+            GUI.Box(tempRect, GUIContent.none, GUI.skin.box);
+
+            tempRect.Set(rect.x + 8 - 4, rect.y + offset + 2, 205, 15);
+
+            EditModeCommonGUI.OnSurfaceFlagButtons(tempRect, m_SurfaceState.surfaceFlagState, m_SurfaceState.selectedBrushSurfaces);
+
+            EditorGUI.BeginDisabledGroup(!m_SurfaceState.canSmooth);
+
+            tempRect.Set(rect.x + 8, rect.y + offset + 38, 94, 15);
+
+            if(GUI.Button(tempRect, contentSmoothSurfaces, leftStyle))
+            {
+                SurfaceUtility.Smooth(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipSmoothSurfaces, tempRect);
+
+            EditorGUI.EndDisabledGroup();
+            EditorGUI.BeginDisabledGroup(!m_SurfaceState.canUnSmooth);
+
+            tempRect.Set(rect.x + 102, rect.y + offset + 38, 112, 15);
+
+            if(GUI.Button(tempRect, contentUnSmoothSurfaces, rightStyle))
+            {
+                SurfaceUtility.UnSmooth(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipUnSmoothSurfaces, tempRect);
+
+            EditorGUI.EndDisabledGroup();
 
             EditorGUI.EndDisabledGroup();
             EditorGUI.showMixedValue = false;
@@ -1102,416 +963,323 @@ namespace RealtimeCSG
 
             EditorGUI.BeginDisabledGroup(!m_SurfaceState.enabled);
 
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUILayout.Space();
+
+            GUILayout.BeginVertical(GUIStyle.none);
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = !m_SurfaceState.textureLocked.HasValue;
+
+            m_SurfaceState.textureLocked = EditorGUILayout.ToggleLeft(contentLockTexture, m_SurfaceState.textureLocked.HasValue && m_SurfaceState.textureLocked.Value);
+
+            TooltipUtility.SetToolTip(toolTipLockTexture);
+
+            if(EditorGUI.EndChangeCheck())
             {
-                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+                SurfaceUtility.SetTextureLock(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.textureLocked.Value);
+            }
 
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical(GUIStyle.none);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUILayout.LabelField(contentUVScale, largeLabelWidth);
+            TooltipUtility.SetToolTip(toolTipScaleUV);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUILayout.LabelField(contentUSymbol, unitWidth);
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleScaleX;
+
+            m_SurfaceState.currentTexGen.Scale.x = EditorGUILayout.FloatField(m_SurfaceState.currentTexGen.Scale.x, minFloatFieldWidth);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetScaleX(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Scale.x);
+            }
+
+            EditorGUILayout.LabelField(contentVSymbol, unitWidth);
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleScaleY;
+
+            m_SurfaceState.currentTexGen.Scale.y = EditorGUILayout.FloatField(m_SurfaceState.currentTexGen.Scale.y, minFloatFieldWidth);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetScaleY(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Scale.y);
+            }
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUILayout.LabelField(contentOffset, largeLabelWidth);
+            TooltipUtility.SetToolTip(toolTipOffsetUV);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUILayout.LabelField(contentUSymbol, unitWidth);
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleTranslationX;
+
+            m_SurfaceState.currentTexGen.Translation.x = EditorGUILayout.FloatField(m_SurfaceState.currentTexGen.Translation.x, minFloatFieldWidth);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetTranslationX(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Translation.x);
+            }
+
+            EditorGUILayout.LabelField(contentVSymbol, unitWidth);
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleTranslationY;
+
+            m_SurfaceState.currentTexGen.Translation.y = EditorGUILayout.FloatField(m_SurfaceState.currentTexGen.Translation.y, minFloatFieldWidth);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetTranslationY(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Translation.y);
+            }
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUILayout.LabelField(contentRotate, largeLabelWidth);
+            TooltipUtility.SetToolTip(toolTipRotation);
+
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleRotationAngle;
+
+            m_SurfaceState.currentTexGen.RotationAngle = EditorGUILayout.FloatField(m_SurfaceState.currentTexGen.RotationAngle, minFloatFieldWidth);
+
+            EditorGUILayout.LabelField(contentAngleSymbol, unitWidth);
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                SurfaceUtility.SetRotationAngle(m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.RotationAngle);
+            }
+
+            GUILayout.EndHorizontal();
+
+            GUILayoutOption[] buttonWidth = Array.Empty<GUILayoutOption>();
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            if(GUILayout.Button(contentRotate90Negative, leftStyle, buttonWidth))
+            {
+                SurfaceUtility.AddRotationAngle(m_SurfaceState.selectedBrushSurfaces, -90.0f);
+            }
+
+            TooltipUtility.SetToolTip(toolTipRotate90Negative);
+
+            if(GUILayout.Button(contentRotate90Positive, rightStyle, buttonWidth))
+            {
+                SurfaceUtility.AddRotationAngle(m_SurfaceState.selectedBrushSurfaces, +90.0f);
+            }
+
+            TooltipUtility.SetToolTip(toolTipRotate90Positive);
+
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
+            EditorGUILayout.Space();
+
+            GUILayout.BeginVertical(GUIStyle.none);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(contentFit, largeLabelWidth);
+
+            if(GUILayout.Button(contentFitX, leftStyle))
+            {
+                SurfaceUtility.FitSurfaceX(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFitX);
+
+            if(GUILayout.Button(contentFitXY, middleStyle))
+            {
+                SurfaceUtility.FitSurface(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFitXY);
+
+            if(GUILayout.Button(contentFitY, rightStyle))
+            {
+                SurfaceUtility.FitSurfaceY(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFitY);
+
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(contentReset, largeLabelWidth);
+
+            if(GUILayout.Button(contentResetX, leftStyle))
+            {
+                SurfaceUtility.ResetSurfaceX(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipResetX);
+
+            if(GUILayout.Button(contentResetXY, middleStyle))
+            {
+                SurfaceUtility.ResetSurface(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipResetXY);
+
+            if(GUILayout.Button(contentResetY, rightStyle))
+            {
+                SurfaceUtility.ResetSurfaceY(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipResetY);
+
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(contentFlip, largeLabelWidth);
+
+            if(GUILayout.Button(contentFlipX, leftStyle))
+            {
+                SurfaceUtility.FlipX(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFlipX);
+
+            if(GUILayout.Button(contentFlipXY, middleStyle))
+            {
+                SurfaceUtility.FlipXY(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFlipXY);
+
+            if(GUILayout.Button(contentFlipY, rightStyle))
+            {
+                SurfaceUtility.FlipY(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipFlipY);
+
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(contentScale, largeLabelWidth);
+
+            if(GUILayout.Button(contentDoubleScale, leftStyle))
+            {
+                SurfaceUtility.MultiplyScale(m_SurfaceState.selectedBrushSurfaces, 2.0f);
+            }
+
+            TooltipUtility.SetToolTip(toolTipDoubleScale);
+
+            if(GUILayout.Button(contentHalfScale, rightStyle))
+            {
+                SurfaceUtility.MultiplyScale(m_SurfaceState.selectedBrushSurfaces, 0.5f);
+            }
+
+            TooltipUtility.SetToolTip(toolTipHalfScale);
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
+            EditorGUILayout.Space();
+
+            OnGUIContentsJustify(false, m_SurfaceState.selectedBrushSurfaces);
+
+            EditorGUILayout.Space();
+
+            GUILayout.BeginVertical(GUIStyle.none);
+
+            EditModeCommonGUI.OnSurfaceFlagButtons(m_SurfaceState.surfaceFlagState, m_SurfaceState.selectedBrushSurfaces);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUI.BeginDisabledGroup(!m_SurfaceState.canSmooth);
+
+            if(GUILayout.Button(contentSmoothSurfaces, leftStyle))
+            {
+                SurfaceUtility.Smooth(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipSmoothSurfaces);
+
+            EditorGUI.EndDisabledGroup();
+            EditorGUI.BeginDisabledGroup(!m_SurfaceState.canUnSmooth);
+
+            if(GUILayout.Button(contentUnSmoothSurfaces, rightStyle))
+            {
+                SurfaceUtility.UnSmooth(m_SurfaceState.selectedBrushSurfaces);
+            }
+
+            TooltipUtility.SetToolTip(toolTipUnSmoothSurfaces);
+
+            EditorGUI.EndDisabledGroup();
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
+
+            EditorGUILayout.Space();
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUILayout.LabelField(contentMaterial, largeLabelWidth);
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUI.showMixedValue = m_SurfaceState.multipleMaterials;
+
+            Material newMaterial = EditorGUILayout.ObjectField(m_SurfaceState.material, typeof(Material), true) as Material;
+
+            EditorGUI.showMixedValue = false;
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                if(!newMaterial)
                 {
-                    EditorGUILayout.Space();
-
-                    GUILayout.BeginVertical(GUIStyle.none);
-
-                    {
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            EditorGUI.showMixedValue = !m_SurfaceState.textureLocked.HasValue;
-
-                            m_SurfaceState.textureLocked = EditorGUILayout.ToggleLeft(
-                                contentLockTexture
-                              , m_SurfaceState.textureLocked.HasValue && m_SurfaceState.textureLocked.Value
-                            );
-
-                            TooltipUtility.SetToolTip(toolTipLockTexture);
-                        }
-
-                        if(EditorGUI.EndChangeCheck())
-                        {
-                            SurfaceUtility.SetTextureLock(
-                                m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.textureLocked.Value
-                            );
-                        }
-                    }
-
-                    GUILayout.EndVertical();
-
-                    GUILayout.BeginVertical(GUIStyle.none);
-
-                    {
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            EditorGUILayout.LabelField(contentUVScale, largeLabelWidth);
-                            TooltipUtility.SetToolTip(toolTipScaleUV);
-
-                            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                            {
-                                EditorGUILayout.LabelField(contentUSymbol, unitWidth);
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleScaleX;
-
-                                    m_SurfaceState.currentTexGen.Scale.x = EditorGUILayout.FloatField(
-                                        m_SurfaceState.currentTexGen.Scale.x, minFloatFieldWidth
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetScaleX(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Scale.x
-                                    );
-                                }
-
-                                EditorGUILayout.LabelField(contentVSymbol, unitWidth);
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleScaleY;
-
-                                    m_SurfaceState.currentTexGen.Scale.y = EditorGUILayout.FloatField(
-                                        m_SurfaceState.currentTexGen.Scale.y, minFloatFieldWidth
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetScaleY(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Scale.y
-                                    );
-                                }
-                            }
-
-                            GUILayout.EndHorizontal();
-                        }
-
-                        GUILayout.EndHorizontal();
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            EditorGUILayout.LabelField(contentOffset, largeLabelWidth);
-                            TooltipUtility.SetToolTip(toolTipOffsetUV);
-
-                            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                            {
-                                EditorGUILayout.LabelField(contentUSymbol, unitWidth);
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleTranslationX;
-
-                                    m_SurfaceState.currentTexGen.Translation.x = EditorGUILayout.FloatField(
-                                        m_SurfaceState.currentTexGen.Translation.x, minFloatFieldWidth
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetTranslationX(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Translation.x
-                                    );
-                                }
-
-                                EditorGUILayout.LabelField(contentVSymbol, unitWidth);
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleTranslationY;
-
-                                    m_SurfaceState.currentTexGen.Translation.y = EditorGUILayout.FloatField(
-                                        m_SurfaceState.currentTexGen.Translation.y, minFloatFieldWidth
-                                    );
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetTranslationY(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.Translation.y
-                                    );
-                                }
-                            }
-
-                            GUILayout.EndHorizontal();
-                        }
-
-                        GUILayout.EndHorizontal();
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            EditorGUILayout.LabelField(contentRotate, largeLabelWidth);
-                            TooltipUtility.SetToolTip(toolTipRotation);
-
-                            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
-
-                            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                            {
-                                EditorGUI.BeginChangeCheck();
-
-                                {
-                                    EditorGUI.showMixedValue = m_SurfaceState.multipleRotationAngle;
-
-                                    m_SurfaceState.currentTexGen.RotationAngle = EditorGUILayout.FloatField(
-                                        m_SurfaceState.currentTexGen.RotationAngle, minFloatFieldWidth
-                                    );
-
-                                    EditorGUILayout.LabelField(contentAngleSymbol, unitWidth);
-                                }
-
-                                if(EditorGUI.EndChangeCheck())
-                                {
-                                    SurfaceUtility.SetRotationAngle(
-                                        m_SurfaceState.selectedBrushSurfaces, m_SurfaceState.currentTexGen.RotationAngle
-                                    );
-                                }
-                            }
-
-                            GUILayout.EndHorizontal();
-
-                            GUILayoutOption[] buttonWidth = Array.Empty<GUILayoutOption>();
-                            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                            {
-                                if(GUILayout.Button(contentRotate90Negative, leftStyle, buttonWidth))
-                                {
-                                    SurfaceUtility.AddRotationAngle(m_SurfaceState.selectedBrushSurfaces, -90.0f);
-                                }
-
-                                TooltipUtility.SetToolTip(toolTipRotate90Negative);
-
-                                if(GUILayout.Button(contentRotate90Positive, rightStyle, buttonWidth))
-                                {
-                                    SurfaceUtility.AddRotationAngle(m_SurfaceState.selectedBrushSurfaces, +90.0f);
-                                }
-
-                                TooltipUtility.SetToolTip(toolTipRotate90Positive);
-                            }
-
-                            GUILayout.EndHorizontal();
-                            GUILayout.EndVertical();
-                        }
-
-                        GUILayout.EndHorizontal();
-                    }
-
-                    GUILayout.EndVertical();
-
-                    EditorGUILayout.Space();
-
-                    GUILayout.BeginVertical(GUIStyle.none);
-
-                    {
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            GUILayout.Label(contentFit, largeLabelWidth);
-
-                            if(GUILayout.Button(contentFitX, leftStyle))
-                            {
-                                SurfaceUtility.FitSurfaceX(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFitX);
-
-                            if(GUILayout.Button(contentFitXY, middleStyle))
-                            {
-                                SurfaceUtility.FitSurface(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFitXY);
-
-                            if(GUILayout.Button(contentFitY, rightStyle))
-                            {
-                                SurfaceUtility.FitSurfaceY(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFitY);
-                        }
-
-                        GUILayout.EndHorizontal();
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            GUILayout.Label(contentReset, largeLabelWidth);
-
-                            if(GUILayout.Button(contentResetX, leftStyle))
-                            {
-                                SurfaceUtility.ResetSurfaceX(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipResetX);
-
-                            if(GUILayout.Button(contentResetXY, middleStyle))
-                            {
-                                SurfaceUtility.ResetSurface(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipResetXY);
-
-                            if(GUILayout.Button(contentResetY, rightStyle))
-                            {
-                                SurfaceUtility.ResetSurfaceY(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipResetY);
-                        }
-
-                        GUILayout.EndHorizontal();
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            GUILayout.Label(contentFlip, largeLabelWidth);
-
-                            if(GUILayout.Button(contentFlipX, leftStyle))
-                            {
-                                SurfaceUtility.FlipX(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFlipX);
-
-                            if(GUILayout.Button(contentFlipXY, middleStyle))
-                            {
-                                SurfaceUtility.FlipXY(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFlipXY);
-
-                            if(GUILayout.Button(contentFlipY, rightStyle))
-                            {
-                                SurfaceUtility.FlipY(m_SurfaceState.selectedBrushSurfaces);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipFlipY);
-                        }
-
-                        GUILayout.EndHorizontal();
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            GUILayout.Label(contentScale, largeLabelWidth);
-
-                            if(GUILayout.Button(contentDoubleScale, leftStyle))
-                            {
-                                SurfaceUtility.MultiplyScale(m_SurfaceState.selectedBrushSurfaces, 2.0f);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipDoubleScale);
-
-                            if(GUILayout.Button(contentHalfScale, rightStyle))
-                            {
-                                SurfaceUtility.MultiplyScale(m_SurfaceState.selectedBrushSurfaces, 0.5f);
-                            }
-
-                            TooltipUtility.SetToolTip(toolTipHalfScale);
-                        }
-
-                        GUILayout.EndHorizontal();
-                    }
-
-                    GUILayout.EndVertical();
-
-                    EditorGUILayout.Space();
-
-                    OnGUIContentsJustify(false, m_SurfaceState.selectedBrushSurfaces);
-
-                    EditorGUILayout.Space();
-
-                    GUILayout.BeginVertical(GUIStyle.none);
-
-                    {
-                        EditModeCommonGUI.OnSurfaceFlagButtons(
-                            m_SurfaceState.surfaceFlagState, m_SurfaceState.selectedBrushSurfaces
-                        );
-
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            EditorGUI.BeginDisabledGroup(!m_SurfaceState.canSmooth);
-
-                            {
-                                if(GUILayout.Button(contentSmoothSurfaces, leftStyle))
-                                {
-                                    SurfaceUtility.Smooth(m_SurfaceState.selectedBrushSurfaces);
-                                }
-
-                                TooltipUtility.SetToolTip(toolTipSmoothSurfaces);
-                            }
-
-                            EditorGUI.EndDisabledGroup();
-                            EditorGUI.BeginDisabledGroup(!m_SurfaceState.canUnSmooth);
-
-                            {
-                                if(GUILayout.Button(contentUnSmoothSurfaces, rightStyle))
-                                {
-                                    SurfaceUtility.UnSmooth(m_SurfaceState.selectedBrushSurfaces);
-                                }
-
-                                TooltipUtility.SetToolTip(toolTipUnSmoothSurfaces);
-                            }
-
-                            EditorGUI.EndDisabledGroup();
-                        }
-
-                        GUILayout.EndHorizontal();
-                    }
-
-                    GUILayout.EndVertical();
-
-                    EditorGUILayout.Space();
-                    Material newMaterial;
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                    {
-                        EditorGUILayout.LabelField(contentMaterial, largeLabelWidth);
-                        GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            EditorGUI.BeginChangeCheck();
-
-                            {
-                                EditorGUI.showMixedValue = m_SurfaceState.multipleMaterials;
-
-                                newMaterial = EditorGUILayout.ObjectField(
-                                    m_SurfaceState.material, typeof(Material), true
-                                ) as Material;
-
-                                EditorGUI.showMixedValue = false;
-                            }
-
-                            if(EditorGUI.EndChangeCheck())
-                            {
-                                if(!newMaterial)
-                                {
-                                    newMaterial = MaterialUtility.MissingMaterial;
-                                }
-
-                                SurfaceUtility.SetMaterials(m_SurfaceState.selectedBrushSurfaces, newMaterial);
-                            }
-                        }
-
-                        GUILayout.Space(2);
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            GUILayout.Space(5);
-
-                            OnGUIContentsMaterialImage(
-                                false, m_SurfaceState.firstMaterial, m_SurfaceState.multipleMaterials
-                              , m_SurfaceState.selectedBrushSurfaces
-                            );
-                        }
-
-                        GUILayout.EndHorizontal();
-                        GUILayout.EndVertical();
-                    }
-
-                    GUILayout.EndHorizontal();
+                    newMaterial = MaterialUtility.MissingMaterial;
                 }
 
-                GUILayout.EndVertical();
+                SurfaceUtility.SetMaterials(m_SurfaceState.selectedBrushSurfaces, newMaterial);
             }
+
+            GUILayout.Space(2);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Space(5);
+
+            OnGUIContentsMaterialImage(m_SurfaceState.firstMaterial, m_SurfaceState.multipleMaterials, m_SurfaceState.selectedBrushSurfaces);
+
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndVertical();
 
             EditorGUI.EndDisabledGroup();
             EditorGUI.showMixedValue = false;
@@ -1539,21 +1307,19 @@ namespace RealtimeCSG
 
             GUIStyle windowStyle = GUI.skin.window;
 
-            CSGModel[] models = InternalCSGModelManager.Models;
-            bool needLightmapUVUpdate = EditModeCommonGUI.NeedLightmapUVUpdate(models);
-            int originalHeight = SURFACE_EDIT_WINDOW_HEIGHT + (needLightmapUVUpdate ? LIGHT_MAP_UV_BUTTON_OFFSET : 0);
-            float visibleHeight = Math.Min(originalHeight, maxHeight);
-            float height = visibleHeight;
-            float y = windowRect.height - height; // 252
+            CSGModel[] models               = InternalCSGModelManager.Models;
+            bool       needLightmapUVUpdate = EditModeCommonGUI.NeedLightmapUVUpdate(models);
+            int        originalHeight       = SURFACE_EDIT_WINDOW_HEIGHT + (needLightmapUVUpdate ? LIGHT_MAP_UV_BUTTON_OFFSET : 0);
+            float      visibleHeight        = Math.Min(originalHeight, maxHeight);
+            float      y                    = windowRect.height - visibleHeight; // 252
 
             Rect currentArea = sceneGUIRect;
             currentArea.y      = y;
-            currentArea.height = height;
+            currentArea.height = visibleHeight;
 
             Rect      boxArea               = currentArea;
             const int scrollbarWidth        = 10;
             const int scrollbarRightOffset  = 7;
-            const int scrollbarTopOffset    = SURFACE_EDIT_TITLE_HEIGHT;
             const int scrollbarBottomOffset = 2;
             Rect      scrollbarArea         = currentArea;
             float     scrollHeight          = originalHeight - visibleHeight;
@@ -1561,8 +1327,8 @@ namespace RealtimeCSG
 
             if(haveScrollbar)
             {
-                scrollbarArea.y      += scrollbarTopOffset;
-                scrollbarArea.height -= scrollbarTopOffset + scrollbarBottomOffset;
+                scrollbarArea.y      += SURFACE_EDIT_TITLE_HEIGHT;
+                scrollbarArea.height -= SURFACE_EDIT_TITLE_HEIGHT + scrollbarBottomOffset;
                 scrollbarArea.x      += scrollbarArea.width - scrollbarRightOffset;
                 scrollbarArea.width  =  scrollbarWidth;
                 boxArea.width        += scrollbarWidth;
@@ -1571,32 +1337,30 @@ namespace RealtimeCSG
             GUI.Box(boxArea, m_ContentSurfacesLabel, windowStyle);
             int windowControlID = GUIUtility.GetControlID(sceneViewSurfaceOverlayHash, FocusType.Keyboard, boxArea);
 
+            currentArea.x     += 5;
+            currentArea.width += 2;
+            currentArea.y     += SURFACE_EDIT_TITLE_HEIGHT;
+            Rect internalScrollbarArea = currentArea;
+            currentArea.height -= SURFACE_EDIT_TITLE_HEIGHT;
+
+            if(haveScrollbar)
             {
-                currentArea.x     += 5;
-                currentArea.width += 2;
-                currentArea.y     += scrollbarTopOffset;
-                Rect internalScrollbarArea = currentArea;
-                currentArea.height -= scrollbarTopOffset;
+                internalScrollbarArea.height =  originalHeight - SURFACE_EDIT_TITLE_HEIGHT;
+                internalScrollbarArea.width  -= 50;
+                m_ScrollbarPosition          =  GUI.BeginScrollView(currentArea, m_ScrollbarPosition, internalScrollbarArea);
+            }
+            else
+            {
+                m_ScrollbarPosition.y = 0;
+            }
 
-                if(haveScrollbar)
-                {
-                    internalScrollbarArea.height = originalHeight - scrollbarTopOffset;
-                    internalScrollbarArea.width -= 50;
-                    m_ScrollbarPosition = GUI.BeginScrollView(currentArea, m_ScrollbarPosition, internalScrollbarArea);
-                }
-                else
-                {
-                    m_ScrollbarPosition.y = 0;
-                }
+            currentArea.y      += 8;
+            currentArea.height -= 8;
+            OnGUIContents(currentArea, tool, needLightmapUVUpdate);
 
-                currentArea.y      += 8;
-                currentArea.height -= 8;
-                OnGUIContents(currentArea, tool, needLightmapUVUpdate);
-
-                if(haveScrollbar)
-                {
-                    GUI.EndScrollView(true);
-                }
+            if(haveScrollbar)
+            {
+                GUI.EndScrollView(true);
             }
 
             m_LastGuiRect = boxArea;

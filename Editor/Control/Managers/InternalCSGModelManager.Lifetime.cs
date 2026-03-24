@@ -190,8 +190,7 @@ namespace RealtimeCSG
 
         private static bool EnsureExternalMethodsPopulated()
         {
-            if(External == null ||
-               External.resetCSG == null)
+            if(External == null || External.resetCSG == null)
             {
                 NativeMethodBindings.RegisterUnityMethods();
                 NativeMethodBindings.RegisterExternalMethods();
@@ -199,9 +198,7 @@ namespace RealtimeCSG
 
             if(External == null)
             {
-                Debug.LogError(
-                    "RealtimeCSG: Cannot rebuild meshes for some reason. External modules not loaded. Please save meshes into the Scene."
-                );
+                Debug.LogError("RealtimeCSG: Cannot rebuild meshes for some reason. External modules not loaded. Please save meshes into the Scene.");
 
                 return false;
             }

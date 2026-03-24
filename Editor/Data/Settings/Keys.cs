@@ -74,8 +74,7 @@ namespace RealtimeCSG
         public static readonly KeyEvent quickHideUnselectedObjectsKey = new KeyEvent(KeyCode.H, EventModifiers.Control);
 
         [KeyDescription("Selection/ToggleVisibility")]
-        public static readonly KeyEvent toggleSelectedObjectVisibilityKey =
-            new KeyEvent(KeyCode.H, EventModifiers.Shift);
+        public static readonly KeyEvent toggleSelectedObjectVisibilityKey = new KeyEvent(KeyCode.H, EventModifiers.Shift);
 
         [KeyDescription("Selection/UnhideAll")]
         public static readonly KeyEvent unHideAllObjectsKey = new KeyEvent(KeyCode.U, EventModifiers.None);
@@ -87,49 +86,31 @@ namespace RealtimeCSG
         public static readonly KeyEvent rotateSelectionRight = new KeyEvent(KeyCode.Period, EventModifiers.Control);
 
         [KeyDescription("Selection/Move left")]
-        public static readonly KeyEvent moveSelectionLeft = new KeyEvent(
-            KeyCode.LeftArrow, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent moveSelectionLeft = new KeyEvent(KeyCode.LeftArrow, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Move right")]
-        public static readonly KeyEvent moveSelectionRight = new KeyEvent(
-            KeyCode.RightArrow, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent moveSelectionRight = new KeyEvent(KeyCode.RightArrow, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Move back")]
-        public static readonly KeyEvent moveSelectionBack = new KeyEvent(
-            KeyCode.DownArrow, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent moveSelectionBack = new KeyEvent(KeyCode.DownArrow, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Move forward")]
-        public static readonly KeyEvent moveSelectionForward = new KeyEvent(
-            KeyCode.UpArrow, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent moveSelectionForward = new KeyEvent(KeyCode.UpArrow, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Move down")]
-        public static readonly KeyEvent moveSelectionDown = new KeyEvent(
-            KeyCode.PageDown, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent moveSelectionDown = new KeyEvent(KeyCode.PageDown, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Move up")]
-        public static readonly KeyEvent moveSelectionUp = new KeyEvent(
-            KeyCode.PageUp, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent moveSelectionUp = new KeyEvent(KeyCode.PageUp, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Flip on X axis")]
-        public static readonly KeyEvent flipSelectionX = new KeyEvent(
-            KeyCode.X, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent flipSelectionX = new KeyEvent(KeyCode.X, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Flip on Y axis")]
-        public static readonly KeyEvent flipSelectionY = new KeyEvent(
-            KeyCode.Y, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent flipSelectionY = new KeyEvent(KeyCode.Y, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Flip on Z axis")]
-        public static readonly KeyEvent flipSelectionZ = new KeyEvent(
-            KeyCode.Z, EventModifiers.Control | EventModifiers.Shift
-        );
+        public static readonly KeyEvent flipSelectionZ = new KeyEvent(KeyCode.Z, EventModifiers.Control | EventModifiers.Shift);
 
         [KeyDescription("Selection/Set as PassThrough")]
         public static readonly KeyEvent makeSelectedPassThroughKey = new KeyEvent(KeyCode.Question);
@@ -141,9 +122,7 @@ namespace RealtimeCSG
         public static readonly KeyEvent makeSelectedSubtractiveKey = new KeyEvent(KeyCode.Minus, KeyCode.KeypadMinus);
 
         [KeyDescription("Selection/Set as Intersecting")]
-        public static readonly KeyEvent makeSelectedIntersectingKey = new KeyEvent(
-            KeyCode.Backslash, KeyCode.KeypadDivide
-        );
+        public static readonly KeyEvent makeSelectedIntersectingKey = new KeyEvent(KeyCode.Backslash, KeyCode.KeypadDivide);
 
         [KeyDescription("Grid/Half grid size")]
         public static readonly KeyEvent halfGridSizeKey = new KeyEvent(KeyCode.LeftBracket);

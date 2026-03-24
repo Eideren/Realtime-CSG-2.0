@@ -35,8 +35,7 @@ namespace RealtimeCSG
 
             Reset();
 
-            if(DragAndDrop.objectReferences == null ||
-               DragAndDrop.objectReferences.Length == 0)
+            if(DragAndDrop.objectReferences == null || DragAndDrop.objectReferences.Length == 0)
             {
                 _dragGameObjects = null;
 
@@ -176,8 +175,7 @@ namespace RealtimeCSG
 
         private void EnableVisualObjects()
         {
-            if(_visualDragGameObject == null ||
-               _visualDragGameObject.Count != _dragGameObjects.Count)
+            if(_visualDragGameObject == null || _visualDragGameObject.Count != _dragGameObjects.Count)
             {
                 CreateVisualObjects();
             }
@@ -262,10 +260,7 @@ namespace RealtimeCSG
 
                 _hoverBrushSurface = null;
                 _hoverParent       = transformInInspector == null ? null : transformInInspector.parent;
-
-                _hoverSiblingIndex = transformInInspector == null
-                    ? int.MaxValue
-                    : transformInInspector.transform.GetSiblingIndex();
+                _hoverSiblingIndex = transformInInspector == null ? int.MaxValue : transformInInspector.transform.GetSiblingIndex();
 
                 float middle = (selectionRect.yMax + selectionRect.yMin) * 0.5f;
 
@@ -298,21 +293,14 @@ namespace RealtimeCSG
 
                 Camera camera = sceneView.camera;
 
-                LegacyBrushIntersection intersection =
-                    SceneQueryUtility.FindMeshIntersection(camera, Event.current.mousePosition);
+                LegacyBrushIntersection intersection = SceneQueryUtility.FindMeshIntersection(camera, Event.current.mousePosition);
 
                 Vector3 normal = intersection.worldPlane.normal;
 
-                _hoverPosition = intersection.worldIntersection;
-                _hoverParent   = SelectionUtility.FindParentToAssignTo(intersection);
-
-                _hoverBrushSurface = intersection.brush != null
-                    ? new SelectedBrushSurface(intersection.brush, intersection.surfaceIndex, intersection.worldPlane)
-                    : null;
-
-                _hoverRotation = SelectionUtility.FindDragOrientation(
-                    sceneView, normal, _sourceSurfaceAlignment, _destinationSurfaceAlignment
-                );
+                _hoverPosition     = intersection.worldIntersection;
+                _hoverParent       = SelectionUtility.FindParentToAssignTo(intersection);
+                _hoverBrushSurface = intersection.brush != null ? new SelectedBrushSurface(intersection.brush, intersection.surfaceIndex, intersection.worldPlane) : null;
+                _hoverRotation     = SelectionUtility.FindDragOrientation(sceneView, normal, _sourceSurfaceAlignment, _destinationSurfaceAlignment);
 
                 _haveNoParent      = _hoverParent == null;
                 _hoverSiblingIndex = int.MaxValue;
@@ -329,9 +317,7 @@ namespace RealtimeCSG
 
                     for(int i = 0; i < localPoints.Length; i++)
                     {
-                        localPoints[i] = GeometryUtility.ProjectPointOnPlane(
-                            localPlane, _hoverRotation * _projectedBounds[i] + _hoverPosition
-                        );
+                        localPoints[i] = GeometryUtility.ProjectPointOnPlane(localPlane, _hoverRotation * _projectedBounds[i] + _hoverPosition);
                     }
 
                     _hoverPosition += CSGGrid.SnapDeltaToGrid(camera, MathConstants.zeroVector3, localPoints);
@@ -465,12 +451,7 @@ namespace RealtimeCSG
             int       highlightSurface    = _hoverBrushSurface.surfaceIndex;
             Matrix4x4 brushTransformation = brush.compareTransformation.localToWorldMatrix;
 
-            CSGRenderer.DrawSelectedBrush(
-                brush.brushNodeID, brush.Shape,
-                brushTransformation, ColorSettings.WireframeOutline,
-                highlightSurface,
-                false, GUIConstants.OLD_LINE_SCALE
-            );
+            CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline, highlightSurface, false, GUIConstants.OLD_LINE_SCALE);
         }
 
 #endregion

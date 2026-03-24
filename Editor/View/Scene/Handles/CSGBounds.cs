@@ -40,14 +40,9 @@ namespace RealtimeCSG.Helpers
 
             Event evt = Event.current;
 
-            switch(evt.type)
+            if(evt.type == EventType.Repaint)
             {
-                case EventType.Repaint:
-                {
-                    Render(camera, worldToLocalRotation, showEdgePoints);
-
-                    break;
-                }
+                Render(camera, worldToLocalRotation, showEdgePoints);
             }
 
             Quaternion localToWorldRotation = Quaternion.Inverse(worldToLocalRotation);
@@ -66,15 +61,12 @@ namespace RealtimeCSG.Helpers
                 Handles.color = sideColors[i * 2 + 1];
 
                 Vector3 position = sidePoints[i];
-                Vector3 normal   = BoundsUtilities.AABBSideNormal[i];
+                Vector3 normal   = BoundsUtilities.aabbSideNormal[i];
                 float   size     = sideSizes[i];
                 int     id       = sideControlIDs[i];
                 EditorGUI.BeginChangeCheck();
 
-                position = CSGSlider1D.Do(
-                    camera, id, position, normal, size, CSGHandles.HoverArrowHandleCap, activeSnappingMode, null, init
-                  , shutdown
-                );
+                position = CSGSlider1D.Do(camera, id, position, normal, size, CSGHandles.HoverArrowHandleCap, activeSnappingMode, null, init, shutdown);
 
                 if(EditorGUI.EndChangeCheck())
                 {
@@ -117,18 +109,15 @@ namespace RealtimeCSG.Helpers
                     Handles.color = edgeColors[i * 2 + 1];
 
                     Vector3 position    = edgePoints[i];
-                    int[]   sideIndices = BoundsUtilities.AABBEdgeSides[i];
-                    Vector3 normal      = BoundsUtilities.AABBEdgeTangents[i];
-                    Vector3 direction1  = BoundsUtilities.AABBSideNormal[sideIndices[0]];
-                    Vector3 direction2  = BoundsUtilities.AABBSideNormal[sideIndices[1]];
+                    int[]   sideIndices = BoundsUtilities.aabbEdgeSides[i];
+                    Vector3 normal      = BoundsUtilities.aabbEdgeTangents[i];
+                    Vector3 direction1  = BoundsUtilities.aabbSideNormal[sideIndices[0]];
+                    Vector3 direction2  = BoundsUtilities.aabbSideNormal[sideIndices[1]];
                     float   size        = edgeSizes[i] / 20.0f;
                     int     id          = edgeControlIDs[i];
                     EditorGUI.BeginChangeCheck();
 
-                    position = CSGHandles.Slider2D(
-                        camera, id, position, Vector3.zero, normal, direction1, direction2, size, null
-                      , activeSnappingMode, null, init, shutdown
-                    );
+                    position = CSGHandles.Slider2D(camera, id, position, Vector3.zero, normal, direction1, direction2, size, null, activeSnappingMode, null, init, shutdown);
 
                     if(EditorGUI.EndChangeCheck())
                     {
@@ -136,7 +125,7 @@ namespace RealtimeCSG.Helpers
                         bounds = OriginalBounds;
 
                         Vector3    delta = position - originalPoint;
-                        CubeSide[] sides = BoundsUtilities.AABBEdgeCubeSides[i];
+                        CubeSide[] sides = BoundsUtilities.aabbEdgeCubeSides[i];
 
                         switch(sides[0])
                         {
@@ -197,14 +186,8 @@ namespace RealtimeCSG.Helpers
             Color     boundOutlinesColor = ColorSettings.MeshEdgeOutline;
             Matrix4x4 localToWorld       = Matrix4x4.TRS(Vector3.zero, localToWorldRotation, Vector3.one);
 
-            PaintUtility.DrawDottedLines(
-                localToWorld, cornerPoints, BoundsUtilities.AABBLineIndices, boundOutlinesColor
-            );
-
-            PaintUtility.DrawLines(
-                localToWorld, cornerPoints, BoundsUtilities.AABBLineIndices, GUIConstants.OLD_LINE_SCALE
-              , boundOutlinesColor
-            );
+            PaintUtility.DrawDottedLines(localToWorld, cornerPoints, BoundsUtilities.aabbLineIndices, boundOutlinesColor);
+            PaintUtility.DrawLines(localToWorld, cornerPoints, BoundsUtilities.aabbLineIndices, GUIConstants.OLD_LINE_SCALE, boundOutlinesColor);
 
             bool isOrtho = camera.orthographic;
 
@@ -212,20 +195,18 @@ namespace RealtimeCSG.Helpers
             {
                 Vector3 cameraDirection = worldToLocalRotation * camera.transform.forward;
 
-                for(int i = 0; i < BoundsUtilities.AABBSideNormal.Length; i++)
+                for(int i = 0; i < BoundsUtilities.aabbSideNormal.Length; i++)
                 {
-                    Vector3 normal = BoundsUtilities.AABBSideNormal[i];
-                    sideBackfaced[i] = Mathf.Abs(Vector3.Dot(normal, cameraDirection)) > 0.9999f;
+                    sideBackfaced[i] = Mathf.Abs(Vector3.Dot(BoundsUtilities.aabbSideNormal[i], cameraDirection)) > 0.9999f;
                 }
             }
             else
             {
                 Vector3 cameraPosition = worldToLocalRotation * camera.transform.position;
 
-                for(int i = 0; i < BoundsUtilities.AABBSideNormal.Length; i++)
+                for(int i = 0; i < BoundsUtilities.aabbSideNormal.Length; i++)
                 {
-                    Vector3 normal = BoundsUtilities.AABBSideNormal[i];
-                    sideBackfaced[i] = Vector3.Dot(normal, cameraPosition - sidePoints[i]) < 0;
+                    sideBackfaced[i] = Vector3.Dot(BoundsUtilities.aabbSideNormal[i], cameraPosition - sidePoints[i]) < 0;
                 }
             }
 
@@ -241,7 +222,7 @@ namespace RealtimeCSG.Helpers
 
                 bool disabled = false;
 
-                switch(BoundsUtilities.AABBSideAxis[i])
+                switch(BoundsUtilities.aabbSideAxis[i])
                 {
                     case PrincipleAxis.X: disabled = CSGSettings.LockAxisX; break;
                     case PrincipleAxis.Y: disabled = CSGSettings.LockAxisY; break;
@@ -286,27 +267,25 @@ namespace RealtimeCSG.Helpers
                 {
                     int id = edgeControlIDs[i];
 
-                    SelectState state = hotControl == id || nearestControl == id
-                        ? SelectState.Hovering
-                        : SelectState.None;
+                    SelectState state = hotControl == id || nearestControl == id ? SelectState.Hovering : SelectState.None;
 
                     Color color1 = ColorSettings.MeshEdgeOutline;
                     Color color2 = ColorSettings.PointInnerStateColor[(int)state];
 
-                    bool disabled1 = BoundsUtilities.AABBEdgeAxis[i][0] switch
+                    bool disabled1 = BoundsUtilities.aabbEdgeAxis[i][0] switch
                     {
                         PrincipleAxis.X => CSGSettings.LockAxisX
                       , PrincipleAxis.Y => CSGSettings.LockAxisY
                       , PrincipleAxis.Z => CSGSettings.LockAxisZ
-                      , _               => false
+                      , var _           => false
                     };
 
-                    bool disabled2 = BoundsUtilities.AABBEdgeAxis[i][1] switch
+                    bool disabled2 = BoundsUtilities.aabbEdgeAxis[i][1] switch
                     {
                         PrincipleAxis.X => CSGSettings.LockAxisX
                       , PrincipleAxis.Y => CSGSettings.LockAxisY
                       , PrincipleAxis.Z => CSGSettings.LockAxisZ
-                      , _               => false
+                      , var _           => false
                     };
 
                     if(disabled1 && disabled2)
@@ -316,8 +295,8 @@ namespace RealtimeCSG.Helpers
 
                     float handleSize      = HandleUtility.GetHandleSize(localToWorldRotation * edgePoints[i]);
                     float pointHandleSize = handleSize / 20.0f;
-                    int   side1           = BoundsUtilities.AABBEdgeSides[i][0];
-                    int   side2           = BoundsUtilities.AABBEdgeSides[i][1];
+                    int   side1           = BoundsUtilities.aabbEdgeSides[i][0];
+                    int   side2           = BoundsUtilities.aabbEdgeSides[i][1];
 
                     if(isOrtho)
                     {
@@ -362,15 +341,11 @@ namespace RealtimeCSG.Helpers
             Quaternion localToWorldRotation = Quaternion.Inverse(worldToLocalRotation);
             Matrix4x4  localToWorld         = Matrix4x4.TRS(Vector3.zero, localToWorldRotation, Vector3.one);
 
-            PaintUtility.DrawDoubleDots(
-                camera, localToWorld, sidePoints, sidePointSizes, sideColors, sidePoints.Length
-            );
+            PaintUtility.DrawDoubleDots(camera, localToWorld, sidePoints, sidePointSizes, sideColors, sidePoints.Length);
 
             if(showEdgePoints)
             {
-                PaintUtility.DrawDoubleDots(
-                    camera, localToWorld, edgePoints, edgePointSizes, edgeColors, edgePoints.Length
-                );
+                PaintUtility.DrawDoubleDots(camera, localToWorld, edgePoints, edgePointSizes, edgeColors, edgePoints.Length);
             }
 
             PaintUtility.RenderBoundsSizes(

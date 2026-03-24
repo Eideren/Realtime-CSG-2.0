@@ -63,8 +63,7 @@ namespace RealtimeCSG
             PrefabAssetType      prefabAssetType    = PrefabUtility.GetPrefabAssetType(gameObject);
             PrefabInstanceStatus prefabInstanceType = PrefabUtility.GetPrefabInstanceStatus(gameObject);
 
-            return prefabAssetType != PrefabAssetType.NotAPrefab ||
-                prefabInstanceType != PrefabInstanceStatus.NotAPrefab;
+            return prefabAssetType != PrefabAssetType.NotAPrefab || prefabInstanceType != PrefabInstanceStatus.NotAPrefab;
         }
 
         public static bool IsPrefabAsset(GameObject gameObject)
@@ -78,8 +77,7 @@ namespace RealtimeCSG
 
             PrefabAssetType prefabType = PrefabUtility.GetPrefabAssetType(gameObject);
 
-            return prefabType != PrefabAssetType.NotAPrefab &&
-                prefabType != PrefabAssetType.Model;
+            return prefabType != PrefabAssetType.NotAPrefab && prefabType != PrefabAssetType.Model;
         }
 
         public static bool IsPrefabInstance(GameObject gameObject)
@@ -111,9 +109,7 @@ namespace RealtimeCSG
                 return null;
             }
 
-            return (GameObject)AssetDatabase.LoadMainAssetAtPath(
-                PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject)
-            );
+            return (GameObject)AssetDatabase.LoadMainAssetAtPath(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject));
         }
 
         public static GameObject GetOutermostPrefabInstanceRoot(GameObject gameObject)

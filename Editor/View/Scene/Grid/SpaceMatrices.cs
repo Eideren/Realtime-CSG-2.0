@@ -1,6 +1,6 @@
 ﻿// * * * * * * * * * * * * * * * * * * * * * *
 //  Description:
-// 
+//
 // * * * * * * * * * * * * * * * * * * * * * *
 
 using System;
@@ -22,8 +22,7 @@ namespace RealtimeCSG
         {
             SpaceMatrices spaceMatrices = new SpaceMatrices();
 
-            if(transform == null ||
-               Tools.pivotRotation == PivotRotation.Global)
+            if(transform == null || Tools.pivotRotation == PivotRotation.Global)
             {
                 return spaceMatrices;
             }

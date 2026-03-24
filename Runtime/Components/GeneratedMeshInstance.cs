@@ -11,9 +11,7 @@ namespace InternalRealtimeCSG
     {
         public static MeshInstanceKey GenerateKey(GeneratedMeshDescription meshDescription)
         {
-            return new MeshInstanceKey(
-                meshDescription.meshQuery, meshDescription.surfaceParameter, meshDescription.subMeshQueryIndex
-            );
+            return new MeshInstanceKey(meshDescription.meshQuery, meshDescription.surfaceParameter, meshDescription.subMeshQueryIndex);
         }
 
         private MeshInstanceKey(MeshQuery meshType, int surfaceParameter, int subMeshIndex)
@@ -166,15 +164,15 @@ namespace InternalRealtimeCSG
         [HideInInspector] public bool HasUV2 = false;
 
         [NonSerialized, HideInInspector]
-         public float ResetUVTime = float.PositiveInfinity;
+        public float ResetUVTime = float.PositiveInfinity;
 
         [HideInInspector] public long LightingHashValue;
 
-        [NonSerialized, HideInInspector]  public bool Dirty = true;
-        [NonSerialized, HideInInspector]  public MeshCollider CachedMeshCollider;
-        [NonSerialized, HideInInspector]  public MeshFilter CachedMeshFilter;
-        [NonSerialized, HideInInspector]  public MeshRenderer CachedMeshRenderer;
-        [NonSerialized, HideInInspector]  public object CachedMeshRendererSO;
+        [NonSerialized, HideInInspector] public bool Dirty = true;
+        [NonSerialized, HideInInspector] public MeshCollider CachedMeshCollider;
+        [NonSerialized, HideInInspector] public MeshFilter CachedMeshFilter;
+        [NonSerialized, HideInInspector] public MeshRenderer CachedMeshRenderer;
+        [NonSerialized, HideInInspector] public object CachedMeshRendererSO;
 
         public void Reset()
         {

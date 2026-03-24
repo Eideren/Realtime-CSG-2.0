@@ -9,8 +9,7 @@ namespace RealtimeCSG
     {
         private static TooltipContentState m_CurrentState;
 
-        private static readonly Dictionary<Object, TooltipContentState> currentStateCache =
-            new Dictionary<Object, TooltipContentState>();
+        private static readonly Dictionary<Object, TooltipContentState> currentStateCache = new Dictionary<Object, TooltipContentState>();
 
         private const float TOOLTIP_WAIT_TIME = 0.125f;
 
@@ -96,8 +95,7 @@ namespace RealtimeCSG
         {
             m_CurrentState = state;
 
-            if(Event.current.type != EventType.Repaint &&
-               Event.current.type != EventType.Layout)
+            if(Event.current.type != EventType.Repaint && Event.current.type != EventType.Layout)
             {
                 return;
             }
@@ -144,27 +142,19 @@ namespace RealtimeCSG
                 m_CurrentState.currentToolTipTitle    = new GUIContent(currentToolTipTitleString);
                 m_CurrentState.currentToolTipContents = new GUIContent(currentToolTipContentsString);
 
-                m_CurrentState.currentToolTipKeyCodes = string.IsNullOrEmpty(currentToolTipKeyCodesString)
-                    ? null
-                    : new GUIContent(currentToolTipKeyCodesString);
+                m_CurrentState.currentToolTipKeyCodes = string.IsNullOrEmpty(currentToolTipKeyCodesString) ? null : new GUIContent(currentToolTipKeyCodesString);
 
                 Vector2 currentToolTipTitleSize    = titleStyle.CalcSize(m_CurrentState.currentToolTipTitle);
                 Vector2 currentToolTipContentsSize = contentsStyle.CalcSize(m_CurrentState.currentToolTipContents);
+                Vector2 currentToolTipKeyCodesSize = m_CurrentState.currentToolTipKeyCodes != null ? keycodesStyle.CalcSize(m_CurrentState.currentToolTipKeyCodes) : Vector2.zero;
 
-                Vector2 currentToolTipKeyCodesSize = m_CurrentState.currentToolTipKeyCodes != null
-                    ? keycodesStyle.CalcSize(m_CurrentState.currentToolTipKeyCodes)
-                    : Vector2.zero;
+                Rect    currentArea = getLastRect ? GUILayoutUtility.GetLastRect() : m_CurrentState.maxArea;
+                Vector2 size        = currentToolTipTitleSize;
 
-                Rect currentArea = getLastRect ? GUILayoutUtility.GetLastRect() : m_CurrentState.maxArea;
-
-                Vector2 size = currentToolTipTitleSize;
-
-                size.x = Mathf.Max(
-                    currentToolTipTitleSize.x, currentToolTipContentsSize.x, currentToolTipKeyCodesSize.x
-                );
-
+                size.x = Mathf.Max(currentToolTipTitleSize.x, currentToolTipContentsSize.x, currentToolTipKeyCodesSize.x);
                 size.y = currentToolTipTitleSize.y + currentToolTipContentsSize.y + currentToolTipKeyCodesSize.y;
-                m_CurrentState.currentToolTipArea = GUIUtility.ScreenToGUIRect(m_CurrentState.tooltipArea);
+
+                m_CurrentState.currentToolTipArea       = GUIUtility.ScreenToGUIRect(m_CurrentState.tooltipArea);
                 m_CurrentState.currentToolTipArea.width = size.x;
 
                 if(m_CurrentState.currentToolTipArea.xMax > currentArea.xMax)
@@ -178,22 +168,11 @@ namespace RealtimeCSG
                     m_CurrentState.currentToolTipArea.width = currentArea.xMax;
                 }
 
-                float currentToolTipTitleHeight = titleStyle.CalcHeight(
-                    m_CurrentState.currentToolTipTitle, m_CurrentState.currentToolTipArea.width
-                );
+                float currentToolTipTitleHeight    = titleStyle.CalcHeight(m_CurrentState.currentToolTipTitle, m_CurrentState.currentToolTipArea.width);
+                float currentToolTipContentsHeight = contentsStyle.CalcHeight(m_CurrentState.currentToolTipContents, m_CurrentState.currentToolTipArea.width);
+                float currentToolTipKeyCodesHeight = m_CurrentState.currentToolTipKeyCodes != null ? keycodesStyle.CalcHeight(m_CurrentState.currentToolTipKeyCodes, m_CurrentState.currentToolTipArea.width) : 0;
 
-                float currentToolTipContentsHeight = contentsStyle.CalcHeight(
-                    m_CurrentState.currentToolTipContents, m_CurrentState.currentToolTipArea.width
-                );
-
-                float currentToolTipKeyCodesHeight = m_CurrentState.currentToolTipKeyCodes != null
-                    ? keycodesStyle.CalcHeight(
-                        m_CurrentState.currentToolTipKeyCodes, m_CurrentState.currentToolTipArea.width
-                    )
-                    : 0;
-
-                m_CurrentState.currentToolTipArea.height = currentToolTipTitleHeight + currentToolTipContentsHeight
-                  + currentToolTipKeyCodesHeight + 4;
+                m_CurrentState.currentToolTipArea.height = currentToolTipTitleHeight + currentToolTipContentsHeight + currentToolTipKeyCodesHeight + 4;
 
                 if(goUp)
                 {
@@ -238,11 +217,8 @@ namespace RealtimeCSG
 
                 m_CurrentState.currentToolTipTitleArea.y = m_CurrentState.currentToolTipArea.y;
 
-                m_CurrentState.currentToolTipContentsArea.y = m_CurrentState.currentToolTipTitleArea.y
-                  + m_CurrentState.currentToolTipTitleArea.height;
-
-                m_CurrentState.currentToolTipKeyCodesArea.y = m_CurrentState.currentToolTipContentsArea.y
-                  + m_CurrentState.currentToolTipContentsArea.height;
+                m_CurrentState.currentToolTipContentsArea.y = m_CurrentState.currentToolTipTitleArea.y + m_CurrentState.currentToolTipTitleArea.height;
+                m_CurrentState.currentToolTipKeyCodesArea.y = m_CurrentState.currentToolTipContentsArea.y + m_CurrentState.currentToolTipContentsArea.height;
 
                 if(m_CurrentState.currentToolTipKeyCodes != null)
                 {
@@ -289,19 +265,12 @@ namespace RealtimeCSG
             GUI.backgroundColor = Color.black;
             GUI.color           = Color.white;
 
-            EditorGUI.LabelField(
-                m_CurrentState.currentToolTipTitleArea, m_CurrentState.currentToolTipTitle, titleStyle
-            );
-
-            EditorGUI.LabelField(
-                m_CurrentState.currentToolTipContentsArea, m_CurrentState.currentToolTipContents, contentsStyle
-            );
+            EditorGUI.LabelField(m_CurrentState.currentToolTipTitleArea, m_CurrentState.currentToolTipTitle, titleStyle);
+            EditorGUI.LabelField(m_CurrentState.currentToolTipContentsArea, m_CurrentState.currentToolTipContents, contentsStyle);
 
             if(m_CurrentState.currentToolTipKeyCodes != null)
             {
-                EditorGUI.LabelField(
-                    m_CurrentState.currentToolTipKeyCodesArea, m_CurrentState.currentToolTipKeyCodes, keycodesStyle
-                );
+                EditorGUI.LabelField(m_CurrentState.currentToolTipKeyCodesArea, m_CurrentState.currentToolTipKeyCodes, keycodesStyle);
             }
 
             GUI.backgroundColor = prevBackgroundColor;
@@ -334,14 +303,11 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(currentArea.Contains(Event.current.mousePosition) &&
-               (EditorWindow.mouseOverWindow == m_CurrentState.editorWindow ||
-                   m_CurrentState.editorWindow == null))
+            if(currentArea.Contains(Event.current.mousePosition) && (EditorWindow.mouseOverWindow == m_CurrentState.editorWindow || m_CurrentState.editorWindow == null))
             {
                 Rect newArea = GUIToScreenRect(currentArea);
 
-                if(m_CurrentState.prevToolTip == tooltip &&
-                   m_CurrentState.tooltipArea != newArea)
+                if(m_CurrentState.prevToolTip == tooltip && m_CurrentState.tooltipArea != newArea)
                 {
                     m_CurrentState.prevToolTip = null;
                 }

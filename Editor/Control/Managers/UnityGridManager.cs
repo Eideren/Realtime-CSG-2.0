@@ -41,9 +41,7 @@ namespace RealtimeCSG
 
             if(m_UnityAnnotationUtility != null)
             {
-                m_UnityShowGridProperty = m_UnityAnnotationUtility.GetProperty(
-                    "showGrid", BindingFlags.NonPublic | BindingFlags.Static
-                );
+                m_UnityShowGridProperty = m_UnityAnnotationUtility.GetProperty("showGrid", BindingFlags.NonPublic | BindingFlags.Static);
 
                 if(m_UnityShowGridProperty != null)
                 {

@@ -22,11 +22,7 @@ namespace RealtimeCSG.Helpers
             return val;
         }
 
-        public static Quaternion Do(
-            Camera camera, int id, string name, Quaternion rotation, Vector3 position, Vector3 axis, float size
-          , bool cutoffPlane, bool snapping, float snap, CSGHandles.InitFunction initFunction
-          , CSGHandles.InitFunction shutdownFunction
-        )
+        public static Quaternion Do(Camera camera, int id, string name, Quaternion rotation, Vector3 position, Vector3 axis, float size, bool cutoffPlane, bool snapping, float snap, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction)
         {
             if(Mathf.Abs(Vector3.Dot(camera.transform.forward, axis)) > .999f)
             {
@@ -62,8 +58,7 @@ namespace RealtimeCSG.Helpers
                         break;
                     }
 
-                    if(((HandleUtility.nearestControl == id && evt.button == 0) ||
-                           (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
+                    if(((HandleUtility.nearestControl == id && evt.button == 0) || (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
                     {
                         if(initFunction != null)
                         {
@@ -99,9 +94,7 @@ namespace RealtimeCSG.Helpers
                         Vector3 direction = Vector3.Cross(axis, position - m_StartPosition).normalized;
                         m_CurrentMousePosition += evt.delta;
 
-                        m_RotationDist = HandleUtility.CalcLineTranslation(
-                            m_StartMousePosition, m_CurrentMousePosition, m_StartPosition, direction
-                        ) / size * 30;
+                        m_RotationDist = HandleUtility.CalcLineTranslation(m_StartMousePosition, m_CurrentMousePosition, m_StartPosition, direction) / size * 30;
 
                         m_RotationDist = SnapValue(m_RotationDist, snap, snapping);
                         rotation       = Quaternion.AngleAxis(m_RotationDist * -1, m_StartAxis) * m_StartRotation;
@@ -151,17 +144,12 @@ namespace RealtimeCSG.Helpers
                     // If we're dragging it, we'll go a bit further and draw a selection pie
                     if(GUIUtility.hotControl == id)
                     {
-                        Vector3 from = Vector3.Cross(
-                            axis, Vector3.Cross(axis, (m_StartPosition - position).normalized).normalized
-                        );
+                        Vector3 from = Vector3.Cross(axis, Vector3.Cross(axis, (m_StartPosition - position).normalized).normalized);
 
                         float radius   = size * 1.1f;
                         float endAngle = m_RotationDist;
 
-                        PaintUtility.DrawRotateCircle(
-                            camera, position, axis, from, radius, 0, 0, endAngle, Handles.color, name, true
-                        );
-
+                        PaintUtility.DrawRotateCircle(camera, position, axis, from, radius, 0, 0, endAngle, Handles.color, name, true);
                         PaintUtility.DrawRotateCirclePie(position, axis, from, radius, 0, endAngle, Handles.color);
                     }
                     else if(CSGHandles.Disabled)

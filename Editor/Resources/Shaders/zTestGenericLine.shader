@@ -84,9 +84,9 @@ Shader "Hidden/CSG/internal/ZTestGenericLine"
             float _alphaMultiplier;
 
             v2f vert(float4 vertex1 : POSITION,
-                                    float3 vertex2 : TEXCOORD0, // second vertex to compute angle with
-                                    float3 offset : TEXCOORD1,
-                                    fixed4 color : COLOR0)
+                     float3 vertex2 : TEXCOORD0, // second vertex to compute angle with
+                     float3 offset : TEXCOORD1,
+                     fixed4 color : COLOR0)
             {
                 v2f o;
 
@@ -99,8 +99,8 @@ Shader "Hidden/CSG/internal/ZTestGenericLine"
 
                 float thickness = (offset.x * _thicknessMultiplier);
                 float2 delta = normalize((screenPosition1 - screenPosition0).xy) * ((thickness < 0.65f)
-                          ? 0.65f
-                          : thickness) * _pixelsPerPoint;
+                                           ? 0.65f
+                                           : thickness) * _pixelsPerPoint;
                 float2 offset2D;
 
                 offset2D.x = -delta.y;

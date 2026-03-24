@@ -261,8 +261,7 @@ namespace RealtimeCSG
                         {
                             if(extraDepth > 0)
                             {
-                                extraDepth = stairsDepth
-                                  - Mathf.Max(0, stairsHeight - extraHeight) / stepHeight * stepDepth;
+                                extraDepth = stairsDepth - Mathf.Max(0, stairsHeight - extraHeight) / stepHeight * stepDepth;
                             }
                             else
                             {
@@ -274,8 +273,7 @@ namespace RealtimeCSG
                         {
                             extraHeight += offsetY;
 
-                            extraDepth = stairsDepth
-                              - Mathf.Max(0, stairsHeight - extraHeight) / stepHeight * stepDepth;
+                            extraDepth = stairsDepth - Mathf.Max(0, stairsHeight - extraHeight) / stepHeight * stepDepth;
                         }
                     }
 
@@ -285,8 +283,7 @@ namespace RealtimeCSG
                         {
                             if(extraHeight > 0)
                             {
-                                extraHeight = stairsHeight
-                                  - Mathf.Max(0, stairsDepth - extraDepth) / stepDepth * stepHeight;
+                                extraHeight = stairsHeight - Mathf.Max(0, stairsDepth - extraDepth) / stepDepth * stepHeight;
                             }
                             else
                             {
@@ -307,8 +304,7 @@ namespace RealtimeCSG
                                 extraDepth = Mathf.Max(0, extraDepth + offsetZ);
                             }
 
-                            extraHeight = stairsHeight
-                              - Mathf.Max(0, stairsDepth - extraDepth) / stepDepth * stepHeight;
+                            extraHeight = stairsHeight - Mathf.Max(0, stairsDepth - extraDepth) / stepDepth * stepHeight;
                         }
 
                         extraDepth = stairsDepth - Mathf.Max(0, stairsHeight - extraHeight) / stepHeight * stepDepth;
@@ -343,12 +339,14 @@ namespace RealtimeCSG
             float totalStepLength  = stairsDepth - extraDepth;
             float totalHeightSteps = Mathf.Max(1, totalStepHeight / stepHeight);
             stepDepth = Mathf.Max(MIN_STEP_DEPTH, totalStepLength / totalHeightSteps);
+
             CalcTotalSteps();
         }
 
         public void SetExtraDepth(float newLengthOffset)
         {
             CalcTotalSteps();
+
             float minTotalStepLength = totalSteps * MIN_STEP_DEPTH;
             extraDepth = Mathf.Min(stairsDepth - minTotalStepLength, Mathf.Max(0, newLengthOffset));
             float totalStepHeight  = stairsHeight - extraHeight;
@@ -380,6 +378,7 @@ namespace RealtimeCSG
         public void SetStepHeight(float newStepHeight)
         {
             stepHeight = Mathf.Max(MIN_STEP_HEIGHT, newStepHeight);
+
             CalcTotalSteps();
         }
 
@@ -454,6 +453,7 @@ namespace RealtimeCSG
             vertices    = Array.Empty<Vector3>();
             extraDepth  = 0;
             extraHeight = 0;
+
             bounds.Reset();
         }
 

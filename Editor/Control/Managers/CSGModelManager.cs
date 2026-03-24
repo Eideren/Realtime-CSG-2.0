@@ -12,9 +12,7 @@ namespace RealtimeCSG
 
         public static bool IsInPlayMode
         {
-            get =>
-                !AllowInEditorPlayMode && (UnityEditor.EditorApplication.isPlaying
-                 || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode);
+            get => !AllowInEditorPlayMode && (UnityEditor.EditorApplication.isPlaying || UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode);
         }
 
         public static void ForceRebuild()

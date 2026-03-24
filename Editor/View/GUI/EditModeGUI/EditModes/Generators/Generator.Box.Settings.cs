@@ -35,9 +35,7 @@ namespace RealtimeCSG
         {
         }
 
-        public Vector3[] GetVertices(
-            CSGPlane buildPlane, Vector3 worldPosition, Vector3 gridTangent, Vector3 gridBinormal, out bool isValid
-        )
+        public Vector3[] GetVertices(CSGPlane buildPlane, Vector3 worldPosition, Vector3 gridTangent, Vector3 gridBinormal, out bool isValid)
         {
             if(vertices.Length == 0)
             {
@@ -55,13 +53,7 @@ namespace RealtimeCSG
             isValid = projectedWidth.magnitude > MathConstants.EqualityEpsilon &&
                 projectedLength.magnitude > MathConstants.EqualityEpsilon;
 
-            return new[]
-            {
-                GeometryUtility.ProjectPointOnPlane(buildPlane, corner0)
-              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedLength)
-              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedWidth + projectedLength)
-              , GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedWidth)
-            };
+            return new[] { GeometryUtility.ProjectPointOnPlane(buildPlane, corner0), GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedLength), GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedWidth + projectedLength), GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedWidth) };
         }
 
         public Vector3 GetCenter(CSGPlane plane)

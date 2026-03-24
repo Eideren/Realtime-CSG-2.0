@@ -58,9 +58,7 @@ namespace RealtimeCSG.Legacy
 
         public override string ToString()
         {
-            return string.Format(
-                "Plane: {0} Tangent: {1} BiNormal: {2} TexGenIndex: {3}", Plane, Tangent, BiNormal, TexGenIndex
-            );
+            return string.Format("Plane: {0} Tangent: {1} BiNormal: {2} TexGenIndex: {3}", Plane, Tangent, BiNormal, TexGenIndex);
         }
     }
 }

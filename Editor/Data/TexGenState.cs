@@ -26,8 +26,7 @@ namespace RealtimeCSG
         {
             Shape shape = brush.Shape;
 
-            if(surfaceSelectState == null ||
-               surfaceControlID == null)
+            if(surfaceSelectState == null || surfaceControlID == null)
             {
                 AllocateSurfaces(shape.Surfaces.Length);
 
@@ -130,17 +129,22 @@ namespace RealtimeCSG
 
             SelectState newState = oldState;
 
-            if(selectionType == SelectionType.Subtractive)
+            switch(selectionType)
             {
-                newState &= ~SelectState.Selected;
-            }
-            else if(selectionType == SelectionType.Toggle)
-            {
-                newState ^= SelectState.Selected;
-            }
-            else
-            {
-                newState |= SelectState.Selected;
+                case SelectionType.Subtractive:
+                    newState &= ~SelectState.Selected;
+
+                    break;
+                case SelectionType.Toggle:
+                    newState ^= SelectState.Selected;
+
+                    break;
+                case SelectionType.Replace:
+                case SelectionType.Additive:
+                default:
+                    newState |= SelectState.Selected;
+
+                    break;
             }
 
             if(oldState == newState)

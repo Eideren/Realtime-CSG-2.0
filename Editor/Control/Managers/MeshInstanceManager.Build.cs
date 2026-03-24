@@ -22,8 +22,7 @@ namespace InternalRealtimeCSG
 
             Scene currentScene = randomObject.gameObject.scene;
 
-            List<GeneratedMeshes> foundMeshContainers =
-                SceneQueryUtility.GetAllComponentsInScene<GeneratedMeshes>(currentScene);
+            List<GeneratedMeshes> foundMeshContainers = SceneQueryUtility.GetAllComponentsInScene<GeneratedMeshes>(currentScene);
 
             foreach(GeneratedMeshes meshContainer in foundMeshContainers)
             {
@@ -153,8 +152,7 @@ namespace InternalRealtimeCSG
                     }
                 }
 
-                if(CSGProjectSettings.Instance.saveMeshesInSceneFiles
-                || !EditorApplication.isPlayingOrWillChangePlaymode)
+                if(CSGProjectSettings.Instance.saveMeshesInSceneFiles || !EditorApplication.isPlayingOrWillChangePlaymode)
                 {
                     Object.DestroyImmediate(meshContainer);
                 }
@@ -164,15 +162,13 @@ namespace InternalRealtimeCSG
                 }
             }
 
-            List<GeneratedMeshInstance> meshInstances =
-                SceneQueryUtility.GetAllComponentsInScene<GeneratedMeshInstance>(currentScene);
+            List<GeneratedMeshInstance> meshInstances = SceneQueryUtility.GetAllComponentsInScene<GeneratedMeshInstance>(currentScene);
 
             foreach(GeneratedMeshInstance meshInstance in meshInstances)
             {
                 if(meshInstance)
                 {
-                    if(CSGProjectSettings.Instance.saveMeshesInSceneFiles
-                    || !EditorApplication.isPlayingOrWillChangePlaymode)
+                    if(CSGProjectSettings.Instance.saveMeshesInSceneFiles || !EditorApplication.isPlayingOrWillChangePlaymode)
                     {
                         Object.DestroyImmediate(meshInstance);
                     }
@@ -183,9 +179,7 @@ namespace InternalRealtimeCSG
                 }
             }
 
-            HashSet<CSGNode> csgnodes =
-                new HashSet<CSGNode>(SceneQueryUtility.GetAllComponentsInScene<CSGNode>(currentScene));
-
+            HashSet<CSGNode> csgnodes             = new HashSet<CSGNode>(SceneQueryUtility.GetAllComponentsInScene<CSGNode>(currentScene));
             List<GameObject> removableGameObjects = new List<GameObject>();
 
             foreach(CSGNode csgnode in csgnodes)
@@ -198,13 +192,7 @@ namespace InternalRealtimeCSG
                 GameObject gameObject = csgnode.gameObject;
                 CSGModel   model      = csgnode as CSGModel;
 
-                if(model && model.name == InternalCSGModelManager.DEFAULT_MODEL_NAME &&
-                   (model.transform.childCount == 0 ||
-                       (model.transform.childCount == 1 &&
-                           model.transform.GetChild(0).name == MESH_CONTAINER_NAME &&
-                           model.transform.GetChild(0).childCount == 0)
-                   )
-                  )
+                if(model && model.name == InternalCSGModelManager.DEFAULT_MODEL_NAME && (model.transform.childCount == 0 || (model.transform.childCount == 1 && model.transform.GetChild(0).name == MESH_CONTAINER_NAME && model.transform.GetChild(0).childCount == 0)))
                 {
                     Object.DestroyImmediate(gameObject);
 
@@ -223,8 +211,7 @@ namespace InternalRealtimeCSG
 
                 if(csgnode)
                 {
-                    if(CSGProjectSettings.Instance.saveMeshesInSceneFiles
-                    || !EditorApplication.isPlayingOrWillChangePlaymode)
+                    if(CSGProjectSettings.Instance.saveMeshesInSceneFiles || !EditorApplication.isPlayingOrWillChangePlaymode)
                     {
                         Object.DestroyImmediate(csgnode);
                     }
@@ -240,8 +227,7 @@ namespace InternalRealtimeCSG
                 GameObject gameObject = removableGameObjects[i];
                 Transform  transform  = gameObject.transform;
 
-                if(CSGProjectSettings.Instance.saveMeshesInSceneFiles
-                || !EditorApplication.isPlayingOrWillChangePlaymode)
+                if(CSGProjectSettings.Instance.saveMeshesInSceneFiles || !EditorApplication.isPlayingOrWillChangePlaymode)
                 {
                     RemoveWithChildrenIfPossible(transform);
                 }

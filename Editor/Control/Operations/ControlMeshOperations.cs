@@ -32,9 +32,9 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                Shape targetShape = selection.shapes[t].Clone();
+                Shape     targetShape        = selection.shapes[t].Clone();
                 Matrix4x4 worldToLocalMatrix = targetMeshState.brushTransform.worldToLocalMatrix;
-                Vector3 localDeltaMovement = GridUtility.CleanPosition(worldToLocalMatrix.MultiplyVector(translation));
+                Vector3   localDeltaMovement = GridUtility.CleanPosition(worldToLocalMatrix.MultiplyVector(translation));
 
                 HashSet<short> selectedIndices = targetMeshState.GetSelectedPointIndices();
 
@@ -45,8 +45,7 @@ namespace InternalRealtimeCSG
                         continue;
                     }
 
-                    targetControlMesh.Vertices[p] =
-                        GridUtility.CleanPosition(targetMeshState.backupPoints[p] + localDeltaMovement);
+                    targetControlMesh.Vertices[p] = GridUtility.CleanPosition(targetMeshState.backupPoints[p] + localDeltaMovement);
                 }
 
                 ControlMeshUtility.RebuildShapeFrom(targetBrush, targetControlMesh, targetShape);
@@ -82,9 +81,7 @@ namespace InternalRealtimeCSG
                 Matrix4x4 localToWorldMatrix = targetMeshState.brushTransform.localToWorldMatrix;
                 Matrix4x4 worldToLocalMatrix = targetMeshState.brushTransform.worldToLocalMatrix;
 
-                Matrix4x4 localCombinedMatrix = worldToLocalMatrix *
-                    transform *
-                    localToWorldMatrix;
+                Matrix4x4 localCombinedMatrix = worldToLocalMatrix * transform * localToWorldMatrix;
 
                 HashSet<short> selectedIndices = targetMeshState.GetSelectedPointIndices();
 
@@ -115,9 +112,7 @@ namespace InternalRealtimeCSG
             }
         }
 
-        public static void RotateControlPoints(
-            this BrushSelection selection, Vector3 center, Quaternion handleRotation, Quaternion rotationOffset
-        )
+        public static void RotateControlPoints(this BrushSelection selection, Vector3 center, Quaternion handleRotation, Quaternion rotationOffset)
         {
             Quaternion inverseHandleRotation = Quaternion.Inverse(handleRotation);
 
@@ -127,24 +122,14 @@ namespace InternalRealtimeCSG
             Matrix4x4 moveMatrix            = Matrix4x4.TRS(center, Quaternion.identity, Vector3.one);
             Matrix4x4 inverseMoveMatrix     = Matrix4x4.TRS(-center, Quaternion.identity, Vector3.one);
 
-            Matrix4x4 combinedMatrix =
-                    moveMatrix *
-                    rotationMatrix *
-                    actionMatrix *
-                    inverseRotationMatrix *
-                    inverseMoveMatrix
-                ;
+            Matrix4x4 combinedMatrix = moveMatrix * rotationMatrix * actionMatrix * inverseRotationMatrix * inverseMoveMatrix;
 
             selection.TransformControlPoints(combinedMatrix);
         }
 
-        public static void ScaleControlPoints(
-            this BrushSelection selection, Vector3 center, Quaternion rotation, Vector3 scale
-        )
+        public static void ScaleControlPoints(this BrushSelection selection, Vector3 center, Quaternion rotation, Vector3 scale)
         {
-            if(float.IsInfinity(scale.x) || float.IsNaN(scale.x) ||
-               float.IsInfinity(scale.y) || float.IsNaN(scale.y) ||
-               float.IsInfinity(scale.z) || float.IsNaN(scale.z))
+            if(float.IsInfinity(scale.x) || float.IsNaN(scale.x) || float.IsInfinity(scale.y) || float.IsNaN(scale.y) || float.IsInfinity(scale.z) || float.IsNaN(scale.z))
             {
                 scale = Vector3.zero;
             }
@@ -172,13 +157,7 @@ namespace InternalRealtimeCSG
             Matrix4x4 moveMatrix            = Matrix4x4.TRS(center, Quaternion.identity, Vector3.one);
             Matrix4x4 inverseMoveMatrix     = Matrix4x4.TRS(-center, Quaternion.identity, Vector3.one);
 
-            Matrix4x4 combinedMatrix =
-                    moveMatrix *
-                    rotationMatrix *
-                    scaleMatrix *
-                    inverseRotationMatrix *
-                    inverseMoveMatrix
-                ;
+            Matrix4x4 combinedMatrix = moveMatrix * rotationMatrix * scaleMatrix * inverseRotationMatrix * inverseMoveMatrix;
 
             selection.TransformControlPoints(combinedMatrix);
         }
@@ -204,9 +183,7 @@ namespace InternalRealtimeCSG
                 {
                     Vector3 cleanedPoint = GridUtility.CleanPosition(points[i]);
 
-                    if(controlMesh.Vertices[i].x == cleanedPoint.x &&
-                       controlMesh.Vertices[i].y == cleanedPoint.y &&
-                       controlMesh.Vertices[i].z == cleanedPoint.z)
+                    if(controlMesh.Vertices[i].x == cleanedPoint.x && controlMesh.Vertices[i].y == cleanedPoint.y && controlMesh.Vertices[i].z == cleanedPoint.z)
                     {
                         continue;
                     }
@@ -259,9 +236,7 @@ namespace InternalRealtimeCSG
 
                 if(localPoints.Count > 0)
                 {
-                    Vector3 worldDeltaMovement = CSGGrid.SnapLocalPointToWorldGridDelta(
-                        camera, brushLocalToWorld, brushWorldToLocal, localPoints.ToArray()
-                    );
+                    Vector3 worldDeltaMovement = CSGGrid.SnapLocalPointToWorldGridDelta(camera, brushLocalToWorld, brushWorldToLocal, localPoints.ToArray());
 
                     if(Mathf.Abs(worldDeltaMovement.x) < Mathf.Abs(minWorldDeltaMovement.x))
                     {
@@ -314,9 +289,7 @@ namespace InternalRealtimeCSG
                     Vector3 localPoint   = brushWorldToLocal.MultiplyPoint(worldPoint);
                     Vector3 snappedPoint = GridUtility.CleanPosition(localPoint);
 
-                    if(controlMesh.Vertices[index].x == snappedPoint.x &&
-                       controlMesh.Vertices[index].y == snappedPoint.y &&
-                       controlMesh.Vertices[index].z == snappedPoint.z)
+                    if(controlMesh.Vertices[index].x == snappedPoint.x && controlMesh.Vertices[index].y == snappedPoint.y && controlMesh.Vertices[index].z == snappedPoint.z)
                     {
                         continue;
                     }

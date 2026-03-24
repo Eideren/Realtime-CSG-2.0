@@ -9,6 +9,7 @@
 //
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+#if RCSG_GEN_ICONS_UTILITY
 using System;
 using System.Globalization;
 using System.IO;
@@ -20,18 +21,16 @@ namespace RealtimeCSG.Utilities
 {
     public class Icon2EmbeddedAssetsUtility : EditorWindow
     {
-        private static Icon2EmbeddedAssetsUtility _window;
+        private static Icon2EmbeddedAssetsUtility m_Window;
 
-#if RCSG_GEN_ICONS_UTILITY
         [MenuItem( "Tools/Icon Generator Utility" )]
-#endif
         private static void Init()
         {
-            _window              = GetWindow<Icon2EmbeddedAssetsUtility>(true);
-            _window.titleContent = new GUIContent("Icon2EmbeddedAssets");
-            _window.minSize      = new Vector2(450, 160);
-            _window.maxSize      = new Vector2(450, 600);
-            _window.ShowUtility();
+            m_Window = GetWindow<Icon2EmbeddedAssetsUtility>(true);
+            m_Window.titleContent = new GUIContent("Icon2EmbeddedAssets");
+            m_Window.minSize = new Vector2(450, 160);
+            m_Window.maxSize = new Vector2(450, 600);
+            m_Window.ShowUtility();
         }
 
         private const string SCRIPT_NAME = "EmbeddedAssets";
@@ -105,14 +104,11 @@ namespace RealtimeCSG.Utilities
                         {
                             AssetDatabase.StartAssetEditing();
 
-                            string[] folders    = AssetDatabase.FindAssets("t:Script TexGenState");
+                            string[] folders = AssetDatabase.FindAssets("t:Script TexGenState");
                             string   rcsgFolder = Path.GetDirectoryName(AssetDatabase.GUIDToAssetPath(folders[0]));
-                            string   path       = $@"{rcsgFolder}\Generated\Icons\{SCRIPT_NAME}.cs";
+                            string   path = $@"{rcsgFolder}\Generated\Icons\{SCRIPT_NAME}.cs";
 
-                            File.WriteAllText(
-                                $@"{Application.dataPath.Replace("/", "\\").Replace("Assets", "")}\{path}"
-                              , ConstructScript(_foundT2Ds)
-                            );
+                            File.WriteAllText($@"{Application.dataPath.Replace("/", "\\").Replace("Assets", "")}\{path}", ConstructScript(_foundT2Ds));
 
                             AssetDatabase.ImportAsset(path);
 
@@ -167,16 +163,11 @@ namespace RealtimeCSG.Utilities
             sb.AppendLine("{");
             ScriptAppend(ref sb, $"public static class {SCRIPT_NAME}", 1);
             ScriptAppend(ref sb, "{", 1);
-
             ScriptAppend(ref sb, "public static bool TryFindIcon( string name, out Texture2D icon )", 2);
             ScriptAppend(ref sb, "{", 2);
             ScriptAppend(ref sb, "return icons.TryGetValue( name, out icon );", 3);
             ScriptAppend(ref sb, "}", 2);
-
-            ScriptAppend(
-                ref sb, "public static Dictionary<string, Texture2D> icons = new Dictionary<string, Texture2D>()", 2
-            );
-
+            ScriptAppend(ref sb, "public static Dictionary<string, Texture2D> icons = new Dictionary<string, Texture2D>()", 2);
             ScriptAppend(ref sb, "{", 2);
 
             foreach(Texture2D t in textures)
@@ -190,14 +181,10 @@ namespace RealtimeCSG.Utilities
             {
                 if(t != null)
                 {
-                    string tname       = TexNameProperty(t.name);
+                    string tname = TexNameProperty(t.name);
                     string tnameLower0 = tname.Replace(tname[0].ToString(), tname[0].ToString().ToLower());
 
-                    ScriptAppend(
-                        ref sb
-                      , $"private const string {t.name} = @\"{Convert.ToBase64String(t.GetRawTextureData())}\";", 2
-                    );
-
+                    ScriptAppend(ref sb, $"private const string {t.name} = @\"{Convert.ToBase64String(t.GetRawTextureData())}\";", 2);
                     ScriptAppend(ref sb, $"private static Texture2D {tnameLower0};", 2);
                     ScriptAppend(ref sb, $"private static Texture2D {tname}", 2);
                     ScriptAppend(ref sb, "{", 2);
@@ -205,19 +192,8 @@ namespace RealtimeCSG.Utilities
                     ScriptAppend(ref sb, "{", 3);
                     ScriptAppend(ref sb, $"if( {tnameLower0} == null )", 4);
                     ScriptAppend(ref sb, "{", 4);
-
-                    ScriptAppend(
-                        ref sb
-                      , $"{tnameLower0} = new Texture2D( {t.width},{t.height}, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear  );"
-                      , 5
-                    );
-
-                    ScriptAppend(
-                        ref sb
-                      , $"{tnameLower0}.LoadRawTextureData( Convert.FromBase64String( {t.name} ) );"
-                      , 5
-                    );
-
+                    ScriptAppend(ref sb, $"{tnameLower0} = new Texture2D( {t.width},{t.height}, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear  );", 5);
+                    ScriptAppend(ref sb, $"{tnameLower0}.LoadRawTextureData( Convert.FromBase64String( {t.name} ) );", 5);
                     ScriptAppend(ref sb, $"{tnameLower0}.Apply();", 5);
                     sb.AppendLine();
                     ScriptAppend(ref sb, "}}", 4);
@@ -236,3 +212,4 @@ namespace RealtimeCSG.Utilities
         }
     }
 }
+#endif

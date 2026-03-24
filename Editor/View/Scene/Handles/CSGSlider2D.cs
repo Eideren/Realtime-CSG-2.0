@@ -10,19 +10,12 @@ namespace RealtimeCSG.Helpers
         private static Vector3[] m_SnapVertices;
         private static Vector2 m_StartPlaneOffset;
 
-        public static Vector3 Do(
-            Camera camera, int id, Vector3 handlePos, Vector3 offset, Vector3 handleDir, Vector3 slideDir1
-          , Vector3 slideDir2, float handleSize, CSGHandles.CapFunction capFunction, SnapMode snapMode
-          , Vector3[] snapVertices, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction
-        )
+        public static Vector3 Do(Camera camera, int id, Vector3 handlePos, Vector3 offset, Vector3 handleDir, Vector3 slideDir1, Vector3 slideDir2, float handleSize, CSGHandles.CapFunction capFunction, SnapMode snapMode, Vector3[] snapVertices, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction)
         {
             bool orgGuiChanged = GUI.changed;
             GUI.changed = false;
 
-            Vector2 delta = CalcDeltaAlongDirections(
-                id, handlePos, offset, handleDir, slideDir1, slideDir2, handleSize, capFunction, snapMode, snapVertices
-              , initFunction, shutdownFunction
-            );
+            Vector2 delta = CalcDeltaAlongDirections(id, handlePos, offset, handleDir, slideDir1, slideDir2, handleSize, capFunction, snapMode, snapVertices, initFunction, shutdownFunction);
 
             if(GUI.changed)
             {
@@ -37,9 +30,7 @@ namespace RealtimeCSG.Helpers
                 {
                     case SnapMode.GridSnapping:
                     {
-                        handlePos = CSGGrid.SnapDeltaToGrid(
-                            camera, handlePos - m_StartPosition, m_SnapVertices, false, true
-                        ) + m_StartPosition;
+                        handlePos = CSGGrid.SnapDeltaToGrid(camera, handlePos - m_StartPosition, m_SnapVertices, false, true) + m_StartPosition;
 
                         break;
                     }
@@ -65,11 +56,7 @@ namespace RealtimeCSG.Helpers
             return handlePos;
         }
 
-        private static Vector2 CalcDeltaAlongDirections(
-            int id, Vector3 handlePos, Vector3 offset, Vector3 handleDir, Vector3 slideDir1, Vector3 slideDir2
-          , float handleSize, CSGHandles.CapFunction capFunction, SnapMode snapMode, Vector3[] snapVertices
-          , CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction
-        )
+        private static Vector2 CalcDeltaAlongDirections(int id, Vector3 handlePos, Vector3 offset, Vector3 handleDir, Vector3 slideDir1, Vector3 slideDir2, float handleSize, CSGHandles.CapFunction capFunction, SnapMode snapMode, Vector3[] snapVertices, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction)
         {
             Vector3    position                     = handlePos + offset;
             Quaternion rotation                     = Quaternion.LookRotation(handleDir, slideDir1);
@@ -87,9 +74,7 @@ namespace RealtimeCSG.Helpers
                     }
                     else
                     {
-                        HandleUtility.AddControl(
-                            id, HandleUtility.DistanceToCircle(handlePos + offset, handleSize * .5f)
-                        );
+                        HandleUtility.AddControl(id, HandleUtility.DistanceToCircle(handlePos + offset, handleSize * .5f));
                     }
 
                     break;
@@ -101,8 +86,7 @@ namespace RealtimeCSG.Helpers
                         break;
                     }
 
-                    if(((HandleUtility.nearestControl == id && evt.button == 0) ||
-                           (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
+                    if(((HandleUtility.nearestControl == id && evt.button == 0) || (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
                     {
                         m_SnapVertices = null;
 
@@ -111,9 +95,7 @@ namespace RealtimeCSG.Helpers
                             initFunction();
                         }
 
-                        Plane plane = new Plane(
-                            Handles.matrix.MultiplyVector(handleDir), Handles.matrix.MultiplyPoint(handlePos)
-                        );
+                        Plane plane = new Plane(Handles.matrix.MultiplyVector(handleDir), Handles.matrix.MultiplyPoint(handlePos));
 
                         Ray mouseRay = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                         plane.Raycast(mouseRay, out float dist);
@@ -144,23 +126,15 @@ namespace RealtimeCSG.Helpers
 
                         Ray mouseRay = HandleUtility.GUIPointToWorldRay(m_CurrentMousePosition);
 
-                        Plane plane = new Plane(
-                            worldPosition, worldPosition + worldSlideDir1, worldPosition + worldSlideDir2
-                        );
+                        Plane plane = new Plane(worldPosition, worldPosition + worldSlideDir1, worldPosition + worldSlideDir2);
 
                         if(plane.Raycast(mouseRay, out float dist))
                         {
                             Vector3 hitpos = Handles.inverseMatrix.MultiplyPoint(mouseRay.GetPoint(dist));
 
-                            deltaDistanceAlongDirections.x = HandleUtility.PointOnLineParameter(
-                                hitpos, m_StartPosition, slideDir1
-                            );
-
-                            deltaDistanceAlongDirections.y = HandleUtility.PointOnLineParameter(
-                                hitpos, m_StartPosition, slideDir2
-                            );
-
-                            deltaDistanceAlongDirections -= m_StartPlaneOffset;
+                            deltaDistanceAlongDirections.x =  HandleUtility.PointOnLineParameter(hitpos, m_StartPosition, slideDir1);
+                            deltaDistanceAlongDirections.y =  HandleUtility.PointOnLineParameter(hitpos, m_StartPosition, slideDir2);
+                            deltaDistanceAlongDirections   -= m_StartPlaneOffset;
 
                             GUI.changed = true;
                         }

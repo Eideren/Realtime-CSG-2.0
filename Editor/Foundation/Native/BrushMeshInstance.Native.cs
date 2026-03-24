@@ -7,30 +7,15 @@ namespace RealtimeCSG.Foundation
     partial struct BrushMeshInstance
     {
         [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int CreateBrushMesh(
-            int userID,
-            int vertexCount, [In] IntPtr vertices,
-            int halfEdgeCount, [In] IntPtr halfEdges,
-            int polygonCount, [In] IntPtr polygons
-        );
+        private static extern int CreateBrushMesh(int userID, int vertexCount, [In] IntPtr vertices, int halfEdgeCount, [In] IntPtr halfEdges, int polygonCount, [In] IntPtr polygons);
 
-        private static int CreateBrushMesh(
-            int userID,
-            int vertexCount, Vector3[] vertices,
-            int halfEdgeCount, BrushMesh.HalfEdge[] halfEdges,
-            int polygonCount, BrushMesh.Polygon[] polygons
-        )
+        private static int CreateBrushMesh(int userID, int vertexCount, Vector3[] vertices, int halfEdgeCount, BrushMesh.HalfEdge[] halfEdges, int polygonCount, BrushMesh.Polygon[] polygons)
         {
             GCHandle verticesHandle  = GCHandle.Alloc(vertices, GCHandleType.Pinned);
             GCHandle halfEdgesHandle = GCHandle.Alloc(halfEdges, GCHandleType.Pinned);
             GCHandle polygonsHandle  = GCHandle.Alloc(polygons, GCHandleType.Pinned);
 
-            int brushMeshID = CreateBrushMesh(
-                userID,
-                vertexCount, verticesHandle.AddrOfPinnedObject(),
-                halfEdgeCount, halfEdgesHandle.AddrOfPinnedObject(),
-                polygonCount, polygonsHandle.AddrOfPinnedObject()
-            );
+            int brushMeshID = CreateBrushMesh(userID, vertexCount, verticesHandle.AddrOfPinnedObject(), halfEdgeCount, halfEdgesHandle.AddrOfPinnedObject(), polygonCount, polygonsHandle.AddrOfPinnedObject());
 
             polygonsHandle.Free();
             halfEdgesHandle.Free();
@@ -41,10 +26,7 @@ namespace RealtimeCSG.Foundation
 
         private static int CreateBrushMesh(int userID, BrushMesh brushMesh)
         {
-            if(brushMesh == null ||
-               brushMesh.vertices == null ||
-               brushMesh.halfEdges == null ||
-               brushMesh.polygons == null)
+            if(brushMesh == null || brushMesh.vertices == null || brushMesh.halfEdges == null || brushMesh.polygons == null)
             {
                 return 0;
             }
@@ -65,12 +47,7 @@ namespace RealtimeCSG.Foundation
 
             int vertexCount = brushMesh.vertices.Length;
 
-            int result = CreateBrushMesh(
-                userID,
-                vertexCount, brushMesh.vertices,
-                edgeCount, brushMesh.halfEdges,
-                polygonCount, brushMesh.polygons
-            );
+            int result = CreateBrushMesh(userID, vertexCount, brushMesh.vertices, edgeCount, brushMesh.halfEdges, polygonCount, brushMesh.polygons);
 
             if(result <= 0)
             {
@@ -84,19 +61,9 @@ namespace RealtimeCSG.Foundation
         private static extern int GetBrushMeshUserID(int brushMeshIndex);
 
         [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool UpdateBrushMesh(
-            int brushMeshIndex,
-            int vertexCount, [In] IntPtr vertices,
-            int halfEdgeCount, [In] IntPtr halfEdges,
-            int polygonCount, [In] IntPtr polygons
-        );
+        private static extern bool UpdateBrushMesh(int brushMeshIndex, int vertexCount, [In] IntPtr vertices, int halfEdgeCount, [In] IntPtr halfEdges, int polygonCount, [In] IntPtr polygons);
 
-        private static bool UpdateBrushMesh(
-            int brushMeshIndex,
-            int vertexCount, Vector3[] vertices,
-            int halfEdgeCount, BrushMesh.HalfEdge[] halfEdges,
-            int polygonCount, BrushMesh.Polygon[] polygons
-        )
+        private static bool UpdateBrushMesh(int brushMeshIndex, int vertexCount, Vector3[] vertices, int halfEdgeCount, BrushMesh.HalfEdge[] halfEdges, int polygonCount, BrushMesh.Polygon[] polygons)
         {
             if(vertices == null || halfEdges == null || polygons == null)
             {
@@ -112,12 +79,7 @@ namespace RealtimeCSG.Foundation
             GCHandle halfEdgesHandle = GCHandle.Alloc(halfEdges, GCHandleType.Pinned);
             GCHandle polygonsHandle  = GCHandle.Alloc(polygons, GCHandleType.Pinned);
 
-            bool result = UpdateBrushMesh(
-                brushMeshIndex,
-                vertexCount, verticesHandle.AddrOfPinnedObject(),
-                halfEdgeCount, halfEdgesHandle.AddrOfPinnedObject(),
-                polygonCount, polygonsHandle.AddrOfPinnedObject()
-            );
+            bool result = UpdateBrushMesh(brushMeshIndex, vertexCount, verticesHandle.AddrOfPinnedObject(), halfEdgeCount, halfEdgesHandle.AddrOfPinnedObject(), polygonCount, polygonsHandle.AddrOfPinnedObject());
 
             polygonsHandle.Free();
             halfEdgesHandle.Free();
@@ -128,10 +90,7 @@ namespace RealtimeCSG.Foundation
 
         private static bool UpdateBrushMesh(int brushMeshIndex, BrushMesh brushMesh)
         {
-            if(brushMeshIndex == 0 ||
-               brushMesh.vertices == null ||
-               brushMesh.halfEdges == null ||
-               brushMesh.polygons == null)
+            if(brushMeshIndex == 0 || brushMesh.vertices == null || brushMesh.halfEdges == null || brushMesh.polygons == null)
             {
                 return false;
             }
@@ -152,12 +111,7 @@ namespace RealtimeCSG.Foundation
 
             int vertexCount = brushMesh.vertices.Length;
 
-            bool result = UpdateBrushMesh(
-                brushMeshIndex,
-                vertexCount, brushMesh.vertices,
-                edgeCount, brushMesh.halfEdges,
-                polygonCount, brushMesh.polygons
-            );
+            bool result = UpdateBrushMesh(brushMeshIndex, vertexCount, brushMesh.vertices, edgeCount, brushMesh.halfEdges, polygonCount, brushMesh.polygons);
 
             return result;
         }

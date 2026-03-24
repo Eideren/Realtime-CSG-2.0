@@ -40,9 +40,7 @@ namespace UnityFBXExporter
         /// <param name="copyMaterials">If set to <c>true</c> copy materials.</param>
         /// <param name="copyTextures">If set to <c>true</c> copy textures.</param>
         /// <param name="oldPath">Old path.</param>
-        public static string ExportGameObject(
-            GameObject gameObj, bool exportColliders, bool copyMaterials, bool copyTextures, string oldPath = null
-        )
+        public static string ExportGameObject(GameObject gameObj, bool exportColliders, bool copyMaterials, bool copyTextures, string oldPath = null)
         {
             if(gameObj == null)
             {
@@ -55,9 +53,7 @@ namespace UnityFBXExporter
 
             if(newPath != null && newPath.Length != 0)
             {
-                bool isSuccess = FBXExporter.ExportGameObjToFBX(
-                    gameObj, newPath, exportColliders, copyMaterials, copyTextures
-                );
+                bool isSuccess = FBXExporter.ExportGameObjToFBX(gameObj, newPath, exportColliders, copyMaterials, copyTextures);
 
                 if(isSuccess)
                 {
@@ -65,9 +61,7 @@ namespace UnityFBXExporter
                 }
                 else
                 {
-                    EditorUtility.DisplayDialog(
-                        "Warning", "The extension probably wasn't an FBX file, could not export.", "Okay"
-                    );
+                    EditorUtility.DisplayDialog("Warning", "The extension probably wasn't an FBX file, could not export.", "Okay");
                 }
             }
 
@@ -80,9 +74,7 @@ namespace UnityFBXExporter
         /// <returns>The new path.</returns>
         /// <param name="gameObject">Item to be exported</param>
         /// <param name="oldPath">The old path that this object was original at.</param>
-        public static string GetNewPath(
-            GameObject gameObject, string typeName = "FBX", string extension = "fbx", string oldPath = null
-        )
+        public static string GetNewPath(GameObject gameObject, string typeName = "FBX", string extension = "fbx", string oldPath = null)
         {
             // NOTE: This must return a path with the starting "Assets/" or else textures won't copy right
 
@@ -98,9 +90,7 @@ namespace UnityFBXExporter
                 name = System.IO.Path.GetFileNameWithoutExtension(oldPath);
             }
 
-            string newPath = EditorUtility.SaveFilePanel(
-                "Export " + typeName + " File", oldPath, name + "." + extension, extension
-            );
+            string newPath = EditorUtility.SaveFilePanel("Export " + typeName + " File", oldPath, name + "." + extension, extension);
 
             int assetsIndex = newPath.IndexOf("Assets");
 

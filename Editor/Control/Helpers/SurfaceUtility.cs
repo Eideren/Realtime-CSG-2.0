@@ -12,8 +12,7 @@ namespace RealtimeCSG
     {
         public static bool CanUnSmooth(SelectedBrushSurface[] selectedSurfaces)
         {
-            if(selectedSurfaces == null ||
-               selectedSurfaces.Length == 0)
+            if(selectedSurfaces == null || selectedSurfaces.Length == 0)
             {
                 return false;
             }
@@ -43,8 +42,7 @@ namespace RealtimeCSG
 
         public static bool CanSmooth(SelectedBrushSurface[] selectedSurfaces)
         {
-            if(selectedSurfaces == null ||
-               selectedSurfaces.Length == 0)
+            if(selectedSurfaces == null || selectedSurfaces.Length == 0)
             {
                 return false;
             }
@@ -84,40 +82,36 @@ namespace RealtimeCSG
 
         public static void UnSmooth(SelectedBrushSurface[] selectedSurfaces)
         {
-            if(selectedSurfaces == null ||
-               selectedSurfaces.Length == 0)
+            if(selectedSurfaces == null || selectedSurfaces.Length == 0)
             {
                 return;
             }
 
-            Dictionary<CSGBrush, List<int>> brushSurfaces = new Dictionary<CSGBrush, List<int>>();
+            Dictionary<CSGBrush, List<int>> brushSurfs = new Dictionary<CSGBrush, List<int>>();
 
             for(int s = 0; s < selectedSurfaces.Length; s++)
             {
                 CSGBrush brush        = selectedSurfaces[s].brush;
                 int      surfaceIndex = selectedSurfaces[s].surfaceIndex;
 
-                if(!brushSurfaces.TryGetValue(brush, out List<int> indices))
+                if(!brushSurfs.TryGetValue(brush, out List<int> indices))
                 {
                     indices = new List<int>();
-                    brushSurfaces.Add(brush, indices);
+                    brushSurfs.Add(brush, indices);
                 }
 
                 indices.Add(surfaceIndex);
             }
 
-            if(brushSurfaces.Count == 0)
+            if(brushSurfs.Count == 0)
             {
                 return;
             }
 
-            Undo.RecordObjects(brushSurfaces.Keys.ToArray(), "Unsmoothing surfaces");
+            Undo.RecordObjects(brushSurfs.Keys.ToArray(), "Unsmoothing surfaces");
 
-            foreach(KeyValuePair<CSGBrush, List<int>> pair in brushSurfaces)
+            foreach((CSGBrush brush, List<int> surfaceIndices) in brushSurfs)
             {
-                CSGBrush  brush          = pair.Key;
-                List<int> surfaceIndices = pair.Value;
-
                 Shape     shape    = brush.Shape;
                 TexGen[]  texGens  = shape.TexGens;
                 Surface[] surfaces = shape.Surfaces;
@@ -136,37 +130,34 @@ namespace RealtimeCSG
 
         public static void Smooth(SelectedBrushSurface[] selectedSurfaces)
         {
-            if(selectedSurfaces == null ||
-               selectedSurfaces.Length == 0)
+            if(selectedSurfaces == null || selectedSurfaces.Length == 0)
             {
                 return;
             }
 
             // Try to find a good smoothing group index
-            uint                            smoothingGroupIndex = FindUnusedSmoothingGroupIndex();
-            Dictionary<CSGBrush, List<int>> brushSurfaces       = new Dictionary<CSGBrush, List<int>>();
+            uint smoothingGroupIndex = FindUnusedSmoothingGroupIndex();
+
+            Dictionary<CSGBrush, List<int>> brushSurfs = new Dictionary<CSGBrush, List<int>>();
 
             for(int s = 0; s < selectedSurfaces.Length; s++)
             {
                 CSGBrush brush        = selectedSurfaces[s].brush;
                 int      surfaceIndex = selectedSurfaces[s].surfaceIndex;
 
-                if(!brushSurfaces.TryGetValue(brush, out List<int> indices))
+                if(!brushSurfs.TryGetValue(brush, out List<int> indices))
                 {
                     indices = new List<int>();
-                    brushSurfaces.Add(brush, indices);
+                    brushSurfs.Add(brush, indices);
                 }
 
                 indices.Add(surfaceIndex);
             }
 
-            Undo.RecordObjects(brushSurfaces.Keys.ToArray(), "Smoothing surfaces");
+            Undo.RecordObjects(brushSurfs.Keys.ToArray(), "Smoothing surfaces");
 
-            foreach(KeyValuePair<CSGBrush, List<int>> pair in brushSurfaces)
+            foreach((CSGBrush brush, List<int> surfaceIndices) in brushSurfs)
             {
-                CSGBrush  brush          = pair.Key;
-                List<int> surfaceIndices = pair.Value;
-
                 Shape     shape    = brush.Shape;
                 TexGen[]  texGens  = shape.TexGens;
                 Surface[] surfaces = shape.Surfaces;
@@ -183,9 +174,7 @@ namespace RealtimeCSG
             InternalCSGModelManager.CheckForChanges();
         }
 
-        public static void SetSurfaceTexGenFlags(
-            SelectedBrushSurface[] selectedBrushSurfaces, TexGenFlags flag, bool set
-        )
+        public static void SetSurfaceTexGenFlags(SelectedBrushSurface[] selectedBrushSurfaces, TexGenFlags flag, bool set)
         {
             using(new UndoGroup(selectedBrushSurfaces, "discarding surface"))
             {
@@ -311,9 +300,7 @@ namespace RealtimeCSG
 
         public static void FlipXY(SelectedBrushSurface[] selectedBrushSurfaces)
         {
-            using(new UndoGroup(
-                      selectedBrushSurfaces, "Reversing texture coordinates of surface in both X and Y direction"
-                  ))
+            using(new UndoGroup(selectedBrushSurfaces, "Reversing texture coordinates of surface in both X and Y direction"))
             {
                 for(int i = 0; i < selectedBrushSurfaces.Length; i++)
                 {
@@ -418,8 +405,7 @@ namespace RealtimeCSG
                     int      surfaceIndex = selectedBrushSurfaces[i].surfaceIndex;
                     int      texGenIndex  = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
 
-                    brush.Shape.TexGens[texGenIndex].RotationAngle =
-                        (brush.Shape.TexGens[texGenIndex].RotationAngle + angle) % MAX_ANGLE;
+                    brush.Shape.TexGens[texGenIndex].RotationAngle = (brush.Shape.TexGens[texGenIndex].RotationAngle + angle) % MAX_ANGLE;
                 }
             }
         }
@@ -432,8 +418,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = selectedBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null ||
-                       brush.ChildData.ModelTransform == null)
+                    if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
                     {
                         continue;
                     }
@@ -444,10 +429,7 @@ namespace RealtimeCSG
                     int       surfaceIndex            = selectedBrushSurfaces[i].surfaceIndex;
                     int       texGenIndex             = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
 
-                    GetSurfaceMinMaxTexCoords(
-                        brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, out Vector2 minCoordinate
-                      , out Vector2 maxCoordinate
-                    );
+                    GetSurfaceMinMaxTexCoords(brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, out Vector2 minCoordinate, out Vector2 maxCoordinate);
 
                     switch(justifyX)
                     {
@@ -506,8 +488,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = selectedBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null ||
-                       brush.ChildData.ModelTransform == null)
+                    if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
                     {
                         continue;
                     }
@@ -518,10 +499,7 @@ namespace RealtimeCSG
                     int       surfaceIndex            = selectedBrushSurfaces[i].surfaceIndex;
                     int       texGenIndex             = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
 
-                    GetSurfaceMinMaxTexCoords(
-                        brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, out Vector2 minCoordinate
-                      , out Vector2 maxCoordinate
-                    );
+                    GetSurfaceMinMaxTexCoords(brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, out Vector2 minCoordinate, out Vector2 maxCoordinate);
 
                     switch(justifyX)
                     {
@@ -557,8 +535,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = selectedBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null ||
-                       brush.ChildData.ModelTransform == null)
+                    if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
                     {
                         continue;
                     }
@@ -569,10 +546,7 @@ namespace RealtimeCSG
                     int       surfaceIndex            = selectedBrushSurfaces[i].surfaceIndex;
                     int       texGenIndex             = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
 
-                    GetSurfaceMinMaxTexCoords(
-                        brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, out Vector2 minCoordinate
-                      , out Vector2 maxCoordinate
-                    );
+                    GetSurfaceMinMaxTexCoords(brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, out Vector2 minCoordinate, out Vector2 maxCoordinate);
 
                     switch(justifyY)
                     {
@@ -584,8 +558,7 @@ namespace RealtimeCSG
                         }
                         case 0:
                         {
-                            shape.TexGens[texGenIndex].Translation.y -=
-                                (maxCoordinate.y + minCoordinate.y) * 0.5f + 0.5f;
+                            shape.TexGens[texGenIndex].Translation.y -= (maxCoordinate.y + minCoordinate.y) * 0.5f + 0.5f;
 
                             break;
                         }
@@ -608,8 +581,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = selectedBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null ||
-                       brush.ChildData.ModelTransform == null)
+                    if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
                     {
                         continue;
                     }
@@ -620,9 +592,7 @@ namespace RealtimeCSG
                     int       surfaceIndex            = selectedBrushSurfaces[i].surfaceIndex;
                     int       texGenIndex             = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
 
-                    FitSurface(
-                        brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, ref shape.TexGens[texGenIndex]
-                    );
+                    FitSurface(brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, ref shape.TexGens[texGenIndex]);
                 }
             }
         }
@@ -635,8 +605,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = selectedBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null ||
-                       brush.ChildData.ModelTransform == null)
+                    if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
                     {
                         continue;
                     }
@@ -647,9 +616,7 @@ namespace RealtimeCSG
                     int       surfaceIndex            = selectedBrushSurfaces[i].surfaceIndex;
                     int       texGenIndex             = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
 
-                    FitSurfaceX(
-                        brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, ref shape.TexGens[texGenIndex]
-                    );
+                    FitSurfaceX(brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, ref shape.TexGens[texGenIndex]);
                 }
             }
         }
@@ -662,8 +629,7 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = selectedBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null ||
-                       brush.ChildData.ModelTransform == null)
+                    if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
                     {
                         continue;
                     }
@@ -674,9 +640,7 @@ namespace RealtimeCSG
                     int       surfaceIndex            = selectedBrushSurfaces[i].surfaceIndex;
                     int       texGenIndex             = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
 
-                    FitSurfaceY(
-                        brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, ref shape.TexGens[texGenIndex]
-                    );
+                    FitSurfaceY(brush.brushNodeID, surfaceIndex, modelLocalToWorldMatrix, ref shape.TexGens[texGenIndex]);
                 }
             }
         }
@@ -733,50 +697,7 @@ namespace RealtimeCSG
             }
         }
 
-        public static bool CopyLastMaterial(
-            CSGBrush dstBrush, int dstSurfaceIndex, CSGPlane dstWorldIntersectionPlane,
-            CSGBrush srcBrush, int srcSurfaceIndex, CSGPlane srcWorldIntersectionPlane,
-            bool registerUndo = true
-        )
-        {
-            if(srcSurfaceIndex < 0 || srcSurfaceIndex >= srcBrush.Shape.Surfaces.Length ||
-               !srcBrush)
-            {
-                return false;
-            }
-
-            if(srcBrush == dstBrush &&
-               srcSurfaceIndex == dstSurfaceIndex)
-            {
-                return false;
-            }
-
-            Shape srcShape = srcBrush.Shape;
-            Shape dstShape = dstBrush.Shape;
-
-            CSGPlane dstLocalPlane = dstShape.Surfaces[dstSurfaceIndex].Plane;
-            CSGPlane srcLocalPlane = srcShape.Surfaces[srcSurfaceIndex].Plane;
-
-            Matrix4x4 srcBrushFromWorld = srcBrush.transform.worldToLocalMatrix;
-            Matrix4x4 dstBrushFromWorld = dstBrush.transform.worldToLocalMatrix;
-
-            CSGPlane srcWorldPlane = GeometryUtility.InverseTransformPlane(srcBrushFromWorld, srcLocalPlane);
-            CSGPlane dstWorldPlane = GeometryUtility.InverseTransformPlane(dstBrushFromWorld, dstLocalPlane);
-
-            bool srcSurfaceInverted = Vector3.Dot(srcWorldIntersectionPlane.normal, srcWorldPlane.normal) < 0;
-            bool dstSurfaceInverted = Vector3.Dot(dstWorldIntersectionPlane.normal, dstWorldPlane.normal) < 0;
-
-            return CopyLastMaterial(
-                dstBrush, dstSurfaceIndex,
-                srcBrush, srcSurfaceIndex,
-                registerUndo
-            );
-        }
-
-        private static void CopyLastMaterialInternal(
-            CSGBrush dstBrush, int dstSurfaceIndex,
-            CSGBrush srcBrush, int srcSurfaceIndex
-        )
+        private static void CopyLastMaterialInternal(CSGBrush dstBrush, int dstSurfaceIndex, CSGBrush srcBrush, int srcSurfaceIndex)
         {
             Shape srcShape = srcBrush.Shape;
             Shape dstShape = dstBrush.Shape;
@@ -833,8 +754,7 @@ namespace RealtimeCSG
             else
             {
                 // Find two points on the intersection between two planes
-                srcWorldPoint1 = (Vector3.Cross(edgeDirection, srcNormal) * dstWorldPlane.d +
-                    Vector3.Cross(dstNormal, edgeDirection) * srcWorldPlane.d) / det;
+                srcWorldPoint1 = (Vector3.Cross(edgeDirection, srcNormal) * dstWorldPlane.d + Vector3.Cross(dstNormal, edgeDirection) * srcWorldPlane.d) / det;
 
                 srcWorldPoint2 = srcWorldPoint1 + edgeDirection.normalized;
 
@@ -894,20 +814,14 @@ namespace RealtimeCSG
             }
         }
 
-        public static bool CopyLastMaterial(
-            CSGBrush dstBrush, int dstSurfaceIndex,
-            CSGBrush srcBrush, int srcSurfaceIndex,
-            bool registerUndo = true
-        )
+        public static bool CopyLastMaterial(CSGBrush dstBrush, int dstSurfaceIndex, CSGBrush srcBrush, int srcSurfaceIndex, bool registerUndo = true)
         {
-            if(srcSurfaceIndex < 0 || srcSurfaceIndex >= srcBrush.Shape.Surfaces.Length ||
-               !srcBrush)
+            if(srcSurfaceIndex < 0 || srcSurfaceIndex >= srcBrush.Shape.Surfaces.Length || !srcBrush)
             {
                 return false;
             }
 
-            if(srcBrush == dstBrush &&
-               srcSurfaceIndex == dstSurfaceIndex)
+            if(srcBrush == dstBrush && srcSurfaceIndex == dstSurfaceIndex)
             {
                 return false;
             }
@@ -929,23 +843,16 @@ namespace RealtimeCSG
 
                 using(new UndoGroup(dstBrushSurface, "Copy materials", true))
                 {
-                    dstBrush.Shape.TexGens[dstTexGenIndex].RenderMaterial =
-                        srcShape.TexGens[srcTexGenIndex].RenderMaterial;
+                    dstBrush.Shape.TexGens[dstTexGenIndex].RenderMaterial = srcShape.TexGens[srcTexGenIndex].RenderMaterial;
 
-                    CopyLastMaterialInternal(
-                        dstBrush, dstSurfaceIndex,
-                        srcBrush, srcSurfaceIndex
-                    );
+                    CopyLastMaterialInternal(dstBrush, dstSurfaceIndex, srcBrush, srcSurfaceIndex);
                 }
             }
             else
             {
                 dstBrush.Shape.TexGens[dstTexGenIndex].RenderMaterial = srcShape.TexGens[srcTexGenIndex].RenderMaterial;
 
-                CopyLastMaterialInternal(
-                    dstBrush, dstSurfaceIndex,
-                    srcBrush, srcSurfaceIndex
-                );
+                CopyLastMaterialInternal(dstBrush, dstSurfaceIndex, srcBrush, srcSurfaceIndex);
             }
 
             return true;
@@ -958,17 +865,17 @@ namespace RealtimeCSG
                 return false;
             }
 
-            Dictionary<CSGBrush, List<int>> brushSurfaces = new Dictionary<CSGBrush, List<int>>();
+            Dictionary<CSGBrush, List<int>> brushSurfs = new Dictionary<CSGBrush, List<int>>();
 
             for(int s = 0; s < selectedSurfaces.Length; s++)
             {
                 CSGBrush brush        = selectedSurfaces[s].brush;
                 int      surfaceIndex = selectedSurfaces[s].surfaceIndex;
 
-                if(!brushSurfaces.TryGetValue(brush, out List<int> indices))
+                if(!brushSurfs.TryGetValue(brush, out List<int> indices))
                 {
                     indices = new List<int>();
-                    brushSurfaces.Add(brush, indices);
+                    brushSurfs.Add(brush, indices);
                 }
 
                 indices.Add(surfaceIndex);
@@ -976,7 +883,7 @@ namespace RealtimeCSG
 
             bool modified = false;
 
-            foreach(KeyValuePair<CSGBrush, List<int>> pair in brushSurfaces)
+            foreach(KeyValuePair<CSGBrush, List<int>> pair in brushSurfs)
             {
                 CSGBrush  brush          = pair.Key;
                 List<int> surfaceIndices = pair.Value;
@@ -986,8 +893,7 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                Vector3 brushLocalNormal =
-                    brush.hierarchyItem.Transform.InverseTransformVector(rotationCircle.rotateSurfaceNormal);
+                Vector3 brushLocalNormal = brush.hierarchyItem.Transform.InverseTransformVector(rotationCircle.rotateSurfaceNormal);
 
                 Shape shape = brush.Shape;
 
@@ -995,18 +901,15 @@ namespace RealtimeCSG
                 {
                     int surfaceIndex = surfaceIndices[s];
 
-                    if(Mathf.Abs(Vector3.Dot(brushLocalNormal, shape.Surfaces[surfaceIndex].Plane.normal))
-                     > MathConstants.AngleEpsilon)
+                    if(Mathf.Abs(Vector3.Dot(brushLocalNormal, shape.Surfaces[surfaceIndex].Plane.normal)) > MathConstants.AngleEpsilon)
                     {
                         int texGenIndex = shape.Surfaces[surfaceIndex].TexGenIndex;
 
-                        RotateTextureCoordAroundWorldPoint(
-                            brush, surfaceIndex, rotationCircle.rotateCenterPoint,
-                            rotationCircle.rotateCurrentSnappedAngle
-                        );
+                        RotateTextureCoordAroundWorldPoint(brush, surfaceIndex, rotationCircle.rotateCenterPoint, rotationCircle.rotateCurrentSnappedAngle);
 
                         shape.TexGens[texGenIndex].RotationAngle %= 360.0f;
-                        modified                                 =  true;
+
+                        modified = true;
                     }
                 }
             }
@@ -1016,13 +919,9 @@ namespace RealtimeCSG
 
         private static readonly Dictionary<CSGBrush, List<int>> brushSurfaces = new Dictionary<CSGBrush, List<int>>();
 
-        public static bool TranslateSurfaces(
-            SelectedBrushSurface[] selectedSurfaces, Vector3 oldWorldPosition
-          , Vector3 newWorldPosition
-        )
+        public static bool TranslateSurfaces(SelectedBrushSurface[] selectedSurfaces, Vector3 oldWorldPosition, Vector3 newWorldPosition)
         {
-            if(selectedSurfaces == null ||
-               selectedSurfaces.Length == 0)
+            if(selectedSurfaces == null || selectedSurfaces.Length == 0)
             {
                 return false;
             }
@@ -1050,8 +949,7 @@ namespace RealtimeCSG
                 CSGBrush  brush          = pair.Key;
                 List<int> surfaceIndices = pair.Value;
 
-                if(brush.ChildData == null ||
-                   brush.ChildData.ModelTransform == null)
+                if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
                 {
                     continue;
                 }
@@ -1068,10 +966,7 @@ namespace RealtimeCSG
                     int surfaceIndex = surfaceIndices[s];
                     int texGenIndex  = targetShape.Surfaces[surfaceIndex].TexGenIndex;
 
-                    brushModified = TranslateTextureCoordInLocalSpace(
-                        ref targetShape.TexGens[texGenIndex], ref targetShape.Surfaces[surfaceIndex],
-                        point1, point2
-                    ) || brushModified;
+                    brushModified = TranslateTextureCoordInLocalSpace(ref targetShape.TexGens[texGenIndex], ref targetShape.Surfaces[surfaceIndex], point1, point2) || brushModified;
                 }
 
                 if(brushModified)
@@ -1086,8 +981,7 @@ namespace RealtimeCSG
 
         public static bool TranslateSurfacesInWorldSpace(CSGBrush[] brushes, Vector3 offset)
         {
-            if(brushes == null ||
-               brushes.Length == 0)
+            if(brushes == null || brushes.Length == 0)
             {
                 return false;
             }
@@ -1098,31 +992,25 @@ namespace RealtimeCSG
             {
                 CSGBrush brush = brushes[b];
 
-                if(brush.ChildData == null ||
-                   brush.ChildData.ModelTransform == null)
+                if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
                 {
                     continue;
                 }
 
-                Vector3     point1 = brush.hierarchyItem.Transform.InverseTransformPoint(MathConstants.zeroVector3);
-                Vector3     point2 = brush.hierarchyItem.Transform.InverseTransformPoint(offset);
+                Vector3     point1      = brush.hierarchyItem.Transform.InverseTransformPoint(MathConstants.zeroVector3);
+                Vector3     point2      = brush.hierarchyItem.Transform.InverseTransformPoint(offset);
                 ControlMesh controlMesh = brush.ControlMesh;
-                Shape       shape = brush.Shape;
+                Shape       shape       = brush.Shape;
 
                 bool brushModified = false;
 
                 for(int s = 0; s < shape.Surfaces.Length; s++)
                 {
-                    int surfaceIndex = s;
-                    int texGenIndex  = shape.Surfaces[surfaceIndex].TexGenIndex;
+                    int texGenIndex = shape.Surfaces[s].TexGenIndex;
 
-                    if((shape.TexGenFlags[texGenIndex] & TexGenFlags.WorldSpaceTexture)
-                    != TexGenFlags.WorldSpaceTexture)
+                    if((shape.TexGenFlags[texGenIndex] & TexGenFlags.WorldSpaceTexture) != TexGenFlags.WorldSpaceTexture)
                     {
-                        brushModified = TranslateTextureCoordInLocalSpace(
-                            ref shape.TexGens[texGenIndex], ref shape.Surfaces[surfaceIndex],
-                            point1, point2
-                        ) || brushModified;
+                        brushModified = TranslateTextureCoordInLocalSpace(ref shape.TexGens[texGenIndex], ref shape.Surfaces[s], point1, point2) || brushModified;
                     }
                 }
 
@@ -1145,8 +1033,7 @@ namespace RealtimeCSG
 
             bool worldModified = false;
 
-            if(brush.ChildData == null ||
-               brush.ChildData.ModelTransform == null)
+            if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
             {
                 return false;
             }
@@ -1160,16 +1047,11 @@ namespace RealtimeCSG
 
             for(int s = 0; s < shape.Surfaces.Length; s++)
             {
-                int surfaceIndex = s;
-                int texGenIndex  = shape.Surfaces[surfaceIndex].TexGenIndex;
+                int texGenIndex = shape.Surfaces[s].TexGenIndex;
 
                 if((shape.TexGenFlags[texGenIndex] & TexGenFlags.WorldSpaceTexture) != TexGenFlags.WorldSpaceTexture)
                 {
-                    brushModified = TranslateTextureCoordInLocalSpace(
-                        ref shape.TexGens[texGenIndex], ref shape.Surfaces[surfaceIndex]
-                       ,
-                        point1, point2
-                    ) || brushModified;
+                    brushModified = TranslateTextureCoordInLocalSpace(ref shape.TexGens[texGenIndex], ref shape.Surfaces[s], point1, point2) || brushModified;
                 }
             }
 
@@ -1257,13 +1139,9 @@ namespace RealtimeCSG
 
 #region Convert..xx..Coord
 
-        public static bool FitSurface(
-            int brushNodeId, int surfaceIndex, Matrix4x4 modelLocalToWorldMatrix, ref TexGen surfaceTexGen
-        )
+        public static bool FitSurface(int brushNodeId, int surfaceIndex, Matrix4x4 modelLocalToWorldMatrix, ref TexGen surfaceTexGen)
         {
-            if(!GetSurfaceMinMaxTexCoords(
-                   brushNodeId, surfaceIndex, modelLocalToWorldMatrix, out Vector2 min, out Vector2 max
-               ))
+            if(!GetSurfaceMinMaxTexCoords(brushNodeId, surfaceIndex, modelLocalToWorldMatrix, out Vector2 min, out Vector2 max))
             {
                 return false;
             }
@@ -1295,13 +1173,9 @@ namespace RealtimeCSG
             return true;
         }
 
-        public static bool FitSurfaceX(
-            int brushNodeId, int surfaceIndex, Matrix4x4 modelLocalToWorldMatrix, ref TexGen surfaceTexGen
-        )
+        public static bool FitSurfaceX(int brushNodeId, int surfaceIndex, Matrix4x4 modelLocalToWorldMatrix, ref TexGen surfaceTexGen)
         {
-            if(!GetSurfaceMinMaxTexCoords(
-                   brushNodeId, surfaceIndex, modelLocalToWorldMatrix, out Vector2 min, out Vector2 max
-               ))
+            if(!GetSurfaceMinMaxTexCoords(brushNodeId, surfaceIndex, modelLocalToWorldMatrix, out Vector2 min, out Vector2 max))
             {
                 return false;
             }
@@ -1322,44 +1196,34 @@ namespace RealtimeCSG
             return true;
         }
 
-        public static bool FitSurfaceY(
-            int brushNodeId, int surfaceIndex, Matrix4x4 modelLocalToWorldMatrix, ref TexGen surfaceTexGen
-        )
+        public static bool FitSurfaceY(int brushNodeId, int surfaceIndex, Matrix4x4 modelLocalToWorldMatrix, ref TexGen surfaceTexGen)
         {
-            if(!GetSurfaceMinMaxTexCoords(
-                   brushNodeId, surfaceIndex, modelLocalToWorldMatrix, out Vector2 min, out Vector2 max
-               ))
+            if(!GetSurfaceMinMaxTexCoords(brushNodeId, surfaceIndex, modelLocalToWorldMatrix, out Vector2 min, out Vector2 max))
             {
                 return false;
             }
 
-            float size_y = max.y - min.y;
+            float sizeY = max.y - min.y;
 
-            if(size_y < MathConstants.EqualityEpsilon)
+            if(sizeY < MathConstants.EqualityEpsilon)
             {
-                size_y = 1.0f;
+                sizeY = 1.0f;
             }
 
             Vector2 prevScale       = surfaceTexGen.Scale;
             Vector2 prevTranslation = surfaceTexGen.Translation;
 
-            surfaceTexGen.Scale.y       = prevScale.y / size_y;
-            surfaceTexGen.Translation.y = (prevTranslation.y - min.y) / size_y;
+            surfaceTexGen.Scale.y       = prevScale.y / sizeY;
+            surfaceTexGen.Translation.y = (prevTranslation.y - min.y) / sizeY;
 
             return true;
         }
 
-        public static bool GetSurfaceMinMaxTexCoords(
-            int brushNodeId, int surfaceIndex, Matrix4x4 modelLocalToWorldMatrix, out Vector2 minTextureCoordinate
-          , out Vector2 maxTextureCoordinate
-        )
+        public static bool GetSurfaceMinMaxTexCoords(int brushNodeId, int surfaceIndex, Matrix4x4 modelLocalToWorldMatrix, out Vector2 minTextureCoordinate, out Vector2 maxTextureCoordinate)
         {
             if(brushNodeId != CSGNode.InvalidNodeID && surfaceIndex >= 0 &&
                InternalCSGModelManager.External.getSurfaceMinMaxTexCoords != null &&
-               InternalCSGModelManager.External.getSurfaceMinMaxTexCoords(
-                   brushNodeId, surfaceIndex, modelLocalToWorldMatrix, out minTextureCoordinate
-                 , out maxTextureCoordinate
-               ))
+               InternalCSGModelManager.External.getSurfaceMinMaxTexCoords(brushNodeId, surfaceIndex, modelLocalToWorldMatrix, out minTextureCoordinate, out maxTextureCoordinate))
             {
                 return true;
             }
@@ -1384,24 +1248,19 @@ namespace RealtimeCSG
             Transform modelTransform    = brush.ChildData.ModelTransform;
             Matrix4x4 modelToWorldSpace = modelTransform.localToWorldMatrix;
 
-            return InternalCSGModelManager.External.convertModelToTextureSpace(
-                brush.brushNodeID, surfaceIndex, modelToWorldSpace, worldCoordinate, out Vector2 texcoordCoordinate
-            )
+            return InternalCSGModelManager.External.convertModelToTextureSpace(brush.brushNodeID, surfaceIndex, modelToWorldSpace, worldCoordinate, out Vector2 texcoordCoordinate)
                 ? texcoordCoordinate
                 : MathConstants.zeroVector2;
         }
 
         public static Vector3 ConvertTextureToModelSpace(CSGBrush brush, int surfaceIndex, Vector2 texcoordCoordinate)
         {
-            if(brush == null || brush.brushNodeID == CSGNode.InvalidNodeID || brush.Shape == null ||
-               surfaceIndex < 0 || surfaceIndex >= brush.Shape.Surfaces.Length ||
-               InternalCSGModelManager.External.convertTextureToModelSpace == null)
+            if(brush == null || brush.brushNodeID == CSGNode.InvalidNodeID || brush.Shape == null || surfaceIndex < 0 || surfaceIndex >= brush.Shape.Surfaces.Length || InternalCSGModelManager.External.convertTextureToModelSpace == null)
             {
                 return MathConstants.zeroVector3;
             }
 
-            if(brush.ChildData == null ||
-               brush.ChildData.ModelTransform == null)
+            if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
             {
                 return MathConstants.zeroVector2;
             }
@@ -1425,9 +1284,7 @@ namespace RealtimeCSG
                 : worldCoordinate;
         }
 
-        public static Matrix4x4 GenerateModelSpaceToPlaneSpaceMatrix(
-            Surface surface, TexGenFlags texGenFlags, Matrix4x4 localFromModel
-        )
+        public static Matrix4x4 GenerateModelSpaceToPlaneSpaceMatrix(Surface surface, TexGenFlags texGenFlags, Matrix4x4 localFromModel)
         {
             Matrix4x4 planeFromLocal = surface.GenerateLocalBrushSpaceToPlaneSpaceMatrix();
 
@@ -1445,24 +1302,18 @@ namespace RealtimeCSG
             return textureFromLocalSpace;
         }
 
-        public static Matrix4x4 GetModelToTextureSpaceMatrix(
-            TexGen texGen, TexGenFlags texGenFlags, Surface surface, Matrix4x4 localFromModel
-        )
+        public static Matrix4x4 GetModelToTextureSpaceMatrix(TexGen texGen, TexGenFlags texGenFlags, Surface surface, Matrix4x4 localFromModel)
         {
-            Matrix4x4 planeFromWorldSpace = GenerateModelSpaceToPlaneSpaceMatrix(surface, texGenFlags, localFromModel);
+            Matrix4x4 planeFromWorldSpace   = GenerateModelSpaceToPlaneSpaceMatrix(surface, texGenFlags, localFromModel);
             Matrix4x4 textureFromPlaneSpace = texGen.GeneratePlaneSpaceToTextureSpaceMatrix();
             Matrix4x4 textureFromWorldSpace = textureFromPlaneSpace * planeFromWorldSpace;
 
             return textureFromWorldSpace;
         }
 
-        public static bool ConvertModelToTextureCoord(
-            ref TexGen texGen, TexGenFlags texGenFlags, ref Surface surface, Matrix4x4 localFromModel
-          , Vector3 localPoint, out Vector2 textureSpacePoint
-        )
+        public static bool ConvertModelToTextureCoord(ref TexGen texGen, TexGenFlags texGenFlags, ref Surface surface, Matrix4x4 localFromModel, Vector3 localPoint, out Vector2 textureSpacePoint)
         {
-            Matrix4x4 srcLocalSpaceToTextureSpace =
-                GetModelToTextureSpaceMatrix(texGen, texGenFlags, surface, localFromModel);
+            Matrix4x4 srcLocalSpaceToTextureSpace = GetModelToTextureSpaceMatrix(texGen, texGenFlags, surface, localFromModel);
 
             Vector3 textureSpacePoint3D = srcLocalSpaceToTextureSpace.MultiplyPoint(localPoint);
             textureSpacePoint = new Vector2(textureSpacePoint3D.x, textureSpacePoint3D.y);
@@ -1470,10 +1321,7 @@ namespace RealtimeCSG
             return true;
         }
 
-        public static bool RotateTextureCoordAroundWorldPoint(
-            CSGBrush brush, int surfaceIndex,
-            Vector3 worldCenter, float angle
-        )
+        public static bool RotateTextureCoordAroundWorldPoint(CSGBrush brush, int surfaceIndex, Vector3 worldCenter, float angle)
         {
             Shape     shape          = brush.Shape;
             Matrix4x4 modelFromWorld = brush.ChildData.ModelTransform.worldToLocalMatrix;
@@ -1484,20 +1332,12 @@ namespace RealtimeCSG
 
             Vector3 modelCenter = modelFromWorld.MultiplyPoint(worldCenter);
 
-            if(!ConvertModelToTextureCoord(
-                   ref shape.TexGens[texgenIndex],
-                   shape.TexGenFlags[texgenIndex],
-                   ref shape.Surfaces[surfaceIndex],
-                   localFromModel,
-                   modelCenter, out Vector2 originalTextureCoordinate
-               ))
+            if(!ConvertModelToTextureCoord(ref shape.TexGens[texgenIndex], shape.TexGenFlags[texgenIndex], ref shape.Surfaces[surfaceIndex], localFromModel, modelCenter, out Vector2 originalTextureCoordinate))
             {
                 return false;
             }
 
-            GeometryUtility.CalculateTangents(
-                shape.Surfaces[surfaceIndex].Plane.normal, out Vector3 tangent, out Vector3 _
-            );
+            GeometryUtility.CalculateTangents(shape.Surfaces[surfaceIndex].Plane.normal, out Vector3 tangent, out Vector3 _);
 
             if(Vector3.Dot(shape.Surfaces[surfaceIndex].Tangent, tangent) < 0)
             {
@@ -1508,13 +1348,7 @@ namespace RealtimeCSG
                 shape.TexGens[texgenIndex].RotationAngle -= angle;
             }
 
-            if(!ConvertModelToTextureCoord(
-                   ref shape.TexGens[texgenIndex],
-                   shape.TexGenFlags[texgenIndex],
-                   ref shape.Surfaces[surfaceIndex],
-                   localFromModel,
-                   modelCenter, out Vector2 newTextureCoordinate
-               ))
+            if(!ConvertModelToTextureCoord(ref shape.TexGens[texgenIndex], shape.TexGenFlags[texgenIndex], ref shape.Surfaces[surfaceIndex], localFromModel, modelCenter, out Vector2 newTextureCoordinate))
             {
                 return false;
             }
@@ -1524,10 +1358,7 @@ namespace RealtimeCSG
             return true;
         }
 
-        public static bool TranslateTextureCoordInLocalSpace(
-            ref TexGen texGen, ref Surface surface,
-            Vector3 from, Vector3 to
-        )
+        public static bool TranslateTextureCoordInLocalSpace(ref TexGen texGen, ref Surface surface, Vector3 from, Vector3 to)
         {
             Matrix4x4 srcLocalSpaceToTextureSpace = GetLocalToTextureSpaceMatrix(texGen, surface);
 
@@ -1544,20 +1375,10 @@ namespace RealtimeCSG
             return true;
         }
 
-        public static bool AlignTextureSpaces(
-            Matrix4x4 srcBrushFromModel, TexGen srcTexGen, TexGenFlags srcTexGenFlags, ref Surface srcSurface
-          , Vector3 srcModelPoint1, Vector3 srcModelPoint2,
-            Matrix4x4 dstBrushFromModel, ref TexGen dstTexGen, TexGenFlags dstTexGenFlags, ref Surface dstSurface
-          , Vector3 dstModelPoint1, Vector3 dstModelPoint2, bool flipX, Vector3 scale
-        )
+        public static bool AlignTextureSpaces(Matrix4x4 srcBrushFromModel, TexGen srcTexGen, TexGenFlags srcTexGenFlags, ref Surface srcSurface, Vector3 srcModelPoint1, Vector3 srcModelPoint2, Matrix4x4 dstBrushFromModel, ref TexGen dstTexGen, TexGenFlags dstTexGenFlags, ref Surface dstSurface, Vector3 dstModelPoint1, Vector3 dstModelPoint2, bool flipX, Vector3 scale)
         {
-            Matrix4x4 srcPlaneFromModel = GenerateModelSpaceToPlaneSpaceMatrix(
-                srcSurface, srcTexGenFlags, srcBrushFromModel
-            );
-
-            Matrix4x4 dstPlaneFromModel = GenerateModelSpaceToPlaneSpaceMatrix(
-                dstSurface, dstTexGenFlags, dstBrushFromModel
-            );
+            Matrix4x4 srcPlaneFromModel = GenerateModelSpaceToPlaneSpaceMatrix(srcSurface, srcTexGenFlags, srcBrushFromModel);
+            Matrix4x4 dstPlaneFromModel = GenerateModelSpaceToPlaneSpaceMatrix(dstSurface, dstTexGenFlags, dstBrushFromModel);
 
             Matrix4x4 srcTextureFromPlane = srcTexGen.GeneratePlaneSpaceToTextureSpaceMatrix();
             Matrix4x4 srcTextureFromModel = srcTextureFromPlane * srcPlaneFromModel;
@@ -1627,12 +1448,7 @@ namespace RealtimeCSG
             return true;
         }
 
-        public static bool AlignTextureSpaces(
-            Matrix4x4 srcTextureMatrix,
-            bool textureMatrixInPlaneSpace,
-            ref TexGen dstTexGen,
-            ref Surface dstSurface
-        )
+        public static bool AlignTextureSpaces(Matrix4x4 srcTextureMatrix, bool textureMatrixInPlaneSpace, ref TexGen dstTexGen, ref Surface dstSurface)
         {
             if(InternalCSGModelManager.External == null)
             {
@@ -1661,11 +1477,8 @@ namespace RealtimeCSG
                 float   rotationAngle = GeometryUtility.SignedAngle(uVector, binormal, normal);
                 dstTexGen.RotationAngle = rotationAngle;
 
-                Quaternion invRotation = Quaternion.AngleAxis(-dstTexGen.RotationAngle, normal);
-
-                Matrix4x4 rotationMatrix = Matrix4x4.TRS(
-                    MathConstants.zeroVector3, invRotation, MathConstants.oneVector3
-                );
+                Quaternion invRotation    = Quaternion.AngleAxis(-dstTexGen.RotationAngle, normal);
+                Matrix4x4  rotationMatrix = Matrix4x4.TRS(MathConstants.zeroVector3, invRotation, MathConstants.oneVector3);
 
                 srcTextureMatrix *= rotationMatrix;
             }
@@ -1678,11 +1491,8 @@ namespace RealtimeCSG
 
                 dstTexGen.Scale = new Vector2(uVectorMagnitude, vVectorMagnitude);
 
-                Vector3 invScale = new Vector3(1.0f / dstTexGen.Scale.x, 1.0f / dstTexGen.Scale.y, 1.0f);
-
-                Matrix4x4 scaleMatrix = Matrix4x4.TRS(
-                    MathConstants.zeroVector3, MathConstants.identityQuaternion, invScale
-                );
+                Vector3   invScale    = new Vector3(1.0f / dstTexGen.Scale.x, 1.0f / dstTexGen.Scale.y, 1.0f);
+                Matrix4x4 scaleMatrix = Matrix4x4.TRS(MathConstants.zeroVector3, MathConstants.identityQuaternion, invScale);
 
                 srcTextureMatrix *= scaleMatrix;
             }

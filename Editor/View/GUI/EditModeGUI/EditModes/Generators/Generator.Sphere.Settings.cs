@@ -181,9 +181,7 @@ namespace RealtimeCSG
             {
                 Vector3 point = realVertices[i];
 
-                realVertices[i] = GeometryUtility.ProjectPointOnPlane(
-                    buildPlane, vertices[0] + matrix.MultiplyPoint(point)
-                );
+                realVertices[i] = GeometryUtility.ProjectPointOnPlane(buildPlane, vertices[0] + matrix.MultiplyPoint(point));
             }
 
             isValid = true;

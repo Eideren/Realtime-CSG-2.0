@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using InternalRealtimeCSG;
 using RealtimeCSG.Components;
 using UnityEditor;
@@ -57,8 +56,7 @@ namespace RealtimeCSG
 
         internal static CSGModel GetDefaultCSGModel(Scene scene)
         {
-            if(!scene.IsValid() ||
-               !scene.isLoaded)
+            if(!scene.IsValid() || !scene.isLoaded)
             {
                 return null;
             }
@@ -81,9 +79,7 @@ namespace RealtimeCSG
 
 #region InitializeDefaultCSGModel
 
-        private static void InitializeDefaultCSGModel(
-            Scene currentScene, CSGSceneState sceneState, bool createIfNoExists = true
-        )
+        private static void InitializeDefaultCSGModel(Scene currentScene, CSGSceneState sceneState, bool createIfNoExists = true)
         {
             bool      inPrefabMode        = false;
             Transform prefabRootTransform = null;
@@ -100,8 +96,7 @@ namespace RealtimeCSG
             string defaultModelName = inPrefabMode ? DEFAULT_PREFAB_MODEL_NAME : DEFAULT_MODEL_NAME;
 
             // make sure we have a default CSG model
-            sceneState.defaultModelObject =
-                SceneQueryUtility.GetUniqueHiddenGameObjectInSceneWithName(currentScene, defaultModelName);
+            sceneState.defaultModelObject = SceneQueryUtility.GetUniqueHiddenGameObjectInSceneWithName(currentScene, defaultModelName);
 
             if(createIfNoExists)
             {

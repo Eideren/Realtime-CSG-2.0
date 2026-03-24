@@ -23,8 +23,7 @@ public class EditModeToolWindowSceneGUI : EditorWindow
     [MenuItem("Window/Realtime-CSG window %F2")]
     public static EditModeToolWindowSceneGUI GetWindow()
     {
-        EditModeToolWindowSceneGUI editorWindow =
-            EditorWindow.GetWindow<EditModeToolWindowSceneGUI>(WINDOW_TITLE, true, typeof(EditModeToolWindowEditor));
+        EditModeToolWindowSceneGUI editorWindow = EditorWindow.GetWindow<EditModeToolWindowSceneGUI>(WINDOW_TITLE, true, typeof(EditModeToolWindowEditor));
 
         editorWindow.minSize = new Vector2(32, 64);
         editorWindow.Show();

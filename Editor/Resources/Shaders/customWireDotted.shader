@@ -43,10 +43,10 @@ Shader "Hidden/CSG/internal/customWireDotted"
             uniform float4 _MainTex_ST;
 
             v2f vert(float4 vertex1 : POSITION,
-                      float2 uv : TEXCOORD0, // texture coordinate
-                      float3 vertex2 : TEXCOORD1, // second vertex to compute angle with
-                      float dashSize : TEXCOORD2, // dash-size
-                      float4 color : COLOR0)
+                     float2 uv : TEXCOORD0, // texture coordinate
+                     float3 vertex2 : TEXCOORD1, // second vertex to compute angle with
+                     float dashSize : TEXCOORD2, // dash-size
+                     float4 color : COLOR0)
             {
                 v2f o;
 

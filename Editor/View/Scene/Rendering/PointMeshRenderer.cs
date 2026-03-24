@@ -123,8 +123,7 @@ namespace RealtimeCSG
 
             public void DrawPoints()
             {
-                if(vertexCount == 0 ||
-                   pointIndexCount == 0)
+                if(vertexCount == 0 || pointIndexCount == 0)
                 {
                     return;
                 }
@@ -134,8 +133,7 @@ namespace RealtimeCSG
 
             public void DrawLines()
             {
-                if(vertexCount == 0 ||
-                   lineIndexCount == 0)
+                if(vertexCount == 0 || lineIndexCount == 0)
                 {
                     return;
                 }

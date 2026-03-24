@@ -63,8 +63,8 @@ namespace RealtimeCSG
         public static float SignedAngle2D(Vector2 from, Vector2 to)
         {
             double unsignedAngle = Angle2D(from, to);
-            float  cross_z       = from.x * to.y - from.y * to.x;
-            int    sign          = System.Math.Sign(cross_z);
+            float  crossZ        = from.x * to.y - from.y * to.x;
+            int    sign          = System.Math.Sign(crossZ);
 
             return (float)(unsignedAngle * sign);
         }
@@ -101,12 +101,7 @@ namespace RealtimeCSG
                 return false;
             }
 
-            if(CounterClockwise(B1, B2, A1) * CounterClockwise(B1, B2, A2) > 0)
-            {
-                return false;
-            }
-
-            return true;
+            return !(CounterClockwise(B1, B2, A1) * CounterClockwise(B1, B2, A2) > 0);
         }
 
         private struct Line
@@ -168,10 +163,7 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    if(Intersects(
-                           points[lines[i].index0], points[lines[i].index1],
-                           points[lines[j].index0], points[lines[j].index1]
-                       ))
+                    if(Intersects(points[lines[i].index0], points[lines[i].index1], points[lines[j].index0], points[lines[j].index1]))
                     {
                         return true;
                     }
@@ -183,8 +175,7 @@ namespace RealtimeCSG
 
         public static Vector2[] RotatePlaneTo2D(Matrix4x4 extraMatrix, Vector3[] points, CSGPlane plane)
         {
-            Matrix4x4 mat = RotatePlaneTo2DMatrix(plane) * extraMatrix;
-
+            Matrix4x4 mat      = RotatePlaneTo2DMatrix(plane) * extraMatrix;
             Vector2[] points2D = new Vector2[points.Length];
 
             for(int i = 0; i < points2D.Length; i++)
@@ -199,8 +190,7 @@ namespace RealtimeCSG
 
         public static Vector2[] RotatePlaneTo2D(Vector3[] points, CSGPlane plane)
         {
-            Matrix4x4 mat = RotatePlaneTo2DMatrix(plane);
-
+            Matrix4x4 mat      = RotatePlaneTo2DMatrix(plane);
             Vector2[] points2D = new Vector2[points.Length];
 
             for(int i = 0; i < points2D.Length; i++)
@@ -312,16 +302,14 @@ namespace RealtimeCSG
 
         public static float CleanLength(float length)
         {
-            int intLength = Mathf.FloorToInt(length);
-
+            int   intLength   = Mathf.FloorToInt(length);
             float fractLength = length - intLength;
 
             fractLength = Mathf.Round(fractLength * 1000.0f) / 1000.0f;
 
             const float epsilon = MathConstants.EqualityEpsilon;
 
-            if(fractLength >= -epsilon &&
-               fractLength < epsilon)
+            if(fractLength >= -epsilon && fractLength < epsilon)
             {
                 fractLength = 0;
             }
@@ -371,9 +359,9 @@ namespace RealtimeCSG
             for(int e = 0; e < points.Length; e++)
             {
                 Vector3 currVertex = points[e];
-                normal.x = normal.x + (prevVertex.y - currVertex.y) * (prevVertex.z + currVertex.z);
-                normal.y = normal.y + (prevVertex.z - currVertex.z) * (prevVertex.x + currVertex.x);
-                normal.z = normal.z + (prevVertex.x - currVertex.x) * (prevVertex.y + currVertex.y);
+                normal.x += (prevVertex.y - currVertex.y) * (prevVertex.z + currVertex.z);
+                normal.y += (prevVertex.z - currVertex.z) * (prevVertex.x + currVertex.x);
+                normal.z += (prevVertex.x - currVertex.x) * (prevVertex.y + currVertex.y);
 
                 prevVertex = currVertex;
             }
@@ -414,9 +402,9 @@ namespace RealtimeCSG
             for(int e = 0; e < indices.Length; e++)
             {
                 Vector3 currVertex = points[indices[e]];
-                normal.x = normal.x + (prevVertex.y - currVertex.y) * (prevVertex.z + currVertex.z);
-                normal.y = normal.y + (prevVertex.z - currVertex.z) * (prevVertex.x + currVertex.x);
-                normal.z = normal.z + (prevVertex.x - currVertex.x) * (prevVertex.y + currVertex.y);
+                normal.x += (prevVertex.y - currVertex.y) * (prevVertex.z + currVertex.z);
+                normal.y += (prevVertex.z - currVertex.z) * (prevVertex.x + currVertex.x);
+                normal.z += (prevVertex.x - currVertex.x) * (prevVertex.y + currVertex.y);
 
                 prevVertex = currVertex;
             }
@@ -468,9 +456,7 @@ namespace RealtimeCSG
 
         public static CSGPlane CalcPolygonPlane(ControlMesh controlMesh, short polygonIndex)
         {
-            if(controlMesh == null ||
-               controlMesh.Polygons == null ||
-               polygonIndex >= controlMesh.Polygons.Length)
+            if(controlMesh == null || controlMesh.Polygons == null || polygonIndex >= controlMesh.Polygons.Length)
             {
                 return new CSGPlane(MathConstants.upVector3, 0);
             }
@@ -540,7 +526,6 @@ namespace RealtimeCSG
 
         public static Vector3 SnapToClosestAxis(Vector3 vector)
         {
-            //Vector3 tangent;
             float absX = Mathf.Abs(vector.x);
             float absY = Mathf.Abs(vector.y);
             float absZ = Mathf.Abs(vector.z);
@@ -592,9 +577,7 @@ namespace RealtimeCSG
             binormal = Vector3.Cross(normal, tangent).normalized;
         }
 
-        public static Vector3 ProjectPointOnInfiniteLine(
-            Vector3 point, Vector3 lineOrigin, Vector3 normalizedLineDirection
-        )
+        public static Vector3 ProjectPointOnInfiniteLine(Vector3 point, Vector3 lineOrigin, Vector3 normalizedLineDirection)
         {
             float dot = Vector3.Dot(normalizedLineDirection, point - lineOrigin);
 
@@ -619,19 +602,14 @@ namespace RealtimeCSG
 
         public static Quaternion GetOrientationForPlane(CSGPlane plane)
         {
-            Vector3 normal = plane.normal;
-
-            Vector3 tangent = Vector3.Cross(normal, Vector3.Cross(normal, CalculateTangent(normal)).normalized)
-               .normalized;
-
-            Quaternion q = Quaternion.LookRotation(tangent, normal);
+            Vector3    normal  = plane.normal;
+            Vector3    tangent = Vector3.Cross(normal, Vector3.Cross(normal, CalculateTangent(normal)).normalized).normalized;
+            Quaternion q       = Quaternion.LookRotation(tangent, normal);
 
             return q;
         }
 
-        public static float DistancePointToCircle(
-            SceneView sceneView, Vector3 point, Vector3 circleCenter, float circleRadius
-        )
+        public static float DistancePointToCircle(SceneView sceneView, Vector3 point, Vector3 circleCenter, float circleRadius)
         {
             Vector2 pointCenter  = HandleUtility.WorldToGUIPoint(point);
             Vector2 screenCenter = HandleUtility.WorldToGUIPoint(circleCenter);
@@ -659,8 +637,7 @@ namespace RealtimeCSG
             {
                 ControlMesh controlMesh = brushes[b].ControlMesh;
 
-                if(controlMesh == null ||
-                   controlMesh.Vertices == null)
+                if(controlMesh == null || controlMesh.Vertices == null)
                 {
                     continue;
                 }
@@ -702,14 +679,13 @@ namespace RealtimeCSG
 
             // TODO: see if we can re-use calculations across list of points
 
-            float t0 = t; // TODO: turn this into t * 0.5f?
-            float t1 = t0 * t;
+            float t1 = t * t;
             float t2 = t1 * t;
 
             ret.x = 0.5f * // TODO: remove this?
             (
                 p1.x * 2.0f + // TODO: change to 1.0f?
-                (-p0.x + p2.x) * t0 +
+                (-p0.x + p2.x) * t +
                 (2.0f * p0.x - 5.0f * p1.x + 4.0f * p2.x - p3.x) * t1 +
                 (-p0.x + 3.0f * p1.x - 3.0f * p2.x + p3.x) * t2
             );
@@ -717,7 +693,7 @@ namespace RealtimeCSG
             ret.y = 0.5f * // TODO: remove this?
             (
                 p1.y * 2.0f + // TODO: change to 1.0f?
-                (-p0.y + p2.y) * t0 +
+                (-p0.y + p2.y) * t +
                 (2.0f * p0.y - 5.0f * p1.y + 4.0f * p2.y - p3.y) * t1 +
                 (-p0.y + 3.0f * p1.y - 3.0f * p2.y + p3.y) * t2
             );
@@ -759,8 +735,7 @@ namespace RealtimeCSG
 
         public static bool ContinueTexGenFromSurfaceToSurface(CSGBrush brush, int srcSurfaceIndex, int dstSurfaceIndex)
         {
-            if(srcSurfaceIndex < 0 || srcSurfaceIndex >= brush.Shape.TexGens.Length ||
-               !brush)
+            if(srcSurfaceIndex < 0 || srcSurfaceIndex >= brush.Shape.TexGens.Length || !brush)
             {
                 return false;
             }
@@ -776,9 +751,7 @@ namespace RealtimeCSG
             CSGPlane dstLocalPlane = surfaces[dstSurfaceIndex].Plane;
             CSGPlane srcLocalPlane = surfaces[srcSurfaceIndex].Plane;
 
-            InternalCSGModelManager.FindParentOperationAndModel(
-                brush.transform, out CSGOperation _, out CSGModel parentModel
-            );
+            InternalCSGModelManager.FindParentOperationAndModel(brush.transform, out CSGOperation _, out CSGModel parentModel);
 
             Matrix4x4 localFromWorld = brush.transform.worldToLocalMatrix;
             Matrix4x4 worldFromModel = parentModel.transform.localToWorldMatrix;
@@ -810,8 +783,7 @@ namespace RealtimeCSG
             else
             {
                 // Find 2 points on intersection of 2 planes
-                srcWorldPoint1 = (Vector3.Cross(edgeDirection, srcWorldNormal) * -dstWorldPlane.d +
-                    Vector3.Cross(dstWorldNormal, edgeDirection) * -srcWorldPlane.d) / det;
+                srcWorldPoint1 = (Vector3.Cross(edgeDirection, srcWorldNormal) * -dstWorldPlane.d + Vector3.Cross(dstWorldNormal, edgeDirection) * -srcWorldPlane.d) / det;
 
                 srcWorldPoint2 = srcWorldPoint1 + edgeDirection;
                 dstWorldPoint1 = srcWorldPoint1;

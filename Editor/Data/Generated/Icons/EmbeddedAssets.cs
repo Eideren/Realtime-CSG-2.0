@@ -91,9 +91,7 @@ namespace RealtimeCSG
             {
                 if(iconPersCsgAdditionSmall == null)
                 {
-                    iconPersCsgAdditionSmall = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersCsgAdditionSmall = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersCsgAdditionSmall.LoadRawTextureData(Convert.FromBase64String(icon_pers_csg_addition_small));
                     iconPersCsgAdditionSmall.Apply();
@@ -114,13 +112,9 @@ namespace RealtimeCSG
             {
                 if(iconPersCsgAdditionSmallOn == null)
                 {
-                    iconPersCsgAdditionSmallOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersCsgAdditionSmallOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconPersCsgAdditionSmallOn.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pers_csg_addition_small_on)
-                    );
+                    iconPersCsgAdditionSmallOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_csg_addition_small_on));
 
                     iconPersCsgAdditionSmallOn.Apply();
                 }
@@ -140,13 +134,9 @@ namespace RealtimeCSG
             {
                 if(iconPersCsgintersectionSmall == null)
                 {
-                    iconPersCsgintersectionSmall = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersCsgintersectionSmall = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconPersCsgintersectionSmall.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pers_csg_intersection_small)
-                    );
+                    iconPersCsgintersectionSmall.LoadRawTextureData(Convert.FromBase64String(icon_pers_csg_intersection_small));
 
                     iconPersCsgintersectionSmall.Apply();
                 }
@@ -166,13 +156,9 @@ namespace RealtimeCSG
             {
                 if(iconPersCsgintersectionSmallOn == null)
                 {
-                    iconPersCsgintersectionSmallOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersCsgintersectionSmallOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconPersCsgintersectionSmallOn.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pers_csg_intersection_small_on)
-                    );
+                    iconPersCsgintersectionSmallOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_csg_intersection_small_on));
 
                     iconPersCsgintersectionSmallOn.Apply();
                 }
@@ -192,13 +178,9 @@ namespace RealtimeCSG
             {
                 if(iconPersCsgSubtractionSmall == null)
                 {
-                    iconPersCsgSubtractionSmall = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersCsgSubtractionSmall = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconPersCsgSubtractionSmall.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pers_csg_subtraction_small)
-                    );
+                    iconPersCsgSubtractionSmall.LoadRawTextureData(Convert.FromBase64String(icon_pers_csg_subtraction_small));
 
                     iconPersCsgSubtractionSmall.Apply();
                 }
@@ -218,13 +200,9 @@ namespace RealtimeCSG
             {
                 if(iconPersCsgSubtractionSmallOn == null)
                 {
-                    iconPersCsgSubtractionSmallOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersCsgSubtractionSmallOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconPersCsgSubtractionSmallOn.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pers_csg_subtraction_small_on)
-                    );
+                    iconPersCsgSubtractionSmallOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_csg_subtraction_small_on));
 
                     iconPersCsgSubtractionSmallOn.Apply();
                 }
@@ -244,9 +222,7 @@ namespace RealtimeCSG
             {
                 if(iconPersGrid == null)
                 {
-                    iconPersGrid = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersGrid = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersGrid.LoadRawTextureData(Convert.FromBase64String(icon_pers_grid));
                     iconPersGrid.Apply();
@@ -267,9 +243,7 @@ namespace RealtimeCSG
             {
                 if(iconPersGridOn == null)
                 {
-                    iconPersGridOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersGridOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersGridOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_grid_on));
                     iconPersGridOn.Apply();
@@ -290,9 +264,7 @@ namespace RealtimeCSG
             {
                 if(iconPersGridsnap == null)
                 {
-                    iconPersGridsnap = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersGridsnap = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersGridsnap.LoadRawTextureData(Convert.FromBase64String(icon_pers_gridsnap));
                     iconPersGridsnap.Apply();
@@ -313,9 +285,7 @@ namespace RealtimeCSG
             {
                 if(iconPersGridsnapOn == null)
                 {
-                    iconPersGridsnapOn = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersGridsnapOn = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersGridsnapOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_gridsnap_on));
                     iconPersGridsnapOn.Apply();
@@ -336,9 +306,7 @@ namespace RealtimeCSG
             {
                 if(iconPersNosnap == null)
                 {
-                    iconPersNosnap = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersNosnap = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersNosnap.LoadRawTextureData(Convert.FromBase64String(icon_pers_nosnap));
                     iconPersNosnap.Apply();
@@ -359,9 +327,7 @@ namespace RealtimeCSG
             {
                 if(iconPersNosnapOn == null)
                 {
-                    iconPersNosnapOn = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersNosnapOn = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersNosnapOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_nosnap_on));
                     iconPersNosnapOn.Apply();
@@ -382,9 +348,7 @@ namespace RealtimeCSG
             {
                 if(iconPersPassThrough == null)
                 {
-                    iconPersPassThrough = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersPassThrough = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersPassThrough.LoadRawTextureData(Convert.FromBase64String(icon_pers_pass_through));
                     iconPersPassThrough.Apply();
@@ -405,9 +369,7 @@ namespace RealtimeCSG
             {
                 if(iconPersPassThroughOn == null)
                 {
-                    iconPersPassThroughOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersPassThroughOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersPassThroughOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_pass_through_on));
                     iconPersPassThroughOn.Apply();
@@ -428,9 +390,7 @@ namespace RealtimeCSG
             {
                 if(iconPersRebuild == null)
                 {
-                    iconPersRebuild = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersRebuild = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersRebuild.LoadRawTextureData(Convert.FromBase64String(icon_pers_rebuild));
                     iconPersRebuild.Apply();
@@ -451,9 +411,7 @@ namespace RealtimeCSG
             {
                 if(iconPersRebuildOn == null)
                 {
-                    iconPersRebuildOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersRebuildOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersRebuildOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_rebuild_on));
                     iconPersRebuildOn.Apply();
@@ -474,9 +432,7 @@ namespace RealtimeCSG
             {
                 if(iconPersRelsnap == null)
                 {
-                    iconPersRelsnap = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersRelsnap = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersRelsnap.LoadRawTextureData(Convert.FromBase64String(icon_pers_relsnap));
                     iconPersRelsnap.Apply();
@@ -497,9 +453,7 @@ namespace RealtimeCSG
             {
                 if(iconPersRelsnapOn == null)
                 {
-                    iconPersRelsnapOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersRelsnapOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersRelsnapOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_relsnap_on));
                     iconPersRelsnapOn.Apply();
@@ -520,9 +474,7 @@ namespace RealtimeCSG
             {
                 if(iconPersRemoveBehind == null)
                 {
-                    iconPersRemoveBehind = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersRemoveBehind = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersRemoveBehind.LoadRawTextureData(Convert.FromBase64String(icon_pers_remove_behind));
                     iconPersRemoveBehind.Apply();
@@ -543,9 +495,7 @@ namespace RealtimeCSG
             {
                 if(iconPersRemoveBehindOn == null)
                 {
-                    iconPersRemoveBehindOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersRemoveBehindOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersRemoveBehindOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_remove_behind_on));
                     iconPersRemoveBehindOn.Apply();
@@ -566,9 +516,7 @@ namespace RealtimeCSG
             {
                 if(iconPersRemoveFront == null)
                 {
-                    iconPersRemoveFront = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersRemoveFront = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersRemoveFront.LoadRawTextureData(Convert.FromBase64String(icon_pers_remove_front));
                     iconPersRemoveFront.Apply();
@@ -589,9 +537,7 @@ namespace RealtimeCSG
             {
                 if(iconPersRemoveFrontOn == null)
                 {
-                    iconPersRemoveFrontOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersRemoveFrontOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersRemoveFrontOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_remove_front_on));
                     iconPersRemoveFrontOn.Apply();
@@ -612,9 +558,7 @@ namespace RealtimeCSG
             {
                 if(iconPersSnapping == null)
                 {
-                    iconPersSnapping = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersSnapping = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersSnapping.LoadRawTextureData(Convert.FromBase64String(icon_pers_snapping));
                     iconPersSnapping.Apply();
@@ -635,9 +579,7 @@ namespace RealtimeCSG
             {
                 if(iconPersSnappingOn == null)
                 {
-                    iconPersSnappingOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersSnappingOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersSnappingOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_snapping_on));
                     iconPersSnappingOn.Apply();
@@ -658,9 +600,7 @@ namespace RealtimeCSG
             {
                 if(iconPersSplit == null)
                 {
-                    iconPersSplit = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersSplit = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersSplit.LoadRawTextureData(Convert.FromBase64String(icon_pers_split));
                     iconPersSplit.Apply();
@@ -681,9 +621,7 @@ namespace RealtimeCSG
             {
                 if(iconPersSplitOn == null)
                 {
-                    iconPersSplitOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersSplitOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersSplitOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_split_on));
                     iconPersSplitOn.Apply();
@@ -704,9 +642,7 @@ namespace RealtimeCSG
             {
                 if(iconPersWireframe == null)
                 {
-                    iconPersWireframe = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersWireframe = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersWireframe.LoadRawTextureData(Convert.FromBase64String(icon_pers_wireframe));
                     iconPersWireframe.Apply();
@@ -727,9 +663,7 @@ namespace RealtimeCSG
             {
                 if(iconPersWireframeOn == null)
                 {
-                    iconPersWireframeOn = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconPersWireframeOn = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconPersWireframeOn.LoadRawTextureData(Convert.FromBase64String(icon_pers_wireframe_on));
                     iconPersWireframeOn.Apply();
@@ -750,9 +684,7 @@ namespace RealtimeCSG
             {
                 if(iconProCsgAdditionSmall == null)
                 {
-                    iconProCsgAdditionSmall = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProCsgAdditionSmall = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProCsgAdditionSmall.LoadRawTextureData(Convert.FromBase64String(icon_pro_csg_addition_small));
                     iconProCsgAdditionSmall.Apply();
@@ -773,13 +705,9 @@ namespace RealtimeCSG
             {
                 if(iconProCsgAdditionSmallOn == null)
                 {
-                    iconProCsgAdditionSmallOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProCsgAdditionSmallOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconProCsgAdditionSmallOn.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pro_csg_addition_small_on)
-                    );
+                    iconProCsgAdditionSmallOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_csg_addition_small_on));
 
                     iconProCsgAdditionSmallOn.Apply();
                 }
@@ -799,13 +727,9 @@ namespace RealtimeCSG
             {
                 if(iconProCsgintersectionSmall == null)
                 {
-                    iconProCsgintersectionSmall = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProCsgintersectionSmall = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconProCsgintersectionSmall.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pro_csg_intersection_small)
-                    );
+                    iconProCsgintersectionSmall.LoadRawTextureData(Convert.FromBase64String(icon_pro_csg_intersection_small));
 
                     iconProCsgintersectionSmall.Apply();
                 }
@@ -825,13 +749,9 @@ namespace RealtimeCSG
             {
                 if(iconProCsgintersectionSmallOn == null)
                 {
-                    iconProCsgintersectionSmallOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProCsgintersectionSmallOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconProCsgintersectionSmallOn.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pro_csg_intersection_small_on)
-                    );
+                    iconProCsgintersectionSmallOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_csg_intersection_small_on));
 
                     iconProCsgintersectionSmallOn.Apply();
                 }
@@ -851,13 +771,9 @@ namespace RealtimeCSG
             {
                 if(iconProCsgSubtractionSmall == null)
                 {
-                    iconProCsgSubtractionSmall = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProCsgSubtractionSmall = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconProCsgSubtractionSmall.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pro_csg_subtraction_small)
-                    );
+                    iconProCsgSubtractionSmall.LoadRawTextureData(Convert.FromBase64String(icon_pro_csg_subtraction_small));
 
                     iconProCsgSubtractionSmall.Apply();
                 }
@@ -877,13 +793,9 @@ namespace RealtimeCSG
             {
                 if(iconProCsgSubtractionSmallOn == null)
                 {
-                    iconProCsgSubtractionSmallOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProCsgSubtractionSmallOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
-                    iconProCsgSubtractionSmallOn.LoadRawTextureData(
-                        Convert.FromBase64String(icon_pro_csg_subtraction_small_on)
-                    );
+                    iconProCsgSubtractionSmallOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_csg_subtraction_small_on));
 
                     iconProCsgSubtractionSmallOn.Apply();
                 }
@@ -903,9 +815,7 @@ namespace RealtimeCSG
             {
                 if(iconProGrid == null)
                 {
-                    iconProGrid = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProGrid = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProGrid.LoadRawTextureData(Convert.FromBase64String(icon_pro_grid));
                     iconProGrid.Apply();
@@ -926,9 +836,7 @@ namespace RealtimeCSG
             {
                 if(iconProGridOn == null)
                 {
-                    iconProGridOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProGridOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProGridOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_grid_on));
                     iconProGridOn.Apply();
@@ -949,9 +857,7 @@ namespace RealtimeCSG
             {
                 if(iconProGridsnap == null)
                 {
-                    iconProGridsnap = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProGridsnap = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProGridsnap.LoadRawTextureData(Convert.FromBase64String(icon_pro_gridsnap));
                     iconProGridsnap.Apply();
@@ -972,9 +878,7 @@ namespace RealtimeCSG
             {
                 if(iconProGridsnapOn == null)
                 {
-                    iconProGridsnapOn = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProGridsnapOn = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProGridsnapOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_gridsnap_on));
                     iconProGridsnapOn.Apply();
@@ -995,9 +899,7 @@ namespace RealtimeCSG
             {
                 if(iconProNosnap == null)
                 {
-                    iconProNosnap = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProNosnap = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProNosnap.LoadRawTextureData(Convert.FromBase64String(icon_pro_nosnap));
                     iconProNosnap.Apply();
@@ -1018,9 +920,7 @@ namespace RealtimeCSG
             {
                 if(iconProNosnapOn == null)
                 {
-                    iconProNosnapOn = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProNosnapOn = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProNosnapOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_nosnap_on));
                     iconProNosnapOn.Apply();
@@ -1041,9 +941,7 @@ namespace RealtimeCSG
             {
                 if(iconProPassThrough == null)
                 {
-                    iconProPassThrough = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProPassThrough = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProPassThrough.LoadRawTextureData(Convert.FromBase64String(icon_pro_pass_through));
                     iconProPassThrough.Apply();
@@ -1064,9 +962,7 @@ namespace RealtimeCSG
             {
                 if(iconProPassThroughOn == null)
                 {
-                    iconProPassThroughOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProPassThroughOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProPassThroughOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_pass_through_on));
                     iconProPassThroughOn.Apply();
@@ -1087,9 +983,7 @@ namespace RealtimeCSG
             {
                 if(iconProRebuild == null)
                 {
-                    iconProRebuild = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProRebuild = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProRebuild.LoadRawTextureData(Convert.FromBase64String(icon_pro_rebuild));
                     iconProRebuild.Apply();
@@ -1110,9 +1004,7 @@ namespace RealtimeCSG
             {
                 if(iconProRebuildOn == null)
                 {
-                    iconProRebuildOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProRebuildOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProRebuildOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_rebuild_on));
                     iconProRebuildOn.Apply();
@@ -1133,9 +1025,7 @@ namespace RealtimeCSG
             {
                 if(iconProRelsnap == null)
                 {
-                    iconProRelsnap = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProRelsnap = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProRelsnap.LoadRawTextureData(Convert.FromBase64String(icon_pro_relsnap));
                     iconProRelsnap.Apply();
@@ -1156,9 +1046,7 @@ namespace RealtimeCSG
             {
                 if(iconProRelsnapOn == null)
                 {
-                    iconProRelsnapOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProRelsnapOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProRelsnapOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_relsnap_on));
                     iconProRelsnapOn.Apply();
@@ -1179,9 +1067,7 @@ namespace RealtimeCSG
             {
                 if(iconProRemoveBehind == null)
                 {
-                    iconProRemoveBehind = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProRemoveBehind = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProRemoveBehind.LoadRawTextureData(Convert.FromBase64String(icon_pro_remove_behind));
                     iconProRemoveBehind.Apply();
@@ -1202,9 +1088,7 @@ namespace RealtimeCSG
             {
                 if(iconProRemoveBehindOn == null)
                 {
-                    iconProRemoveBehindOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProRemoveBehindOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProRemoveBehindOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_remove_behind_on));
                     iconProRemoveBehindOn.Apply();
@@ -1225,9 +1109,7 @@ namespace RealtimeCSG
             {
                 if(iconProRemoveFront == null)
                 {
-                    iconProRemoveFront = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProRemoveFront = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProRemoveFront.LoadRawTextureData(Convert.FromBase64String(icon_pro_remove_front));
                     iconProRemoveFront.Apply();
@@ -1248,9 +1130,7 @@ namespace RealtimeCSG
             {
                 if(iconProRemoveFrontOn == null)
                 {
-                    iconProRemoveFrontOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProRemoveFrontOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProRemoveFrontOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_remove_front_on));
                     iconProRemoveFrontOn.Apply();
@@ -1271,9 +1151,7 @@ namespace RealtimeCSG
             {
                 if(iconProSnapping == null)
                 {
-                    iconProSnapping = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProSnapping = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProSnapping.LoadRawTextureData(Convert.FromBase64String(icon_pro_snapping));
                     iconProSnapping.Apply();
@@ -1294,9 +1172,7 @@ namespace RealtimeCSG
             {
                 if(iconProSnappingOn == null)
                 {
-                    iconProSnappingOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProSnappingOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProSnappingOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_snapping_on));
                     iconProSnappingOn.Apply();
@@ -1317,9 +1193,7 @@ namespace RealtimeCSG
             {
                 if(iconProSplit == null)
                 {
-                    iconProSplit = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProSplit = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProSplit.LoadRawTextureData(Convert.FromBase64String(icon_pro_split));
                     iconProSplit.Apply();
@@ -1340,9 +1214,7 @@ namespace RealtimeCSG
             {
                 if(iconProSplitOn == null)
                 {
-                    iconProSplitOn = new Texture2D(
-                        17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProSplitOn = new Texture2D(17, 17, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProSplitOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_split_on));
                     iconProSplitOn.Apply();
@@ -1363,9 +1235,7 @@ namespace RealtimeCSG
             {
                 if(iconProWireframe == null)
                 {
-                    iconProWireframe = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProWireframe = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProWireframe.LoadRawTextureData(Convert.FromBase64String(icon_pro_wireframe));
                     iconProWireframe.Apply();
@@ -1386,9 +1256,7 @@ namespace RealtimeCSG
             {
                 if(iconProWireframeOn == null)
                 {
-                    iconProWireframeOn = new Texture2D(
-                        16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear
-                    );
+                    iconProWireframeOn = new Texture2D(16, 16, TextureFormat.RGBA32, false, PlayerSettings.colorSpace == ColorSpace.Linear);
 
                     iconProWireframeOn.LoadRawTextureData(Convert.FromBase64String(icon_pro_wireframe_on));
                     iconProWireframeOn.Apply();

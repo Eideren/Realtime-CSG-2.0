@@ -55,32 +55,32 @@ namespace RealtimeCSG
 
         private static void UpdateStyles()
         {
-            m_Styles           = new Styles();
+            m_Styles = new Styles();
             m_Styles.emptyItem = new GUIStyle(EditorStyles.foldout);
 
-            m_Styles.emptyItem.active.background  = null;
-            m_Styles.emptyItem.hover.background   = null;
-            m_Styles.emptyItem.normal.background  = null;
+            m_Styles.emptyItem.active.background = null;
+            m_Styles.emptyItem.hover.background = null;
+            m_Styles.emptyItem.normal.background = null;
             m_Styles.emptyItem.focused.background = null;
 
-            m_Styles.emptyItem.onActive.background  = null;
-            m_Styles.emptyItem.onHover.background   = null;
-            m_Styles.emptyItem.onNormal.background  = null;
+            m_Styles.emptyItem.onActive.background = null;
+            m_Styles.emptyItem.onHover.background = null;
+            m_Styles.emptyItem.onNormal.background = null;
             m_Styles.emptyItem.onFocused.background = null;
 
-            m_Styles.emptySelected          = new GUIStyle(m_Styles.emptyItem);
-            m_Styles.emptySelected.normal   = m_Styles.emptySelected.active;
+            m_Styles.emptySelected = new GUIStyle(m_Styles.emptyItem);
+            m_Styles.emptySelected.normal = m_Styles.emptySelected.active;
             m_Styles.emptySelected.onNormal = m_Styles.emptySelected.onActive;
 
-            m_Styles.foldOut          = new GUIStyle(EditorStyles.foldout);
-            m_Styles.foldOut.active   = m_Styles.foldOut.normal;
+            m_Styles.foldOut = new GUIStyle(EditorStyles.foldout);
+            m_Styles.foldOut.active = m_Styles.foldOut.normal;
             m_Styles.foldOut.onActive = m_Styles.foldOut.onNormal;
 
-            m_Styles.foldOutSelected          = new GUIStyle(EditorStyles.foldout);
-            m_Styles.foldOutSelected.normal   = m_Styles.foldOutSelected.active;
+            m_Styles.foldOutSelected = new GUIStyle(EditorStyles.foldout);
+            m_Styles.foldOutSelected.normal = m_Styles.foldOutSelected.active;
             m_Styles.foldOutSelected.onNormal = m_Styles.foldOutSelected.onActive;
 
-            m_Styles.emptyItem.active   = m_Styles.emptyItem.normal;
+            m_Styles.emptyItem.active = m_Styles.emptyItem.normal;
             m_Styles.emptyItem.onActive = m_Styles.emptyItem.onNormal;
         }
 
@@ -95,9 +95,9 @@ namespace RealtimeCSG
             public StackItem(CSGTreeNode[] children, float xpos = 0)
             {
                 this.children = children;
-                index         = 0;
-                count         = this.children.Length;
-                this.xpos     = xpos;
+                index = 0;
+                count = this.children.Length;
+                this.xpos = xpos;
             }
 
             public int index;
@@ -127,7 +127,7 @@ namespace RealtimeCSG
             }
 
             StackItem     currentStackItem = itemStack[itemStack.Count - 1];
-            CSGTreeNode[] children         = currentStackItem.children;
+            CSGTreeNode[] children = currentStackItem.children;
 
             while(currentStackItem.index < currentStackItem.count)
             {
@@ -138,7 +138,7 @@ namespace RealtimeCSG
 
                 if(!openNodes.TryGetValue(nodeID, out bool isOpen))
                 {
-                    isOpen            = true;
+                    isOpen = true;
                     openNodes[nodeID] = true;
                 }
 
@@ -184,7 +184,7 @@ namespace RealtimeCSG
         {
             int    userID = coreNode.UserID;
             int    nodeID = coreNode.NodeID;
-            Object obj    = userID != 0 ? EditorUtility.InstanceIDToObject(userID) : null;
+            Object obj = userID != 0 ? EditorUtility.InstanceIDToObject(userID) : null;
 
             if(obj == null)
             {
@@ -216,7 +216,7 @@ namespace RealtimeCSG
             float kItemHeight = EditorGUIUtility.singleLineHeight;
 
             StackItem     currentStackItem = itemStack[itemStack.Count - 1];
-            CSGTreeNode[] children         = currentStackItem.children;
+            CSGTreeNode[] children = currentStackItem.children;
             itemRect.x = currentStackItem.xpos;
 
             while(currentStackItem.index < currentStackItem.count)
@@ -229,13 +229,13 @@ namespace RealtimeCSG
                     return;
                 }
 
-                int nodeID     = children[i].NodeID;
-                int userID     = children[i].UserID;
+                int nodeID = children[i].NodeID;
+                int userID = children[i].UserID;
                 int childCount = children[i].Count;
 
                 if(itemRect.y > visibleArea.yMin)
                 {
-                    string name     = NameForCoreNode(children[i]);
+                    string name = NameForCoreNode(children[i]);
                     bool   selected = selectedInstanceIDs.Contains(userID);
 
                     GUIStyle style = (childCount > 0)
@@ -301,7 +301,7 @@ namespace RealtimeCSG
             foreach(int instanceID in Selection.instanceIDs)
             {
                 Object     obj = EditorUtility.InstanceIDToObject(instanceID);
-                GameObject go  = obj as GameObject;
+                GameObject go = obj as GameObject;
 
                 if(go != null)
                 {
@@ -315,7 +315,7 @@ namespace RealtimeCSG
 
             float kItemHeight = EditorGUIUtility.singleLineHeight;
 
-            CSGTreeNode[]     allNodes        = CSGManager.AllTreeNodes;
+            CSGTreeNode[]     allNodes = CSGManager.AllTreeNodes;
             List<CSGTreeNode> allRootNodeList = new List<CSGTreeNode>();
 
             for(int i = 0; i < allNodes.Length; i++)
@@ -334,19 +334,19 @@ namespace RealtimeCSG
             int totalCount = GetVisibleItems(allRootNodes, ref _openNodes);
 
             Rect itemArea = position;
-            itemArea.x      =  0;
-            itemArea.y      =  0;
+            itemArea.x = 0;
+            itemArea.y = 0;
             itemArea.height -= 200;
 
             Rect totalRect = position;
-            totalRect.x      = 0;
-            totalRect.y      = 0;
-            totalRect.width  = position.width - SCROLL_WIDTH;
+            totalRect.x = 0;
+            totalRect.y = 0;
+            totalRect.width = position.width - SCROLL_WIDTH;
             totalRect.height = (totalCount * kItemHeight) + (2 * PADDING);
 
             Rect itemRect = position;
-            itemRect.x      = 0;
-            itemRect.y      = PADDING;
+            itemRect.x = 0;
+            itemRect.y = PADDING;
             itemRect.height = kItemHeight;
 
             m_ScrollPos = GUI.BeginScrollView(itemArea, m_ScrollPos, totalRect);
@@ -367,10 +367,10 @@ namespace RealtimeCSG
 
                 if(obj)
                 {
-                    CSGBrush     brush     = obj as CSGBrush;
+                    CSGBrush     brush = obj as CSGBrush;
                     CSGOperation operation = obj as CSGOperation;
-                    CSGModel     model     = obj as CSGModel;
-                    int          nodeID    = CSGNode.InvalidNodeID;
+                    CSGModel     model = obj as CSGModel;
+                    int          nodeID = CSGNode.InvalidNodeID;
 
                     if(brush)
                     {
@@ -390,8 +390,8 @@ namespace RealtimeCSG
                     if(nodeID != CSGNode.InvalidNodeID)
                     {
                         Rect labelArea = itemArea;
-                        labelArea.x      = 0;
-                        labelArea.y      = labelArea.height;
+                        labelArea.x = 0;
+                        labelArea.y = labelArea.height;
                         labelArea.height = kItemHeight;
                         CSGTreeNode node = new CSGTreeNode { nodeID = nodeID };
                         GUI.Label(labelArea, $"NodeID: {nodeID}");

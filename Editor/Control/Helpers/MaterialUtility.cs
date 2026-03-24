@@ -14,8 +14,7 @@ namespace RealtimeCSG
         internal const string SPECIAL_SURFACE_SHADER_ID = SHADER_NAME_ROOT + SPECIAL_SURFACE_SHADER_NAME;
         internal const string TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME = "transparentSpecialSurface";
 
-        internal const string TRANSPARENT_SPECIAL_SURFACE_SHADER_ID =
-            SHADER_NAME_ROOT + TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME;
+        internal const string TRANSPARENT_SPECIAL_SURFACE_SHADER_ID = SHADER_NAME_ROOT + TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME;
 
         internal const string HIDDEN_NAME = "hidden";
         internal const string CULLED_NAME = "culled";
@@ -55,6 +54,11 @@ namespace RealtimeCSG
         private static readonly int shaderMainTexBaseColorMapProp = Shader.PropertyToID("_BaseColorMap");
         private static readonly int shaderMainTexMainTexProp = Shader.PropertyToID("_MainTex");
 
+        private static readonly int metallicMaterialProp = Shader.PropertyToID("_Metallic");
+        private static readonly int smoothnessMaterialProp = Shader.PropertyToID("_Smoothness");
+        private static readonly int metallicGlossMapMaterialProp = Shader.PropertyToID("_MetallicGlossMap");
+        private static readonly int detailAlbedoMapMaterialProp = Shader.PropertyToID("_DetailAlbedoMap");
+
         private static void ShaderInit()
         {
             m_ShadersInitialized = true;
@@ -68,9 +72,7 @@ namespace RealtimeCSG
             TransparentSpecialSurfaceShader = Shader.Find(TRANSPARENT_SPECIAL_SURFACE_SHADER_ID);
         }
 
-        internal static Material GenerateEditorMaterial(
-            string shaderName, string textureName = null, string materialName = null
-        )
+        internal static Material GenerateEditorMaterial(string shaderName, string textureName = null, string materialName = null)
         {
             string name = $"{shaderName}:{textureName}";
 
@@ -109,8 +111,7 @@ namespace RealtimeCSG
 
             if(textureName != null)
             {
-                material.mainTexture =
-                    Resources.Load<Texture2D>($"RealtimeCSG/Textures/{textureName}");
+                material.mainTexture = Resources.Load<Texture2D>($"RealtimeCSG/Textures/{textureName}");
 
                 if(!material.mainTexture)
                 {
@@ -208,10 +209,7 @@ namespace RealtimeCSG
 
             if(material == null)
             {
-                Debug.LogWarningFormat(
-                    "Could not find material '{0}{1}.mat'. Not generating material '{0}{1}.mat' for the current render pipeline."
-                  , "RealtimeCSG/Materials/", name
-                );
+                Debug.LogWarningFormat("Could not find material '{0}{1}.mat'. Not generating material '{0}{1}.mat' for the current render pipeline.", "RealtimeCSG/Materials/", name);
 
                 return;
             }
@@ -238,11 +236,6 @@ namespace RealtimeCSG
 
                     if(material.name.Equals("Metal"))
                     {
-                        int metallicMaterialProp         = Shader.PropertyToID("_Metallic");
-                        int smoothnessMaterialProp       = Shader.PropertyToID("_Smoothness");
-                        int metallicGlossMapMaterialProp = Shader.PropertyToID("_MetallicGlossMap");
-                        int detailAlbedoMapMaterialProp  = Shader.PropertyToID("_DetailAlbedoMap");
-
                         // if the material is the built-in metal texture, then we'll set its metalness to 100%
 
                         if(material.HasProperty(metallicMaterialProp))
@@ -250,17 +243,12 @@ namespace RealtimeCSG
                             material.SetFloat(metallicMaterialProp, 1f);
                             material.SetFloat(smoothnessMaterialProp, 1f);
 
-                            material.SetTexture(
-                                metallicGlossMapMaterialProp
-                              , Resources.Load<Texture2D>("RealtimeCSG/Textures/checker_m")
-                            );
+                            material.SetTexture(metallicGlossMapMaterialProp, Resources.Load<Texture2D>("RealtimeCSG/Textures/checker_m"));
                         }
 
                         if(material.HasProperty(detailAlbedoMapMaterialProp))
                         {
-                            material.SetTexture(
-                                detailAlbedoMapMaterialProp, Resources.Load<Texture2D>("RealtimeCSG/Textures/checker")
-                            );
+                            material.SetTexture(detailAlbedoMapMaterialProp, Resources.Load<Texture2D>("RealtimeCSG/Textures/checker"));
                         }
                     }
                 }
@@ -268,10 +256,7 @@ namespace RealtimeCSG
                 {
                     AssetDatabase.StopAssetEditing();
 
-                    Debug.LogErrorFormat(
-                        "Could not find a compatible default render pipeline shader. Shader '{0}' does not contain any properties named '_MainTex', '_Albedo', '_Diffuse', or '_BaseColorMap'."
-                      , material.shader.name
-                    );
+                    Debug.LogErrorFormat("Could not find a compatible default render pipeline shader. Shader '{0}' does not contain any properties named '_MainTex', '_Albedo', '_Diffuse', or '_BaseColorMap'.", material.shader.name);
 
                     return;
                 }
@@ -562,9 +547,7 @@ namespace RealtimeCSG
 
             if(m_LineThicknessMultiplierId != -1)
             {
-                genericLineMaterial.SetFloat(
-                    m_LineThicknessMultiplierId, m_LineThicknessMultiplier * EditorGUIUtility.pixelsPerPoint
-                );
+                genericLineMaterial.SetFloat(m_LineThicknessMultiplierId, m_LineThicknessMultiplier * EditorGUIUtility.pixelsPerPoint);
             }
 
             if(m_LineDashMultiplierId != -1)
@@ -616,9 +599,7 @@ namespace RealtimeCSG
             {
                 if(!m_HiddenMaterial)
                 {
-                    m_HiddenMaterial = GenerateEditorMaterial(
-                        TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME, HIDDEN_NAME, HIDDEN_MATERIAL_NAME
-                    );
+                    m_HiddenMaterial = GenerateEditorMaterial(TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME, HIDDEN_NAME, HIDDEN_MATERIAL_NAME);
                 }
 
                 return m_HiddenMaterial;
@@ -633,9 +614,7 @@ namespace RealtimeCSG
             {
                 if(!m_CulledMaterial)
                 {
-                    m_CulledMaterial = GenerateEditorMaterial(
-                        TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME, CULLED_NAME, CULLED_MATERIAL_NAME
-                    );
+                    m_CulledMaterial = GenerateEditorMaterial(TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME, CULLED_NAME, CULLED_MATERIAL_NAME);
                 }
 
                 return m_CulledMaterial;
@@ -650,9 +629,7 @@ namespace RealtimeCSG
             {
                 if(!m_ColliderMaterial)
                 {
-                    m_ColliderMaterial = GenerateEditorMaterial(
-                        SPECIAL_SURFACE_SHADER_NAME, COLLIDER_NAME, COLLIDER_MATERIAL_NAME
-                    );
+                    m_ColliderMaterial = GenerateEditorMaterial(SPECIAL_SURFACE_SHADER_NAME, COLLIDER_NAME, COLLIDER_MATERIAL_NAME);
                 }
 
                 return m_ColliderMaterial;
@@ -667,9 +644,7 @@ namespace RealtimeCSG
             {
                 if(!m_TriggerMaterial)
                 {
-                    m_TriggerMaterial = GenerateEditorMaterial(
-                        TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME, TRIGGER_NAME, TRIGGER_MATERIAL_NAME
-                    );
+                    m_TriggerMaterial = GenerateEditorMaterial(TRANSPARENT_SPECIAL_SURFACE_SHADER_NAME, TRIGGER_NAME, TRIGGER_MATERIAL_NAME);
                 }
 
                 return m_TriggerMaterial;
@@ -684,9 +659,7 @@ namespace RealtimeCSG
             {
                 if(!m_ShadowOnlyMaterial)
                 {
-                    m_ShadowOnlyMaterial = GenerateEditorMaterial(
-                        SPECIAL_SURFACE_SHADER_NAME, SHADOW_ONLY_NAME, SHADOW_ONLY_MATERIAL_NAME
-                    );
+                    m_ShadowOnlyMaterial = GenerateEditorMaterial(SPECIAL_SURFACE_SHADER_NAME, SHADOW_ONLY_NAME, SHADOW_ONLY_MATERIAL_NAME);
                 }
 
                 return m_ShadowOnlyMaterial;
@@ -701,9 +674,7 @@ namespace RealtimeCSG
             {
                 if(!m_CastShadowsMaterial)
                 {
-                    m_CastShadowsMaterial = GenerateEditorMaterial(
-                        SPECIAL_SURFACE_SHADER_NAME, CAST_SHADOWS_NAME, CAST_SHADOWS_MATERIAL_NAME
-                    );
+                    m_CastShadowsMaterial = GenerateEditorMaterial(SPECIAL_SURFACE_SHADER_NAME, CAST_SHADOWS_NAME, CAST_SHADOWS_MATERIAL_NAME);
                 }
 
                 return m_CastShadowsMaterial;
@@ -718,9 +689,7 @@ namespace RealtimeCSG
             {
                 if(!m_ReceiveShadowsMaterial)
                 {
-                    m_ReceiveShadowsMaterial = GenerateEditorMaterial(
-                        SPECIAL_SURFACE_SHADER_NAME, RECEIVE_SHADOWS_NAME, RECEIVE_SHADOWS_MATERIAL_NAME
-                    );
+                    m_ReceiveShadowsMaterial = GenerateEditorMaterial(SPECIAL_SURFACE_SHADER_NAME, RECEIVE_SHADOWS_NAME, RECEIVE_SHADOWS_MATERIAL_NAME);
                 }
 
                 return m_ReceiveShadowsMaterial;

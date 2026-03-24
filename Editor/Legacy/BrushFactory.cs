@@ -25,18 +25,14 @@ namespace RealtimeCSG.Legacy
         /// <param name="texGen">A legacy <see cref="RealtimeCSG.Legacy.TexGen"/> that describes how the texture coordinates are calculated in the <see cref="RealtimeCSG.Foundation.SurfaceDescription"/>.</param>
         /// <param name="texGenFlags">A legacy <see cref="RealtimeCSG.Legacy.TexGenFlags"/> enum that describes if the <see cref="RealtimeCSG.Foundation.SurfaceDescription"/> texture generation will be in world-space or brush-space.</param>
         /// <returns>A new <see cref="RealtimeCSG.Foundation.SurfaceDescription"/></returns>
-        public static SurfaceDescription CreateSurfaceDescription(
-            Surface surface, TexGen texGen, TexGenFlags texGenFlags
-        )
+        public static SurfaceDescription CreateSurfaceDescription(Surface surface, TexGen texGen, TexGenFlags texGenFlags)
         {
             Matrix4x4 localToTextureSpace = SurfaceUtility.GetLocalToTextureSpaceMatrix(texGen, surface);
 
             SurfaceDescription description;
             description.smoothingGroup = texGen.SmoothingGroup;
 
-            description.surfaceFlags = (texGenFlags & TexGenFlags.WorldSpaceTexture) == 0
-                ? SurfaceFlags.None
-                : SurfaceFlags.TextureIsInWorldSpace;
+            description.surfaceFlags = (texGenFlags & TexGenFlags.WorldSpaceTexture) == 0 ? SurfaceFlags.None : SurfaceFlags.TextureIsInWorldSpace;
 
             description.UV0.U = localToTextureSpace.GetRow(0);
             description.UV0.V = localToTextureSpace.GetRow(1);
@@ -79,9 +75,7 @@ namespace RealtimeCSG.Legacy
         {
             Vector3 halfSize = size * 0.5f;
 
-            return !CreateCubeControlMesh(out ControlMesh controlMesh, out Shape shape, halfSize, -halfSize, material)
-                ? null
-                : GenerateFromControlMesh(controlMesh, shape);
+            return !CreateCubeControlMesh(out ControlMesh controlMesh, out Shape shape, halfSize, -halfSize, material) ? null : GenerateFromControlMesh(controlMesh, shape);
         }
     }
 }

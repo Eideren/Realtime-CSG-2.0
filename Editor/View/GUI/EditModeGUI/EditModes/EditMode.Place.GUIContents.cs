@@ -7,33 +7,13 @@ namespace RealtimeCSG
         private static GUIContent m_ContentTitleLabel;
 
         private static readonly GUIContent rotateByOffsetContent = new GUIContent("Rotate");
-
-        private static readonly ToolTip rotateByOffsetTooltip = new ToolTip(
-            "Rotate by given offset",
-            "Click to rotate the selected objects by the given offset."
-        );
-
+        private static readonly ToolTip rotateByOffsetTooltip = new ToolTip("Rotate by given offset", "Click to rotate the selected objects by the given offset.");
         private static readonly GUIContent cloneRotateByOffsetContent = new GUIContent("Clone + Rotate");
-
-        private static readonly ToolTip cloneRotateByOffsetTooltip = new ToolTip(
-            "Clone + rotate",
-            "Click to rotate a copy of the selected objects by the given offset."
-        );
-
+        private static readonly ToolTip cloneRotateByOffsetTooltip = new ToolTip("Clone + rotate", "Click to rotate a copy of the selected objects by the given offset.");
         private static readonly GUIContent moveByOffsetContent = new GUIContent("Move");
-
-        private static readonly ToolTip moveByOffsetTooltip = new ToolTip(
-            "Move by given offset",
-            "Click to move the selected objects by the given offset."
-        );
-
+        private static readonly ToolTip moveByOffsetTooltip = new ToolTip("Move by given offset", "Click to move the selected objects by the given offset.");
         private static readonly GUIContent cloneMoveByOffsetContent = new GUIContent("Clone + Move");
-
-        private static readonly ToolTip cloneMoveByOffsetTooltip = new ToolTip(
-            "Clone + Move",
-            "Click to move a copy of the selected objects by the given offset."
-        );
-
+        private static readonly ToolTip cloneMoveByOffsetTooltip = new ToolTip("Clone + Move", "Click to move a copy of the selected objects by the given offset.");
         private static readonly GUIContent recenterPivotContent = new GUIContent("Recenter pivot");
 
         private static readonly ToolTip recenterPivotTooltip = new ToolTip(

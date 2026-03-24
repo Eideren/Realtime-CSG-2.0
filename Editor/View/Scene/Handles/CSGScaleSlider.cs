@@ -22,10 +22,7 @@ namespace RealtimeCSG.Helpers
             return val;
         }
 
-        public static float DoAxis(
-            int id, float scale, Vector3 position, Vector3 direction, Quaternion rotation, float size, bool snapping
-          , float snap, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction
-        )
+        public static float DoAxis(int id, float scale, Vector3 position, Vector3 direction, Quaternion rotation, float size, bool snapping, float snap, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction)
         {
             Event evt = Event.current;
 
@@ -35,9 +32,7 @@ namespace RealtimeCSG.Helpers
                 {
                     HandleUtility.AddControl(id, HandleUtility.DistanceToLine(position, position + direction * size));
 
-                    HandleUtility.AddControl(
-                        id, HandleUtility.DistanceToCircle(position + direction * size, size * .2f)
-                    );
+                    HandleUtility.AddControl(id, HandleUtility.DistanceToCircle(position + direction * size, size * .2f));
 
                     break;
                 }
@@ -48,8 +43,7 @@ namespace RealtimeCSG.Helpers
                         break;
                     }
 
-                    if(((HandleUtility.nearestControl == id && evt.button == 0) ||
-                           (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
+                    if(((HandleUtility.nearestControl == id && evt.button == 0) || (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
                     {
                         if(initFunction != null)
                         {
@@ -71,9 +65,7 @@ namespace RealtimeCSG.Helpers
                     {
                         m_CurrentMousePosition += evt.delta;
 
-                        float dist = 1 + HandleUtility.CalcLineTranslation(
-                            m_StartMousePosition, m_CurrentMousePosition, position, direction
-                        ) / size;
+                        float dist = 1 + HandleUtility.CalcLineTranslation(m_StartMousePosition, m_CurrentMousePosition, position, direction) / size;
 
                         dist        = SnapValue(dist, snap, snapping);
                         scale       = m_StartScale * dist;
@@ -120,10 +112,7 @@ namespace RealtimeCSG.Helpers
                         s = size * scale / m_StartScale;
                     }
 
-                    Handles.CubeHandleCap(
-                        id, position + direction * s * m_ScaleDrawLength, rotation, size * .1f, EventType.Repaint
-                    );
-
+                    Handles.CubeHandleCap(id, position + direction * s * m_ScaleDrawLength, rotation, size * .1f, EventType.Repaint);
                     Handles.DrawLine(position, position + direction * (s * m_ScaleDrawLength - size * .05f));
 
                     Handles.color = originalColor;
@@ -135,10 +124,7 @@ namespace RealtimeCSG.Helpers
             return scale;
         }
 
-        public static Vector3 DoCenter(
-            int id, Vector3 value, Vector3 position, Quaternion rotation, float size, CSGHandles.CapFunction capFunction
-          , bool snapping, float snap, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction
-        )
+        public static Vector3 DoCenter(int id, Vector3 value, Vector3 position, Quaternion rotation, float size, CSGHandles.CapFunction capFunction, bool snapping, float snap, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction)
         {
             size *= 0.5f;
             Event evt = Event.current;
@@ -158,8 +144,7 @@ namespace RealtimeCSG.Helpers
                         break;
                     }
 
-                    if(((HandleUtility.nearestControl == id && evt.button == 0) ||
-                           (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
+                    if(((HandleUtility.nearestControl == id && evt.button == 0) || (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
                     {
                         if(initFunction != null)
                         {
@@ -170,6 +155,7 @@ namespace RealtimeCSG.Helpers
                         m_StartScale3         = value;
                         m_ValueDrag           = 0;
                         evt.Use();
+
                         EditorGUIUtility.SetWantsMouseJumping(1);
                     }
 

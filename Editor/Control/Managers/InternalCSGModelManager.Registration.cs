@@ -201,8 +201,9 @@ namespace RealtimeCSG
         {
             CSGModel model = gameObject.AddComponent<CSGModel>();
 
-            const StaticEditorFlags defaultFlags = StaticEditorFlags.BatchingStatic |
-                StaticEditorFlags.NavigationStatic |
+            const StaticEditorFlags defaultFlags =
+                StaticEditorFlags.BatchingStatic |
+                StaticEditorFlags.NavigationStatic | // TODO: fix navigation flags
                 StaticEditorFlags.OccludeeStatic |
                 StaticEditorFlags.OffMeshLinkGeneration |
                 StaticEditorFlags.ReflectionProbeStatic;
@@ -291,11 +292,7 @@ namespace RealtimeCSG
 
             // make sure that the surface array is not empty,
             //  otherwise nothing can get rendered
-            if(component.Shape == null ||
-               component.Shape.Surfaces == null ||
-               component.Shape.Surfaces.Length == 0 ||
-               component.Shape.TexGens == null ||
-               component.Shape.TexGens.Length == 0)
+            if(component.Shape == null || component.Shape.Surfaces == null || component.Shape.Surfaces.Length == 0 || component.Shape.TexGens == null || component.Shape.TexGens.Length == 0)
             {
                 dirty = true;
                 BrushFactory.CreateCubeControlMesh(out component.ControlMesh, out component.Shape, Vector3.one);
@@ -418,8 +415,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(component.ParentData.TransformID == 0 &&
-               component.operationNodeID != CSGNode.InvalidNodeID)
+            if(component.ParentData.TransformID == 0 && component.operationNodeID != CSGNode.InvalidNodeID)
             {
                 component.ParentData.Transform   = component.transform;
                 component.ParentData.TransformID = component.transform.GetInstanceID();
@@ -560,15 +556,13 @@ namespace RealtimeCSG
             }
 
             // make sure our model has actually been initialized
-            if(childData.Model &&
-               !childData.Model.IsRegistered)
+            if(childData.Model && !childData.Model.IsRegistered)
             {
                 RegisterModel(childData.Model);
             }
 
             // make sure our parent (if any) has actually been initialized
-            if(childData.Parent &&
-               !childData.Parent.IsRegistered)
+            if(childData.Parent && !childData.Parent.IsRegistered)
             {
                 registerOperations.Remove(childData.Parent);
                 unregisterOperations.Remove(childData.Parent);
@@ -582,11 +576,7 @@ namespace RealtimeCSG
 
         private static void RegisterBrush(CSGBrush brush)
         {
-            if(CSGModelManager.IsInPlayMode ||
-               External == null ||
-               !brush ||
-               !brush.isActiveAndEnabled ||
-               brush.IsRegistered)
+            if(CSGModelManager.IsInPlayMode || External == null || !brush || !brush.isActiveAndEnabled || brush.IsRegistered)
             {
                 return;
             }
@@ -672,12 +662,7 @@ namespace RealtimeCSG
 
         private static void RegisterOperation(CSGOperation op)
         {
-            if(CSGModelManager.IsInPlayMode ||
-               External == null ||
-               !op ||
-               !op.isActiveAndEnabled ||
-               op.PassThrough ||
-               op.IsRegistered)
+            if(CSGModelManager.IsInPlayMode || External == null || !op || !op.isActiveAndEnabled || op.PassThrough || op.IsRegistered)
             {
                 return;
             }
@@ -737,11 +722,7 @@ namespace RealtimeCSG
 
         private static void RegisterModel(CSGModel model)
         {
-            if(CSGModelManager.IsInPlayMode ||
-               External == null ||
-               !model ||
-               !model.isActiveAndEnabled ||
-               model.IsRegistered)
+            if(CSGModelManager.IsInPlayMode || External == null || !model || !model.isActiveAndEnabled || model.IsRegistered)
             {
                 return;
             }
@@ -753,9 +734,7 @@ namespace RealtimeCSG
                     return;
                 }
 
-                Debug.LogWarning(
-                    $"Model named {model.name} marked as registered, but wasn't actually registered", model
-                );
+                Debug.LogWarning($"Model named {model.name} marked as registered, but wasn't actually registered", model);
             }
 
             if(!model.DefaultPhysicsMaterial)
@@ -797,9 +776,7 @@ namespace RealtimeCSG
             Shape       shape       = brush.Shape;
             ControlMesh controlMesh = brush.ControlMesh;
 
-            BrushMesh brushMesh = BrushFactory.GenerateFromControlMesh(
-                controlMesh, shape, brush.ChildData.Model.DefaultPhysicsMaterial
-            );
+            BrushMesh brushMesh = BrushFactory.GenerateFromControlMesh(controlMesh, shape, brush.ChildData.Model.DefaultPhysicsMaterial);
 
             if(brushMesh == null)
             {
@@ -856,9 +833,7 @@ namespace RealtimeCSG
 
             int brushNodeID = brush.brushNodeID;
 
-            if(brush.ChildData != null &&
-               brush.ChildData.Model &&
-               brush.ChildData.Model.IsRegistered)
+            if(brush.ChildData != null && brush.ChildData.Model && brush.ChildData.Model.IsRegistered)
             {
                 ParentNodeData parentData = GetParentData(brush.ChildData);
 
@@ -910,8 +885,7 @@ namespace RealtimeCSG
 
             int opID = op.operationNodeID;
 
-            if(op.ChildData.Model &&
-               op.ChildData.Model.IsRegistered)
+            if(op.ChildData.Model && op.ChildData.Model.IsRegistered)
             {
                 ParentNodeData parentData = GetParentData(op.ChildData);
 
@@ -925,15 +899,13 @@ namespace RealtimeCSG
             removedOperations.Add(opID);
 
             // did we remove component, or entire game-object?
-            if(op &&
-               op.gameObject)
+            if(op && op.gameObject)
             {
                 Transform transform = op.transform;
 
                 if(op.gameObject.activeInHierarchy)
                 {
-                    CSGOperation parent;
-                    FindParentOperation(transform, out parent);
+                    FindParentOperation(transform, out CSGOperation parent);
                     UpdateChildrenParent(parent, transform);
                 }
             }
@@ -1086,10 +1058,7 @@ namespace RealtimeCSG
             {
                 op.PrevOperation = op.OperationType;
 
-                External.setOperationOperationType(
-                    op.operationNodeID,
-                    op.OperationType
-                );
+                External.setOperationOperationType(op.operationNodeID, op.OperationType);
             }
         }
 
@@ -1133,9 +1102,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            bool updateTexGens = compareShape.prevTexGens == null
-             || compareShape.prevTexGens.Length != shape.TexGens.Length ||
-                surfacesModified;
+            bool updateTexGens = compareShape.prevTexGens == null || compareShape.prevTexGens.Length != shape.TexGens.Length || surfacesModified;
 
             if(!updateTexGens)
             {
@@ -1196,8 +1163,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(shape.Surfaces[surfaceIndex].TexGenIndex
-                        != compareShape.prevSurfaces[surfaceIndex].TexGenIndex)
+                        if(shape.Surfaces[surfaceIndex].TexGenIndex != compareShape.prevSurfaces[surfaceIndex].TexGenIndex)
                         {
                             updateTexGens = true;
                         }
@@ -1217,8 +1183,7 @@ namespace RealtimeCSG
                     SetBrushMeshSurfaces(brush);
                     surfacesModified = false;
 
-                    if(compareShape.prevSurfaces == null ||
-                       compareShape.prevSurfaces.Length != shape.Surfaces.Length)
+                    if(compareShape.prevSurfaces == null || compareShape.prevSurfaces.Length != shape.Surfaces.Length)
                     {
                         compareShape.prevSurfaces = new Surface[shape.Surfaces.Length];
                     }
@@ -1280,8 +1245,7 @@ namespace RealtimeCSG
             // check if surfaces changed
             CheckSurfaceModifications(brush, surfacesModified);
 
-            if(wasRegistered &&
-               brush.controlMeshGeneration != brush.ControlMesh.Generation)
+            if(wasRegistered && brush.controlMeshGeneration != brush.ControlMesh.Generation)
             {
                 brush.controlMeshGeneration = brush.ControlMesh.Generation;
                 ControlMeshUtility.RebuildShape(brush);
@@ -1293,9 +1257,6 @@ namespace RealtimeCSG
         private static readonly CSGBrush[] emptyBrushArray = Array.Empty<CSGBrush>();
         private static readonly CSGOperation[] emptyOperationArray = Array.Empty<CSGOperation>();
         private static readonly CSGModel[] emptyModelArray = Array.Empty<CSGModel>();
-
-        internal static double RegisterTime;
-        internal static double ValidateTime;
 
         internal static void UpdateRegistration()
         {
@@ -1332,21 +1293,15 @@ namespace RealtimeCSG
             // unregister old components
             if(unregisterBrushes.Count > 0 || unregisterOperations.Count > 0 || disableModels.Count > 0)
             {
-                CSGBrush[] unregisterBrushesList =
-                    unregisterBrushes.Count == 0 ? emptyBrushArray : unregisterBrushes.ToArray();
+                CSGBrush[]     unregisterBrushesList    = unregisterBrushes.Count == 0 ? emptyBrushArray : unregisterBrushes.ToArray();
+                CSGOperation[] unregisterOperationsList = unregisterOperations.Count == 0 ? emptyOperationArray : unregisterOperations.ToArray();
+                CSGModel[]     disableModelsList        = disableModels.Count == 0 ? emptyModelArray : disableModels.ToArray();
 
-                CSGOperation[] unregisterOperationsList = unregisterOperations.Count == 0
-                    ? emptyOperationArray
-                    : unregisterOperations.ToArray();
-
-                CSGModel[] disableModelsList = disableModels.Count == 0 ? emptyModelArray : disableModels.ToArray();
                 unregisterBrushes.Clear();
                 unregisterOperations.Clear();
                 disableModels.Clear();
 
-                if(unregisterBrushesList.Length > 0 ||
-                   unregisterOperationsList.Length > 0 ||
-                   disableModelsList.Length > 0)
+                if(unregisterBrushesList.Length > 0 || unregisterOperationsList.Length > 0 || disableModelsList.Length > 0)
                 {
                     m_IsHierarchyModified = true;
                 }
@@ -1382,179 +1337,167 @@ namespace RealtimeCSG
                 }
             }
 
-            double startTime = EditorApplication.timeSinceStartup;
-
             // register new components
             if(registerModels.Count > 0 || enableModels.Count > 0 || registerOperations.Count > 0
             || registerBrushes.Count > 0)
             {
-                CSGModel[] registerModelsList = registerModels.Count == 0 ? emptyModelArray : registerModels.ToArray();
-                CSGModel[] enableModelsList   = enableModels.Count == 0 ? emptyModelArray : enableModels.ToArray();
-
-                CSGOperation[] registerOperationsList =
-                    registerOperations.Count == 0 ? emptyOperationArray : registerOperations.ToArray();
-
-                CSGBrush[] registerBrushesList =
-                    registerBrushes.Count == 0 ? emptyBrushArray : registerBrushes.ToArray();
+                CSGModel[]     registerModelsList     = registerModels.Count == 0 ? emptyModelArray : registerModels.ToArray();
+                CSGModel[]     enableModelsList       = enableModels.Count == 0 ? emptyModelArray : enableModels.ToArray();
+                CSGOperation[] registerOperationsList = registerOperations.Count == 0 ? emptyOperationArray : registerOperations.ToArray();
+                CSGBrush[]     registerBrushesList    = registerBrushes.Count == 0 ? emptyBrushArray : registerBrushes.ToArray();
 
                 registerModels.Clear();
                 enableModels.Clear();
                 registerOperations.Clear();
                 registerBrushes.Clear();
 
-                if(registerBrushesList.Length > 0 ||
-                   registerModelsList.Length > 0 ||
-                   enableModelsList.Length > 0 ||
-                   registerOperationsList.Length > 0)
+                if(registerBrushesList.Length > 0 || registerModelsList.Length > 0 || enableModelsList.Length > 0 || registerOperationsList.Length > 0)
                 {
                     m_IsHierarchyModified = true;
                 }
 
                 HashSet<GameObject> prefabInstances = new HashSet<GameObject>();
+                HashSet<GameObject> foundPrefabs    = new HashSet<GameObject>();
 
+                for(int i = registerModelsList.Length - 1; i >= 0; i--)
                 {
-                    HashSet<GameObject> foundPrefabs = new HashSet<GameObject>();
+                    CSGModel component = registerModelsList[i];
 
-                    for(int i = registerModelsList.Length - 1; i >= 0; i--)
+                    if(!component)
                     {
-                        CSGModel component = registerModelsList[i];
+                        continue;
+                    }
 
-                        if(!component)
-                        {
-                            continue;
-                        }
+                    GameObject parent = CSGPrefabUtility.GetOutermostPrefabInstanceRoot(component.gameObject);
 
-                        GameObject parent = CSGPrefabUtility.GetOutermostPrefabInstanceRoot(component.gameObject);
+                    if(!parent)
+                    {
+                        continue;
+                    }
 
-                        if(!parent)
-                        {
-                            continue;
-                        }
-
-                        if(prefabInstances.Contains(parent))
-                        {
-                            ArrayUtility.RemoveAt(ref registerModelsList, i);
-
-                            continue;
-                        }
-
-                        if(foundPrefabs.Contains(parent))
-                        {
-                            continue;
-                        }
-
-                        Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
-                        foundPrefabs.Add(parent);
-
-                        if(!parentNodeObj)
-                        {
-                            continue;
-                        }
-
-                        CSGNode parentNode = parentNodeObj as CSGNode;
-
-                        if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
-                        {
-                            continue;
-                        }
-
-                        prefabInstances.Add(parent);
+                    if(prefabInstances.Contains(parent))
+                    {
                         ArrayUtility.RemoveAt(ref registerModelsList, i);
+
+                        continue;
                     }
 
-                    for(int i = registerOperationsList.Length - 1; i >= 0; i--)
+                    if(foundPrefabs.Contains(parent))
                     {
-                        CSGOperation component = registerOperationsList[i];
+                        continue;
+                    }
 
-                        if(!component)
-                        {
-                            continue;
-                        }
+                    Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
+                    foundPrefabs.Add(parent);
 
-                        GameObject parent = CSGPrefabUtility.GetOutermostPrefabInstanceRoot(component.gameObject);
+                    if(!parentNodeObj)
+                    {
+                        continue;
+                    }
 
-                        if(!parent)
-                        {
-                            continue;
-                        }
+                    CSGNode parentNode = parentNodeObj as CSGNode;
 
-                        if(prefabInstances.Contains(parent))
-                        {
-                            ArrayUtility.RemoveAt(ref registerOperationsList, i);
+                    if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
+                    {
+                        continue;
+                    }
 
-                            continue;
-                        }
+                    prefabInstances.Add(parent);
+                    ArrayUtility.RemoveAt(ref registerModelsList, i);
+                }
 
-                        if(foundPrefabs.Contains(parent))
-                        {
-                            continue;
-                        }
+                for(int i = registerOperationsList.Length - 1; i >= 0; i--)
+                {
+                    CSGOperation component = registerOperationsList[i];
 
-                        Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
-                        foundPrefabs.Add(parent);
+                    if(!component)
+                    {
+                        continue;
+                    }
 
-                        if(!parentNodeObj)
-                        {
-                            continue;
-                        }
+                    GameObject parent = CSGPrefabUtility.GetOutermostPrefabInstanceRoot(component.gameObject);
 
-                        CSGNode parentNode = parentNodeObj as CSGNode;
+                    if(!parent)
+                    {
+                        continue;
+                    }
 
-                        if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
-                        {
-                            continue;
-                        }
-
-                        prefabInstances.Add(parent);
+                    if(prefabInstances.Contains(parent))
+                    {
                         ArrayUtility.RemoveAt(ref registerOperationsList, i);
+
+                        continue;
                     }
 
-                    for(int i = registerBrushesList.Length - 1; i >= 0; i--)
+                    if(foundPrefabs.Contains(parent))
                     {
-                        CSGBrush component = registerBrushesList[i];
-
-                        if(!component)
-                        {
-                            continue;
-                        }
-
-                        GameObject parent = CSGPrefabUtility.GetOutermostPrefabInstanceRoot(component.gameObject);
-
-                        if(!parent)
-                        {
-                            continue;
-                        }
-
-                        if(prefabInstances.Contains(parent))
-                        {
-                            ArrayUtility.RemoveAt(ref registerBrushesList, i);
-
-                            continue;
-                        }
-
-                        if(foundPrefabs.Contains(parent))
-                        {
-                            continue;
-                        }
-
-                        Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
-                        foundPrefabs.Add(parent);
-
-                        if(!parentNodeObj)
-                        {
-                            continue;
-                        }
-
-                        CSGNode parentNode = parentNodeObj as CSGNode;
-
-                        if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
-                        {
-                            continue;
-                        }
-
-                        prefabInstances.Add(parent);
-                        ArrayUtility.RemoveAt(ref registerBrushesList, i);
+                        continue;
                     }
+
+                    Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
+                    foundPrefabs.Add(parent);
+
+                    if(!parentNodeObj)
+                    {
+                        continue;
+                    }
+
+                    CSGNode parentNode = parentNodeObj as CSGNode;
+
+                    if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
+                    {
+                        continue;
+                    }
+
+                    prefabInstances.Add(parent);
+                    ArrayUtility.RemoveAt(ref registerOperationsList, i);
+                }
+
+                for(int i = registerBrushesList.Length - 1; i >= 0; i--)
+                {
+                    CSGBrush component = registerBrushesList[i];
+
+                    if(!component)
+                    {
+                        continue;
+                    }
+
+                    GameObject parent = CSGPrefabUtility.GetOutermostPrefabInstanceRoot(component.gameObject);
+
+                    if(!parent)
+                    {
+                        continue;
+                    }
+
+                    if(prefabInstances.Contains(parent))
+                    {
+                        ArrayUtility.RemoveAt(ref registerBrushesList, i);
+
+                        continue;
+                    }
+
+                    if(foundPrefabs.Contains(parent))
+                    {
+                        continue;
+                    }
+
+                    Component parentNodeObj = parent.GetComponent(TypeConstants.csgNodeType);
+                    foundPrefabs.Add(parent);
+
+                    if(!parentNodeObj)
+                    {
+                        continue;
+                    }
+
+                    CSGNode parentNode = parentNodeObj as CSGNode;
+
+                    if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
+                    {
+                        continue;
+                    }
+
+                    prefabInstances.Add(parent);
+                    ArrayUtility.RemoveAt(ref registerBrushesList, i);
                 }
 
                 // we've found new prefabs that should have been copied instead of prefab-instances (this can happen when you drag it into the hierarchy)
@@ -1576,9 +1519,7 @@ namespace RealtimeCSG
                         Transform instanceParent    = instanceTransform.parent;
                         int       instanceIndex     = instanceTransform.GetSiblingIndex();
 
-                        GameObject newInstance = instanceParent
-                            ? Object.Instantiate(instance, instanceParent)
-                            : Object.Instantiate(instance);
+                        GameObject newInstance = instanceParent ? Object.Instantiate(instance, instanceParent) : Object.Instantiate(instance);
 
                         if(ArrayUtility.Contains(selection, instance))
                         {
@@ -1657,18 +1598,11 @@ namespace RealtimeCSG
                 }
             }
 
-            RegisterTime = EditorApplication.timeSinceStartup - startTime;
-
-            startTime = EditorApplication.timeSinceStartup;
-
             // validate components
             if(validateBrushes.Count > 0 || validateOperations.Count > 0)
             {
-                CSGBrush[] validateBrushesList =
-                    validateBrushes.Count == 0 ? emptyBrushArray : validateBrushes.ToArray();
-
-                CSGOperation[] validateOperationsList =
-                    validateOperations.Count == 0 ? emptyOperationArray : validateOperations.ToArray();
+                CSGBrush[]     validateBrushesList    = validateBrushes.Count == 0 ? emptyBrushArray : validateBrushes.ToArray();
+                CSGOperation[] validateOperationsList = validateOperations.Count == 0 ? emptyOperationArray : validateOperations.ToArray();
 
                 validateBrushes.Clear();
                 validateOperations.Clear();
@@ -1685,8 +1619,6 @@ namespace RealtimeCSG
                     ValidateOperation(component);
                 }
             }
-
-            ValidateTime = EditorApplication.timeSinceStartup - startTime;
         }
     }
 }

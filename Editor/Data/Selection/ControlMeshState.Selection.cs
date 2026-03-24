@@ -7,9 +7,9 @@ namespace RealtimeCSG
 {
     internal class ControlMeshSelection
     {
-        [SerializeField] public SelectState[] points;
-        [SerializeField] public SelectState[] edges;
-        [SerializeField] public SelectState[] polygons;
+        public SelectState[] points;
+        public SelectState[] edges;
+        public SelectState[] polygons;
 
         public void CopyTo(ControlMeshSelection other)
         {
@@ -124,11 +124,9 @@ namespace RealtimeCSG
     internal partial class ControlMeshState
     {
         // selection
-
         public readonly ControlMeshSelection selection = new ControlMeshSelection();
 
         // backup stuff
-
         public readonly ControlMeshSelection selectionBackup = new ControlMeshSelection();
 
         public void BackupSelection()
@@ -153,8 +151,7 @@ namespace RealtimeCSG
 
         public float GetClosestEdgeDistance(CSGPlane cameraPlane, int pointIndex0, int pointIndex1)
         {
-            if(pointIndex0 < 0 || pointIndex0 >= worldPoints.Length ||
-               pointIndex1 < 0 || pointIndex1 >= worldPoints.Length)
+            if(pointIndex0 < 0 || pointIndex0 >= worldPoints.Length || pointIndex1 < 0 || pointIndex1 >= worldPoints.Length)
             {
                 return float.PositiveInfinity;
             }
@@ -175,17 +172,14 @@ namespace RealtimeCSG
 
             for(int p = 0; p < polygonCenterPoints.Length; p++)
             {
-                if(p != surfaceIndex1 &&
-                   p != surfaceIndex2)
+                if(p != surfaceIndex1 && p != surfaceIndex2)
                 {
                     continue;
                 }
 
                 Vector3 polygonCenterPoint = polygonCenterPoints[p];
 
-                Vector3 polygonCenterPointOnLine = GeometryUtility.ProjectPointOnInfiniteLine(
-                    polygonCenterPoints[p], point0, (point1 - point0).normalized
-                );
+                Vector3 polygonCenterPointOnLine = GeometryUtility.ProjectPointOnInfiniteLine(polygonCenterPoints[p], point0, (point1 - point0).normalized);
 
                 Vector3 direction = (polygonCenterPointOnLine - polygonCenterPoint).normalized;
 

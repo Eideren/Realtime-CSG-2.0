@@ -24,29 +24,13 @@ namespace RealtimeCSG
 
         private static readonly GUIContent contentFlip = new GUIContent("Flip");
         private static readonly GUIContent contentFlipX = new GUIContent("X");
-
-        private static readonly ToolTip tooltipFlipX = new ToolTip(
-            "Flip X", "Flip the selection in the x direction", Keys.flipSelectionX
-        );
-
+        private static readonly ToolTip tooltipFlipX = new ToolTip("Flip X", "Flip the selection in the x direction", Keys.flipSelectionX);
         private static readonly GUIContent contentFlipY = new GUIContent("Y");
-
-        private static readonly ToolTip tooltipFlipY = new ToolTip(
-            "Flip Y", "Flip the selection in the y direction", Keys.flipSelectionY
-        );
-
+        private static readonly ToolTip tooltipFlipY = new ToolTip("Flip Y", "Flip the selection in the y direction", Keys.flipSelectionY);
         private static readonly GUIContent contentFlipZ = new GUIContent("Z");
-
-        private static readonly ToolTip tooltipFlipZ = new ToolTip(
-            "Flip Z", "Flip the selection in the z direction", Keys.flipSelectionZ
-        );
-
+        private static readonly ToolTip tooltipFlipZ = new ToolTip("Flip Z", "Flip the selection in the z direction", Keys.flipSelectionZ);
         private static readonly GUIContent contentSnapToGrid = new GUIContent("Snap to grid");
-
-        private static readonly ToolTip tooltipSnapToGrid = new ToolTip(
-            contentSnapToGrid.text, "Snap the selection to the closest grid lines", Keys.snapToGridKey
-        );
-
+        private static readonly ToolTip tooltipSnapToGrid = new ToolTip(contentSnapToGrid.text, "Snap the selection to the closest grid lines", Keys.snapToGridKey);
         private static readonly GUIContent contentSelection = new GUIContent("Selection");
         private static readonly GUIContent contentIgnoreHidden = new GUIContent("Ignore Hidden Surfaces");
 

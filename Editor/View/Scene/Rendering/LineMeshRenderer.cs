@@ -353,9 +353,7 @@ namespace RealtimeCSG
             }
         }
 
-        public void DrawLines(
-            Vector3[] vertices, int[] indices, Color color, float thickness = 1.0f, float dashSize = 0.0f
-        ) //2
+        public void DrawLines(Vector3[] vertices, int[] indices, Color color, float thickness = 1.0f, float dashSize = 0.0f) //2
         {
             Vector4 corner1 = new Vector4(thickness, -1, dashSize);
             Vector4 corner2 = new Vector4(thickness, +1, dashSize);
@@ -384,8 +382,7 @@ namespace RealtimeCSG
                     int index0 = indices[i + 0];
                     int index1 = indices[i + 1];
 
-                    if(index0 < 0 || index0 >= vertices.Length ||
-                       index1 < 0 || index1 >= vertices.Length)
+                    if(index0 < 0 || index0 >= vertices.Length || index1 < 0 || index1 >= vertices.Length)
                     {
                         continue;
                     }
@@ -432,8 +429,7 @@ namespace RealtimeCSG
                     int index0 = indices[i + 0];
                     int index1 = indices[i + 1];
 
-                    if(index0 < 0 || index0 >= vertices.Length ||
-                       index1 < 0 || index1 >= vertices.Length)
+                    if(index0 < 0 || index0 >= vertices.Length || index1 < 0 || index1 >= vertices.Length)
                     {
                         continue;
                     }
@@ -498,9 +494,7 @@ namespace RealtimeCSG
             }
         }
 
-        public void DrawLines(
-            Vector3[] vertices, int[] indices, Color[] colors, float thickness = 1.0f, float dashSize = 0.0f
-        ) //1
+        public void DrawLines(Vector3[] vertices, int[] indices, Color[] colors, float thickness = 1.0f, float dashSize = 0.0f) //1
         {
             Vector4 corner1 = new Vector4(thickness, -1, dashSize);
             Vector4 corner2 = new Vector4(thickness, +1, dashSize);
@@ -531,8 +525,7 @@ namespace RealtimeCSG
                     int index0 = indices[i + 0];
                     int index1 = indices[i + 1];
 
-                    if(index0 < 0 || index0 >= vertices.Length ||
-                       index1 < 0 || index1 >= vertices.Length)
+                    if(index0 < 0 || index0 >= vertices.Length || index1 < 0 || index1 >= vertices.Length)
                     {
                         continue;
                     }
@@ -581,8 +574,7 @@ namespace RealtimeCSG
                     int index0 = indices[i + 0];
                     int index1 = indices[i + 1];
 
-                    if(index0 < 0 || index0 >= vertices.Length ||
-                       index1 < 0 || index1 >= vertices.Length)
+                    if(index0 < 0 || index0 >= vertices.Length || index1 < 0 || index1 >= vertices.Length)
                     {
                         continue;
                     }
@@ -647,9 +639,7 @@ namespace RealtimeCSG
             }
         }
 
-        public void DrawLines(
-            Matrix4x4 matrix, Vector3[] vertices, Color color, float thickness = 1.0f, float dashSize = 0.0f
-        )
+        public void DrawLines(Matrix4x4 matrix, Vector3[] vertices, Color color, float thickness = 1.0f, float dashSize = 0.0f)
         {
             int      lineMeshIndex = _currentLineMesh;
             LineMesh lineMesh      = _lineMeshes[_currentLineMesh];
@@ -669,10 +659,7 @@ namespace RealtimeCSG
                     lineMesh.Clear();
                 }
 
-                lineMesh.AddLine(
-                    matrix.MultiplyPoint(vertices[i + 0]), matrix.MultiplyPoint(vertices[i + 1]), thickness, dashSize
-                  , color
-                );
+                lineMesh.AddLine(matrix.MultiplyPoint(vertices[i + 0]), matrix.MultiplyPoint(vertices[i + 1]), thickness, dashSize, color);
             }
 
             _currentLineMesh = lineMeshIndex;
@@ -704,10 +691,7 @@ namespace RealtimeCSG
             _currentLineMesh = lineMeshIndex;
         }
 
-        public void DrawLines(
-            Matrix4x4 matrix, Vector3[] vertices, int[] indices, Color[] colors, float thickness = 1.0f
-          , float dashSize = 0.0f
-        )
+        public void DrawLines(Matrix4x4 matrix, Vector3[] vertices, int[] indices, Color[] colors, float thickness = 1.0f, float dashSize = 0.0f)
         {
             int      lineMeshIndex = _currentLineMesh;
             LineMesh lineMesh      = _lineMeshes[_currentLineMesh];
@@ -735,18 +719,13 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                lineMesh.AddLine(
-                    matrix.MultiplyPoint(vertices[index0]), matrix.MultiplyPoint(vertices[index1]), thickness, dashSize
-                  , colors[c]
-                );
+                lineMesh.AddLine(matrix.MultiplyPoint(vertices[index0]), matrix.MultiplyPoint(vertices[index1]), thickness, dashSize, colors[c]);
             }
 
             _currentLineMesh = lineMeshIndex;
         }
 
-        public void DrawLines(
-            Matrix4x4 matrix, Vector3[] vertices, Color[] colors, float thickness = 1.0f, float dashSize = 0.0f
-        )
+        public void DrawLines(Matrix4x4 matrix, Vector3[] vertices, Color[] colors, float thickness = 1.0f, float dashSize = 0.0f)
         {
             int      lineMeshIndex = _currentLineMesh;
             LineMesh lineMesh      = _lineMeshes[_currentLineMesh];
@@ -766,10 +745,7 @@ namespace RealtimeCSG
                     lineMesh.Clear();
                 }
 
-                lineMesh.AddLine(
-                    matrix.MultiplyPoint(vertices[i + 0]), matrix.MultiplyPoint(vertices[i + 1]), thickness, dashSize
-                  , colors[c]
-                );
+                lineMesh.AddLine(matrix.MultiplyPoint(vertices[i + 0]), matrix.MultiplyPoint(vertices[i + 1]), thickness, dashSize, colors[c]);
             }
 
             _currentLineMesh = lineMeshIndex;

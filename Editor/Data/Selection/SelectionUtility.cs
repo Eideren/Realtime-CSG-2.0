@@ -18,7 +18,7 @@ namespace RealtimeCSG
 
     internal static class SelectionUtility
     {
-        private static CSGModel lastUsedModelInstance;
+        private static CSGModel m_LastUsedModelInstance;
 
         internal static CSGModel LastUsedModel
         {
@@ -26,18 +26,17 @@ namespace RealtimeCSG
             {
                 CSGModel returnModel = null;
 
-                if(lastUsedModelInstance != null)
+                if(m_LastUsedModelInstance != null)
                 {
-                    HideFlags flags = lastUsedModelInstance.gameObject.hideFlags;
+                    HideFlags flags = m_LastUsedModelInstance.gameObject.hideFlags;
 
                     if((flags & (HideFlags.HideInHierarchy | HideFlags.NotEditable | HideFlags.DontSaveInBuild)) == 0)
                     {
-                        returnModel = lastUsedModelInstance;
+                        returnModel = m_LastUsedModelInstance;
                     }
                 }
 
-                if(returnModel != null &&
-                   returnModel.gameObject.activeInHierarchy)
+                if(returnModel != null && returnModel.gameObject.activeInHierarchy)
                 {
                     return returnModel;
                 }
@@ -46,8 +45,7 @@ namespace RealtimeCSG
                 {
                     HideFlags flags = model.gameObject.hideFlags;
 
-                    if((flags & (HideFlags.HideInHierarchy | HideFlags.NotEditable | HideFlags.DontSaveInBuild)) == 0 &&
-                       model.gameObject.activeInHierarchy)
+                    if((flags & (HideFlags.HideInHierarchy | HideFlags.NotEditable | HideFlags.DontSaveInBuild)) == 0 && model.gameObject.activeInHierarchy)
                     {
                         // don't want new stuff to be added to a prefab instance
                         if(CSGPrefabUtility.IsPrefabAssetOrInstance(model.gameObject))
@@ -70,8 +68,7 @@ namespace RealtimeCSG
 
                 HideFlags flags = value.gameObject.hideFlags;
 
-                if((flags & (HideFlags.HideInHierarchy | HideFlags.NotEditable | HideFlags.DontSaveInBuild)) != 0 &&
-                   value.gameObject.activeInHierarchy)
+                if((flags & (HideFlags.HideInHierarchy | HideFlags.NotEditable | HideFlags.DontSaveInBuild)) != 0 && value.gameObject.activeInHierarchy)
                 {
                     return;
                 }
@@ -82,19 +79,17 @@ namespace RealtimeCSG
                     return;
                 }
 
-                lastUsedModelInstance = value;
+                m_LastUsedModelInstance = value;
             }
         }
 
         public static Transform FindParentToAssignTo(LegacyBrushIntersection intersection)
         {
-            if(intersection.brush == null ||
-               CSGPrefabUtility.IsPrefabAsset(intersection.brush.gameObject))
+            if(intersection.brush == null || CSGPrefabUtility.IsPrefabAsset(intersection.brush.gameObject))
             {
                 CSGModel lastModel = LastUsedModel;
 
-                if(lastModel == null ||
-                   CSGPrefabUtility.IsPrefabAsset(lastModel.gameObject))
+                if(lastModel == null || CSGPrefabUtility.IsPrefabAsset(lastModel.gameObject))
                 {
                     return null;
                 }
@@ -122,18 +117,10 @@ namespace RealtimeCSG
                 return null;
             }
 
-            if(CSGPrefabUtility.GetCorrespondingObjectFromSource(hoverParent.gameObject) != null)
-            {
-                return null;
-            }
-
-            return hoverParent;
+            return CSGPrefabUtility.GetCorrespondingObjectFromSource(hoverParent.gameObject) != null ? null : hoverParent;
         }
 
-        public static Quaternion FindDragOrientation(
-            SceneView sceneView, Vector3 normal, PrefabSourceAlignment sourceSurfaceAlignment
-          , PrefabDestinationAlignment destinationSurfaceAlignment
-        )
+        public static Quaternion FindDragOrientation(SceneView sceneView, Vector3 normal, PrefabSourceAlignment sourceSurfaceAlignment, PrefabDestinationAlignment destinationSurfaceAlignment)
         {
             Quaternion srcRotation;
 
@@ -168,9 +155,7 @@ namespace RealtimeCSG
                     // aligned vector that is most aligned with the camera's up vector
                     if(absX <= absY && absX <= absZ && absY > absZ)
                     {
-                        tangent = GeometryUtility.SnapToClosestAxis(
-                            sceneView.camera ? sceneView.camera.transform.up : MathConstants.upVector3
-                        );
+                        tangent = GeometryUtility.SnapToClosestAxis(sceneView.camera ? sceneView.camera.transform.up : MathConstants.upVector3);
                     }
 
                     return Quaternion.LookRotation(normal, tangent) * srcRotation;
@@ -182,9 +167,7 @@ namespace RealtimeCSG
 
                     if(normal.sqrMagnitude == 0)
                     {
-                        normal = GeometryUtility.SnapToClosestAxis(
-                            sceneView.camera ? sceneView.camera.transform.forward : MathConstants.forwardVector3
-                        );
+                        normal = GeometryUtility.SnapToClosestAxis(sceneView.camera ? sceneView.camera.transform.forward : MathConstants.forwardVector3);
                     }
 
                     Vector3 tangent = MathConstants.upVector3; // assume up is up in the world
@@ -196,9 +179,7 @@ namespace RealtimeCSG
                     // aligned vector that is most aligned with the camera's up vector
                     if(absX <= absY && absX <= absZ && absY > absZ)
                     {
-                        tangent = GeometryUtility.SnapToClosestAxis(
-                            sceneView.camera ? sceneView.camera.transform.up : MathConstants.upVector3
-                        );
+                        tangent = GeometryUtility.SnapToClosestAxis(sceneView.camera ? sceneView.camera.transform.up : MathConstants.upVector3);
                     }
 
                     return Quaternion.LookRotation(normal, tangent) * srcRotation;
@@ -487,12 +468,11 @@ namespace RealtimeCSG
         {
             Camera camera = sceneView.camera;
 
-            SceneQueryUtility.FindClickWorldIntersection(
-                camera, Event.current.mousePosition, out GameObject gameobject, ignoreInvisibleSurfaces
-            );
+            SceneQueryUtility.FindClickWorldIntersection(camera, Event.current.mousePosition, out GameObject gameobject, ignoreInvisibleSurfaces);
 
             gameobject = SceneQueryUtility.FindSelectionBase(gameobject);
 
+            // TODO: convert to entityIds
             List<int> selectedObjectsOnClick = new List<int>(Selection.instanceIDs);
             bool      addedSelection         = false;
 
@@ -518,6 +498,7 @@ namespace RealtimeCSG
                     }
                     else
                     {
+                        // TODO: convert to entityIds
                         Selection.instanceIDs = selectedObjectsOnClick.ToArray();
                     }
                 }
@@ -528,6 +509,8 @@ namespace RealtimeCSG
                 {
                     int instanceID = gameobject.GetInstanceID();
                     selectedObjectsOnClick.Add(instanceID);
+
+                    // TODO: convert to entityIds
                     Selection.instanceIDs = selectedObjectsOnClick.ToArray();
                     addedSelection        = true;
                 }
@@ -538,6 +521,8 @@ namespace RealtimeCSG
                 {
                     int instanceID = gameobject.GetInstanceID();
                     selectedObjectsOnClick.Remove(instanceID);
+
+                    // TODO: convert to entityIds
                     Selection.instanceIDs = selectedObjectsOnClick.ToArray();
 
                     return;

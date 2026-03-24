@@ -124,10 +124,7 @@ namespace RealtimeCSG
 
                 if(editMode == EditMode.ExtrudeShape || editMode == EditMode.EditShape)
                 {
-                    Vector3 newPosition = settings.vertices[0] + settings.StairsDepth * lengthDirection
-                      + value * widthDirection;
-
-                    settings.SetPoint(1, newPosition);
+                    settings.SetPoint(1, settings.vertices[0] + settings.StairsDepth * lengthDirection + value * widthDirection);
                     UpdateBaseShape();
                 }
             }
@@ -148,8 +145,7 @@ namespace RealtimeCSG
 
                 if(editMode == EditMode.ExtrudeShape || editMode == EditMode.EditShape)
                 {
-                    Vector3 newPosition = settings.vertices[0] + value * lengthDirection
-                      + settings.StairsWidth * widthDirection;
+                    Vector3 newPosition = settings.vertices[0] + value * lengthDirection + settings.StairsWidth * widthDirection;
 
                     settings.SetPoint(1, newPosition);
                     UpdateBaseShape();
@@ -183,8 +179,7 @@ namespace RealtimeCSG
         {
             get
             {
-                float floatTotalSteps =
-                    Mathf.Max(0, settings.StairsHeight - settings.ExtraHeight) / settings.StepHeight;
+                float floatTotalSteps = Mathf.Max(0, settings.StairsHeight - settings.ExtraHeight) / settings.StepHeight;
 
                 return Mathf.Max(0, settings.StairsDepth - floatTotalSteps * settings.StepDepth);
             }
@@ -198,8 +193,7 @@ namespace RealtimeCSG
                 Undo.RecordObject(this, "Modified Linear Stairs Extra Depth");
                 settings.SetExtraDepth(value);
 
-                if(editMode != EditMode.CreatePlane &&
-                   settings.vertices.Length > 1)
+                if(editMode != EditMode.CreatePlane && settings.vertices.Length > 1)
                 {
                     UpdateBaseShape();
                 }
@@ -219,8 +213,7 @@ namespace RealtimeCSG
                 Undo.RecordObject(this, "Modified Linear Stairs Extra Height");
                 settings.SetExtraHeight(value);
 
-                if(editMode != EditMode.CreatePlane &&
-                   settings.vertices.Length > 1)
+                if(editMode != EditMode.CreatePlane && settings.vertices.Length > 1)
                 {
                     UpdateBaseShape();
                 }
@@ -240,8 +233,7 @@ namespace RealtimeCSG
                 Undo.RecordObject(this, "Modified Stairs Bottom");
                 settings.StairsBottom = value;
 
-                if(editMode != EditMode.CreatePlane &&
-                   settings.vertices.Length > 1)
+                if(editMode != EditMode.CreatePlane && settings.vertices.Length > 1)
                 {
                     UpdateBaseShape();
                 }
@@ -272,6 +264,7 @@ namespace RealtimeCSG
         {
             settings.Reset();
             base.Reset();
+
             _hoverDefaultPlane  = null;
             _firstSnappedPlanes = null;
             _firstSnappedEdges  = null;
@@ -283,9 +276,7 @@ namespace RealtimeCSG
             Camera camera = Camera.current;
             ResetVisuals();
 
-            CSGGrid.SetForcedGrid(
-                camera, new CSGPlane(fromGridQuaternion * MathConstants.upVector3, settings.bounds.Min)
-            );
+            CSGGrid.SetForcedGrid(camera, new CSGPlane(fromGridQuaternion * MathConstants.upVector3, settings.bounds.Min));
 
             switch(editMode)
             {
@@ -451,9 +442,7 @@ namespace RealtimeCSG
 
                 // note, we use 'inverse' of the worldToLocalMatrix because to transform a plane we'd need to do an inverse,
                 // and using the already inversed matrix we don't need to do a costly inverse.
-                CSGPlane localPlane = GeometryUtility.InverseTransformPlane(
-                    _firstSnappedBrush.transform.localToWorldMatrix, worldPlane
-                );
+                CSGPlane localPlane = GeometryUtility.InverseTransformPlane(_firstSnappedBrush.transform.localToWorldMatrix, worldPlane);
 
                 Vector3[] vertices        = _firstSnappedBrush.ControlMesh.Vertices;
                 bool      planeIsInversed = false;
@@ -517,16 +506,9 @@ namespace RealtimeCSG
             Color     boundOutlinesColor = ColorSettings.MeshEdgeOutline;
             Matrix4x4 localToWorld       = Matrix4x4.TRS(Vector3.zero, localToWorldRotation, Vector3.one);
 
-            PaintUtility.DrawDottedLines(localToWorld, volume, BoundsUtilities.AABBLineIndices, boundOutlinesColor);
-
-            PaintUtility.DrawLines(
-                localToWorld, volume, BoundsUtilities.AABBLineIndices, GUIConstants.OLD_LINE_SCALE, boundOutlinesColor
-            );
-
-            PaintUtility.RenderBoundsSizes(
-                worldToLocalRotation, localToWorldRotation, camera, volume, Color.white, Color.white, Color.white, true
-              , true, true
-            );
+            PaintUtility.DrawDottedLines(localToWorld, volume, BoundsUtilities.aabbLineIndices, boundOutlinesColor);
+            PaintUtility.DrawLines(localToWorld, volume, BoundsUtilities.aabbLineIndices, GUIConstants.OLD_LINE_SCALE, boundOutlinesColor);
+            PaintUtility.RenderBoundsSizes(worldToLocalRotation, localToWorldRotation, camera, volume, Color.white, Color.white, Color.white, true, true, true);
         }
 
         private void PaintShape(SceneView sceneView, int id)
@@ -537,31 +519,27 @@ namespace RealtimeCSG
             Color     temp       = Handles.color;
             Matrix4x4 origMatrix = Handles.matrix;
 
+            Handles.matrix = MathConstants.identityMatrix;
+
+            Handles.color = ColorSettings.PointInnerStateColor[3];
+
+            float handleSize       = CSGHandleUtility.GetHandleSize(_worldPosition);
+            float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
+            PaintUtility.SquareDotCap(id, _worldPosition, rotation, scaledHandleSize);
+
+            if(settings.vertices != null && settings.vertices.Length > 0)
             {
-                Handles.matrix = MathConstants.identityMatrix;
+                Handles.color = ColorSettings.PointInnerStateColor[0];
 
-                Handles.color = ColorSettings.PointInnerStateColor[3];
-
+                for(int i = 0; i < settings.vertices.Length; i++)
                 {
-                    float handleSize       = CSGHandleUtility.GetHandleSize(_worldPosition);
-                    float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
-                    PaintUtility.SquareDotCap(id, _worldPosition, rotation, scaledHandleSize);
+                    handleSize       = CSGHandleUtility.GetHandleSize(settings.vertices[i]);
+                    scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
+                    PaintUtility.SquareDotCap(id, settings.vertices[i], rotation, scaledHandleSize);
                 }
 
-                if(settings.vertices != null && settings.vertices.Length > 0)
-                {
-                    Handles.color = ColorSettings.PointInnerStateColor[0];
-
-                    for(int i = 0; i < settings.vertices.Length; i++)
-                    {
-                        float handleSize       = CSGHandleUtility.GetHandleSize(settings.vertices[i]);
-                        float scaledHandleSize = handleSize * GUIConstants.HANDLE_SCALE;
-                        PaintUtility.SquareDotCap(id, settings.vertices[i], rotation, scaledHandleSize);
-                    }
-
-                    PaintSquare();
-                    PaintBounds(camera);
-                }
+                PaintSquare();
+                PaintBounds(camera);
             }
 
             Handles.matrix = origMatrix;
@@ -601,8 +579,7 @@ namespace RealtimeCSG
 
             if(settings.vertices.Length > 0)
             {
-                if(settings.vertexIDs == null ||
-                   settings.vertexIDs.Length != settings.vertices.Length)
+                if(settings.vertexIDs == null || settings.vertexIDs.Length != settings.vertices.Length)
                 {
                     settings.vertexIDs = new int[settings.vertices.Length];
                 }
@@ -620,10 +597,7 @@ namespace RealtimeCSG
 
             if(Event.current.type == EventType.MouseUp)
             {
-                if(GUIUtility.hotControl == 0 &&
-                   Event.current.modifiers == EventModifiers.None &&
-                   !mouseIsDragging && Event.current.button == 0 &&
-                   (Tools.viewTool == ViewTool.None || Tools.viewTool == ViewTool.Pan))
+                if(GUIUtility.hotControl == 0 && Event.current.modifiers == EventModifiers.None && !mouseIsDragging && Event.current.button == 0 && (Tools.viewTool == ViewTool.None || Tools.viewTool == ViewTool.Pan))
                 {
                     ResetVisuals();
                     Event.current.Use();
@@ -641,8 +615,7 @@ namespace RealtimeCSG
 
             if(settings.vertices.Length < MAX_POINTS)
             {
-                if(editMode == EditMode.ExtrudeShape ||
-                   editMode == EditMode.EditShape)
+                if(editMode == EditMode.ExtrudeShape || editMode == EditMode.EditShape)
                 {
                     editMode = EditMode.CreatePlane;
                 }
@@ -664,9 +637,7 @@ namespace RealtimeCSG
 
                 EditorGUI.BeginChangeCheck();
 
-                {
-                    newBounds = CSGHandles.Box(camera, newBounds, worldToLocalRotation, false);
-                }
+                newBounds = CSGHandles.Box(camera, newBounds, worldToLocalRotation, false);
 
                 if(EditorGUI.EndChangeCheck())
                 {
@@ -714,18 +685,9 @@ namespace RealtimeCSG
 
                 Color bottomColor = ColorSettings.PointInnerStateColor[(int)bottomSelectState];
 
-                PaintUtility.DrawLine(
-                    localToWorld, bottomFrom, bottomTo, GUIConstants.OLD_THICK_LINE_SCALE, bottomColor
-                );
-
-                PaintUtility.DrawLine(
-                    localToWorld, topFrom, bottomFrom, GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.MeshEdgeOutline
-                );
-
-                PaintUtility.DrawLine(
-                    localToWorld, topTo, bottomTo, GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.MeshEdgeOutline
-                );
-
+                PaintUtility.DrawLine(localToWorld, bottomFrom, bottomTo, GUIConstants.OLD_THICK_LINE_SCALE, bottomColor);
+                PaintUtility.DrawLine(localToWorld, topFrom, bottomFrom, GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.MeshEdgeOutline);
+                PaintUtility.DrawLine(localToWorld, topTo, bottomTo, GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.MeshEdgeOutline);
                 PaintUtility.DrawDottedLine(localToWorld, topFrom, bottomFrom, ColorSettings.MeshEdgeOutline);
                 PaintUtility.DrawDottedLine(localToWorld, topTo, bottomTo, ColorSettings.MeshEdgeOutline);
 
@@ -733,94 +695,66 @@ namespace RealtimeCSG
 
                 settings.CalcTotalSteps();
 
+                Vector3 topDirection = localToWorld.MultiplyVector(MathConstants.forwardVector3);
+                Handles.color = topColor;
+
+                EditorGUI.BeginChangeCheck();
+
+                Vector3 point = localToWorld.MultiplyPoint(new Vector3(width * 0.25f, height, lengthOffset));
+                float   size  = HandleUtility.GetHandleSize(point) * kSlopeDotSize;
+                Vector3 temp  = CSGSlider1D.Do(camera, _topSlopeLeftID, point, topDirection, size, CSGHandles.CircleDotCap, activeSnappingMode, null);
+
+                lengthOffset = worldToLocal.MultiplyPoint(temp).z;
+
+                if(EditorGUI.EndChangeCheck())
                 {
-                    Vector3 topDirection = localToWorld.MultiplyVector(MathConstants.forwardVector3);
-                    Handles.color = topColor;
-
-                    EditorGUI.BeginChangeCheck();
-
-                    {
-                        Vector3 point = localToWorld.MultiplyPoint(new Vector3(width * 0.25f, height, lengthOffset));
-                        float   size  = HandleUtility.GetHandleSize(point) * kSlopeDotSize;
-
-                        Vector3 temp = CSGSlider1D.Do(
-                            camera, _topSlopeLeftID, point, topDirection, size, CSGHandles.CircleDotCap
-                          , activeSnappingMode, null
-                        );
-
-                        lengthOffset = worldToLocal.MultiplyPoint(temp).z;
-                    }
-
-                    if(EditorGUI.EndChangeCheck())
-                    {
-                        Undo.RecordObject(this, "Modified Length");
-                        settings.SetExtraDepth(lengthOffset);
-                    }
-
-                    EditorGUI.BeginChangeCheck();
-
-                    {
-                        Vector3 point = localToWorld.MultiplyPoint(new Vector3(width * 0.75f, height, lengthOffset));
-                        float   size  = HandleUtility.GetHandleSize(point) * kSlopeDotSize;
-
-                        Vector3 temp = CSGSlider1D.Do(
-                            camera, _topSlopeRightID, point, topDirection, size, CSGHandles.CircleDotCap
-                          , activeSnappingMode, null
-                        );
-
-                        lengthOffset = worldToLocal.MultiplyPoint(temp).z;
-                    }
-
-                    if(EditorGUI.EndChangeCheck())
-                    {
-                        Undo.RecordObject(this, "Modified Length");
-                        settings.SetExtraDepth(lengthOffset);
-                    }
+                    Undo.RecordObject(this, "Modified Length");
+                    settings.SetExtraDepth(lengthOffset);
                 }
 
+                EditorGUI.BeginChangeCheck();
+
+                point = localToWorld.MultiplyPoint(new Vector3(width * 0.75f, height, lengthOffset));
+                size  = HandleUtility.GetHandleSize(point) * kSlopeDotSize;
+                temp  = CSGSlider1D.Do(camera, _topSlopeRightID, point, topDirection, size, CSGHandles.CircleDotCap, activeSnappingMode, null);
+
+                lengthOffset = worldToLocal.MultiplyPoint(temp).z;
+
+                if(EditorGUI.EndChangeCheck())
                 {
-                    Vector3 bottomDirection = localToWorld.MultiplyVector(MathConstants.upVector3);
+                    Undo.RecordObject(this, "Modified Length");
+                    settings.SetExtraDepth(lengthOffset);
+                }
 
-                    Handles.color = bottomColor;
-                    EditorGUI.BeginChangeCheck();
+                Vector3 bottomDirection = localToWorld.MultiplyVector(MathConstants.upVector3);
 
-                    {
-                        Vector3 point = localToWorld.MultiplyPoint(new Vector3(width * 0.25f, heightOffset, length));
-                        float   size  = HandleUtility.GetHandleSize(point) * kSlopeDotSize;
+                Handles.color = bottomColor;
+                EditorGUI.BeginChangeCheck();
 
-                        Vector3 temp = CSGSlider1D.Do(
-                            camera, _bottomSlopeLeftID, point, bottomDirection, size, CSGHandles.CircleDotCap
-                          , activeSnappingMode, null
-                        );
+                point = localToWorld.MultiplyPoint(new Vector3(width * 0.25f, heightOffset, length));
+                size  = HandleUtility.GetHandleSize(point) * kSlopeDotSize;
+                temp  = CSGSlider1D.Do(camera, _bottomSlopeLeftID, point, bottomDirection, size, CSGHandles.CircleDotCap, activeSnappingMode, null);
 
-                        heightOffset = worldToLocal.MultiplyPoint(temp).y;
-                    }
+                heightOffset = worldToLocal.MultiplyPoint(temp).y;
 
-                    if(EditorGUI.EndChangeCheck())
-                    {
-                        Undo.RecordObject(this, "Modified Height");
-                        settings.SetExtraHeight(heightOffset);
-                    }
+                if(EditorGUI.EndChangeCheck())
+                {
+                    Undo.RecordObject(this, "Modified Height");
+                    settings.SetExtraHeight(heightOffset);
+                }
 
-                    EditorGUI.BeginChangeCheck();
+                EditorGUI.BeginChangeCheck();
 
-                    {
-                        Vector3 point = localToWorld.MultiplyPoint(new Vector3(width * 0.75f, heightOffset, length));
-                        float   size  = HandleUtility.GetHandleSize(point) * kSlopeDotSize;
+                point = localToWorld.MultiplyPoint(new Vector3(width * 0.75f, heightOffset, length));
+                size  = HandleUtility.GetHandleSize(point) * kSlopeDotSize;
+                temp  = CSGSlider1D.Do(camera, _bottomSlopeRightID, point, bottomDirection, size, CSGHandles.CircleDotCap, activeSnappingMode, null);
 
-                        Vector3 temp = CSGSlider1D.Do(
-                            camera, _bottomSlopeRightID, point, bottomDirection, size, CSGHandles.CircleDotCap
-                          , activeSnappingMode, null
-                        );
+                heightOffset = worldToLocal.MultiplyPoint(temp).y;
 
-                        heightOffset = worldToLocal.MultiplyPoint(temp).y;
-                    }
-
-                    if(EditorGUI.EndChangeCheck())
-                    {
-                        Undo.RecordObject(this, "Modified Height");
-                        settings.SetExtraHeight(heightOffset);
-                    }
+                if(EditorGUI.EndChangeCheck())
+                {
+                    Undo.RecordObject(this, "Modified Height");
+                    settings.SetExtraHeight(heightOffset);
                 }
             }
 
@@ -866,11 +800,9 @@ namespace RealtimeCSG
             Camera   camera          = sceneView.camera;
             bool     assume2DView    = CSGSettings.Assume2DView(camera);
 
-            if(camera != null &&
-               camera.pixelRect.Contains(Event.current.mousePosition))
+            if(camera != null && camera.pixelRect.Contains(Event.current.mousePosition))
             {
-                if(!_hoverDefaultPlane.HasValue ||
-                   settings.vertices.Length == 0)
+                if(!_hoverDefaultPlane.HasValue || settings.vertices.Length == 0)
                 {
                     bool forceGrid = CSGGrid.ForceGrid;
                     CSGGrid.ForceGrid   = false;
@@ -884,11 +816,7 @@ namespace RealtimeCSG
 
                 if(editMode == EditMode.CreatePlane)
                 {
-                    if(!assume2DView && !havePlane &&
-                       EditorWindow.mouseOverWindow == sceneView &&
-                       SceneQueryUtility.FindWorldIntersection(
-                           camera, Event.current.mousePosition, out LegacyBrushIntersection intersection
-                       ))
+                    if(!assume2DView && !havePlane && EditorWindow.mouseOverWindow == sceneView && SceneQueryUtility.FindWorldIntersection(camera, Event.current.mousePosition, out LegacyBrushIntersection intersection))
                     {
                         _worldPosition  = intersection.worldIntersection;
                         hoverBuildPlane = intersection.worldPlane;
@@ -908,10 +836,7 @@ namespace RealtimeCSG
 
                     if(snapFunction != null)
                     {
-                        _worldPosition = snapFunction(
-                            camera, _worldPosition, hoverBuildPlane, ref visualSnappedEdges, out CSGBrush snappedOnBrush
-                          , generatedBrushes, true
-                        );
+                        _worldPosition = snapFunction(camera, _worldPosition, hoverBuildPlane, ref visualSnappedEdges, out CSGBrush snappedOnBrush, generatedBrushes, true);
 
                         if(snappedOnBrush != null)
                         {
@@ -936,8 +861,7 @@ namespace RealtimeCSG
                     if(settings.vertices.Length == 2)
                     {
                         Vector3 startPoint = settings.vertices[1];
-
-                        Vector3 forward = camera.transform.forward;
+                        Vector3 forward    = camera.transform.forward;
 
                         if(Vector3.Dot(forward, gridBinormal) < Vector3.Dot(forward, gridTangent))
                         {
@@ -957,22 +881,17 @@ namespace RealtimeCSG
                         {
                             Ray ray = new Ray(startPoint, gridNormal);
 
-                            _worldPosition = raySnapFunction(
-                                camera, _worldPosition, ray, ref visualSnappedEdges, out CSGBrush snappedOnBrush
-                            );
+                            _worldPosition = raySnapFunction(camera, _worldPosition, ray, ref visualSnappedEdges, out CSGBrush snappedOnBrush);
 
                             if(snappedOnBrush != null)
                             {
-                                pointOnEdge = visualSnappedEdges != null &&
-                                    visualSnappedEdges.Count > 0;
+                                pointOnEdge = visualSnappedEdges != null && visualSnappedEdges.Count > 0;
 
                                 vertexOnBrush = snappedOnBrush;
                             }
                         }
 
-                        _worldPosition = GeometryUtility.ProjectPointOnInfiniteLine(
-                            _worldPosition, startPoint, gridNormal
-                        );
+                        _worldPosition = GeometryUtility.ProjectPointOnInfiniteLine(_worldPosition, startPoint, gridNormal);
                     }
                     else
                     {
@@ -983,11 +902,7 @@ namespace RealtimeCSG
 
                         if(snapFunction != null)
                         {
-                            _worldPosition = snapFunction(
-                                camera, _worldPosition, hoverBuildPlane, ref visualSnappedEdges
-                              , out CSGBrush snappedOnBrush
-                              , generatedBrushes, true
-                            );
+                            _worldPosition = snapFunction(camera, _worldPosition, hoverBuildPlane, ref visualSnappedEdges, out CSGBrush snappedOnBrush, generatedBrushes, true);
 
                             if(snappedOnBrush != null)
                             {
@@ -1052,9 +967,7 @@ namespace RealtimeCSG
                 {
                     if(GUIUtility.hotControl == shapeId)
                     {
-                        if(Keys.performActionKey.IsKeyPressed() ||
-                           Keys.deleteSelectionKey.IsKeyPressed() ||
-                           Keys.cancelActionKey.IsKeyPressed())
+                        if(Keys.performActionKey.IsKeyPressed() || Keys.deleteSelectionKey.IsKeyPressed() || Keys.cancelActionKey.IsKeyPressed())
                         {
                             Event.current.Use();
                         }
@@ -1096,9 +1009,7 @@ namespace RealtimeCSG
                         return;
                     }
 
-                    if((GUIUtility.hotControl != 0 && GUIUtility.hotControl != shapeEditId
-                        && GUIUtility.hotControl != shapeId) ||
-                       Event.current.button != 0)
+                    if((GUIUtility.hotControl != 0 && GUIUtility.hotControl != shapeEditId && GUIUtility.hotControl != shapeId) || Event.current.button != 0)
                     {
                         return;
                     }
@@ -1107,8 +1018,7 @@ namespace RealtimeCSG
 
                     if(settings.vertices.Length == 0)
                     {
-                        if((GUIUtility.hotControl == 0 ||
-                               GUIUtility.hotControl == shapeEditId) && shapeId != -1)
+                        if((GUIUtility.hotControl == 0 || GUIUtility.hotControl == shapeEditId) && shapeId != -1)
                         {
                             CalculateWorldSpaceTangents(camera);
                             GUIUtility.hotControl             = shapeId;
@@ -1159,8 +1069,7 @@ namespace RealtimeCSG
 
                                     for(int i = 0; i < _firstSnappedPlanes.Length; i++)
                                     {
-                                        if(_firstSnappedPlanes[i].Distance(_worldPosition)
-                                        <= MathConstants.DistanceEpsilon)
+                                        if(_firstSnappedPlanes[i].Distance(_worldPosition) <= MathConstants.DistanceEpsilon)
                                         {
                                             outside = false;
 
@@ -1182,9 +1091,7 @@ namespace RealtimeCSG
                                     {
                                         if(!settings.onGeometryVertices[i])
                                         {
-                                            settings.SetPoint(
-                                                i, GeometryUtility.ProjectPointOnPlane(plane, settings.vertices[i])
-                                            );
+                                            settings.SetPoint(i, GeometryUtility.ProjectPointOnPlane(plane, settings.vertices[i]));
 
                                             settings.onGeometryVertices[i] = true;
                                         }
@@ -1295,10 +1202,7 @@ namespace RealtimeCSG
                 Undo.RecordObjects(generatedBrushes, "Created Linear Stairs");
             }
 
-            if(!GenerateStairs(
-                   generatedBrushes, totalSteps, StepDepth, StepHeight, StepDepth, StairsDepth, StairsWidth
-                 , StairsHeight, ExtraDepth, ExtraHeight, StairsBottom
-               ))
+            if(!GenerateStairs(generatedBrushes, totalSteps, StepDepth, StepHeight, StepDepth, StairsDepth, StairsWidth, StairsHeight, ExtraDepth, ExtraHeight, StairsBottom))
             {
                 InternalCSGModelManager.SkipCheckForChanges = false;
                 HideGenerateBrushes();
@@ -1330,11 +1234,7 @@ namespace RealtimeCSG
             return true;
         }
 
-        private bool GenerateStairs(
-            CSGBrush[] stepBrushes, int totalSteps, float stepLength, float stepHeight, float stepDepth
-          , float stairsDepth, float stairsWidth, float stairsHeight, float extraDepth, float extraHeight
-          , StairsBottom stairsBottom
-        )
+        private bool GenerateStairs(CSGBrush[] stepBrushes, int totalSteps, float stepLength, float stepHeight, float stepDepth, float stairsDepth, float stairsWidth, float stairsHeight, float extraDepth, float extraHeight, StairsBottom stairsBottom)
         {
             stairsDepth = Math.Max(0, stairsDepth);
 
@@ -1400,9 +1300,7 @@ namespace RealtimeCSG
                     size *= -1;
                 }
 
-                if(!BrushFactory.CreateCubeControlMesh(
-                       out ControlMesh newControlMesh, out Shape newShape, Vector3.zero, size
-                   ))
+                if(!BrushFactory.CreateCubeControlMesh(out ControlMesh newControlMesh, out Shape newShape, Vector3.zero, size))
                 {
                     success = false;
 

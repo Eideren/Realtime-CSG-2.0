@@ -127,7 +127,7 @@ namespace RealtimeCSG
 
         public KeyEvent(params KeyCodeWithModifier[] keys)
         {
-            this.keys        = keys;
+            this.keys   = keys;
             defaultKeys = keys;
         }
 
@@ -231,7 +231,7 @@ namespace RealtimeCSG
               , KeyCode.KeypadMinus    => "Keypad '-'"
               , KeyCode.KeypadPlus     => "Keypad '+'"
               , KeyCode.KeypadEquals   => "Keypad '='"
-              , _                      => ObjectNames.NicifyVariableName(code.ToString())
+              , var _                  => ObjectNames.NicifyVariableName(code.ToString())
             };
         }
     }

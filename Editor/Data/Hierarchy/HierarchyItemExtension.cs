@@ -6,9 +6,7 @@ namespace RealtimeCSG
 {
     internal static class HierarchyItemExtension
     {
-        internal static bool FindSiblingIndex(
-            this HierarchyItem self, int siblingIndex, int searchTransformID, out int index
-        )
+        internal static bool FindSiblingIndex(this HierarchyItem self, int siblingIndex, int searchTransformID, out int index)
         {
             if(self.ChildNodes == null || self.ChildNodes.Length == 0)
             {
@@ -55,8 +53,7 @@ namespace RealtimeCSG
                 {
                     if(self.ChildNodes[imid].Transform != null && self.ChildNodes[imid].Transform)
                     {
-                        self.ChildNodes[imid].CachedTransformSiblingIndex =
-                            self.ChildNodes[imid].Transform.GetSiblingIndex();
+                        self.ChildNodes[imid].CachedTransformSiblingIndex = self.ChildNodes[imid].Transform.GetSiblingIndex();
                     }
                     else
                     {
@@ -91,8 +88,7 @@ namespace RealtimeCSG
                         {
                             if(self.ChildNodes[imid - 1].Transform != null && self.ChildNodes[imid - 1].Transform)
                             {
-                                self.ChildNodes[imid - 1].CachedTransformSiblingIndex =
-                                    self.ChildNodes[imid - 1].Transform.GetSiblingIndex();
+                                self.ChildNodes[imid - 1].CachedTransformSiblingIndex = self.ChildNodes[imid - 1].Transform.GetSiblingIndex();
                             }
                             else
                             {

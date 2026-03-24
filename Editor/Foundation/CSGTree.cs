@@ -129,12 +129,7 @@ namespace RealtimeCSG.Foundation
         /// <returns><b>true</b> on success, <b>false</b> on failure</returns>
         public bool AddRange(params CSGTreeNode[] array)
         {
-            if(array == null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-
-            return CSGTreeNode.InsertChildNodeRange(treeNodeID, Count, array);
+            return array == null ? throw new ArgumentNullException(nameof(array)) : CSGTreeNode.InsertChildNodeRange(treeNodeID, Count, array);
         }
 
         /// <summary>Inserts an element into the <see cref="RealtimeCSG.Foundation.CSGTreeNode"/> at the specified index.</summary>
@@ -152,12 +147,7 @@ namespace RealtimeCSG.Foundation
         /// <returns><b>true</b> on success, <b>false</b> on failure</returns>
         public bool InsertRange(int index, params CSGTreeNode[] array)
         {
-            if(array == null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-
-            return CSGTreeNode.InsertChildNodeRange(treeNodeID, index, array);
+            return array == null ? throw new ArgumentNullException(nameof(array)) : CSGTreeNode.InsertChildNodeRange(treeNodeID, index, array);
         }
 
         /// <summary>Removes a specific <see cref="RealtimeCSG.Foundation.CSGTreeNode"/> from the <see cref="RealtimeCSG.Foundation.CSGTree"/>.</summary>
@@ -231,13 +221,9 @@ namespace RealtimeCSG.Foundation
         /// <param name="vertexChannelMask">A mask to prevent certain vertex channels to be generated. By default this value is to <see cref="RealtimeCSG.Foundation.VertexChannelFlags.All"/>.</param>
         /// <returns>An array of <see cref="RealtimeCSG.Foundation.GeneratedMeshDescription"/>'s that can be used to generate <see cref="RealtimeCSG.Foundation.GeneratedMeshContents"/> using <see cref="RealtimeCSG.Foundation.CSGTree.GetGeneratedMesh"/></returns>
         /// <seealso cref="RealtimeCSG.Foundation.CSGTree.GetGeneratedMesh"/>
-        public GeneratedMeshDescription[] GetMeshDescriptions(
-            MeshQuery[] meshQuery, VertexChannelFlags vertexChannelMask = VertexChannelFlags.All
-        )
+        public GeneratedMeshDescription[] GetMeshDescriptions(MeshQuery[] meshQuery, VertexChannelFlags vertexChannelMask = VertexChannelFlags.All)
         {
-            return meshQuery == null
-                ? throw new ArgumentNullException(nameof(meshQuery))
-                : GetMeshDescriptions(treeNodeID, meshQuery, vertexChannelMask);
+            return meshQuery == null ? throw new ArgumentNullException(nameof(meshQuery)) : GetMeshDescriptions(treeNodeID, meshQuery, vertexChannelMask);
         }
 
         /// <summary>Creates and returns a <see cref="RealtimeCSG.Foundation.GeneratedMeshContents"/> for a given <see cref="RealtimeCSG.Foundation.GeneratedMeshDescription"/> created by <see cref="RealtimeCSG.Foundation.CSGTree.GetMeshDescriptions"/></summary>

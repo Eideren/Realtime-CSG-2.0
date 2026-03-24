@@ -7,9 +7,7 @@ namespace RealtimeCSG
     {
         private static bool SettingsToggle(bool value, GUIContent content, bool isSceneGUI)
         {
-            return isSceneGUI
-                ? EditorGUILayout.ToggleLeft(content, value, width120)
-                : EditorGUILayout.Toggle(content, value);
+            return isSceneGUI ? EditorGUILayout.ToggleLeft(content, value, width120) : EditorGUILayout.Toggle(content, value);
         }
 
         private static float FloatSettingsControl(float value, float minValue, float maxValue, GUIContent content)
@@ -62,15 +60,11 @@ namespace RealtimeCSG
         {
             GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
 
-            {
-                generator.SphereSmoothShading = SettingsToggle(
-                    generator.SphereSmoothShading, smoothShadingContent, isSceneGUI
-                );
+            generator.SphereSmoothShading = SettingsToggle(generator.SphereSmoothShading, smoothShadingContent, isSceneGUI);
 
-                TooltipUtility.SetToolTip(smoothShadingTooltip);
-                generator.IsHemiSphere = SettingsToggle(generator.IsHemiSphere, hemiSphereContent, isSceneGUI);
-                TooltipUtility.SetToolTip(hemiSphereTooltip);
-            }
+            TooltipUtility.SetToolTip(smoothShadingTooltip);
+            generator.IsHemiSphere = SettingsToggle(generator.IsHemiSphere, hemiSphereContent, isSceneGUI);
+            TooltipUtility.SetToolTip(hemiSphereTooltip);
 
             GUILayout.EndVertical();
         }
@@ -89,86 +83,59 @@ namespace RealtimeCSG
             GUILayout.Space(5);
 
             GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
+            EditorGUI.BeginDisabledGroup(!generator.CanCommit);
+
+            GUILayout.Label(radiusContent, width65);
+
+            if(isSceneGUI)
             {
-                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                {
-                    EditorGUI.BeginDisabledGroup(!generator.CanCommit);
-
-                    {
-                        GUILayout.Label(radiusContent, width65);
-
-                        if(isSceneGUI)
-                        {
-                            TooltipUtility.SetToolTip(radiusTooltip);
-                        }
-
-                        float radius = generator.SphereRadius;
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            if(!isSceneGUI)
-                            {
-                                radius = Units.DistanceUnitToUnity(
-                                    distanceUnit
-                                  , EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, radius))
-                                );
-                            }
-                            else
-                            {
-                                radius = Units.DistanceUnitToUnity(
-                                    distanceUnit
-                                  , EditorGUILayout.DoubleField(
-                                        Units.UnityToDistanceUnit(distanceUnit, radius), width65
-                                    )
-                                );
-                            }
-                        }
-
-                        if(EditorGUI.EndChangeCheck())
-                        {
-                            generator.SphereRadius = radius;
-                        }
-
-                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
-                        {
-                            distanceUnit             = nextUnit;
-                            CSGSettings.DistanceUnit = distanceUnit;
-                            CSGSettings.UpdateSnapSettings();
-                            CSGSettings.Save();
-                            CSGEditorGUIUtility.RepaintAll();
-                        }
-                    }
-
-                    EditorGUI.EndDisabledGroup();
-                }
-
-                GUILayout.EndHorizontal();
-
-                if(!isSceneGUI)
-                {
-                    TooltipUtility.SetToolTip(radiusTooltip);
-                }
-
-                generator.SphereSplits = IntSettingsControl(
-                    generator.SphereSplits,
-                    1,
-                    CSGSettings.MaxSphereSplits,
-                    splitsContent
-                );
-
-                TooltipUtility.SetToolTip(splitsTooltip);
-
-                generator.SphereOffset = FloatSettingsControl(
-                    generator.SphereOffset,
-                    0,
-                    360,
-                    offsetContent
-                );
-
-                TooltipUtility.SetToolTip(offsetTooltip);
+                TooltipUtility.SetToolTip(radiusTooltip);
             }
+
+            float radius = generator.SphereRadius;
+            EditorGUI.BeginChangeCheck();
+
+            if(!isSceneGUI)
+            {
+                radius = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, radius)));
+            }
+            else
+            {
+                radius = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, radius), width65));
+            }
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.SphereRadius = radius;
+            }
+
+            if(GUILayout.Button(unitText, EditorStyles.miniLabel, width25))
+            {
+                distanceUnit             = nextUnit;
+                CSGSettings.DistanceUnit = distanceUnit;
+                CSGSettings.UpdateSnapSettings();
+                CSGSettings.Save();
+                CSGEditorGUIUtility.RepaintAll();
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            GUILayout.EndHorizontal();
+
+            if(!isSceneGUI)
+            {
+                TooltipUtility.SetToolTip(radiusTooltip);
+            }
+
+            generator.SphereSplits = IntSettingsControl(generator.SphereSplits, 1, CSGSettings.MaxSphereSplits, splitsContent);
+
+            TooltipUtility.SetToolTip(splitsTooltip);
+
+            generator.SphereOffset = FloatSettingsControl(generator.SphereOffset, 0, 360, offsetContent);
+
+            TooltipUtility.SetToolTip(offsetTooltip);
 
             GUILayout.EndVertical();
 

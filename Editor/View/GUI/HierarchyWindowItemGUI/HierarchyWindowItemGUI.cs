@@ -31,8 +31,7 @@ namespace RealtimeCSG
 
             CSGNode node = o.GetComponent<CSGNode>();
 
-            if(node == null ||
-               !node.enabled || (node.hideFlags & (HideFlags.HideInHierarchy | HideFlags.HideInInspector)) != 0)
+            if(node == null || !node.enabled || (node.hideFlags & (HideFlags.HideInHierarchy | HideFlags.HideInInspector)) != 0)
             {
                 return;
             }
@@ -46,9 +45,7 @@ namespace RealtimeCSG
                 operationType = brush.OperationType;
                 CSGSkin skin = CsgguiStyleUtility.Skin;
 
-                GUI.Label(
-                    selectionRect, skin.hierarchyOperations[(int)operationType], CsgguiStyleUtility.RightAlignedLabel
-                );
+                GUI.Label(selectionRect, skin.hierarchyOperations[(int)operationType], CsgguiStyleUtility.RightAlignedLabel);
 
                 return;
             }
@@ -66,10 +63,7 @@ namespace RealtimeCSG
 
                     if(operationTypeIndex >= 0 && operationTypeIndex < skin.hierarchyOperations.Length)
                     {
-                        GUI.Label(
-                            selectionRect, skin.hierarchyOperations[operationTypeIndex]
-                          , CsgguiStyleUtility.RightAlignedLabel
-                        );
+                        GUI.Label(selectionRect, skin.hierarchyOperations[operationTypeIndex], CsgguiStyleUtility.RightAlignedLabel);
                     }
                 }
                 else

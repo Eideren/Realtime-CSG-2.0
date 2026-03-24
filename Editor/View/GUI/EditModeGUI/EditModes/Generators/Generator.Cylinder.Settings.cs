@@ -177,9 +177,7 @@ namespace RealtimeCSG
             Array.Copy(vertices, backupVertices, vertices.Length);
         }
 
-        public Vector3[] GetVertices(
-            CSGPlane buildPlane, Vector3 worldPosition, Vector3 gridTangent, Vector3 gridBinormal, out bool isValid
-        )
+        public Vector3[] GetVertices(CSGPlane buildPlane, Vector3 worldPosition, Vector3 gridTangent, Vector3 gridBinormal, out bool isValid)
         {
             if(vertices.Length < 1)
             {
@@ -285,11 +283,7 @@ namespace RealtimeCSG
 
             for(int i = 0; i < CircleSides; i++)
             {
-                Vector3 point = realVertices[i];
-
-                realVertices[i] = GeometryUtility.ProjectPointOnPlane(
-                    buildPlane, vertices[0] + matrix.MultiplyPoint(point)
-                );
+                realVertices[i] = GeometryUtility.ProjectPointOnPlane(buildPlane, vertices[0] + matrix.MultiplyPoint(realVertices[i]));
             }
 
             isValid = true;

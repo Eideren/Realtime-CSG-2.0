@@ -13,124 +13,92 @@ namespace RealtimeCSG
             GUIContent   unitText     = Units.GetUnitGUIContent(distanceUnit);
 
             GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
+            GUILayout.Label(heightContent, width65);
+
+            float height = generator.HaveHeight ? generator.Height : GeometryUtility.CleanLength(generator.DefaultHeight);
+
+            EditorGUI.BeginChangeCheck();
+
+            height = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, height)));
+
+            if(EditorGUI.EndChangeCheck())
             {
+                if(generator.HaveHeight)
                 {
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                    {
-                        GUILayout.Label(heightContent, width65);
-
-                        float height = generator.HaveHeight
-                            ? generator.Height
-                            : GeometryUtility.CleanLength(generator.DefaultHeight);
-
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            height = Units.DistanceUnitToUnity(
-                                distanceUnit
-                              , EditorGUILayout.DoubleField(Units.UnityToDistanceUnit(distanceUnit, height))
-                            );
-                        }
-
-                        if(EditorGUI.EndChangeCheck())
-                        {
-                            if(generator.HaveHeight)
-                            {
-                                generator.Height = height;
-                            }
-                            else
-                            {
-                                generator.DefaultHeight = height;
-                            }
-                        }
-
-                        if(GUILayout.Button(unitText, EditorStyles.miniLabel, width20))
-                        {
-                            distanceUnit             = nextUnit;
-                            CSGSettings.DistanceUnit = distanceUnit;
-                            CSGSettings.UpdateSnapSettings();
-                            CSGSettings.Save();
-                            CSGEditorGUIUtility.RepaintAll();
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(heightTooltip);
+                    generator.Height = height;
                 }
-
+                else
                 {
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                    {
-                        GUILayout.Label(curveSidesContent, width65);
-                        uint subdivisions = generator.CurveSides;
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            subdivisions = (uint)Mathf.Clamp(EditorGUILayout.IntField((int)subdivisions), 0, 32);
-                        }
-
-                        if(EditorGUI.EndChangeCheck() && generator.CurveSides != subdivisions)
-                        {
-                            generator.CurveSides = subdivisions;
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(curveSidesTooltip);
+                    generator.DefaultHeight = height;
                 }
-
-                {
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                    {
-                        EditorGUI.BeginDisabledGroup(!generator.HaveSelectedEdgesOrVertices);
-
-                        {
-                            HandleConstraints? tangentState = generator.SelectedTangentState;
-                            EditorGUI.BeginChangeCheck();
-
-                            {
-                                GUILayout.Label(edgeTypeContent, width65);
-                                EditorGUI.showMixedValue = !tangentState.HasValue;
-
-                                tangentState = (HandleConstraints)EditorGUILayout.EnumPopup(
-                                    tangentState.HasValue ? tangentState.Value : HandleConstraints.Straight
-                                );
-
-                                EditorGUI.showMixedValue = false;
-                            }
-
-                            if(EditorGUI.EndChangeCheck())
-                            {
-                                generator.SelectedTangentState = tangentState;
-                            }
-                        }
-
-                        EditorGUI.EndDisabledGroup();
-                    }
-
-                    GUILayout.EndHorizontal();
-                    TooltipUtility.SetToolTip(edgeTypeTooltip);
-                }
-
-                EditorGUILayout.Space();
-
-                EditorGUI.BeginDisabledGroup(!generator.HaveSelectedEdges);
-
-                {
-                    if(GUILayout.Button(splitSelectedContent))
-                    {
-                        generator.SplitSelectedEdge();
-                    }
-
-                    TooltipUtility.SetToolTip(splitSelectedTooltip);
-                }
-
-                EditorGUI.EndDisabledGroup();
             }
+
+            if(GUILayout.Button(unitText, EditorStyles.miniLabel, width20))
+            {
+                distanceUnit             = nextUnit;
+                CSGSettings.DistanceUnit = distanceUnit;
+                CSGSettings.UpdateSnapSettings();
+                CSGSettings.Save();
+                CSGEditorGUIUtility.RepaintAll();
+            }
+
+            GUILayout.EndHorizontal();
+            TooltipUtility.SetToolTip(heightTooltip);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.Label(curveSidesContent, width65);
+            uint subdivisions = generator.CurveSides;
+            EditorGUI.BeginChangeCheck();
+
+            subdivisions = (uint)Mathf.Clamp(EditorGUILayout.IntField((int)subdivisions), 0, 32);
+
+            if(EditorGUI.EndChangeCheck() && generator.CurveSides != subdivisions)
+            {
+                generator.CurveSides = subdivisions;
+            }
+
+            GUILayout.EndHorizontal();
+            TooltipUtility.SetToolTip(curveSidesTooltip);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            EditorGUI.BeginDisabledGroup(!generator.HaveSelectedEdgesOrVertices);
+
+            HandleConstraints? tangentState = generator.SelectedTangentState;
+            EditorGUI.BeginChangeCheck();
+
+            GUILayout.Label(edgeTypeContent, width65);
+            EditorGUI.showMixedValue = !tangentState.HasValue;
+
+            tangentState = (HandleConstraints)EditorGUILayout.EnumPopup(tangentState.HasValue ? tangentState.Value : HandleConstraints.Straight);
+
+            EditorGUI.showMixedValue = false;
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                generator.SelectedTangentState = tangentState;
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            GUILayout.EndHorizontal();
+            TooltipUtility.SetToolTip(edgeTypeTooltip);
+
+            EditorGUILayout.Space();
+
+            EditorGUI.BeginDisabledGroup(!generator.HaveSelectedEdges);
+
+            if(GUILayout.Button(splitSelectedContent))
+            {
+                generator.SplitSelectedEdge();
+            }
+
+            TooltipUtility.SetToolTip(splitSelectedTooltip);
+
+            EditorGUI.EndDisabledGroup();
 
             GUILayout.EndVertical();
         }
@@ -139,11 +107,9 @@ namespace RealtimeCSG
         {
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
+            if(isSceneGUI)
             {
-                if(isSceneGUI)
-                {
-                    FreeDrawSettingsGUI(generator);
-                }
+                FreeDrawSettingsGUI(generator);
             }
 
             GUILayout.EndHorizontal();

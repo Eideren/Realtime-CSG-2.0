@@ -7,30 +7,6 @@ using RealtimeCSG.Legacy;
 
 namespace RealtimeCSG
 {
-    [Serializable]
-    internal sealed class ShapePolygon
-    {
-        public ShapePolygon()
-        {
-        }
-
-        public ShapePolygon(Vector3[] vertices)
-        {
-            this.vertices = vertices;
-        }
-
-        // NOTE: an edge is defined as [vertex n, vertex (n+1)%vertices.length]
-        public Vector3[] vertices;
-        public TexGen[] edgeTexgens;
-    }
-
-    [Serializable]
-    internal struct ShapeEdge
-    {
-        public int polygonIndex;
-        public int edgeIndex;
-    }
-
     internal static class ShapePolygonUtility
     {
         public static bool IntersectsWithShapePolygon2D(ShapePolygon shapePolygon, Ray ray)
@@ -75,8 +51,7 @@ namespace RealtimeCSG
                 }
             }
 
-            while(vertices.Length > 3
-               && (vertices[0] - vertices[vertices.Length - 1]).magnitude < MathConstants.DistanceEpsilon)
+            while(vertices.Length > 3 && (vertices[0] - vertices[vertices.Length - 1]).magnitude < MathConstants.DistanceEpsilon)
             {
                 int lastIndex = vertices.Length - 1;
                 ArrayUtility.RemoveAt(ref vertices, lastIndex);
@@ -98,8 +73,7 @@ namespace RealtimeCSG
                 }
             }
 
-            while(vertices.Length > 3
-               && (vertices[0] - vertices[vertices.Length - 1]).magnitude < MathConstants.DistanceEpsilon)
+            while(vertices.Length > 3 && (vertices[0] - vertices[vertices.Length - 1]).magnitude < MathConstants.DistanceEpsilon)
             {
                 int lastIndex = vertices.Length - 1;
                 ArrayUtility.RemoveAt(ref vertices, lastIndex);
@@ -110,26 +84,12 @@ namespace RealtimeCSG
             shapePolygon.edgeTexgens = edgeTexgens;
         }
 
-        public static List<ShapePolygon> CreateCleanPolygonsFromVertices(
-            Vector3[] vertices,
-            Vector3 origin,
-            CSGPlane buildPlane
-        )
+        public static List<ShapePolygon> CreateCleanPolygonsFromVertices(Vector3[] vertices, Vector3 origin, CSGPlane buildPlane)
         {
-            return CreateCleanPolygonsFromVertices(
-                vertices,
-                origin,
-                buildPlane,
-                out Vector3[] _
-            );
+            return CreateCleanPolygonsFromVertices(vertices, origin, buildPlane, out Vector3[] _);
         }
 
-        public static List<ShapePolygon> CreateCleanPolygonsFromVertices(
-            Vector3[] vertices,
-            Vector3 origin,
-            CSGPlane buildPlane,
-            out Vector3[] projectedVertices
-        )
+        public static List<ShapePolygon> CreateCleanPolygonsFromVertices(Vector3[] vertices, Vector3 origin, CSGPlane buildPlane, out Vector3[] projectedVertices)
         {
             if(vertices.Length < 3)
             {
@@ -185,8 +145,7 @@ namespace RealtimeCSG
 
                             Array.Copy(vertices2d, i, firstVertices, 0, centerLength);
 
-                            List<ShapePolygon> firstPolygons =
-                                CreateCleanSubPolygonsFromVertices(firstVertices);
+                            List<ShapePolygon> firstPolygons = CreateCleanSubPolygonsFromVertices(firstVertices);
 
                             if(combinedPolygons != null)
                             {
@@ -246,17 +205,7 @@ namespace RealtimeCSG
             return polygons;
         }
 
-        public static bool GenerateControlMeshFromVertices(
-            ShapePolygon shape2DPolygon,
-            Matrix4x4 localToWorld,
-            Vector3 direction,
-            float height,
-            TexGen capTexgen,
-            bool? smooth,
-            bool singleSurfaceEnds,
-            out ControlMesh controlMesh,
-            out Shape shape
-        )
+        public static bool GenerateControlMeshFromVertices(ShapePolygon shape2DPolygon, Matrix4x4 localToWorld, Vector3 direction, float height, TexGen capTexgen, bool? smooth, bool singleSurfaceEnds, out ControlMesh controlMesh, out Shape shape)
         {
             if(shape2DPolygon == null)
             {
@@ -454,9 +403,7 @@ namespace RealtimeCSG
                 dstEdges[currOffset + 2].HardEdge = true;
                 dstEdges[currOffset + 3].HardEdge = true;
 
-                dstPolygons[polygonIndex] = new Polygon(
-                    new[] { currOffset + 0, currOffset + 1, currOffset + 2, currOffset + 3 }, polygonIndex
-                );
+                dstPolygons[polygonIndex] = new Polygon(new[] { currOffset + 0, currOffset + 1, currOffset + 2, currOffset + 3 }, polygonIndex);
             }
 
             for(int i = 0; i < dstPoints.Length; i++)
@@ -536,12 +483,7 @@ namespace RealtimeCSG
             return false;
         }
 
-        public static void FixMaterials(
-            Vector3[] originalVertices,
-            List<ShapePolygon> polygons,
-            TexGen[] edgeTexgens = null,
-            ShapeEdge[] shapeEdges = null
-        )
+        public static void FixMaterials(Vector3[] originalVertices, List<ShapePolygon> polygons, TexGen[] edgeTexgens = null, ShapeEdge[] shapeEdges = null)
         {
             if(shapeEdges != null)
             {
@@ -590,8 +532,7 @@ namespace RealtimeCSG
                         {
                             shapeTexgens[n1] = new TexGen(CSGSettings.DefaultMaterial); //n0
                         }
-                        else if(Mathf.Abs(vertex1 - vertex0) == 1 ||
-                                (vertex0 == vertices3d.Length - 1 && vertex1 == 0))
+                        else if(Mathf.Abs(vertex1 - vertex0) == 1 || (vertex0 == vertices3d.Length - 1 && vertex1 == 0))
                         {
                             if(shapeEdges != null)
                             {

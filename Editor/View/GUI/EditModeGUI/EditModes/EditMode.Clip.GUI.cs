@@ -37,105 +37,95 @@ namespace RealtimeCSG
             InitLocalStyles();
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.FlexibleSpace();
+
+            CsgguiStyleUtility.ResetGUIState();
+
+            GUIStyle windowStyle = GUI.skin.window;
+            GUILayout.BeginVertical(m_ContentClipLabel, windowStyle, CsgguiStyleUtility.contentEmpty);
+
+            OnGUIContents(true, tool);
+
+            GUILayout.EndVertical();
+            Rect currentArea = GUILayoutUtility.GetLastRect();
+            m_LastGuiRect = currentArea;
+
+            Rect buttonArea = currentArea;
+            buttonArea.x      += buttonArea.width - 17;
+            buttonArea.y      += 2;
+            buttonArea.height =  13;
+            buttonArea.width  =  13;
+
+            if(GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
             {
-                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+                EditModeToolWindowSceneGUI.GetWindow();
+            }
 
+            TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
+
+            int controlID = GUIUtility.GetControlID(sceneViewMeshOverlayHash, FocusType.Passive, currentArea);
+
+            switch(Event.current.GetTypeForControl(controlID))
+            {
+                case EventType.MouseDown:
                 {
-                    GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
-
+                    if(currentArea.Contains(Event.current.mousePosition))
                     {
-                        GUILayout.FlexibleSpace();
-
-                        CsgguiStyleUtility.ResetGUIState();
-
-                        GUIStyle windowStyle = GUI.skin.window;
-                        GUILayout.BeginVertical(m_ContentClipLabel, windowStyle, CsgguiStyleUtility.contentEmpty);
-
-                        {
-                            OnGUIContents(true, tool);
-                        }
-
-                        GUILayout.EndVertical();
-                        Rect currentArea = GUILayoutUtility.GetLastRect();
-                        m_LastGuiRect = currentArea;
-
-                        Rect buttonArea = currentArea;
-                        buttonArea.x      += buttonArea.width - 17;
-                        buttonArea.y      += 2;
-                        buttonArea.height =  13;
-                        buttonArea.width  =  13;
-
-                        if(GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
-                        {
-                            EditModeToolWindowSceneGUI.GetWindow();
-                        }
-
-                        TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
-
-                        int controlID = GUIUtility.GetControlID(
-                            sceneViewMeshOverlayHash, FocusType.Passive, currentArea
-                        );
-
-                        switch(Event.current.GetTypeForControl(controlID))
-                        {
-                            case EventType.MouseDown:
-                            {
-                                if(currentArea.Contains(Event.current.mousePosition))
-                                {
-                                    GUIUtility.hotControl      = controlID;
-                                    GUIUtility.keyboardControl = controlID;
-                                    Event.current.Use();
-                                }
-
-                                break;
-                            }
-                            case EventType.MouseMove:
-                            {
-                                if(currentArea.Contains(Event.current.mousePosition))
-                                {
-                                    Event.current.Use();
-                                }
-
-                                break;
-                            }
-                            case EventType.MouseUp:
-                            {
-                                if(GUIUtility.hotControl == controlID)
-                                {
-                                    GUIUtility.hotControl      = 0;
-                                    GUIUtility.keyboardControl = 0;
-                                    Event.current.Use();
-                                }
-
-                                break;
-                            }
-                            case EventType.MouseDrag:
-                            {
-                                if(GUIUtility.hotControl == controlID)
-                                {
-                                    Event.current.Use();
-                                }
-
-                                break;
-                            }
-                            case EventType.ScrollWheel:
-                            {
-                                if(currentArea.Contains(Event.current.mousePosition))
-                                {
-                                    Event.current.Use();
-                                }
-
-                                break;
-                            }
-                        }
+                        GUIUtility.hotControl      = controlID;
+                        GUIUtility.keyboardControl = controlID;
+                        Event.current.Use();
                     }
 
-                    GUILayout.EndVertical();
+                    break;
                 }
+                case EventType.MouseMove:
+                {
+                    if(currentArea.Contains(Event.current.mousePosition))
+                    {
+                        Event.current.Use();
+                    }
 
-                GUILayout.EndVertical();
-                GUILayout.FlexibleSpace();
+                    break;
+                }
+                case EventType.MouseUp:
+                {
+                    if(GUIUtility.hotControl == controlID)
+                    {
+                        GUIUtility.hotControl      = 0;
+                        GUIUtility.keyboardControl = 0;
+                        Event.current.Use();
+                    }
+
+                    break;
+                }
+                case EventType.MouseDrag:
+                {
+                    if(GUIUtility.hotControl == controlID)
+                    {
+                        Event.current.Use();
+                    }
+
+                    break;
+                }
+                case EventType.ScrollWheel:
+                {
+                    if(currentArea.Contains(Event.current.mousePosition))
+                    {
+                        Event.current.Use();
+                    }
+
+                    break;
+                }
             }
+
+            GUILayout.EndVertical();
+
+            GUILayout.EndVertical();
+            GUILayout.FlexibleSpace();
 
             GUILayout.EndHorizontal();
 
@@ -163,176 +153,145 @@ namespace RealtimeCSG
             }
             else
             {
-                GUILayout.Label(
-                    tool.ClipBrushCount == 1
-                        ? $"{tool.ClipBrushCount} brush selected"
-                        : $"{tool.ClipBrushCount} brushes selected"
-                );
+                GUILayout.Label(tool.ClipBrushCount == 1 ? $"{tool.ClipBrushCount} brush selected" : $"{tool.ClipBrushCount} brushes selected");
             }
 
             EditorGUILayout.Space();
             EditorGUI.BeginDisabledGroup(tool == null);
 
+            GUILayout.BeginVertical(isSceneGUI ? GUI.skin.box : GUIStyle.none);
+
+            ClipMode newClipMode = tool != null ? tool.clipMode : (ClipMode)999;
+            CSGSkin  skin        = CsgguiStyleUtility.Skin;
+
+            for(int i = 0; i < clipModeValues.Length; i++)
             {
-                GUILayout.BeginVertical(isSceneGUI ? GUI.skin.box : GUIStyle.none);
+                bool       selected = newClipMode == clipModeValues[i];
+                GUIContent content;
+                GUIStyle   style;
 
+                if(selected)
                 {
-                    ClipMode newClipMode = tool != null ? tool.clipMode : (ClipMode)999;
-                    CSGSkin skin        = CsgguiStyleUtility.Skin;
-
-                    for(int i = 0; i < clipModeValues.Length; i++)
-                    {
-                        bool       selected = newClipMode == clipModeValues[i];
-                        GUIContent content;
-                        GUIStyle   style;
-
-                        if(selected)
-                        {
-                            style   = CsgguiStyleUtility.SelectedIconLabelStyle;
-                            content = skin.clipNamesOn[i];
-                        }
-                        else
-                        {
-                            style   = CsgguiStyleUtility.UnselectedIconLabelStyle;
-                            content = skin.clipNames[i];
-                        }
-
-                        if(GUILayout.Toggle(selected, content, style))
-                        {
-                            newClipMode = clipModeValues[i];
-                        }
-
-                        TooltipUtility.SetToolTip(CsgguiStyleUtility.clipTooltips[i]);
-                    }
-
-                    if(tool != null && tool.clipMode != newClipMode)
-                    {
-                        tool.SetClipMode(newClipMode);
-                    }
+                    style   = CsgguiStyleUtility.SelectedIconLabelStyle;
+                    content = skin.clipNamesOn[i];
+                }
+                else
+                {
+                    style   = CsgguiStyleUtility.UnselectedIconLabelStyle;
+                    content = skin.clipNames[i];
                 }
 
-                GUILayout.EndVertical();
-
-                if(!isSceneGUI)
+                if(GUILayout.Toggle(selected, content, style))
                 {
-                    GUILayout.Space(10);
+                    newClipMode = clipModeValues[i];
                 }
 
-                bool disabled = tool == null || tool.editMode != EditModeClip.EditMode.EditPoints;
+                TooltipUtility.SetToolTip(CsgguiStyleUtility.clipTooltips[i]);
+            }
 
-                Material defaultMaterial = CSGSettings.DefaultMaterial;
-                GUILayout.BeginVertical(isSceneGUI ? materialSceneWidth : CsgguiStyleUtility.contentEmpty);
+            if(tool != null && tool.clipMode != newClipMode)
+            {
+                tool.SetClipMode(newClipMode);
+            }
 
+            GUILayout.EndVertical();
+
+            if(!isSceneGUI)
+            {
+                GUILayout.Space(10);
+            }
+
+            bool disabled = tool == null || tool.editMode != EditModeClip.EditMode.EditPoints;
+
+            Material defaultMaterial = CSGSettings.DefaultMaterial;
+            GUILayout.BeginVertical(isSceneGUI ? materialSceneWidth : CsgguiStyleUtility.contentEmpty);
+
+            GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+            if(isSceneGUI)
+            {
+                EditorGUI.BeginChangeCheck();
+
+                defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial);
+
+                if(EditorGUI.EndChangeCheck() && defaultMaterial)
                 {
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
-
-                    {
-                        if(isSceneGUI)
-                        {
-                            EditorGUI.BeginChangeCheck();
-
-                            {
-                                defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial);
-                            }
-
-                            if(EditorGUI.EndChangeCheck() && defaultMaterial)
-                            {
-                                CSGSettings.DefaultMaterial = defaultMaterial;
-                                CSGSettings.Save();
-                            }
-
-                            GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
-                        }
-
-                        {
-                            EditorGUI.BeginDisabledGroup(disabled);
-
-                            {
-                                if(GUILayout.Button(contentCancel))
-                                {
-                                    m_DoCancel = true;
-                                }
-
-                                TooltipUtility.SetToolTip(cancelTooltip);
-
-                                if(GUILayout.Button(contentCommit))
-                                {
-                                    m_DoCommit = true;
-                                }
-
-                                TooltipUtility.SetToolTip(commitTooltip);
-                            }
-
-                            EditorGUI.EndDisabledGroup();
-                        }
-
-                        if(isSceneGUI)
-                        {
-                            GUILayout.EndVertical();
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-
-                    if(isSceneGUI)
-                    {
-                        GUILayout.Space(2);
-                        EditorGUI.BeginChangeCheck();
-
-                        {
-                            defaultMaterial =
-                                EditorGUILayout.ObjectField(defaultMaterial, typeof(Material), true) as Material;
-                        }
-
-                        if(EditorGUI.EndChangeCheck() && defaultMaterial)
-                        {
-                            CSGSettings.DefaultMaterial = defaultMaterial;
-                            CSGSettings.Save();
-                        }
-                    }
+                    CSGSettings.DefaultMaterial = defaultMaterial;
+                    CSGSettings.Save();
                 }
 
-                if(!isSceneGUI)
-                {
-                    EditorGUILayout.Space();
-                    GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+            }
 
-                    {
-                        EditorGUILayout.LabelField(contentDefaultMaterial, largeLabelWidth);
-                        GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+            EditorGUI.BeginDisabledGroup(disabled);
 
-                        {
-                            EditorGUI.BeginChangeCheck();
+            if(GUILayout.Button(contentCancel))
+            {
+                m_DoCancel = true;
+            }
 
-                            {
-                                defaultMaterial =
-                                    EditorGUILayout.ObjectField(defaultMaterial, typeof(Material), true) as Material;
-                            }
+            TooltipUtility.SetToolTip(cancelTooltip);
 
-                            if(EditorGUI.EndChangeCheck() && defaultMaterial)
-                            {
-                                CSGSettings.DefaultMaterial = defaultMaterial;
-                                CSGSettings.Save();
-                            }
-                        }
+            if(GUILayout.Button(contentCommit))
+            {
+                m_DoCommit = true;
+            }
 
-                        GUILayout.Space(2);
-                        GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+            TooltipUtility.SetToolTip(commitTooltip);
 
-                        {
-                            GUILayout.Space(5);
-                            defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial, false);
-                        }
+            EditorGUI.EndDisabledGroup();
 
-                        GUILayout.EndHorizontal();
-                        GUILayout.EndVertical();
-                    }
-
-                    GUILayout.EndHorizontal();
-                }
-
+            if(isSceneGUI)
+            {
                 GUILayout.EndVertical();
             }
+
+            GUILayout.EndHorizontal();
+
+            if(isSceneGUI)
+            {
+                GUILayout.Space(2);
+                EditorGUI.BeginChangeCheck();
+
+                defaultMaterial = EditorGUILayout.ObjectField(defaultMaterial, typeof(Material), true) as Material;
+
+                if(EditorGUI.EndChangeCheck() && defaultMaterial)
+                {
+                    CSGSettings.DefaultMaterial = defaultMaterial;
+                    CSGSettings.Save();
+                }
+            }
+
+            if(!isSceneGUI)
+            {
+                EditorGUILayout.Space();
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+                EditorGUILayout.LabelField(contentDefaultMaterial, largeLabelWidth);
+                GUILayout.BeginVertical(CsgguiStyleUtility.contentEmpty);
+
+                EditorGUI.BeginChangeCheck();
+
+                defaultMaterial = EditorGUILayout.ObjectField(defaultMaterial, typeof(Material), true) as Material;
+
+                if(EditorGUI.EndChangeCheck() && defaultMaterial)
+                {
+                    CSGSettings.DefaultMaterial = defaultMaterial;
+                    CSGSettings.Save();
+                }
+
+                GUILayout.Space(2);
+                GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
+
+                GUILayout.Space(5);
+                defaultMaterial = CSGEditorGUIUtility.MaterialImage(defaultMaterial, false);
+
+                GUILayout.EndHorizontal();
+                GUILayout.EndVertical();
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.EndVertical();
 
             EditorGUI.EndDisabledGroup();
         }

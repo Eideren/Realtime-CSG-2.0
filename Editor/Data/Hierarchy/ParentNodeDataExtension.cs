@@ -14,7 +14,7 @@ namespace RealtimeCSG
                 return false;
             }
 
-            // on each level remove self from parent. 
+            // on each level remove self from parent.
             // if it doesn't have any childNodes left, remove itself from it's parent
             HierarchyItem iterator = node;
 
@@ -76,16 +76,14 @@ namespace RealtimeCSG
                 {
                     Transform iteratorTransform = iterator.Transform;
 
-                    int iteratorParentTransformID =
-                        iteratorTransform.parent == null ? 0 : iteratorTransform.parent.GetInstanceID();
+                    int iteratorParentTransformID = iteratorTransform.parent == null ? 0 : iteratorTransform.parent.GetInstanceID();
 
                     // Compare the unity parent transform to the stored parent transform
                     if(iteratorParent.TransformID != iteratorParentTransformID)
                     {
                         int defaultCSGInstanceID = 0;
 
-                        CSGModel defaultCSGModel =
-                            InternalCSGModelManager.GetDefaultCSGModelForObject(iteratorTransform);
+                        CSGModel defaultCSGModel = InternalCSGModelManager.GetDefaultCSGModelForObject(iteratorTransform);
 
                         if(defaultCSGModel != null &&
                            defaultCSGModel.transform != null)
@@ -110,12 +108,7 @@ namespace RealtimeCSG
                     }
 
                     // Does the child even exist in the parent transform?
-                    int iteratorChildIndex;
-
-                    if(!iteratorParent.FindSiblingIndex(
-                           iterator.CachedTransformSiblingIndex, iteratorTransformID
-                         , out iteratorChildIndex
-                       ))
+                    if(!iteratorParent.FindSiblingIndex(iterator.CachedTransformSiblingIndex, iteratorTransformID, out int iteratorChildIndex))
                     {
                         RemoveNode(node, top);
                         AddNode(node, top);
@@ -128,9 +121,9 @@ namespace RealtimeCSG
                     if(iteratorChildIndex != iterator.SiblingIndex)
                     {
                         iterator.SiblingIndex = iteratorChildIndex;
-                        RemoveNode(node, top);       //
-                        AddNode(node, top);          //
-                        top.ChildrenModified = true; //
+                        RemoveNode(node, top);
+                        AddNode(node, top);
+                        top.ChildrenModified = true;
 
                         return true;
                     }
@@ -201,9 +194,8 @@ namespace RealtimeCSG
                 return false;
             }
 
-            List<Transform> ancestors = new List<Transform>();
-
-            Transform leafTransform = node.Transform;
+            List<Transform> ancestors     = new List<Transform>();
+            Transform       leafTransform = node.Transform;
 
             if(leafTransform == null)
             {
@@ -212,8 +204,7 @@ namespace RealtimeCSG
 
             Transform iterator = leafTransform.parent;
 
-            while(iterator != null &&
-                  iterator != top.Transform)
+            while(iterator != null && iterator != top.Transform)
             {
                 ancestors.Add(iterator);
                 iterator = iterator.parent;
@@ -241,15 +232,6 @@ namespace RealtimeCSG
 
                 return false;
             }
-#if !UNITY_2018_3_OR_NEWER
-			// TODO: figure out how to check this, yet still support prefab isolation mode
-			if (iterator != top.Transform)
-			{
-				return false;
-			}
-#endif
-
-            //var currentLoopCount = CurrentLoopCount;
 
             HierarchyItem lastParent    = top;
             int           ancestorDepth = ancestors.Count - 1;
@@ -257,11 +239,8 @@ namespace RealtimeCSG
             while(ancestorDepth >= 0)
             {
                 Transform ancestor = ancestors[ancestorDepth];
-                int       childIndex;
 
-                if(!lastParent.FindSiblingIndex(
-                       ancestor.GetSiblingIndex(), ancestor.GetInstanceID(), out childIndex
-                   ))
+                if(!lastParent.FindSiblingIndex(ancestor.GetSiblingIndex(), ancestor.GetInstanceID(), out int childIndex))
                 {
                     break;
                 }

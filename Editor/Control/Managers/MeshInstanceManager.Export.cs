@@ -19,7 +19,7 @@ namespace InternalRealtimeCSG
             string typeName;
             string extension;
 
-            switch(exportType)
+            switch(exportType) // TODO: remove FBX export - it should be handled by unity's fbx package
             {
                 case ExportType.FBX:
                     typeName  = "FBX";
@@ -86,8 +86,7 @@ namespace InternalRealtimeCSG
 
             Scene currentScene = model.gameObject.scene;
 
-            List<GeneratedMeshes> foundMeshContainers =
-                SceneQueryUtility.GetAllComponentsInScene<GeneratedMeshes>(currentScene);
+            List<GeneratedMeshes> foundMeshContainers = SceneQueryUtility.GetAllComponentsInScene<GeneratedMeshes>(currentScene);
 
             AABB bounds = new AABB();
             bounds.Reset();
@@ -119,9 +118,7 @@ namespace InternalRealtimeCSG
 
                     RenderSurfaceType surfaceType = GetSurfaceType(instance.MeshDescription, owner.Settings);
 
-                    if(surfaceType != RenderSurfaceType.Normal &&
-                       surfaceType != RenderSurfaceType.ShadowOnly &&
-                       surfaceType != RenderSurfaceType.Collider)
+                    if(surfaceType != RenderSurfaceType.Normal && surfaceType != RenderSurfaceType.ShadowOnly && surfaceType != RenderSurfaceType.Collider)
                     {
                         continue;
                     }
@@ -142,10 +139,7 @@ namespace InternalRealtimeCSG
 
                     Mesh mesh = instance.SharedMesh;
 
-                    if(!mesh.isReadable)
-                    {
-                    }
-                    else
+                    if(mesh.isReadable)
                     {
                         Vector3[] vertices = mesh.vertices;
 
@@ -155,9 +149,7 @@ namespace InternalRealtimeCSG
                         }
                     }
 
-                    GameObject subObj = Object.Instantiate(
-                        instance.gameObject, MathConstants.zeroVector3, MathConstants.identityQuaternion
-                    );
+                    GameObject subObj = Object.Instantiate(instance.gameObject, MathConstants.zeroVector3, MathConstants.identityQuaternion);
 
                     subObj.hideFlags            = HideFlags.None;
                     subObj.transform.position   = owner.transform.position;

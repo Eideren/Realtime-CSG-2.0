@@ -30,18 +30,10 @@ namespace RealtimeCSG
 
             if(haveRotateStartAngle)
             {
-                PaintUtility.DrawRotateCirclePie(
-                    rotateCenterPoint, rotateSurfaceNormal, rotateSurfaceTangent, rotateRadius, rotateCurrentStartAngle
-                  , endAngle,
-                    ColorSettings.RotateCircleOutline
-                );
+                PaintUtility.DrawRotateCirclePie(rotateCenterPoint, rotateSurfaceNormal, rotateSurfaceTangent, rotateRadius, rotateCurrentStartAngle, endAngle, ColorSettings.RotateCircleOutline);
             }
 
-            PaintUtility.DrawRotateCircle(
-                camera, rotateCenterPoint, rotateSurfaceNormal, rotateSurfaceTangent, rotateRadius,
-                rotateOriginalAngle, rotateCurrentStartAngle, endAngle,
-                ColorSettings.RotateCircleOutline
-            );
+            PaintUtility.DrawRotateCircle(camera, rotateCenterPoint, rotateSurfaceNormal, rotateSurfaceTangent, rotateRadius, rotateOriginalAngle, rotateCurrentStartAngle, endAngle, ColorSettings.RotateCircleOutline);
         }
 
         public void Initialize(Transform transform, Surface surface, Vector3 centerPoint)
@@ -69,28 +61,22 @@ namespace RealtimeCSG
                     rotateOriginalAngle  = surfaceTexGen.RotationAngle;
                     rotateStartVector    = vectorToCenter;
 
-                    rotateCurrentStartAngle = GeometryUtility.SignedAngle(
-                        rotateSurfaceTangent, vectorToCenter, rotateSurfaceNormal
-                    );
+                    rotateCurrentStartAngle = GeometryUtility.SignedAngle(rotateSurfaceTangent, vectorToCenter, rotateSurfaceNormal);
                 }
 
                 rotateRadius = Math.Max(rotateRadius, handleSize * GUIConstants.MIN_ROTATE_RADIUS);
             }
             else
             {
-                rotateCurrentAngle = GeometryUtility.SignedAngle(
-                    rotateStartVector, vectorToCenter, rotateSurfaceNormal
-                );
+                rotateCurrentAngle = GeometryUtility.SignedAngle(rotateStartVector, vectorToCenter, rotateSurfaceNormal);
 
                 float minSize = handleSize * GUIConstants.MIN_ROTATE_RADIUS * 2;
 
-                rotateRadius = Mathf.CeilToInt((rotateRadius - minSize) / minSize - 0.5f) * minSize
-                  + minSize;
+                rotateRadius = Mathf.CeilToInt((rotateRadius - minSize) / minSize - 0.5f) * minSize + minSize;
             }
 
             // snap texture coordinates in world/local space
-            rotateCurrentSnappedAngle = GridUtility.SnappedAngle(rotateOriginalAngle + rotateCurrentAngle)
-              - rotateOriginalAngle;
+            rotateCurrentSnappedAngle = GridUtility.SnappedAngle(rotateOriginalAngle + rotateCurrentAngle) - rotateOriginalAngle;
 
             return haveRotateStartAngle;
         }

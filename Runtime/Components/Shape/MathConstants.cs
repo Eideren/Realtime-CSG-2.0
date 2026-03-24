@@ -37,13 +37,9 @@ namespace InternalRealtimeCSG
         public static readonly Vector3 backVector3 = Vector3.back;
         public static readonly Vector3 NaNVector3 = new Vector3(float.NaN, float.NaN, float.NaN);
 
-        public static readonly Vector3 PositiveInfinityVector3 = new Vector3(
-            float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity
-        );
+        public static readonly Vector3 PositiveInfinityVector3 = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
 
-        public static readonly Vector3 NegativeInfinityVector3 = new Vector3(
-            float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity
-        );
+        public static readonly Vector3 NegativeInfinityVector3 = new Vector3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
 
         public static readonly Vector2 zeroVector2 = Vector2.zero;
         public static readonly Vector2 oneVector2 = Vector2.one;

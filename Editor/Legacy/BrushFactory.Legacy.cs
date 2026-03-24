@@ -77,16 +77,9 @@ namespace RealtimeCSG.Legacy
 
         // Create a brush from an array of planes that define the convex space.
         // optionally it's possible, for each plane, to supply a material and a texture-matrix that defines how the texture is translated/rotated/scaled.
-        public static CSGBrush CreateBrushFromPlanes(
-            Transform parent, string brushName, Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null
-          , Material[] materials = null, Matrix4x4[] textureMatrices = null
-          , TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace
-        )
+        public static CSGBrush CreateBrushFromPlanes(Transform parent, string brushName, Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null, Material[] materials = null, Matrix4x4[] textureMatrices = null, TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace)
         {
-            if(!CreateControlMeshFromPlanes(
-                   out ControlMesh controlMesh, out Shape shape, planes, tangents, binormals, materials, textureMatrices
-                 , textureMatrixSpace
-               ))
+            if(!CreateControlMeshFromPlanes(out ControlMesh controlMesh, out Shape shape, planes, tangents, binormals, materials, textureMatrices, textureMatrixSpace))
             {
                 return null;
             }
@@ -94,51 +87,19 @@ namespace RealtimeCSG.Legacy
             return CreateBrush(parent, brushName, controlMesh, shape);
         }
 
-        public static CSGBrush CreateBrushFromPlanes(
-            string brushName, Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null
-          , Material[] materials = null, Matrix4x4[] textureMatrices = null
-          , TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace
-        )
+        public static CSGBrush CreateBrushFromPlanes(string brushName, Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null, Material[] materials = null, Matrix4x4[] textureMatrices = null, TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace)
         {
-            return CreateBrushFromPlanes(
-                null, brushName, planes, tangents, binormals, materials, textureMatrices, textureMatrixSpace
-            );
+            return CreateBrushFromPlanes(null, brushName, planes, tangents, binormals, materials, textureMatrices, textureMatrixSpace);
         }
 
-        public static CSGBrush CreateBrushFromPlanes(
-            Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null, Material[] materials = null
-          , Matrix4x4[] textureMatrices = null, TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace
-        )
+        public static CSGBrush CreateBrushFromPlanes(Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null, Material[] materials = null, Matrix4x4[] textureMatrices = null, TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace)
         {
-            return CreateBrushFromPlanes(
-                null, "Brush", planes, tangents, binormals, materials, textureMatrices, textureMatrixSpace
-            );
+            return CreateBrushFromPlanes(null, "Brush", planes, tangents, binormals, materials, textureMatrices, textureMatrixSpace);
         }
 
-        public static CSGBrush CreateBrushFromPlanes(
-            GameObject gameObject,
-            Plane[] planes,
-            Vector3[] tangents = null,
-            Vector3[] binormals = null,
-            Material[] materials = null,
-            Matrix4x4[] textureMatrices = null,
-            TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace,
-            uint[] smoothingGroups = null,
-            TexGenFlags[] texGenFlags = null
-        )
+        public static CSGBrush CreateBrushFromPlanes(GameObject gameObject, Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null, Material[] materials = null, Matrix4x4[] textureMatrices = null, TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace, uint[] smoothingGroups = null, TexGenFlags[] texGenFlags = null)
         {
-            if(!CreateControlMeshFromPlanes(
-                   out ControlMesh controlMesh,
-                   out Shape shape,
-                   planes,
-                   tangents,
-                   binormals,
-                   materials,
-                   textureMatrices,
-                   textureMatrixSpace,
-                   smoothingGroups,
-                   texGenFlags
-               ))
+            if(!CreateControlMeshFromPlanes(out ControlMesh controlMesh, out Shape shape, planes, tangents, binormals, materials, textureMatrices, textureMatrixSpace, smoothingGroups, texGenFlags))
             {
                 return null;
             }
@@ -146,21 +107,14 @@ namespace RealtimeCSG.Legacy
             return CreateBrushComponent(gameObject, controlMesh, shape);
         }
 
-        public static bool SetBrushFromPlanes(
-            CSGBrush brush, Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null
-          , Material[] materials = null, Matrix4x4[] textureMatrices = null
-          , TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace
-        )
+        public static bool SetBrushFromPlanes(CSGBrush brush, Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null, Material[] materials = null, Matrix4x4[] textureMatrices = null, TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace)
         {
             if(!brush)
             {
                 return false;
             }
 
-            if(!CreateControlMeshFromPlanes(
-                   out ControlMesh controlMesh, out Shape shape, planes, tangents, binormals, materials, textureMatrices
-                 , textureMatrixSpace
-               ))
+            if(!CreateControlMeshFromPlanes(out ControlMesh controlMesh, out Shape shape, planes, tangents, binormals, materials, textureMatrices, textureMatrixSpace))
             {
                 return false;
             }
@@ -183,9 +137,7 @@ namespace RealtimeCSG.Legacy
 
 #region CreateCubeControlMesh (internal)
 
-        internal static bool CreateCubeControlMesh(
-            out ControlMesh controlMesh, out Shape shape, Vector3 min, Vector3 max, Material material = null
-        )
+        internal static bool CreateCubeControlMesh(out ControlMesh controlMesh, out Shape shape, Vector3 min, Vector3 max, Material material = null)
         {
             if(min.x > max.x)
             {
@@ -405,29 +357,12 @@ namespace RealtimeCSG.Legacy
             shape.Surfaces[4].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 4);
             shape.Surfaces[5].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 5);
 
-            GeometryUtility.CalculateTangents(
-                shape.Surfaces[0].Plane.normal, out shape.Surfaces[0].Tangent, out shape.Surfaces[0].BiNormal
-            );
-
-            GeometryUtility.CalculateTangents(
-                shape.Surfaces[1].Plane.normal, out shape.Surfaces[1].Tangent, out shape.Surfaces[1].BiNormal
-            );
-
-            GeometryUtility.CalculateTangents(
-                shape.Surfaces[2].Plane.normal, out shape.Surfaces[2].Tangent, out shape.Surfaces[2].BiNormal
-            );
-
-            GeometryUtility.CalculateTangents(
-                shape.Surfaces[3].Plane.normal, out shape.Surfaces[3].Tangent, out shape.Surfaces[3].BiNormal
-            );
-
-            GeometryUtility.CalculateTangents(
-                shape.Surfaces[4].Plane.normal, out shape.Surfaces[4].Tangent, out shape.Surfaces[4].BiNormal
-            );
-
-            GeometryUtility.CalculateTangents(
-                shape.Surfaces[5].Plane.normal, out shape.Surfaces[5].Tangent, out shape.Surfaces[5].BiNormal
-            );
+            GeometryUtility.CalculateTangents(shape.Surfaces[0].Plane.normal, out shape.Surfaces[0].Tangent, out shape.Surfaces[0].BiNormal);
+            GeometryUtility.CalculateTangents(shape.Surfaces[1].Plane.normal, out shape.Surfaces[1].Tangent, out shape.Surfaces[1].BiNormal);
+            GeometryUtility.CalculateTangents(shape.Surfaces[2].Plane.normal, out shape.Surfaces[2].Tangent, out shape.Surfaces[2].BiNormal);
+            GeometryUtility.CalculateTangents(shape.Surfaces[3].Plane.normal, out shape.Surfaces[3].Tangent, out shape.Surfaces[3].BiNormal);
+            GeometryUtility.CalculateTangents(shape.Surfaces[4].Plane.normal, out shape.Surfaces[4].Tangent, out shape.Surfaces[4].BiNormal);
+            GeometryUtility.CalculateTangents(shape.Surfaces[5].Plane.normal, out shape.Surfaces[5].Tangent, out shape.Surfaces[5].BiNormal);
 
             if(material == null)
             {
@@ -450,11 +385,7 @@ namespace RealtimeCSG.Legacy
             shape.TexGens[4].Scale = MathConstants.oneVector3;
             shape.TexGens[5].Scale = MathConstants.oneVector3;
 
-            shape.TexGenFlags = new[]
-            {
-                CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags
-              , CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags
-            };
+            shape.TexGenFlags = new[] { CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags };
 
             ShapeUtility.EnsureInitialized(shape);
             controlMesh.Valid = ControlMeshUtility.Validate(controlMesh, shape);
@@ -524,12 +455,9 @@ namespace RealtimeCSG.Legacy
         /// <param name="shape">A legacy <see cref="RealtimeCSG.Legacy.Shape"/> that describes the surfaces in the <see cref="RealtimeCSG.Foundation.BrushMesh"/>.</param>
         /// <param name="defaultPhysicsMaterial"></param>
         /// <returns>A new <see cref="RealtimeCSG.Foundation.BrushMesh"/></returns>
-        public static BrushMesh GenerateFromControlMesh(
-            ControlMesh controlMesh, Shape shape, PhysicsMaterial defaultPhysicsMaterial = null
-        )
+        public static BrushMesh GenerateFromControlMesh(ControlMesh controlMesh, Shape shape, PhysicsMaterial defaultPhysicsMaterial = null)
         {
-            if(controlMesh == null ||
-               shape == null)
+            if(controlMesh == null || shape == null)
             {
                 return null;
             }
@@ -543,9 +471,7 @@ namespace RealtimeCSG.Legacy
             HalfEdge[] srcEdges    = controlMesh.Edges;
             Polygon[]  srcPolygons = controlMesh.Polygons;
 
-            if(vertices == null ||
-               srcEdges == null ||
-               srcPolygons == null)
+            if(vertices == null || srcEdges == null || srcPolygons == null)
             {
                 return null;
             }
@@ -554,19 +480,14 @@ namespace RealtimeCSG.Legacy
             TexGen[]      texgens     = shape.TexGens;
             TexGenFlags[] texgenFlags = shape.TexGenFlags;
 
-            if(surfaces == null ||
-               texgens == null ||
-               texgenFlags == null)
+            if(surfaces == null || texgens == null || texgenFlags == null)
             {
                 return null;
             }
 
             int polygonCount = surfaces.Length;
 
-            if(polygonCount != srcPolygons.Length ||
-               polygonCount != texgens.Length ||
-               polygonCount != texgenFlags.Length ||
-               polygonCount != surfaces.Length)
+            if(polygonCount != srcPolygons.Length || polygonCount != texgens.Length || polygonCount != texgenFlags.Length || polygonCount != surfaces.Length)
             {
                 return null;
             }
@@ -660,18 +581,7 @@ namespace RealtimeCSG.Legacy
         /// <param name="smoothingGroups">The smoothing groups for each plane (optional)</param>
         /// <param name="texGenFlags">The <see cref="RealtimeCSG.Legacy.TexGenFlags"/> for each plane (optional)</param>
         /// <returns>*true* on success, *false* on failure</returns>
-        public static bool CreateControlMeshFromPlanes(
-            out ControlMesh controlMesh,
-            out Shape shape,
-            Plane[] planes,
-            Vector3[] tangents = null,
-            Vector3[] binormals = null,
-            Material[] materials = null,
-            Matrix4x4[] textureMatrices = null,
-            TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace,
-            uint[] smoothingGroups = null,
-            TexGenFlags[] texGenFlags = null
-        )
+        public static bool CreateControlMeshFromPlanes(out ControlMesh controlMesh, out Shape shape, Plane[] planes, Vector3[] tangents = null, Vector3[] binormals = null, Material[] materials = null, Matrix4x4[] textureMatrices = null, TextureMatrixSpace textureMatrixSpace = TextureMatrixSpace.WorldSpace, uint[] smoothingGroups = null, TexGenFlags[] texGenFlags = null)
         {
             controlMesh = null;
             shape       = null;
@@ -700,11 +610,11 @@ namespace RealtimeCSG.Legacy
                 }
             }
 
-            if(planes.Length != materials.Length ||
-               (textureMatrices != null && planes.Length != textureMatrices.Length) ||
-               (tangents != null && tangents.Length != textureMatrices.Length) ||
-               (binormals != null && binormals.Length != textureMatrices.Length) ||
-               (smoothingGroups != null && smoothingGroups.Length != materials.Length))
+            if(planes.Length != materials.Length
+            || (textureMatrices != null && planes.Length != textureMatrices.Length)
+            || (tangents != null && tangents.Length != textureMatrices.Length)
+            || (binormals != null && binormals.Length != textureMatrices.Length)
+            || (smoothingGroups != null && smoothingGroups.Length != materials.Length))
             {
                 Debug.LogError("All non null arrays need to be of equal length");
 
@@ -752,7 +662,7 @@ namespace RealtimeCSG.Legacy
                 }
             }
 
-            controlMesh = ControlMeshUtility.CreateFromShape(shape, MathConstants.DistanceEpsilon);
+            controlMesh = ControlMeshUtility.CreateFromShape(shape);
 
             if(controlMesh == null)
             {
@@ -777,10 +687,7 @@ namespace RealtimeCSG.Legacy
 
                     shape.Surfaces[n].TexGenIndex = n;
 
-                    SurfaceUtility.AlignTextureSpaces(
-                        textureMatrices[i], textureMatrixSpace == TextureMatrixSpace.PlaneSpace, ref shape.TexGens[n]
-                      , ref shape.Surfaces[n]
-                    );
+                    SurfaceUtility.AlignTextureSpaces(textureMatrices[i], textureMatrixSpace == TextureMatrixSpace.PlaneSpace, ref shape.TexGens[n], ref shape.Surfaces[n]);
 
                     n++;
                 }
@@ -797,9 +704,7 @@ namespace RealtimeCSG.Legacy
         /// <param name="size">The size of the cube</param>
         /// <param name="material">The [UnityEngine.Material](https://docs.unity3d.com/ScriptReference/Material.html) that will be set to all surfaces of the cube (optional)</param>
         /// <returns>*true* on success, *false* on failure</returns>
-        public static bool CreateCubeControlMesh(
-            out ControlMesh controlMesh, out Shape shape, Vector3 size, Material material = null
-        )
+        public static bool CreateCubeControlMesh(out ControlMesh controlMesh, out Shape shape, Vector3 size, Material material = null)
         {
             Vector3 halfSize = size * 0.5f;
 

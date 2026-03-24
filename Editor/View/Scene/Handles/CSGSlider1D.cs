@@ -11,11 +11,7 @@ namespace RealtimeCSG.Helpers
         private static Vector3 m_StartPosition;
         private static Vector3[] m_SnapVertices;
 
-        internal static Vector3 Do(
-            Camera camera, int id, Vector3 position, Vector3 direction, float size, CSGHandles.CapFunction capFunction
-          , SnapMode snapMode, Vector3[] snapVertices, CSGHandles.InitFunction initFunction = null
-          , CSGHandles.InitFunction shutdownFunction = null
-        )
+        internal static Vector3 Do(Camera camera, int id, Vector3 position, Vector3 direction, float size, CSGHandles.CapFunction capFunction, SnapMode snapMode, Vector3[] snapVertices, CSGHandles.InitFunction initFunction = null, CSGHandles.InitFunction shutdownFunction = null)
         {
             Event evt = Event.current;
 
@@ -41,8 +37,7 @@ namespace RealtimeCSG.Helpers
                         break;
                     }
 
-                    if(((HandleUtility.nearestControl == id && evt.button == 0) ||
-                           (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
+                    if(((HandleUtility.nearestControl == id && evt.button == 0) || (GUIUtility.keyboardControl == id && evt.button == 2)) && GUIUtility.hotControl == 0)
                     {
                         m_SnapVertices = null;
 
@@ -55,6 +50,7 @@ namespace RealtimeCSG.Helpers
                         m_CurrentMousePosition = m_StartMousePosition       = evt.mousePosition;
                         m_StartPosition        = position;
                         evt.Use();
+
                         EditorGUIUtility.SetWantsMouseJumping(1);
                     }
 
@@ -71,9 +67,7 @@ namespace RealtimeCSG.Helpers
 
                         m_CurrentMousePosition += evt.delta;
 
-                        float dist = HandleUtility.CalcLineTranslation(
-                            m_StartMousePosition, m_CurrentMousePosition, m_StartPosition, direction
-                        );
+                        float dist = HandleUtility.CalcLineTranslation(m_StartMousePosition, m_CurrentMousePosition, m_StartPosition, direction);
 
                         Vector3 worldDirection = Handles.matrix.MultiplyVector(direction);
                         Vector3 worldPosition  = Handles.matrix.MultiplyPoint(m_StartPosition) + worldDirection * dist;
@@ -83,9 +77,7 @@ namespace RealtimeCSG.Helpers
                         {
                             case SnapMode.GridSnapping:
                             {
-                                Vector3 delta = CSGGrid.SnapDeltaToGrid(
-                                    camera, position - m_StartPosition, m_SnapVertices, false, true
-                                );
+                                Vector3 delta = CSGGrid.SnapDeltaToGrid(camera, position - m_StartPosition, m_SnapVertices, false, true);
 
                                 position = delta + m_StartPosition;
 
@@ -134,9 +126,7 @@ namespace RealtimeCSG.Helpers
                 {
                     Color originalColor = Handles.color;
 
-                    Handles.color = CSGHandles.StateColor(
-                        originalColor, CSGHandles.Disabled, CSGHandles.FocusControl == id
-                    );
+                    Handles.color = CSGHandles.StateColor(originalColor, CSGHandles.Disabled, CSGHandles.FocusControl == id);
 
                     if(capFunction != null)
                     {

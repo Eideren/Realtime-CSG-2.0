@@ -10,10 +10,7 @@ namespace RealtimeCSG.Helpers
         private static Vector3 m_StartPosition;
         private static Vector3[] m_SnapVertices;
 
-        public static Vector3 Do(
-            Camera camera, int id, Vector3 position, Quaternion rotation, float size
-          , CSGHandles.CapFunction handleFunction, bool snapping, Vector3[] snapVertices
-        )
+        public static Vector3 Do(Camera camera, int id, Vector3 position, Quaternion rotation, float size, CSGHandles.CapFunction handleFunction, bool snapping, Vector3[] snapVertices)
         {
             Vector3   worldPosition = Handles.matrix.MultiplyPoint(position);
             Matrix4x4 origMatrix    = Handles.matrix;
@@ -32,8 +29,7 @@ namespace RealtimeCSG.Helpers
                 }
                 case EventType.MouseDown:
                 {
-                    if((HandleUtility.nearestControl == id && evt.button == 0) ||
-                       (GUIUtility.keyboardControl == id && evt.button == 2))
+                    if((HandleUtility.nearestControl == id && evt.button == 0) || (GUIUtility.keyboardControl == id && evt.button == 2))
                     {
                         GUIUtility.hotControl  = GUIUtility.keyboardControl = id;
                         m_CurrentMousePosition = m_StartMousePosition       = evt.mousePosition;
@@ -58,9 +54,7 @@ namespace RealtimeCSG.Helpers
 
                         if(snapping)
                         {
-                            position = CSGGrid.SnapDeltaToGrid(
-                                camera, position - m_StartPosition, m_SnapVertices, false, true
-                            ) + m_StartPosition;
+                            position = CSGGrid.SnapDeltaToGrid(camera, position - m_StartPosition, m_SnapVertices, false, true) + m_StartPosition;
                         }
                         else
                         {

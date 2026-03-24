@@ -10,32 +10,15 @@ namespace RealtimeCSG
     [Serializable]
     internal sealed class FilteredSelection
     {
-        [FormerlySerializedAs("OtherTargets"), SerializeField]
-        public Transform[] otherTargets = Array.Empty<Transform>();
-
-        [FormerlySerializedAs("NodeTargets"), SerializeField]
-        public CSGNode[] nodeTargets = Array.Empty<CSGNode>();
-
-        [FormerlySerializedAs("BrushTargets"), SerializeField]
-        public CSGBrush[] brushTargets = Array.Empty<CSGBrush>();
-
-        [FormerlySerializedAs("OperationTargets"), SerializeField]
-        public CSGOperation[] operationTargets = Array.Empty<CSGOperation>();
-
-        [FormerlySerializedAs("ModelTargets"), SerializeField]
-        public CSGModel[] modelTargets = Array.Empty<CSGModel>();
-
-        [FormerlySerializedAs("RemovedNodes"), SerializeField]
-        public CSGNode[] removedNodes = Array.Empty<CSGNode>();
-
-        [FormerlySerializedAs("RemovedOthers"), SerializeField]
-        public Transform[] removedOthers = Array.Empty<Transform>();
-
-        [FormerlySerializedAs("AddedNodes"), SerializeField]
-        public CSGNode[] addedNodes = Array.Empty<CSGNode>();
-
-        [FormerlySerializedAs("AddedOthers"), SerializeField]
-        public Transform[] addedOthers = Array.Empty<Transform>();
+        [SerializeField] public Transform[] otherTargets = Array.Empty<Transform>();
+        [SerializeField] public CSGNode[] nodeTargets = Array.Empty<CSGNode>();
+        [SerializeField] public CSGBrush[] brushTargets = Array.Empty<CSGBrush>();
+        [SerializeField] public CSGOperation[] operationTargets = Array.Empty<CSGOperation>();
+        [SerializeField] public CSGModel[] modelTargets = Array.Empty<CSGModel>();
+        [SerializeField] public CSGNode[] removedNodes = Array.Empty<CSGNode>();
+        [SerializeField] public Transform[] removedOthers = Array.Empty<Transform>();
+        [SerializeField] public CSGNode[] addedNodes = Array.Empty<CSGNode>();
+        [SerializeField] public Transform[] addedOthers = Array.Empty<Transform>();
 
         public HashSet<CSGBrush> GetAllContainedBrushes()
         {
@@ -56,8 +39,7 @@ namespace RealtimeCSG
 
                     brush.EnsureInitialized();
 
-                    if(brush.ControlMesh == null ||
-                       brush.Shape == null)
+                    if(brush.ControlMesh == null || brush.Shape == null)
                     {
                         continue;
                     }
@@ -86,8 +68,7 @@ namespace RealtimeCSG
 
                         brush.EnsureInitialized();
 
-                        if(brush.ControlMesh == null ||
-                           brush.Shape == null)
+                        if(brush.ControlMesh == null || brush.Shape == null)
                         {
                             continue;
                         }
@@ -117,8 +98,7 @@ namespace RealtimeCSG
 
                         brush.EnsureInitialized();
 
-                        if(brush.ControlMesh == null ||
-                           brush.Shape == null)
+                        if(brush.ControlMesh == null || brush.Shape == null)
                         {
                             continue;
                         }
@@ -349,10 +329,7 @@ namespace RealtimeCSG
             int originalTargetOtherCount = otherTargets == null ? 0 : otherTargets.Length;
 
             // If our counts are the same and nothing is removed (and nothing could've been added), nothing has changed.
-            if(newTargetNodes.Count == originalTargetNodeCount &&
-               newTargetOthers.Count == originalTargetOtherCount &&
-               foundRemovedNodes.Count == 0 &&
-               foundRemovedOthers.Count == 0)
+            if(newTargetNodes.Count == originalTargetNodeCount && newTargetOthers.Count == originalTargetOtherCount && foundRemovedNodes.Count == 0 && foundRemovedOthers.Count == 0)
             {
                 return false;
             }
@@ -540,8 +517,7 @@ namespace RealtimeCSG
             addedNodes  = foundAddedNodes.ToArray();
             addedOthers = foundAddedOthers.ToArray();
 
-            return foundAddedNodes.Count > 0 || foundRemovedNodes.Count > 0 || foundAddedOthers.Count > 0
-             || foundRemovedOthers.Count > 0;
+            return foundAddedNodes.Count > 0 || foundRemovedNodes.Count > 0 || foundAddedOthers.Count > 0 || foundRemovedOthers.Count > 0;
         }
     }
 }

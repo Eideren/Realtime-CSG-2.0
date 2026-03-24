@@ -85,16 +85,14 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                ulong externalOutlineGeneration =
-                    InternalCSGModelManager.External.getBrushOutlineGeneration(brushNodeId);
+                ulong externalOutlineGeneration = InternalCSGModelManager.External.getBrushOutlineGeneration(brushNodeId);
 
                 if(!outlineCache.TryGetValue(brushNodeId, out GeometryWireframe outline))
                 {
                     externalOutlineGeneration -= 1;
                 }
 
-                if(outline == null ||
-                   externalOutlineGeneration != outline.outlineGeneration)
+                if(outline == null || externalOutlineGeneration != outline.outlineGeneration)
                 {
                     if(!InternalCSGModelManager.External.getBrushOutline(brushNodeId, out outline))
                     {
@@ -137,14 +135,7 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                int brushNodeId  = brush.brushNodeID;
-                int surfaceIndex = selectedSurfaces[i].surfaceIndex;
-
-                if(!InternalCSGModelManager.External.getSurfaceOutline(
-                       brushNodeId,
-                       surfaceIndex,
-                       out GeometryWireframe outline
-                   ))
+                if(!InternalCSGModelManager.External.getSurfaceOutline(brush.brushNodeID, selectedSurfaces[i].surfaceIndex, out GeometryWireframe outline))
                 {
                     outline = null;
                 }

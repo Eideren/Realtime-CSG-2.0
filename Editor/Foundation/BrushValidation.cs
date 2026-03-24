@@ -41,32 +41,27 @@ namespace RealtimeCSG.Foundation
             {
                 if(halfEdges[h].vertexIndex < 0)
                 {
-                    Debug.LogError("brushMesh.halfEdges[" + h + "].vertexIndex is " + halfEdges[h].vertexIndex);
+                    Debug.LogError($"brushMesh.halfEdges[{h}].vertexIndex is {halfEdges[h].vertexIndex}");
                     fail = true;
                 }
                 else if(halfEdges[h].vertexIndex >= vertices.Length)
                 {
-                    Debug.LogError(
-                        "brushMesh.halfEdges[" + h + "].vertexIndex is " + halfEdges[h].vertexIndex + ", but there are "
-                      + vertices.Length + " vertices."
-                    );
+                    Debug.LogError($"brushMesh.halfEdges[{h}].vertexIndex is {halfEdges[h].vertexIndex}, but there are {vertices.Length} vertices.");
 
                     fail = true;
                 }
 
                 if(halfEdges[h].twinIndex < 0)
                 {
-                    Debug.LogError("brushMesh.halfEdges[" + h + "].twinIndex is " + halfEdges[h].twinIndex);
+                    Debug.LogError($"brushMesh.halfEdges[{h}].twinIndex is {halfEdges[h].twinIndex}");
                     fail = true;
 
                     continue;
                 }
-                else if(halfEdges[h].twinIndex >= halfEdges.Length)
+
+                if(halfEdges[h].twinIndex >= halfEdges.Length)
                 {
-                    Debug.LogError(
-                        "brushMesh.halfEdges[" + h + "].twinIndex is " + halfEdges[h].twinIndex + ", but there are "
-                      + halfEdges.Length + " edges."
-                    );
+                    Debug.LogError($"brushMesh.halfEdges[{h}].twinIndex is {halfEdges[h].twinIndex}, but there are {halfEdges.Length} edges.");
 
                     fail = true;
 
@@ -78,10 +73,7 @@ namespace RealtimeCSG.Foundation
 
                 if(twin.twinIndex != h)
                 {
-                    Debug.LogError(
-                        "brushMesh.halfEdges[" + h + "].twinIndex is " + halfEdges[h].twinIndex
-                      + ", but the twinIndex of its twin is " + twin.twinIndex + " instead of " + h + "."
-                    );
+                    Debug.LogError($"brushMesh.halfEdges[{h}].twinIndex is {halfEdges[h].twinIndex}, but the twinIndex of its twin is {twin.twinIndex} instead of {h}.");
 
                     fail = true;
                 }
@@ -94,40 +86,31 @@ namespace RealtimeCSG.Foundation
 
                 if(firstEdge < 0)
                 {
-                    Debug.LogError("brushMesh.polygons[" + p + "].firstEdge is " + firstEdge);
+                    Debug.LogError($"brushMesh.polygons[{p}].firstEdge is {firstEdge}");
                     fail = true;
                 }
                 else if(firstEdge >= halfEdges.Length)
                 {
-                    Debug.LogError(
-                        "brushMesh.polygons[" + p + "].firstEdge is " + firstEdge + ", but there are "
-                      + halfEdges.Length + " edges."
-                    );
+                    Debug.LogError($"brushMesh.polygons[{p}].firstEdge is {firstEdge}, but there are {halfEdges.Length} edges.");
 
                     fail = true;
                 }
 
                 if(count <= 0)
                 {
-                    Debug.LogError("brushMesh.polygons[" + p + "].edgeCount is " + count);
+                    Debug.LogError($"brushMesh.polygons[{p}].edgeCount is {count}");
                     fail = true;
                 }
                 else if(firstEdge + count > halfEdges.Length)
                 {
-                    Debug.LogError(
-                        "brushMesh.polygons[" + p + "].firstEdge + brushMesh.polygons[" + p + "].edgeCount is "
-                      + (firstEdge + count) + ", but there are " + halfEdges.Length + " edges."
-                    );
+                    Debug.LogError($"brushMesh.polygons[{p}].firstEdge + brushMesh.polygons[{p}].edgeCount is {(firstEdge + count)}, but there are {halfEdges.Length} edges.");
 
                     fail = true;
                 }
                 else if(p < polygons.Length - 1 &&
                         polygons[p + 1].firstEdge != firstEdge + count)
                 {
-                    Debug.LogError(
-                        "brushMesh.polygons[" + (p + 1) + "].firstEdge does not equal brushMesh.polygons[" + p
-                      + "].firstEdge + brushMesh.polygons[" + p + "].edgeCount."
-                    );
+                    Debug.LogError($"brushMesh.polygons[{(p + 1)}].firstEdge does not equal brushMesh.polygons[{p}].firstEdge + brushMesh.polygons[{p}].edgeCount.");
 
                     fail = true;
                 }
@@ -140,11 +123,7 @@ namespace RealtimeCSG.Foundation
 
                     if(h0.vertexIndex != t1.vertexIndex)
                     {
-                        Debug.LogError(
-                            "brushMesh.halfEdges[" + (i0 + firstEdge) + "].vertexIndex (" + h0.vertexIndex
-                          + ") is not equal to brushMesh.halfEdges[" + h1.twinIndex + "].vertexIndex (" + t1.vertexIndex
-                          + ")."
-                        );
+                        Debug.LogError($"brushMesh.halfEdges[{(i0 + firstEdge)}].vertexIndex ({h0.vertexIndex}) is not equal to brushMesh.halfEdges[{h1.twinIndex}].vertexIndex ({t1.vertexIndex}).");
 
                         fail = true;
                     }

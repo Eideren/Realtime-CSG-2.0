@@ -21,9 +21,7 @@ namespace RealtimeCSG
 
             public Flags()
             {
-                helperSurfaceFlagContent = Enum.GetNames(typeof(HelperSurfaceFlags))
-                   .Select(x => new GUIContent(ObjectNames.NicifyVariableName(x)))
-                   .ToArray();
+                helperSurfaceFlagContent = Enum.GetNames(typeof(HelperSurfaceFlags)).Select(x => new GUIContent(ObjectNames.NicifyVariableName(x))).ToArray();
 
                 Array crappyArray = Enum.GetValues(typeof(HelperSurfaceFlags));
                 helperSurfaceFlagValues = new int[crappyArray.Length];
@@ -113,10 +111,7 @@ namespace RealtimeCSG
             int helperSurfaces = (int)CSGSettings.VisibleHelperSurfaces;
             EditorGUI.BeginChangeCheck();
 
-            GUI.Toggle(
-                drawPos, helperSurfaces == allVisibleSurfaces, m_Flags.onlyVisibleContent
-              , CsgguiStyleUtility.Skin.menuItem
-            );
+            GUI.Toggle(drawPos, helperSurfaces == allVisibleSurfaces, m_Flags.onlyVisibleContent, CsgguiStyleUtility.Skin.menuItem);
 
             if(EditorGUI.EndChangeCheck())
             {
@@ -130,10 +125,7 @@ namespace RealtimeCSG
 
             EditorGUI.BeginChangeCheck();
 
-            GUI.Toggle(
-                drawPos, helperSurfaces == allHelperSurfaces, m_Flags.allHelperContent
-              , CsgguiStyleUtility.Skin.menuItem
-            );
+            GUI.Toggle(drawPos, helperSurfaces == allHelperSurfaces, m_Flags.allHelperContent, CsgguiStyleUtility.Skin.menuItem);
 
             if(EditorGUI.EndChangeCheck())
             {

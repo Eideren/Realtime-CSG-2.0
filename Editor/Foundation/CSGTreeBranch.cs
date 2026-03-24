@@ -23,9 +23,7 @@ namespace RealtimeCSG.Foundation
         /// <param name="operation"></param>
         /// <param name="children">The child nodes that are children of this branch. A branch may not have duplicate children, contain itself or contain a <see cref="RealtimeCSG.Foundation.CSGTree"/>.</param>
         /// <returns>A new <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/>. May be an invalid node if it failed to create it.</returns>
-        public static CSGTreeBranch Create(
-            int userID = 0, CSGOperationType operation = CSGOperationType.Additive, params CSGTreeNode[] children
-        )
+        public static CSGTreeBranch Create(int userID = 0, CSGOperationType operation = CSGOperationType.Additive, params CSGTreeNode[] children)
         {
             if(!GenerateBranch(userID, out int branchNodeID))
             {

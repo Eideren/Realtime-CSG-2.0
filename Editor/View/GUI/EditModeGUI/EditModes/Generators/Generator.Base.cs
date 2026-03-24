@@ -26,14 +26,9 @@ namespace RealtimeCSG
             get => false;
         }
 
-        public delegate Vector3 SnapToGridFunction(
-            Camera camera, Vector3 worldPosition, CSGPlane plane, ref List<Vector3> snappingEdges
-          , out CSGBrush snappedOnBrush, CSGBrush[] ignoreBrushes, bool ignoreAllBrushes = false
-        );
+        public delegate Vector3 SnapToGridFunction(Camera camera, Vector3 worldPosition, CSGPlane plane, ref List<Vector3> snappingEdges, out CSGBrush snappedOnBrush, CSGBrush[] ignoreBrushes, bool ignoreAllBrushes = false);
 
-        public delegate Vector3 SnapToRayFunction(
-            Camera camera, Vector3 worldPosition, Ray ray, ref List<Vector3> snappingEdges, out CSGBrush snappedOnBrush
-        );
+        public delegate Vector3 SnapToRayFunction(Camera camera, Vector3 worldPosition, Ray ray, ref List<Vector3> snappingEdges, out CSGBrush snappedOnBrush);
 
         [NonSerialized] internal SnapToGridFunction snapFunction = null;
         [NonSerialized] internal SnapToRayFunction raySnapFunction = null;
@@ -85,12 +80,8 @@ namespace RealtimeCSG
 
         [NonSerialized] protected int undoGroupIndex;
 
-        [NonSerialized]
-        protected List<Vector3> visualSnappedEdges; // used to visualize edges which we're snapping against
-
-        [NonSerialized]
-        protected List<Vector3> visualSnappedGrid; // used to visualize grid lines we're snapping against
-
+        [NonSerialized] protected List<Vector3> visualSnappedEdges; // used to visualize edges which we're snapping against
+        [NonSerialized] protected List<Vector3> visualSnappedGrid; // used to visualize grid lines we're snapping against
         [NonSerialized] protected CSGBrush visualSnappedBrush; // used to visualize the brush we're snapping on
 
         [NonSerialized] protected CSGPlane buildPlane = new CSGPlane(0, 1, 0, 0);
@@ -124,10 +115,7 @@ namespace RealtimeCSG
 
         public CSGOperationType CurrentCSGOperationType
         {
-            get =>
-                forceCurrentCSGOperationType == INVALID_CSG_OPERATION_TYPE
-                    ? currentCSGOperationType
-                    : forceCurrentCSGOperationType;
+            get => forceCurrentCSGOperationType == INVALID_CSG_OPERATION_TYPE ? currentCSGOperationType : forceCurrentCSGOperationType;
             set
             {
                 if(forceCurrentCSGOperationType == value)
@@ -170,7 +158,7 @@ namespace RealtimeCSG
             Reset();
 
             shapeIsValid = true;
-            isFinished = false;
+            isFinished   = false;
 
             _originalGridRotation = CSGGrid.ForcedGridRotation;
             _originalGridCenter   = CSGGrid.ForcedGridCenter;
@@ -198,8 +186,7 @@ namespace RealtimeCSG
 
         protected virtual bool StartEditMode(Camera camera)
         {
-            if(editMode == EditMode.EditShape ||
-               editMode == EditMode.ExtrudeShape)
+            if(editMode == EditMode.EditShape || editMode == EditMode.ExtrudeShape)
             {
                 return false;
             }
@@ -264,9 +251,7 @@ namespace RealtimeCSG
         {
             if(visualSnappedEdges != null)
             {
-                PaintUtility.DrawLines(
-                    visualSnappedEdges.ToArray(), GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.SnappedEdges
-                );
+                PaintUtility.DrawLines(visualSnappedEdges.ToArray(), GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.SnappedEdges);
             }
 
             Matrix4x4 origMatrix = Handles.matrix;
@@ -279,17 +264,12 @@ namespace RealtimeCSG
 
             if(visualSnappedBrush != null)
             {
-                if(visualSnappedBrush.compareTransformation != null &&
-                   visualSnappedBrush.ChildData != null &&
-                   visualSnappedBrush.ChildData.ModelTransform)
+                if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.ChildData != null && visualSnappedBrush.ChildData.ModelTransform)
                 {
                     Color     color               = ColorSettings.HoverOutlines;
                     Matrix4x4 brushTransformation = visualSnappedBrush.compareTransformation.localToWorldMatrix;
 
-                    CSGRenderer.DrawOutlines(
-                        visualSnappedBrush.brushNodeID, brushTransformation,
-                        color, color, color, color, GUIConstants.OLD_THICK_LINE_SCALE
-                    );
+                    CSGRenderer.DrawOutlines(visualSnappedBrush.brushNodeID, brushTransformation, color, color, color, color, GUIConstants.OLD_THICK_LINE_SCALE);
                 }
             }
 
@@ -299,10 +279,7 @@ namespace RealtimeCSG
         protected void SetBrushTransformation(Transform transform)
         {
             Vector3 direction = buildPlane.normal;
-
-            Quaternion rotation = brushRotation.HasValue
-                ? brushRotation.Value
-                : Quaternion.FromToRotation(MathConstants.upVector3, direction);
+            Quaternion rotation = brushRotation.HasValue ? brushRotation.Value : Quaternion.FromToRotation(MathConstants.upVector3, direction);
 
             if(!ignoreModelRotation)
             {
@@ -310,7 +287,6 @@ namespace RealtimeCSG
             }
 
             transform.rotation = rotation;
-
             transform.position = brushPosition;
         }
 
@@ -347,8 +323,7 @@ namespace RealtimeCSG
                 {
                     SceneQueryUtility.ClearDeepClick();
 
-                    if(Keys.performActionKey.IsKeyPressed() || Keys.deleteSelectionKey.IsKeyPressed()
-                    || Keys.cancelActionKey.IsKeyPressed())
+                    if(Keys.performActionKey.IsKeyPressed() || Keys.deleteSelectionKey.IsKeyPressed() || Keys.cancelActionKey.IsKeyPressed())
                     {
                         Event.current.Use();
                     }
@@ -378,28 +353,24 @@ namespace RealtimeCSG
             }
         }
 
-        protected void PaintSideLength(
-            Camera camera, Vector3 edgeCenter, Vector3 circleCenter, float length, string name
-        )
+        protected void PaintSideLength(Camera camera, Vector3 edgeCenter, Vector3 circleCenter, float length, string name)
         {
-            Vector2 textCenter2DA = HandleUtility.WorldToGUIPoint(circleCenter);
-            Vector2 textCenter2DB = HandleUtility.WorldToGUIPoint(edgeCenter);
-            Vector2 normal2D      = (textCenter2DB - textCenter2DA).normalized;
+            Vector2 textCenter2Da = HandleUtility.WorldToGUIPoint(circleCenter);
+            Vector2 textCenter2Db = HandleUtility.WorldToGUIPoint(edgeCenter);
+            Vector2 normal2D      = (textCenter2Db - textCenter2Da).normalized;
 
-            Vector2 textCenter2D = textCenter2DB;
+            Vector2 textCenter2D = textCenter2Db;
             textCenter2D += normal2D * (HOVER_TEXT_DISTANCE * 2);
 
             Ray textCenterRay = HandleUtility.GUIPointToWorldRay(textCenter2D);
-
-            Vector3 textCenter = textCenterRay.origin
-              + textCenterRay.direction * ((camera.farClipPlane + camera.nearClipPlane) * 0.5f);
+            Vector3 textCenter = textCenterRay.origin + textCenterRay.direction * ((camera.farClipPlane + camera.nearClipPlane) * 0.5f);
 
             PaintUtility.DrawLine(edgeCenter, textCenter, Color.black);
             PaintUtility.DrawDottedLine(edgeCenter, textCenter, ColorSettings.SnappedEdges);
 
             if(float.IsNaN(length) || float.IsInfinity(length))
             {
-                PaintUtility.DrawScreenText(textCenter2D, name + " --");
+                PaintUtility.DrawScreenText(textCenter2D, $"{name} --");
             }
             else
             {
@@ -424,9 +395,7 @@ namespace RealtimeCSG
 
             Vector3 gridSpaceNormal = CSGGrid.VectorToGridSpace(buildPlane.normal);
 
-            GeometryUtility.CalculateTangents(
-                gridSpaceNormal, out Vector3 gridSpaceTangent, out Vector3 gridSpaceBinormal
-            );
+            GeometryUtility.CalculateTangents(gridSpaceNormal, out Vector3 gridSpaceTangent, out Vector3 gridSpaceBinormal);
 
             gridNormal   = CSGGrid.VectorFromGridSpace(gridSpaceNormal);
             gridTangent  = CSGGrid.VectorFromGridSpace(gridSpaceTangent);
@@ -450,9 +419,7 @@ namespace RealtimeCSG
             {
                 for(int i = 0; i < generatedBrushes.Length; i++)
                 {
-                    if(generatedBrushes[i] &&
-                       generatedBrushes[i].gameObject &&
-                       generatedBrushes[i].gameObject.activeSelf)
+                    if(generatedBrushes[i] && generatedBrushes[i].gameObject && generatedBrushes[i].gameObject.activeSelf)
                     {
                         generatedBrushes[i].gameObject.SetActive(false);
                     }
@@ -474,8 +441,7 @@ namespace RealtimeCSG
 
             Transform lastUsedModelTransform = !lastUsedModel ? null : lastUsedModel.transform;
 
-            if(!lastUsedModelTransform ||
-               !lastUsedModel.isActiveAndEnabled)
+            if(!lastUsedModelTransform || !lastUsedModel.isActiveAndEnabled)
             {
                 if(prevSelection != null && prevSelection.Length > 0)
                 {
@@ -504,8 +470,7 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if((brush.gameObject.hideFlags & (HideFlags.HideInHierarchy | HideFlags.NotEditable
-                             | HideFlags.DontSaveInBuild)) != 0)
+                        if((brush.gameObject.hideFlags & (HideFlags.HideInHierarchy | HideFlags.NotEditable | HideFlags.DontSaveInBuild)) != 0)
                         {
                             continue;
                         }
@@ -517,8 +482,7 @@ namespace RealtimeCSG
 
                         CSGModel model = brush.ChildData.Model;
 
-                        if(!model ||
-                           !model.isActiveAndEnabled)
+                        if(!model || !model.isActiveAndEnabled)
                         {
                             continue;
                         }
@@ -591,9 +555,7 @@ namespace RealtimeCSG
 
                     if(brushObjectCount > 1)
                     {
-                        operationGameObject = OperationsUtility.CreateGameObject(
-                            parentGameObject.transform, "Operation", true
-                        );
+                        operationGameObject = OperationsUtility.CreateGameObject(parentGameObject.transform, "Operation", true);
 
                         Transform transform = operationGameObject.transform;
                         SetBrushTransformation(transform);
@@ -677,8 +639,7 @@ namespace RealtimeCSG
                 UpdateBrushPosition();
             }
 
-            return generatedBrushes != null && generatedBrushes.Length > 0
-             && generatedBrushes.Length == brushObjectCount;
+            return generatedBrushes != null && generatedBrushes.Length > 0 && generatedBrushes.Length == brushObjectCount;
         }
 
         internal void MarkAllBrushesDirty()
@@ -712,8 +673,7 @@ namespace RealtimeCSG
 
         public virtual void HandleEvents(SceneView sceneView, Rect sceneRect)
         {
-            if(Event.current.type == EventType.MouseDown ||
-               Event.current.type == EventType.MouseMove)
+            if(Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseMove)
             {
                 mouseIsDragging = false;
             }
@@ -736,7 +696,6 @@ namespace RealtimeCSG
                 default:
                 case EditMode.CreatePlane:
                 case EditMode.CreateShape: HandleCreateShapeEvents(sceneView, sceneRect); break;
-
                 case EditMode.ExtrudeShape:
                 case EditMode.EditShape: HandleEditShapeEvents(sceneView, sceneRect); break;
             }

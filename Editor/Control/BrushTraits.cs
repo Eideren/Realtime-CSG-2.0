@@ -5,9 +5,7 @@ namespace RealtimeCSG
 {
     internal static class BrushTraits
     {
-        public static bool IsSurfaceUnselectable(
-            CSGBrush brush, int surfaceIndex, bool isTrigger, bool ignoreSurfaceFlags = false
-        )
+        public static bool IsSurfaceUnselectable(CSGBrush brush, int surfaceIndex, bool isTrigger, bool ignoreSurfaceFlags = false)
         {
             if(!brush)
             {
@@ -36,8 +34,7 @@ namespace RealtimeCSG
             int           texGenIndex = surfaces[surfaceIndex].TexGenIndex;
             TexGenFlags[] texGenFlags = shape.TexGenFlags;
 
-            if(texGenFlags == null ||
-               texGenIndex < 0 || texGenIndex >= texGenFlags.Length)
+            if(texGenFlags == null || texGenIndex < 0 || texGenIndex >= texGenFlags.Length)
             {
                 return true;
             }

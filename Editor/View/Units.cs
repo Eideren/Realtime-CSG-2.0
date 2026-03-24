@@ -8,11 +8,7 @@ namespace RealtimeCSG
     public static class Units
     {
         private static readonly string[] pixelUnitStrings = { string.Empty, "pixels" };
-
-        private static readonly GUIContent[] pixelUnitGUIContent =
-        {
-            new GUIContent(pixelUnitStrings[0]), new GUIContent(pixelUnitStrings[1])
-        };
+        private static readonly GUIContent[] pixelUnitGUIContent = { new GUIContent(pixelUnitStrings[0]), new GUIContent(pixelUnitStrings[1]) };
 
         public static string GetUnitString(PixelUnit unit)
         {
@@ -25,13 +21,7 @@ namespace RealtimeCSG
         }
 
         private static readonly string[] distanceUnitStrings = { "m", "cm", "mm", "ft", "\"" };
-
-        private static readonly GUIContent[] distanceUnitGUIContent =
-        {
-            new GUIContent(distanceUnitStrings[0]), new GUIContent(distanceUnitStrings[1])
-          , new GUIContent(distanceUnitStrings[2]), new GUIContent(distanceUnitStrings[3])
-          , new GUIContent(distanceUnitStrings[4])
-        };
+        private static readonly GUIContent[] distanceUnitGUIContent = { new GUIContent(distanceUnitStrings[0]), new GUIContent(distanceUnitStrings[1]), new GUIContent(distanceUnitStrings[2]), new GUIContent(distanceUnitStrings[3]), new GUIContent(distanceUnitStrings[4]) };
 
         public static string GetUnitString(DistanceUnit unit)
         {
@@ -62,10 +52,7 @@ namespace RealtimeCSG
                 unitString = " " + unitString;
             }
 
-            return string.Format(
-                CultureInfo.InvariantCulture, "x:{0:F}{2}\ny:{1:F}{2}", UnityToPixelsUnit(value.x)
-              , UnityToPixelsUnit(value.y), unitString
-            );
+            return string.Format(CultureInfo.InvariantCulture, "x:{0:F}{2}\ny:{1:F}{2}", UnityToPixelsUnit(value.x), UnityToPixelsUnit(value.y), unitString);
         }
 
         public static string ToPixelsString(Vector2 value)
@@ -85,10 +72,7 @@ namespace RealtimeCSG
             float x = (long)Math.Round((double)value.x * 16384) / 16384.0f;
             float y = (long)Math.Round((double)value.y * 16384) / 16384.0f;
 
-            return string.Format(
-                CultureInfo.InvariantCulture, "u:{0:F}{2}\nv:{1:F}{2}", UnityToPixelsUnit(x), UnityToPixelsUnit(y)
-              , unitString
-            );
+            return string.Format(CultureInfo.InvariantCulture, "u:{0:F}{2}\nv:{1:F}{2}", UnityToPixelsUnit(x), UnityToPixelsUnit(y), unitString);
         }
 
         public static string ToRoundedPixelsString(Vector2 value)
@@ -134,9 +118,7 @@ namespace RealtimeCSG
 
         public static string ToDistanceString(DistanceUnit unit, float value)
         {
-            return string.Format(
-                CultureInfo.InvariantCulture, "{0} {1}", UnityToDistanceUnit(unit, value), GetUnitString(unit)
-            );
+            return string.Format(CultureInfo.InvariantCulture, "{0} {1}", UnityToDistanceUnit(unit, value), GetUnitString(unit));
         }
 
         public static string ToDistanceString(float value)
@@ -144,9 +126,7 @@ namespace RealtimeCSG
             return ToDistanceString(CSGSettings.DistanceUnit, value);
         }
 
-        public static string ToDistanceString(
-            DistanceUnit unit, Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false
-        )
+        public static string ToDistanceString(DistanceUnit unit, Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false)
         {
             StringBuilder builder    = new StringBuilder();
             string        unitString = GetUnitString(unit);
@@ -157,9 +137,7 @@ namespace RealtimeCSG
             }
             else
             {
-                builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "x: {0} {1}\n", UnityToDistanceUnit(unit, value.x), unitString
-                );
+                builder.AppendFormat(CultureInfo.InvariantCulture, "x: {0} {1}\n", UnityToDistanceUnit(unit, value.x), unitString);
             }
 
             if(lockY)
@@ -168,9 +146,7 @@ namespace RealtimeCSG
             }
             else
             {
-                builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "y: {0} {1}\n", UnityToDistanceUnit(unit, value.y), unitString
-                );
+                builder.AppendFormat(CultureInfo.InvariantCulture, "y: {0} {1}\n", UnityToDistanceUnit(unit, value.y), unitString);
             }
 
             if(lockZ)
@@ -179,9 +155,7 @@ namespace RealtimeCSG
             }
             else
             {
-                builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "z: {0} {1}", UnityToDistanceUnit(unit, value.z), unitString
-                );
+                builder.AppendFormat(CultureInfo.InvariantCulture, "z: {0} {1}", UnityToDistanceUnit(unit, value.z), unitString);
             }
 
             return builder.ToString();
@@ -194,14 +168,7 @@ namespace RealtimeCSG
 
         public static string ToRoundedDistanceString(DistanceUnit unit, float value)
         {
-            if(float.IsNaN(value))
-            {
-                return "NaN";
-            }
-
-            return string.Format(
-                CultureInfo.InvariantCulture, "{0:F} {1}", UnityToDistanceUnit(unit, value), GetUnitString(unit)
-            );
+            return float.IsNaN(value) ? "NaN" : string.Format(CultureInfo.InvariantCulture, "{0:F} {1}", UnityToDistanceUnit(unit, value), GetUnitString(unit));
         }
 
         public static string ToRoundedDistanceString(float value)
@@ -209,9 +176,7 @@ namespace RealtimeCSG
             return ToRoundedDistanceString(CSGSettings.DistanceUnit, value);
         }
 
-        public static string ToRoundedDistanceString(
-            DistanceUnit unit, Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false
-        )
+        public static string ToRoundedDistanceString(DistanceUnit unit, Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false)
         {
             StringBuilder builder    = new StringBuilder();
             string        unitString = GetUnitString(unit);
@@ -222,9 +187,7 @@ namespace RealtimeCSG
             }
             else
             {
-                builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "x: {0:F} {1}\n", UnityToDistanceUnit(unit, value.x), unitString
-                );
+                builder.AppendFormat(CultureInfo.InvariantCulture, "x: {0:F} {1}\n", UnityToDistanceUnit(unit, value.x), unitString);
             }
 
             if(lockY)
@@ -233,9 +196,7 @@ namespace RealtimeCSG
             }
             else
             {
-                builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "y: {0:F} {1}\n", UnityToDistanceUnit(unit, value.y), unitString
-                );
+                builder.AppendFormat(CultureInfo.InvariantCulture, "y: {0:F} {1}\n", UnityToDistanceUnit(unit, value.y), unitString);
             }
 
             if(lockZ)
@@ -244,24 +205,18 @@ namespace RealtimeCSG
             }
             else
             {
-                builder.AppendFormat(
-                    CultureInfo.InvariantCulture, "z: {0:F} {1}", UnityToDistanceUnit(unit, value.z), unitString
-                );
+                builder.AppendFormat(CultureInfo.InvariantCulture, "z: {0:F} {1}", UnityToDistanceUnit(unit, value.z), unitString);
             }
 
             return builder.ToString();
         }
 
-        public static string ToRoundedDistanceString(
-            Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false
-        )
+        public static string ToRoundedDistanceString(Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false)
         {
             return ToRoundedDistanceString(CSGSettings.DistanceUnit, value, lockX, lockY, lockZ);
         }
 
-        public static string ToRoundedScaleString(
-            Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false
-        )
+        public static string ToRoundedScaleString(Vector3 value, bool lockX = false, bool lockY = false, bool lockZ = false)
         {
             StringBuilder builder = new StringBuilder();
 

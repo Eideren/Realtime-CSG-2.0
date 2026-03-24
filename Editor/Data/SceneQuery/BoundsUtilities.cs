@@ -145,13 +145,7 @@ namespace RealtimeCSG
             Matrix4x4 moveMatrix            = Matrix4x4.TRS(center, Quaternion.identity, Vector3.one);
             Matrix4x4 inverseMoveMatrix     = Matrix4x4.TRS(-center, Quaternion.identity, Vector3.one);
 
-            Matrix4x4 combinedMatrix =
-                    moveMatrix *
-                    rotationMatrix *
-                    scaleMatrix *
-                    inverseRotationMatrix *
-                    inverseMoveMatrix
-                ;
+            Matrix4x4 combinedMatrix = moveMatrix * rotationMatrix * scaleMatrix * inverseRotationMatrix * inverseMoveMatrix;
 
             for(int p = 0; p < worldPoints.Length; p++)
             {
@@ -189,8 +183,7 @@ namespace RealtimeCSG
 
             ControlMesh controlMesh = brush.ControlMesh;
 
-            if(controlMesh == null ||
-               controlMesh.Vertices == null)
+            if(controlMesh == null || controlMesh.Vertices == null)
             {
                 return min;
             }
@@ -244,12 +237,7 @@ namespace RealtimeCSG
                 }
             }
 
-            if(float.IsInfinity(min.x))
-            {
-                return min;
-            }
-
-            return new Vector3(min.x * 0.5f + max.x * 0.5f, min.y * 0.5f + max.y * 0.5f, min.z * 0.5f + max.z * 0.5f);
+            return float.IsInfinity(min.x) ? min : new Vector3(min.x * 0.5f + max.x * 0.5f, min.y * 0.5f + max.y * 0.5f, min.z * 0.5f + max.z * 0.5f);
         }
 
         public static AABB GetLocalBounds(CSGBrush[] brushes, Matrix4x4 worldToLocal)
@@ -331,16 +319,16 @@ namespace RealtimeCSG
         {
             Vector3 center = inputBounds.Center;
 
-            switch(index)
+            return index switch
             {
-                default: return Vector3.zero;
-                case 0:  return new Vector3(inputBounds.MinX, center.y, center.z);
-                case 1:  return new Vector3(inputBounds.MaxX, center.y, center.z);
-                case 2:  return new Vector3(center.x, inputBounds.MinY, center.z);
-                case 3:  return new Vector3(center.x, inputBounds.MaxY, center.z);
-                case 4:  return new Vector3(center.x, center.y, inputBounds.MinZ);
-                case 5:  return new Vector3(center.x, center.y, inputBounds.MaxZ);
-            }
+                0 => new Vector3(inputBounds.MinX, center.y, center.z)
+              , 1 => new Vector3(inputBounds.MaxX, center.y, center.z)
+              , 2 => new Vector3(center.x, inputBounds.MinY, center.z)
+              , 3 => new Vector3(center.x, inputBounds.MaxY, center.z)
+              , 4 => new Vector3(center.x, center.y, inputBounds.MinZ)
+              , 5 => new Vector3(center.x, center.y, inputBounds.MaxZ)
+              , _ => Vector3.zero
+            };
         }
 
         public static void GetBoundsEdgePoints(AABB inputBounds, Vector3[] outputPoints)
@@ -372,219 +360,137 @@ namespace RealtimeCSG
         {
             Vector3 center = inputBounds.Center;
 
-            switch(index)
+            return index switch
             {
-                default: return Vector3.zero;
-                case 0:  return new Vector3(center.x, inputBounds.MinY, inputBounds.MinZ);
-                case 1:  return new Vector3(inputBounds.MaxX, inputBounds.MinY, center.z);
-                case 2:  return new Vector3(center.x, inputBounds.MinY, inputBounds.MaxZ);
-                case 3:  return new Vector3(inputBounds.MinX, inputBounds.MinY, center.z);
-
-                case 4: return new Vector3(center.x, inputBounds.MaxY, inputBounds.MinZ);
-                case 5: return new Vector3(inputBounds.MaxX, inputBounds.MaxY, center.z);
-                case 6: return new Vector3(center.x, inputBounds.MaxY, inputBounds.MaxZ);
-                case 7: return new Vector3(inputBounds.MinX, inputBounds.MaxY, center.z);
-
-                case 8:  return new Vector3(inputBounds.MinX, center.y, inputBounds.MinZ);
-                case 9:  return new Vector3(inputBounds.MaxX, center.y, inputBounds.MinZ);
-                case 10: return new Vector3(inputBounds.MaxX, center.y, inputBounds.MaxZ);
-                case 11: return new Vector3(inputBounds.MinX, center.y, inputBounds.MaxZ);
-            }
+                0  => new Vector3(center.x, inputBounds.MinY, inputBounds.MinZ)
+              , 1  => new Vector3(inputBounds.MaxX, inputBounds.MinY, center.z)
+              , 2  => new Vector3(center.x, inputBounds.MinY, inputBounds.MaxZ)
+              , 3  => new Vector3(inputBounds.MinX, inputBounds.MinY, center.z)
+              , 4  => new Vector3(center.x, inputBounds.MaxY, inputBounds.MinZ)
+              , 5  => new Vector3(inputBounds.MaxX, inputBounds.MaxY, center.z)
+              , 6  => new Vector3(center.x, inputBounds.MaxY, inputBounds.MaxZ)
+              , 7  => new Vector3(inputBounds.MinX, inputBounds.MaxY, center.z)
+              , 8  => new Vector3(inputBounds.MinX, center.y, inputBounds.MinZ)
+              , 9  => new Vector3(inputBounds.MaxX, center.y, inputBounds.MinZ)
+              , 10 => new Vector3(inputBounds.MaxX, center.y, inputBounds.MaxZ)
+              , 11 => new Vector3(inputBounds.MinX, center.y, inputBounds.MaxZ)
+              , _  => Vector3.zero
+            };
         }
 
         // useful for drawing lines
-        public static readonly int[] AABBLineIndices =
+        public static readonly int[] aabbLineIndices = { 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 };
+
+        public static readonly int[][] aabbEdgeIndices =
         {
-            0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7
+            new[] { 0, 1 }, //  0  {-X -Y -Z} {+X -Y -Z}
+            new[] { 1, 2 }  //  1  {+X -Y -Z} {+X -Y +Z}
+          , new[] { 3, 2 }  //  2  {-X -Y +Z} {+X -Y +Z}
+          , new[] { 0, 3 }  //  3  {-X -Y -Z} {-X -Y +Z}
+          , new[] { 4, 5 }  //  4  {-X +Y -Z} {+X +Y -Z}
+          , new[] { 5, 6 }  //  5  {+X +Y -Z} {+X +Y +Z}
+          , new[] { 7, 6 }  //  6  {-X +Y +Z} {+X +Y +Z}
+          , new[] { 4, 7 }  //  7  {-X +Y -Z} {-X +Y +Z}
+          , new[] { 0, 4 }  //  8  {-X -Y -Z} {-X +Y -Z}
+          , new[] { 1, 5 }  //  9  {+X -Y -Z} {+X +Y -Z}
+          , new[] { 2, 6 }  // 10  {+X -Y +Z} {+X +Y +Z}
+          , new[] { 3, 7 }  // 11  {-X -Y +Z} {-X +Y +Z}
         };
 
-        public static readonly int[][] AABBEdgeIndices =
-        {
-            new int[2] { 0, 1 }, //  0  {-X -Y -Z} {+X -Y -Z}
-            new int[2] { 1, 2 }
-          , //  1  {+X -Y -Z} {+X -Y +Z}
-            new int[2] { 3, 2 }
-          , //  2  {-X -Y +Z} {+X -Y +Z}
-            new int[2] { 0, 3 }
-          , //  3  {-X -Y -Z} {-X -Y +Z}
+        public static readonly int[] aabbTopIndices = { 0, 1, 2, 3 };
 
-            new int[2] { 4, 5 }
-          , //  4  {-X +Y -Z} {+X +Y -Z}
-            new int[2] { 5, 6 }
-          , //  5  {+X +Y -Z} {+X +Y +Z}
-            new int[2] { 7, 6 }
-          , //  6  {-X +Y +Z} {+X +Y +Z}
-            new int[2] { 4, 7 }
-          , //  7  {-X +Y -Z} {-X +Y +Z}
-
-            new int[2] { 0, 4 }
-          , //  8  {-X -Y -Z} {-X +Y -Z}
-            new int[2] { 1, 5 }
-          , //  9  {+X -Y -Z} {+X +Y -Z}
-            new int[2] { 2, 6 }
-,                               // 10  {+X -Y +Z} {+X +Y +Z}
-            new int[2] { 3, 7 } // 11  {-X -Y +Z} {-X +Y +Z}
-        };
-
-        public static readonly int[] AABBTopIndices = { 0, 1, 2, 3 };
-
-        public static readonly int[][] AABBSidePointIndices =
+        public static readonly int[][] aabbSidePointIndices =
         {
             new[] { 0, 3, 7, 4 }, // 0
-            new[] { 5, 6, 2, 1 }
-          , // 1
-
-            new[] { 0, 1, 2, 3 }
-          , // 2
-            new[] { 7, 6, 5, 4 }
-          , // 3
-
-            new[] { 4, 5, 1, 0 }
-,                                // 4
-            new[] { 3, 2, 6, 7 } // 5
+            new[] { 5, 6, 2, 1 }  // 1
+          , new[] { 0, 1, 2, 3 }  // 2
+          , new[] { 7, 6, 5, 4 }  // 3
+          , new[] { 4, 5, 1, 0 }  // 4
+          , new[] { 3, 2, 6, 7 }  // 5
         };
 
-        public static readonly int[] AABBYAxi = { 8, 9, 10, 11 };
-        public static readonly int[] AABBXAxi = { 0, 2, 4, 6 };
-        public static readonly int[] AABBZAxi = { 1, 3, 5, 7 };
+        public static readonly int[] aabbyAxi = { 8, 9, 10, 11 };
+        public static readonly int[] aabbxAxi = { 0, 2, 4, 6 };
+        public static readonly int[] aabbzAxi = { 1, 3, 5, 7 };
 
-        public static readonly PrincipleAxis[][] AABBEdgeAxis =
+        public static readonly PrincipleAxis[][] aabbEdgeAxis =
         {
             new[] { PrincipleAxis.Y, PrincipleAxis.Z }, // 0,1
-            new[] { PrincipleAxis.X, PrincipleAxis.Y }
-          , // 1,2
-            new[] { PrincipleAxis.Y, PrincipleAxis.Z }
-          , // 2,3
-            new[] { PrincipleAxis.X, PrincipleAxis.Y }
-          , // 3,0
-
-            new[] { PrincipleAxis.Y, PrincipleAxis.Z }
-          , // 4,5
-            new[] { PrincipleAxis.X, PrincipleAxis.Y }
-          , // 5,6
-            new[] { PrincipleAxis.Y, PrincipleAxis.Z }
-          , // 6,7
-            new[] { PrincipleAxis.X, PrincipleAxis.Y }
-          , // 7,4
-
-            new[] { PrincipleAxis.X, PrincipleAxis.Z }
-          , // 0,4
-            new[] { PrincipleAxis.X, PrincipleAxis.Z }
-          , // 1,5
-            new[] { PrincipleAxis.X, PrincipleAxis.Z }
-,                                                      // 2,6
-            new[] { PrincipleAxis.X, PrincipleAxis.Z } // 3,7
+            new[] { PrincipleAxis.X, PrincipleAxis.Y }  // 1,2
+          , new[] { PrincipleAxis.Y, PrincipleAxis.Z }  // 2,3
+          , new[] { PrincipleAxis.X, PrincipleAxis.Y }  // 3,0
+          , new[] { PrincipleAxis.Y, PrincipleAxis.Z }  // 4,5
+          , new[] { PrincipleAxis.X, PrincipleAxis.Y }  // 5,6
+          , new[] { PrincipleAxis.Y, PrincipleAxis.Z }  // 6,7
+          , new[] { PrincipleAxis.X, PrincipleAxis.Y }  // 7,4
+          , new[] { PrincipleAxis.X, PrincipleAxis.Z }  // 0,4
+          , new[] { PrincipleAxis.X, PrincipleAxis.Z }  // 1,5
+          , new[] { PrincipleAxis.X, PrincipleAxis.Z }  // 2,6
+          , new[] { PrincipleAxis.X, PrincipleAxis.Z }  // 3,7
         };
 
-        public static readonly PrincipleAxis[] AABBEdgeTangentAxis =
+        public static readonly PrincipleAxis[] aabbEdgeTangentAxis =
         {
             PrincipleAxis.X, // 0,1
-            PrincipleAxis.Z
-          , // 1,2
-            PrincipleAxis.X
-          , // 2,3
-            PrincipleAxis.Z
-          , // 3,0
-
-            PrincipleAxis.X
-          , // 4,5
-            PrincipleAxis.Z
-          , // 5,6
-            PrincipleAxis.X
-          , // 6,7
-            PrincipleAxis.Z
-          , // 7,4
-
-            PrincipleAxis.Y
-          , // 0,4
-            PrincipleAxis.Y
-          , // 1,5
-            PrincipleAxis.Y
-,                           // 2,6
-            PrincipleAxis.Y // 3,7
+            PrincipleAxis.Z  // 1,2
+          , PrincipleAxis.X  // 2,3
+          , PrincipleAxis.Z  // 3,0
+          , PrincipleAxis.X  // 4,5
+          , PrincipleAxis.Z  // 5,6
+          , PrincipleAxis.X  // 6,7
+          , PrincipleAxis.Z  // 7,4
+          , PrincipleAxis.Y  // 0,4
+          , PrincipleAxis.Y  // 1,5
+          , PrincipleAxis.Y  // 2,6
+          , PrincipleAxis.Y  // 3,7
         };
 
-        public static readonly Vector3[] AABBEdgeTangents =
+        public static readonly Vector3[] aabbEdgeTangents =
         {
             new Vector3(1, 0, 0), // 0,1
-            new Vector3(0, 0, 1)
-          , // 1,2
-            new Vector3(1, 0, 0)
-          , // 2,3
-            new Vector3(0, 0, 1)
-          , // 3,0
-
-            new Vector3(1, 0, 0)
-          , // 4,5
-            new Vector3(0, 0, 1)
-          , // 5,6
-            new Vector3(1, 0, 0)
-          , // 6,7
-            new Vector3(0, 0, 1)
-          , // 7,4
-
-            new Vector3(0, 1, 0)
-          , // 0,4
-            new Vector3(0, 1, 0)
-          , // 1,5
-            new Vector3(0, 1, 0)
-,                                // 2,6
-            new Vector3(0, 1, 0) // 3,7
+            new Vector3(0, 0, 1)  // 1,2
+          , new Vector3(1, 0, 0)  // 2,3
+          , new Vector3(0, 0, 1)  // 3,0
+          , new Vector3(1, 0, 0)  // 4,5
+          , new Vector3(0, 0, 1)  // 5,6
+          , new Vector3(1, 0, 0)  // 6,7
+          , new Vector3(0, 0, 1)  // 7,4
+          , new Vector3(0, 1, 0)  // 0,4
+          , new Vector3(0, 1, 0)  // 1,5
+          , new Vector3(0, 1, 0)  // 2,6
+          , new Vector3(0, 1, 0)  // 3,7
         };
 
-        public static readonly CubeSide[][] AABBEdgeCubeSides =
+        public static readonly CubeSide[][] aabbEdgeCubeSides =
         {
             // sides  normal1 normal2
             new[] { CubeSide.NegativeZ, CubeSide.NegativeY }, // 4,2 ( 0, 0,-1) ( 0,-1, 0)
-            new[] { CubeSide.PositiveX, CubeSide.NegativeY }
-          , // 1,2 ( 1, 0, 0) ( 0,-1, 0)
-            new[] { CubeSide.PositiveZ, CubeSide.NegativeY }
-          , // 5,2 ( 0, 0, 1) ( 0,-1, 0)
-            new[] { CubeSide.NegativeX, CubeSide.NegativeY }
-          , // 0,2 (-1, 0, 0) ( 0,-1, 0)
-
-            new[] { CubeSide.NegativeZ, CubeSide.PositiveY }
-          , // 4,3 ( 0, 0,-1) ( 0, 1, 0)
-            new[] { CubeSide.PositiveX, CubeSide.PositiveY }
-          , // 1,3 ( 1, 0, 0) ( 0, 1, 0)
-            new[] { CubeSide.PositiveZ, CubeSide.PositiveY }
-          , // 5,3 ( 0, 0, 1) ( 0, 1, 0)
-            new[] { CubeSide.NegativeX, CubeSide.PositiveY }
-          , // 0,3 (-1, 0, 0) ( 0, 1, 0)
-
-            new[] { CubeSide.NegativeX, CubeSide.NegativeZ }
-          , // 0,4 (-1, 0, 0) ( 0, 0,-1)
-            new[] { CubeSide.PositiveX, CubeSide.NegativeZ }
-          , // 1,4 ( 1, 0, 0) ( 0, 0,-1)
-            new[] { CubeSide.PositiveX, CubeSide.PositiveZ }
-,                                                            // 1,5 ( 1, 0, 0) ( 0, 0, 1)
-            new[] { CubeSide.NegativeX, CubeSide.PositiveZ } // 0,5 (-1, 0, 0) ( 0, 0, 1)
+            new[] { CubeSide.PositiveX, CubeSide.NegativeY }  // 1,2 ( 1, 0, 0) ( 0,-1, 0)
+          , new[] { CubeSide.PositiveZ, CubeSide.NegativeY }  // 5,2 ( 0, 0, 1) ( 0,-1, 0)
+          , new[] { CubeSide.NegativeX, CubeSide.NegativeY }  // 0,2 (-1, 0, 0) ( 0,-1, 0)
+          , new[] { CubeSide.NegativeZ, CubeSide.PositiveY }  // 4,3 ( 0, 0,-1) ( 0, 1, 0)
+          , new[] { CubeSide.PositiveX, CubeSide.PositiveY }  // 1,3 ( 1, 0, 0) ( 0, 1, 0)
+          , new[] { CubeSide.PositiveZ, CubeSide.PositiveY }  // 5,3 ( 0, 0, 1) ( 0, 1, 0)
+          , new[] { CubeSide.NegativeX, CubeSide.PositiveY }  // 0,3 (-1, 0, 0) ( 0, 1, 0)
+          , new[] { CubeSide.NegativeX, CubeSide.NegativeZ }  // 0,4 (-1, 0, 0) ( 0, 0,-1)
+          , new[] { CubeSide.PositiveX, CubeSide.NegativeZ }  // 1,4 ( 1, 0, 0) ( 0, 0,-1)
+          , new[] { CubeSide.PositiveX, CubeSide.PositiveZ }  // 1,5 ( 1, 0, 0) ( 0, 0, 1)
+          , new[] { CubeSide.NegativeX, CubeSide.PositiveZ }  // 0,5 (-1, 0, 0) ( 0, 0, 1)
         };
 
         // for each side returns the two side - indices
-        public static readonly int[][] AABBEdgeSides =
-        {
-            new[] { 4, 2 }, new[] { 1, 2 }, new[] { 5, 2 }, new[] { 0, 2 }, new[] { 4, 3 }, new[] { 1, 3 }
-          , new[] { 5, 3 }, new[] { 0, 3 }, new[] { 0, 4 }, new[] { 1, 4 }, new[] { 1, 5 }, new[] { 0, 5 }
-        };
+        public static readonly int[][] aabbEdgeSides = { new[] { 4, 2 }, new[] { 1, 2 }, new[] { 5, 2 }, new[] { 0, 2 }, new[] { 4, 3 }, new[] { 1, 3 }, new[] { 5, 3 }, new[] { 0, 3 }, new[] { 0, 4 }, new[] { 1, 4 }, new[] { 1, 5 }, new[] { 0, 5 } };
 
-        public static readonly PrincipleAxis[] AABBSideAxis =
-        {
-            PrincipleAxis.X, PrincipleAxis.X, PrincipleAxis.Y, PrincipleAxis.Y, PrincipleAxis.Z, PrincipleAxis.Z
-        };
+        public static readonly PrincipleAxis[] aabbSideAxis = { PrincipleAxis.X, PrincipleAxis.X, PrincipleAxis.Y, PrincipleAxis.Y, PrincipleAxis.Z, PrincipleAxis.Z };
 
-        public static readonly Vector3[] AABBSideNormal =
+        public static readonly Vector3[] aabbSideNormal =
         {
             new Vector3(-1, 0, 0), // 0
-            new Vector3(1, 0, 0)
-          , // 1
-            new Vector3(0, -1, 0)
-          , // 2
-            new Vector3(0, 1, 0)
-          , // 3
-            new Vector3(0, 0, -1)
-,                                // 4
-            new Vector3(0, 0, 1) // 5
+            new Vector3(1, 0, 0)   // 1
+          , new Vector3(0, -1, 0)  // 2
+          , new Vector3(0, 1, 0)   // 3
+          , new Vector3(0, 0, -1)  // 4
+          , new Vector3(0, 0, 1)   // 5
         };
     }
 }

@@ -137,6 +137,7 @@ namespace RealtimeCSG
         {
             _isEnabled   = true;
             Tools.hidden = _hideTool;
+
             ResetTool();
         }
 
@@ -155,6 +156,7 @@ namespace RealtimeCSG
 
             _isEnabled   = false;
             Tools.hidden = false;
+
             ResetTool();
         }
 
@@ -231,12 +233,7 @@ namespace RealtimeCSG
 
         public bool HotKeyReleased()
         {
-            if(CurrentGenerator == null)
-            {
-                return false;
-            }
-
-            return CurrentGenerator.HotKeyReleased();
+            return CurrentGenerator != null && CurrentGenerator.HotKeyReleased();
         }
 
         private void OnShapeCancelledEvent()
@@ -290,10 +287,10 @@ namespace RealtimeCSG
             {
                 case EventType.ValidateCommand:
                 {
-                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed()
-                    || !EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed()
-                    || !EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed()
-                    || !EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
+                    if((!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed())
+                    || (!EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed())
+                    || (!EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed())
+                    || (!EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed()))
                     {
                         Event.current.Use();
 
@@ -311,10 +308,10 @@ namespace RealtimeCSG
 
                 case EventType.KeyDown:
                 {
-                    if(!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed()
-                    || !EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed()
-                    || !EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed()
-                    || !EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed())
+                    if((!EditorGUIUtility.editingTextField && Keys.makeSelectedAdditiveKey.IsKeyPressed())
+                    || (!EditorGUIUtility.editingTextField && Keys.makeSelectedSubtractiveKey.IsKeyPressed())
+                    || (!EditorGUIUtility.editingTextField && Keys.makeSelectedIntersectingKey.IsKeyPressed())
+                    || (!EditorGUIUtility.editingTextField && Keys.cancelActionKey.IsKeyPressed()))
                     {
                         Event.current.Use();
 
@@ -402,10 +399,7 @@ namespace RealtimeCSG
                             brushNodeIDs[i]        = brush.brushNodeID;
                         }
 
-                        CSGRenderer.DrawSelectedBrushes(
-                            _zTestLineMeshManager, _noZTestLineMeshManager, brushNodeIDs, brushTransformation,
-                            ColorSettings.SelectedOutlines, GUIConstants.LINE_SCALE
-                        );
+                        CSGRenderer.DrawSelectedBrushes(_zTestLineMeshManager, _noZTestLineMeshManager, brushNodeIDs, brushTransformation, ColorSettings.SelectedOutlines, GUIConstants.LINE_SCALE);
                     }
 
                     MaterialUtility.LineAlphaMultiplier     = 1.0f;
@@ -435,17 +429,11 @@ namespace RealtimeCSG
             return EditModeGenerateGUI.OnSceneGUI(this);
         }
 
-        public void GenerateFromPolygon(
-            Camera camera, CSGBrush brush, CSGPlane plane, Vector3 direction, Vector3[] meshVertices, int[] indices
-          , uint[] smoothingGroups, bool drag, CSGOperationType forceDragSource, bool autoCommitExtrusion
-        )
+        public void GenerateFromPolygon(Camera camera, CSGBrush brush, CSGPlane plane, Vector3 direction, Vector3[] meshVertices, int[] indices, uint[] smoothingGroups, bool drag, CSGOperationType forceDragSource, bool autoCommitExtrusion)
         {
             BuilderMode = ShapeMode.FreeDraw;
 
-            freedrawGenerator.GenerateFromPolygon(
-                camera, brush, plane, direction, meshVertices, indices, smoothingGroups, drag, forceDragSource
-              , autoCommitExtrusion
-            );
+            freedrawGenerator.GenerateFromPolygon(camera, brush, plane, direction, meshVertices, indices, smoothingGroups, drag, forceDragSource, autoCommitExtrusion);
         }
     }
 }

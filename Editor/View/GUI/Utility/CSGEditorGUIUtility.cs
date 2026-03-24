@@ -14,7 +14,7 @@ namespace RealtimeCSG
             CsgguiStyleUtility.InitStyles();
 
             CSGSkin rcsgSkin = CsgguiStyleUtility.Skin;
-            Color    oldColor = GUI.color;
+            Color   oldColor = GUI.color;
             GUI.color = Color.white;
 
             bool pressed = false;
@@ -111,10 +111,7 @@ namespace RealtimeCSG
             return operation;
         }
 
-        private static void CalcSize(
-            ref Rect[] rects, out Rect bounds, out int xCount, GUIContent[] contents, float yOffset
-          , float areaWidth = -1
-        )
+        private static void CalcSize(ref Rect[] rects, out Rect bounds, out int xCount, GUIContent[] contents, float yOffset, float areaWidth = -1)
         {
             if(areaWidth <= 0)
             {
@@ -128,80 +125,75 @@ namespace RealtimeCSG
                 rects = new Rect[contents.Length];
             }
 
+            GUISkin  skin       = GUI.skin;
+            GUIStyle buttonSkin = skin.button;
+
+            float textWidth = buttonSkin.CalcSize(contents[0]).x;
+
+            for(int i = 1; i < contents.Length; i++)
             {
-                GUISkin  skin       = GUI.skin;
-                GUIStyle buttonSkin = skin.button;
+                float width = buttonSkin.CalcSize(contents[i]).x;
 
-                float textWidth = buttonSkin.CalcSize(contents[0]).x;
-
-                for(int i = 1; i < contents.Length; i++)
+                if(width > textWidth)
                 {
-                    float width = buttonSkin.CalcSize(contents[i]).x;
-
-                    if(width > textWidth)
-                    {
-                        textWidth = width;
-                    }
+                    textWidth = width;
                 }
-
-                RectOffset margin         = buttonSkin.margin;
-                RectOffset padding        = buttonSkin.padding;
-                int        paddingWidth   = padding.left + padding.right;
-                float      minButtonWidth = textWidth + paddingWidth + margin.horizontal;
-                float      screenWidth    = areaWidth - margin.horizontal;
-                float      countValue     = Mathf.Clamp(screenWidth / minButtonWidth, 1, contents.Length);
-                xCount = Mathf.FloorToInt(countValue);
-
-                float realButtonWidth = screenWidth / xCount;
-
-                if(xCount == contents.Length)
-                {
-                    realButtonWidth = screenWidth / countValue;
-                }
-
-                position.x      = 0;
-                position.y      = yOffset;
-                position.width  = realButtonWidth;
-                position.height = 15;
-
-                bounds       = new Rect();
-                bounds.width = areaWidth;
-
-                xCount--;
-                int count = 0;
-
-                while(count < contents.Length)
-                {
-                    position.y++;
-                    position.x = 2;
-
-                    for(int x = 0; x <= xCount; x++)
-                    {
-                        position.x++;
-
-                        rects[count] = position;
-
-                        position.x += realButtonWidth - 1;
-
-                        count++;
-
-                        if(count >= contents.Length)
-                        {
-                            break;
-                        }
-                    }
-
-                    position.y += 16;
-                }
-
-                bounds.height = position.y - yOffset;
             }
+
+            RectOffset margin         = buttonSkin.margin;
+            RectOffset padding        = buttonSkin.padding;
+            int        paddingWidth   = padding.left + padding.right;
+            float      minButtonWidth = textWidth + paddingWidth + margin.horizontal;
+            float      screenWidth    = areaWidth - margin.horizontal;
+            float      countValue     = Mathf.Clamp(screenWidth / minButtonWidth, 1, contents.Length);
+            xCount = Mathf.FloorToInt(countValue);
+
+            float realButtonWidth = screenWidth / xCount;
+
+            if(xCount == contents.Length)
+            {
+                realButtonWidth = screenWidth / countValue;
+            }
+
+            position.x      = 0;
+            position.y      = yOffset;
+            position.width  = realButtonWidth;
+            position.height = 15;
+
+            bounds       = new Rect();
+            bounds.width = areaWidth;
+
+            xCount--;
+            int count = 0;
+
+            while(count < contents.Length)
+            {
+                position.y++;
+                position.x = 2;
+
+                for(int x = 0; x <= xCount; x++)
+                {
+                    position.x++;
+
+                    rects[count] = position;
+
+                    position.x += realButtonWidth - 1;
+
+                    count++;
+
+                    if(count >= contents.Length)
+                    {
+                        break;
+                    }
+                }
+
+                position.y += 16;
+            }
+
+            bounds.height = position.y - yOffset;
         }
 
-        public static int ToolbarWrapped(
-            int selected, ref Rect[] rects, out Rect bounds, GUIContent[] contents, ToolTip[] tooltips = null
-          , float yOffset = 0, float areaWidth = -1
-        )
+        public static int ToolbarWrapped(int selected, ref Rect[] rects, out Rect bounds, GUIContent[] contents, ToolTip[] tooltips = null, float yOffset = 0, float areaWidth = -1)
         {
             if(areaWidth <= 0)
             {
@@ -254,8 +246,7 @@ namespace RealtimeCSG
         internal const int MATERIAL_SMALL_SIZE = 48;
         internal const int MATERIAL_LARGE_SIZE = 100;
 
-        [NonSerialized]
-        private static MaterialEditor m_MaterialEditor;
+        [NonSerialized] private static MaterialEditor m_MaterialEditor;
 
         private static readonly GUILayoutOption materialSmallWidth = GUILayout.Width(MATERIAL_SMALL_SIZE);
         private static readonly GUILayoutOption materialSmallHeight = GUILayout.Height(MATERIAL_SMALL_SIZE);
@@ -299,26 +290,21 @@ namespace RealtimeCSG
 
             GUILayout.BeginHorizontal(CsgguiStyleUtility.EmptyMaterialStyle, width, height);
 
+            Editor editor = m_MaterialEditor;
+            Editor.CreateCachedEditor(material, typeof(MaterialEditor), ref editor);
+            m_MaterialEditor = editor as MaterialEditor;
+
+            if(m_MaterialEditor)
             {
-                Editor editor = m_MaterialEditor;
-                Editor.CreateCachedEditor(material, typeof(MaterialEditor), ref editor);
-                m_MaterialEditor = editor as MaterialEditor;
+                Rect rect = GUILayoutUtility.GetRect(small ? MATERIAL_SMALL_SIZE : MATERIAL_LARGE_SIZE, small ? MATERIAL_SMALL_SIZE : MATERIAL_LARGE_SIZE);
 
-                if(m_MaterialEditor)
-                {
-                    Rect rect = GUILayoutUtility.GetRect(
-                        small ? MATERIAL_SMALL_SIZE : MATERIAL_LARGE_SIZE,
-                        small ? MATERIAL_SMALL_SIZE : MATERIAL_LARGE_SIZE
-                    );
-
-                    EditorGUI.showMixedValue = showMixedValue;
-                    m_MaterialEditor.OnPreviewGUI(rect, GUIStyle.none);
-                    EditorGUI.showMixedValue = false;
-                }
-                else
-                {
-                    GUILayout.Box(new GUIContent(), CsgguiStyleUtility.EmptyMaterialStyle, width, height);
-                }
+                EditorGUI.showMixedValue = showMixedValue;
+                m_MaterialEditor.OnPreviewGUI(rect, GUIStyle.none);
+                EditorGUI.showMixedValue = false;
+            }
+            else
+            {
+                GUILayout.Box(new GUIContent(), CsgguiStyleUtility.EmptyMaterialStyle, width, height);
             }
 
             GUILayout.EndHorizontal();
@@ -328,8 +314,7 @@ namespace RealtimeCSG
 
             if(currentArea.Contains(currentPoint))
             {
-                if(Event.current.type == EventType.DragUpdated &&
-                   GetDragMaterial() != null)
+                if(Event.current.type == EventType.DragUpdated && GetDragMaterial() != null)
                 {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Generic;
                     Event.current.Use();
@@ -379,9 +364,7 @@ namespace RealtimeCSG
 
             EditorGUI.BeginChangeCheck();
 
-            {
-                value.x = EditorGUILayout.FloatField(vectorXContent, value.x, options);
-            }
+            value.x = EditorGUILayout.FloatField(vectorXContent, value.x, options);
 
             if(EditorGUI.EndChangeCheck())
             {
@@ -391,9 +374,7 @@ namespace RealtimeCSG
 
             EditorGUI.BeginChangeCheck();
 
-            {
-                value.y = EditorGUILayout.FloatField(vectorYContent, value.y, options);
-            }
+            value.y = EditorGUILayout.FloatField(vectorYContent, value.y, options);
 
             if(EditorGUI.EndChangeCheck())
             {
@@ -403,9 +384,7 @@ namespace RealtimeCSG
 
             EditorGUI.BeginChangeCheck();
 
-            {
-                value.z = EditorGUILayout.FloatField(vectorZContent, value.z, options);
-            }
+            value.z = EditorGUILayout.FloatField(vectorZContent, value.z, options);
 
             if(EditorGUI.EndChangeCheck())
             {
@@ -450,84 +429,59 @@ namespace RealtimeCSG
             EditorGUIUtility.labelWidth = vectorLabelWidth;
             GUILayout.BeginHorizontal();
 
+            EditorGUI.BeginChangeCheck();
+
+            value.x = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(vectorXContent, Units.UnityToDistanceUnit(distanceUnit, value.x), options));
+
+            if(EditorGUI.EndChangeCheck())
             {
-                EditorGUI.BeginChangeCheck();
+                realValue.x = value.x; // don't want to introduce math errors unless we actually modify something
+                modified    = true;
+            }
 
-                {
-                    value.x = Units.DistanceUnitToUnity(
-                        distanceUnit
-                      , EditorGUILayout.DoubleField(
-                            vectorXContent, Units.UnityToDistanceUnit(distanceUnit, value.x), options
-                        )
-                    );
-                }
-
-                if(EditorGUI.EndChangeCheck())
-                {
-                    realValue.x = value.x; // don't want to introduce math errors unless we actually modify something
-                    modified    = true;
-                }
-
-                if(multiLine)
-                {
-                    clickedUnitButton =
-                        GUILayout.Button(unitText, EditorStyles.miniLabel, width22) || clickedUnitButton;
-                }
-
-                if(multiLine)
-                {
-                    GUILayout.EndHorizontal();
-                    GUILayout.BeginHorizontal();
-                }
-
-                EditorGUI.BeginChangeCheck();
-
-                {
-                    value.y = Units.DistanceUnitToUnity(
-                        distanceUnit
-                      , EditorGUILayout.DoubleField(
-                            vectorYContent, Units.UnityToDistanceUnit(distanceUnit, value.y), options
-                        )
-                    );
-                }
-
-                if(EditorGUI.EndChangeCheck())
-                {
-                    realValue.y = value.y; // don't want to introduce math errors unless we actually modify something
-                    modified    = true;
-                }
-
-                if(multiLine)
-                {
-                    clickedUnitButton =
-                        GUILayout.Button(unitText, EditorStyles.miniLabel, width22) || clickedUnitButton;
-                }
-
-                if(multiLine)
-                {
-                    GUILayout.EndHorizontal();
-                    GUILayout.BeginHorizontal();
-                }
-
-                EditorGUI.BeginChangeCheck();
-
-                {
-                    value.z = Units.DistanceUnitToUnity(
-                        distanceUnit
-                      , EditorGUILayout.DoubleField(
-                            vectorZContent, Units.UnityToDistanceUnit(distanceUnit, value.z), options
-                        )
-                    );
-                }
-
-                if(EditorGUI.EndChangeCheck())
-                {
-                    realValue.z = value.z; // don't want to introduce math errors unless we actually modify something
-                    modified    = true;
-                }
-
+            if(multiLine)
+            {
                 clickedUnitButton = GUILayout.Button(unitText, EditorStyles.miniLabel, width22) || clickedUnitButton;
             }
+
+            if(multiLine)
+            {
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+            }
+
+            EditorGUI.BeginChangeCheck();
+
+            value.y = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(vectorYContent, Units.UnityToDistanceUnit(distanceUnit, value.y), options));
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                realValue.y = value.y; // don't want to introduce math errors unless we actually modify something
+                modified    = true;
+            }
+
+            if(multiLine)
+            {
+                clickedUnitButton = GUILayout.Button(unitText, EditorStyles.miniLabel, width22) || clickedUnitButton;
+            }
+
+            if(multiLine)
+            {
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+            }
+
+            EditorGUI.BeginChangeCheck();
+
+            value.z = Units.DistanceUnitToUnity(distanceUnit, EditorGUILayout.DoubleField(vectorZContent, Units.UnityToDistanceUnit(distanceUnit, value.z), options));
+
+            if(EditorGUI.EndChangeCheck())
+            {
+                realValue.z = value.z; // don't want to introduce math errors unless we actually modify something
+                modified    = true;
+            }
+
+            clickedUnitButton = GUILayout.Button(unitText, EditorStyles.miniLabel, width22) || clickedUnitButton;
 
             GUILayout.EndHorizontal();
             EditorGUIUtility.labelWidth = originalLabelWidth;
@@ -541,6 +495,7 @@ namespace RealtimeCSG
             {
                 distanceUnit             = nextUnit;
                 CSGSettings.DistanceUnit = distanceUnit;
+
                 CSGSettings.UpdateSnapSettings();
                 CSGSettings.Save();
                 RepaintAll();

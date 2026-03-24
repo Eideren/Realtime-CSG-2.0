@@ -67,9 +67,7 @@ namespace RealtimeCSG
 
                         Matrix4x4 brushTransformation = brush.compareTransformation.localToWorldMatrix;
 
-                        CSGRenderer.DrawSimpleOutlines(
-                            lineMeshManager, brush.brushNodeID, brushTransformation, brush.outlineColor.Value
-                        );
+                        CSGRenderer.DrawSimpleOutlines(lineMeshManager, brush.brushNodeID, brushTransformation, brush.outlineColor.Value);
                     }
 
                     lineMeshManager.End();

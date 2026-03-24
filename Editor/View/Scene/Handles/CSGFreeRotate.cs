@@ -8,10 +8,7 @@ namespace RealtimeCSG.Helpers
         private static Vector2 m_CurrentMousePosition;
         internal const float PICK_DISTANCE = 5.0f;
 
-        public static Quaternion Do(
-            Camera camera, int id, Quaternion rotation, Vector3 position, float size
-          , CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction
-        )
+        public static Quaternion Do(Camera camera, int id, Quaternion rotation, Vector3 position, float size, CSGHandles.InitFunction initFunction, CSGHandles.InitFunction shutdownFunction)
         {
             Vector3   worldPosition = Handles.matrix.MultiplyPoint(position);
             Matrix4x4 origMatrix    = Handles.matrix;
@@ -57,8 +54,7 @@ namespace RealtimeCSG.Helpers
                     {
                         m_CurrentMousePosition += evt.delta;
 
-                        Vector3 rotDir =
-                            camera.transform.TransformDirection(new Vector3(-evt.delta.y, -evt.delta.x, 0));
+                        Vector3 rotDir = camera.transform.TransformDirection(new Vector3(-evt.delta.y, -evt.delta.x, 0));
 
                         rotation = Quaternion.AngleAxis(evt.delta.magnitude, rotDir.normalized) * rotation;
 
@@ -111,9 +107,9 @@ namespace RealtimeCSG.Helpers
                     // We only want the position to be affected by the Handles.matrix.
                     Handles.matrix = Matrix4x4.identity;
                     Handles.DrawWireDisc(worldPosition, camera.transform.forward, size);
-                    Handles.matrix = origMatrix;
 
-                    Handles.color = originalColor;
+                    Handles.matrix = origMatrix;
+                    Handles.color  = originalColor;
 
                     break;
                 }

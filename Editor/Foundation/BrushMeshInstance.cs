@@ -57,8 +57,7 @@ namespace RealtimeCSG.Foundation
         }
 
         /// <value>An invalid instance</value>
-        public static readonly BrushMeshInstance InvalidInstance =
-            new BrushMeshInstance { brushMeshID = INVALID_INSTANCE_ID };
+        public static readonly BrushMeshInstance InvalidInstance = new BrushMeshInstance { brushMeshID = INVALID_INSTANCE_ID };
 
         internal const int INVALID_INSTANCE_ID = 0;
     }

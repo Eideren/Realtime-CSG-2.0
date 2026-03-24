@@ -40,8 +40,7 @@ namespace RealtimeCSG.Foundation
     /// <remarks><note>This struct is mirrored on the native side and cannot be modified.</note></remarks>
     /// <seealso cref="RealtimeCSG.Foundation.BrushMesh.Polygon"/>
     /// <seealso cref="RealtimeCSG.Foundation.BrushMesh"/>
-    [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4)
-   , DebuggerDisplay("SurfaceFlags={surfaceFlags}, SmoothingGroup={smoothingGroup}, UV0={UV0}")]
+    [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4), DebuggerDisplay("SurfaceFlags={surfaceFlags}, SmoothingGroup={smoothingGroup}, UV0={UV0}")]
     public struct SurfaceDescription
     {
         /// <value>The current normal smoothing group, 0 means that the surface doesn't do any smoothing</value>
@@ -66,15 +65,13 @@ namespace RealtimeCSG.Foundation
     /// <seealso cref="RealtimeCSG.Foundation.BrushMeshInstance.Create"/>
     /// <seealso cref="RealtimeCSG.Foundation.BrushMeshInstance.Set"/>
     /// <seealso cref="RealtimeCSG.Foundation.CSGTreeBrush"/>
-    [Serializable
-   , DebuggerDisplay("VertexCount={vertices.Length}, HalfEdgeCount={halfEdges.Length}, PolygonCount={polygons.Length}")]
+    [Serializable, DebuggerDisplay("VertexCount={vertices.Length}, HalfEdgeCount={halfEdges.Length}, PolygonCount={polygons.Length}")]
     public sealed class BrushMesh
     {
         /// <summary>Defines the polygon of a <see cref="RealtimeCSG.Foundation.BrushMesh"/>.</summary>
         /// <remarks><note>This struct is mirrored on the native side and cannot be modified.</note></remarks>
         /// <seealso cref="RealtimeCSG.Foundation.BrushMesh"/>
-        [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4)
-       , DebuggerDisplay("PolygonID={polygonID}, EdgeCount={edgeCount}, FirstEdge={firstEdge}")]
+        [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4), DebuggerDisplay("PolygonID={polygonID}, EdgeCount={edgeCount}, FirstEdge={firstEdge}")]
         public struct Polygon
         {
             /// <value>The index to the first half edge that forms this <see cref="RealtimeCSG.Foundation.BrushMesh.Polygon"/>.</value>
@@ -97,8 +94,7 @@ namespace RealtimeCSG.Foundation
         /// <summary>Defines a half edge of a <see cref="RealtimeCSG.Foundation.BrushMesh"/>.</summary>
         /// <remarks><note>This struct is mirrored on the native side and cannot be modified.</note></remarks>
         /// <seealso cref="RealtimeCSG.Foundation.BrushMesh"/>
-        [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4)
-       , DebuggerDisplay("VertexIndex={vertexIndex}, Twin={twinIndex}")]
+        [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4), DebuggerDisplay("VertexIndex={vertexIndex}, Twin={twinIndex}")]
         public struct HalfEdge
         {
             /// <value>The index to the vertex of this <seealso cref="RealtimeCSG.Foundation.BrushMesh.HalfEdge"/>.</value>

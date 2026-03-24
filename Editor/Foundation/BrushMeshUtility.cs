@@ -16,9 +16,7 @@ namespace RealtimeCSG.Foundation
         /// <param name="layers">The <see cref="RealtimeCSG.Foundation.SurfaceLayers"/> that define how the surfaces of this cube are rendered or if they need to be part of a collider etc.</param>
         /// <param name="surfaceFlags">Optional flags that modify surface behavior.</param>
         /// <returns>A <see cref="RealtimeCSG.Foundation.BrushMesh"/> on success, null on failure</returns>
-        public static BrushMesh CreateCube(
-            Vector3 size, SurfaceLayers layers, SurfaceFlags surfaceFlags = SurfaceFlags.None
-        )
+        public static BrushMesh CreateCube(Vector3 size, SurfaceLayers layers, SurfaceFlags surfaceFlags = SurfaceFlags.None)
         {
             Vector3 halfSize = size * 0.5f;
 
@@ -34,9 +32,7 @@ namespace RealtimeCSG.Foundation
         /// <param name="layers">The <see cref="RealtimeCSG.Foundation.SurfaceLayers"/> that define how the surfaces of this cube are rendered or if they need to be part of a collider etc.</param>
         /// <param name="surfaceFlags">Optional flags that modify surface behavior.</param>
         /// <returns>A <see cref="RealtimeCSG.Foundation.BrushMesh"/> on success, null on failure</returns>
-        public static BrushMesh CreateCube(
-            Vector3 min, Vector3 max, SurfaceLayers layers, SurfaceFlags surfaceFlags = SurfaceFlags.None
-        )
+        public static BrushMesh CreateCube(Vector3 min, Vector3 max, SurfaceLayers layers, SurfaceFlags surfaceFlags = SurfaceFlags.None)
         {
             if(min.x == max.x || min.y == max.y || min.z == max.z)
             {

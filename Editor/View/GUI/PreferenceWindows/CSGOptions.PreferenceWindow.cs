@@ -11,35 +11,22 @@ namespace RealtimeCSG
         {
             EditorGUI.BeginChangeCheck();
 
-            CSGSettings.ShowTooltips = EditorGUILayout.ToggleLeft("Show Tool-Tips", CSGSettings.ShowTooltips);
-
-            CSGSettings.SnapNonCSGObjects = EditorGUILayout.ToggleLeft(
-                "Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects
-            );
-
-            CSGSettings.AutoRigidbody = EditorGUILayout.ToggleLeft(
-                "Disable auto add rigidbodies", CSGSettings.AutoRigidbody
-            );
-
-            CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft(
-                "Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs
-            );
+            CSGSettings.ShowTooltips       = EditorGUILayout.ToggleLeft("Show Tool-Tips", CSGSettings.ShowTooltips);
+            CSGSettings.SnapNonCSGObjects  = EditorGUILayout.ToggleLeft("Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects);
+            CSGSettings.AutoRigidbody      = EditorGUILayout.ToggleLeft("Disable auto add rigidbodies", CSGSettings.AutoRigidbody);
+            CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft("Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs);
 
             EditorGUILayout.Space();
-            CSGSettings.MaxCircleSides = EditorGUILayout.IntField("Max Circle Sides", CSGSettings.MaxCircleSides);
 
+            CSGSettings.MaxCircleSides  = EditorGUILayout.IntField("Max Circle Sides", CSGSettings.MaxCircleSides);
             CSGSettings.MaxSphereSplits = EditorGUILayout.IntField("Max Sphere Splits", CSGSettings.MaxSphereSplits);
 
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField("Surfaces", EditorStyles.boldLabel);
 
-            bool beforeToggleWorldSpaceTexture = (CSGSettings.DefaultTexGenFlags & TexGenFlags.WorldSpaceTexture)
-             != TexGenFlags.WorldSpaceTexture;
-
-            bool afterToggleWorldSpaceTexture = EditorGUILayout.ToggleLeft(
-                "Lock Texture To Object (Default)", beforeToggleWorldSpaceTexture
-            );
+            bool beforeToggleWorldSpaceTexture = (CSGSettings.DefaultTexGenFlags & TexGenFlags.WorldSpaceTexture) != TexGenFlags.WorldSpaceTexture;
+            bool afterToggleWorldSpaceTexture  = EditorGUILayout.ToggleLeft("Lock Texture To Object (Default)", beforeToggleWorldSpaceTexture);
 
             if(afterToggleWorldSpaceTexture != beforeToggleWorldSpaceTexture)
             {
@@ -65,38 +52,20 @@ namespace RealtimeCSG
         {
             EditorGUI.BeginChangeCheck();
 
-            CSGProjectSettings.Instance.saveMeshesInSceneFiles = !EditorGUILayout.ToggleLeft(
-                "[Experimental] Don't Save Meshes In Scene Files"
-              , !CSGProjectSettings.Instance.saveMeshesInSceneFiles
-            );
+            CSGProjectSettings.Instance.saveMeshesInSceneFiles = !EditorGUILayout.ToggleLeft("[Experimental] Don't Save Debug Meshes In Scene Files", !CSGProjectSettings.Instance.saveMeshesInSceneFiles);
 
             if(!CSGProjectSettings.Instance.saveMeshesInSceneFiles)
             {
-                EditorGUILayout.HelpBox(
-                    "Meshes will be rebuilt on editor & scene load. This is an experimental option, if meshes are not rebuilding properly, please disable it."
-                   ,
-                    MessageType.Warning, true
-                );
+                EditorGUILayout.HelpBox("Debug meshes will be rebuilt on editor & scene load. This is an experimental option, if debug meshes are not rebuilding properly, please disable it.", MessageType.Warning, true);
             }
             else
             {
-                EditorGUILayout.HelpBox(
-                    "If enabled, meshes will be automatically rebuilt on editor & scene load, dramatically saving disk space."
-                   ,
-                    MessageType.Info, true
-                );
+                EditorGUILayout.HelpBox("If enabled, debug meshes will be automatically rebuilt on editor & scene load, dramatically saving disk space.", MessageType.Info, true);
             }
 
-            CSGProjectSettings.Instance.snapEverythingTo0001Grid = EditorGUILayout.ToggleLeft(
-                "Snap All CSG Objects To 0.001 Grid", CSGProjectSettings.Instance.snapEverythingTo0001Grid
-            );
+            CSGProjectSettings.Instance.snapEverythingTo0001Grid = EditorGUILayout.ToggleLeft("Snap All CSG Objects To 0.001 Grid", CSGProjectSettings.Instance.snapEverythingTo0001Grid);
 
-            EditorGUILayout.HelpBox(
-                "If enabled, every CSG object will snap to a small grid regardless of snapping options. " +
-                "This ensures things line up when on a tiny scale, but can make it difficult to work at a small scale."
-               ,
-                MessageType.Info, true
-            );
+            EditorGUILayout.HelpBox("If enabled, every CSG object will snap to a small grid regardless of snapping options. This ensures things line up when on a tiny scale, but can make it difficult to work at a small scale.", MessageType.Info, true);
 
             if(EditorGUI.EndChangeCheck())
             {
@@ -124,11 +93,7 @@ namespace RealtimeCSG
                     GUILayout.Space(10);
                     CSGKeysPreferenceWindow.PreferenceWindow();
                 }
-              , keywords = new[]
-                {
-                    "Tool-Tip", "ToolTip", "Tool-Tips", "ToolTips", "Snap", "Circle", "Sphere", "Lock", "Texture"
-                  , "Surface"
-                }
+              , keywords = new[] { "Tool-Tip", "ToolTip", "Tool-Tips", "ToolTips", "Snap", "Circle", "Sphere", "Lock", "Texture", "Surface" }
             };
 
             return provider;

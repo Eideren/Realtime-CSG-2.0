@@ -121,13 +121,8 @@ namespace RealtimeCSG
         private const float LARGE = 0.95f;
         private const float SMALL = 0.35f;
 
-        public static Color GridColor1W = new Color(
-            LARGE * GridColorW.r, LARGE * GridColorW.g, LARGE * GridColorW.b, 1.00f * GridColorW.a
-        );
-
-        public static Color GridColor2W = new Color(
-            SMALL * GridColorW.r, SMALL * GridColorW.g, SMALL * GridColorW.b, 0.65f * GridColorW.a
-        );
+        public static Color GridColor1W = new Color(LARGE * GridColorW.r, LARGE * GridColorW.g, LARGE * GridColorW.b, 1.00f * GridColorW.a);
+        public static Color GridColor2W = new Color(SMALL * GridColorW.r, SMALL * GridColorW.g, SMALL * GridColorW.b, 0.65f * GridColorW.a);
 
         public static readonly Color outerInvalidColor = Color.black;
         public static readonly Color innerInvalidColor = Color.red;
@@ -244,9 +239,7 @@ namespace RealtimeCSG
             get => shadowOutlineColor;
         }
 
-        private static Color m_SnappedEdges = new Color(
-            125.0f / 255.0f, 176.0f / 255.0f, 250.0f / 255.0f, 95.0f / 255.0f
-        );
+        private static Color m_SnappedEdges = new Color(125.0f / 255.0f, 176.0f / 255.0f, 250.0f / 255.0f, 95.0f / 255.0f);
 
         public static Color SnappedEdges
         {
@@ -307,21 +300,11 @@ namespace RealtimeCSG
             split[3] = split[3].Replace(',', '.');
             split[4] = split[4].Replace(',', '.');
 
-            bool success = float.TryParse(
-                split[1], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out float r
-            );
+            bool success = float.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out float r);
 
-            success &= float.TryParse(
-                split[2], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out float g
-            );
-
-            success &= float.TryParse(
-                split[3], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out float b
-            );
-
-            success &= float.TryParse(
-                split[4], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out float a
-            );
+            success &= float.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out float g);
+            success &= float.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out float b);
+            success &= float.TryParse(split[4], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out float a);
 
             if(success)
             {
@@ -350,14 +333,8 @@ namespace RealtimeCSG
         private static readonly Color defaultBackground = new Color(0.278431f, 0.278431f, 0.278431f, 0);
         private static readonly Color defaultWireframe = new Color(0.0f, 0.0f, 0.0f, 0.5f);
         private static readonly Color defaultWireframeOverlay = new Color(0.0f, 0.0f, 0.0f, 0.25f);
-
-        private static readonly Color defaultWireframeActive = new Color(
-            125.0f / 255.0f, 176.0f / 255.0f, 250.0f / 255.0f, 95.0f / 255.0f
-        );
-
-        private static readonly Color defaultWireframeSelected = new Color(
-            94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 0.25f
-        );
+        private static readonly Color defaultWireframeActive = new Color(125.0f / 255.0f, 176.0f / 255.0f, 250.0f / 255.0f, 95.0f / 255.0f);
+        private static readonly Color defaultWireframeSelected = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 0.25f);
 
         private static readonly Color defaultXAxis = new Color(154f / 255, 243f / 255, 72f / 255, .93f);
         private static readonly Color defaultYAxis = new Color(154f / 255, 243f / 255, 72f / 255, .93f);
@@ -468,43 +445,16 @@ namespace RealtimeCSG
 
             bool modified = false;
 
-            modified = ParseColor("Scene/Background", ref m_TextBackground, defaultBackground, ref m_ParsedBackground)
-             || modified;
-
-            modified = ParseColor("Scene/Guide Line", ref m_TextGuideline, defaultGuideline, ref m_ParsedGuideline)
-             || modified;
-
+            modified = ParseColor("Scene/Background", ref m_TextBackground, defaultBackground, ref m_ParsedBackground) || modified;
+            modified = ParseColor("Scene/Guide Line", ref m_TextGuideline, defaultGuideline, ref m_ParsedGuideline) || modified;
             modified = ParseColor("Scene/Grid", ref m_TextGrid, defaultGrid, ref m_ParsedGrid) || modified;
-
-            modified = ParseColor("Scene/Center Axis", ref m_TextCenterAxis, defaultCenterAxis, ref m_ParsedCenterAxis)
-             || modified;
-
-            modified = ParseColor(
-                "Scene/Selected Axis", ref m_TextSelectedAxis, defaultSelectedAxis, ref m_ParsedSelectedAxis
-            ) || modified;
-
-            modified = ParseColor(
-                "Scene/Selection Outline", ref m_TextSelectionOutline, defaultSelectionOutline
-              , ref m_ParsedSelectionOutline
-            ) || modified;
-
-            modified = ParseColor("Scene/Wireframe", ref m_TextWireframe, defaultWireframe, ref m_ParsedWireframe)
-             || modified;
-
-            modified = ParseColor(
-                "Scene/Wireframe Overlay", ref m_TextWireframeOverlay, defaultWireframeOverlay
-              , ref m_ParsedWireframeOverlay
-            ) || modified;
-
-            modified = ParseColor(
-                "Scene/Wireframe Active", ref m_TextWireframeActive, defaultWireframeActive, ref m_ParsedWireframeActive
-            ) || modified;
-
-            modified = ParseColor(
-                "Scene/Wireframe Selected", ref m_TextWireframeSelected, defaultWireframeSelected
-              , ref m_ParsedWireframeSelected
-            ) || modified;
-
+            modified = ParseColor("Scene/Center Axis", ref m_TextCenterAxis, defaultCenterAxis, ref m_ParsedCenterAxis) || modified;
+            modified = ParseColor("Scene/Selected Axis", ref m_TextSelectedAxis, defaultSelectedAxis, ref m_ParsedSelectedAxis) || modified;
+            modified = ParseColor("Scene/Selection Outline", ref m_TextSelectionOutline, defaultSelectionOutline, ref m_ParsedSelectionOutline) || modified;
+            modified = ParseColor("Scene/Wireframe", ref m_TextWireframe, defaultWireframe, ref m_ParsedWireframe) || modified;
+            modified = ParseColor("Scene/Wireframe Overlay", ref m_TextWireframeOverlay, defaultWireframeOverlay, ref m_ParsedWireframeOverlay) || modified;
+            modified = ParseColor("Scene/Wireframe Active", ref m_TextWireframeActive, defaultWireframeActive, ref m_ParsedWireframeActive) || modified;
+            modified = ParseColor("Scene/Wireframe Selected", ref m_TextWireframeSelected, defaultWireframeSelected, ref m_ParsedWireframeSelected) || modified;
             modified = ParseColor("Scene/X Axis", ref m_TextXAxis, defaultXAxis, ref m_ParsedXAxis) || modified;
             modified = ParseColor("Scene/Z Axis", ref m_TextZAxis, defaultZAxis, ref m_ParsedZAxis) || modified;
             modified = ParseColor("Scene/Y Axis", ref m_TextYAxis, defaultYAxis, ref m_ParsedYAxis) || modified;

@@ -23,8 +23,7 @@ namespace RealtimeCSG
 
         private static bool CanAddObjectToAsset(string assetPath, Object obj)
         {
-            if(!obj ||
-               string.IsNullOrEmpty(assetPath))
+            if(!obj || string.IsNullOrEmpty(assetPath))
             {
                 return false;
             }
@@ -39,9 +38,7 @@ namespace RealtimeCSG
             return string.IsNullOrEmpty(objPath) || assetPath == objPath;
         }
 
-        private static bool CanRemoveObjectFromAsset(
-            string assetPath, Object obj, bool ignoreWhenPartOfOtherAsset = false
-        )
+        private static bool CanRemoveObjectFromAsset(string assetPath, Object obj, bool ignoreWhenPartOfOtherAsset = false)
         {
             if(!obj)
             {
@@ -95,8 +92,7 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                foreach(GeneratedMeshInstance generatedMeshInstance in generatedMeshesInstance
-                           .GetComponentsInChildren<GeneratedMeshInstance>())
+                foreach(GeneratedMeshInstance generatedMeshInstance in generatedMeshesInstance.GetComponentsInChildren<GeneratedMeshInstance>())
                 {
                     if(!generatedMeshInstance) // possible when it's deleted in a prefab
                     {
@@ -180,9 +176,8 @@ namespace RealtimeCSG
         public static bool IsDefaultModel(CSGModel model)
         {
             return (model.hideFlags & MeshInstanceManager.COMPONENT_HIDE_FLAGS) == MeshInstanceManager.COMPONENT_HIDE_FLAGS
-              ||
-                (model.hideFlags & HideFlags.DontSave) == HideFlags.DontSave ||
-                (model.hideFlags & HideFlags.DontSaveInEditor) == HideFlags.DontSaveInEditor;
+             || (model.hideFlags & HideFlags.DontSave) == HideFlags.DontSave
+             || (model.hideFlags & HideFlags.DontSaveInEditor) == HideFlags.DontSaveInEditor;
         }
 
         public static bool IsModelEditable(CSGModel model)
@@ -194,9 +189,7 @@ namespace RealtimeCSG
 
             // Nested prefabs do not play nice with editing in scene, so it's best to edit them in prefab mode themselves
             // We only allow editing of nested prefabs when in prefab mode
-            return CSGPrefabUtility.AreInPrefabMode()
-                ? CSGPrefabUtility.IsEditedInPrefabMode(model)
-                : model.isActiveAndEnabled;
+            return CSGPrefabUtility.AreInPrefabMode() ? CSGPrefabUtility.IsEditedInPrefabMode(model) : model.isActiveAndEnabled;
         }
 
         public static bool IsModelSelectable(CSGModel model)
@@ -271,12 +264,12 @@ namespace RealtimeCSG
                 return false;
             }
 
-            bool              collidable       = model.HaveCollider;
-            bool              isTrigger        = collidable && model.IsTrigger;
+            bool collidable = model.HaveCollider;
+            bool isTrigger  = collidable && model.IsTrigger;
+
             StaticEditorFlags ownerStaticFlags = GameObjectUtility.GetStaticEditorFlags(model.gameObject);
 
-            bool batchingstatic = (ownerStaticFlags & StaticEditorFlags.BatchingStatic)
-             == StaticEditorFlags.BatchingStatic;
+            bool batchingstatic = (ownerStaticFlags & StaticEditorFlags.BatchingStatic) == StaticEditorFlags.BatchingStatic;
 
             return (batchingstatic || collidable) && !isTrigger;
         }
@@ -290,8 +283,7 @@ namespace RealtimeCSG
 
             StaticEditorFlags ownerStaticFlags = GameObjectUtility.GetStaticEditorFlags(model.gameObject);
 
-            bool batchingstatic = (ownerStaticFlags & StaticEditorFlags.BatchingStatic)
-             == StaticEditorFlags.BatchingStatic;
+            bool batchingstatic = (ownerStaticFlags & StaticEditorFlags.BatchingStatic) == StaticEditorFlags.BatchingStatic;
 
             return batchingstatic;
         }

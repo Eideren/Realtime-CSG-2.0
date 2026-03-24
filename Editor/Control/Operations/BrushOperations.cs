@@ -38,9 +38,7 @@ namespace InternalRealtimeCSG
                     worldPoints[p] = brushLocalToWorld.MultiplyPoint(points[p]);
                 }
 
-                worldDeltaMovement = CSGGrid.SnapDeltaToGrid(
-                    camera, worldDeltaMovement, worldPoints.ToArray(), false, false
-                );
+                worldDeltaMovement = CSGGrid.SnapDeltaToGrid(camera, worldDeltaMovement, worldPoints.ToArray(), false, false);
             }
 
             if(worldDeltaMovement.x == 0.0f && worldDeltaMovement.y == 0.0f && worldDeltaMovement.z == 0.0f)
@@ -57,12 +55,10 @@ namespace InternalRealtimeCSG
 
         public static void Flip(CSGBrush[] brushes, Matrix4x4 flipMatrix, string undoDescription = "Flip brushes")
         {
-            bool fail = false;
             Undo.IncrementCurrentGroup();
             Undo.RegisterCompleteObjectUndo(brushes.ToArray<UnityEngine.Object>(), undoDescription);
 
-            bool isGlobal = Tools.pivotRotation == PivotRotation.Global;
-
+            bool    isGlobal  = Tools.pivotRotation == PivotRotation.Global;
             Vector3 centerAll = BoundsUtilities.GetCenter(brushes);
 
             for(int t = 0; t < brushes.Length; t++)
@@ -75,9 +71,7 @@ namespace InternalRealtimeCSG
 
                 if(isGlobal)
                 {
-                    brushFlip = brush.transform.localToWorldMatrix *
-                        flipMatrix *
-                        brush.transform.worldToLocalMatrix;
+                    brushFlip = brush.transform.localToWorldMatrix * flipMatrix * brush.transform.worldToLocalMatrix;
 
                     brushCenter = brush.transform.InverseTransformPoint(centerAll) - position;
                 }
@@ -87,9 +81,7 @@ namespace InternalRealtimeCSG
                     brushCenter = brush.transform.InverseTransformPoint(centerAll);
                 }
 
-                brushFlip = Matrix4x4.TRS(brushCenter, Quaternion.identity, Vector3.one) *
-                    brushFlip *
-                    Matrix4x4.TRS(-brushCenter, Quaternion.identity, Vector3.one);
+                brushFlip = Matrix4x4.TRS(brushCenter, Quaternion.identity, Vector3.one) * brushFlip * Matrix4x4.TRS(-brushCenter, Quaternion.identity, Vector3.one);
 
                 brush.EnsureInitialized();
                 Shape shape = brush.Shape;

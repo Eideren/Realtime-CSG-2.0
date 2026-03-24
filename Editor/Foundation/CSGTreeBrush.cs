@@ -43,10 +43,7 @@ namespace RealtimeCSG.Foundation
         /// <param name="operation">The <see cref="RealtimeCSG.Foundation.CSGOperationType"/> that needs to be performed with this <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/>.</param>
         /// <param name="flags"><see cref="RealtimeCSG.Foundation.CSGTreeBrush"/> specific flags</param>
         /// <returns>A new <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/>. May be an invalid node if it failed to create it.</returns>
-        public static CSGTreeBrush Create(
-            int userID, Matrix4x4 localTransformation, BrushMeshInstance brushMesh = default
-          , CSGOperationType operation = CSGOperationType.Additive, CSGTreeBrushFlags flags = CSGTreeBrushFlags.Default
-        )
+        public static CSGTreeBrush Create(int userID, Matrix4x4 localTransformation, BrushMeshInstance brushMesh = default, CSGOperationType operation = CSGOperationType.Additive, CSGTreeBrushFlags flags = CSGTreeBrushFlags.Default)
         {
             if(GenerateBrush(userID, out int brushNodeID))
             {
@@ -84,10 +81,7 @@ namespace RealtimeCSG.Foundation
         /// <param name="operation">The <see cref="RealtimeCSG.Foundation.CSGOperationType"/> that needs to be performed with this <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/>.</param>
         /// <param name="flags"><see cref="RealtimeCSG.Foundation.CSGTreeBrush"/> specific flags</param>
         /// <returns>A new <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/>. May be an invalid node if it failed to create it.</returns>
-        public static CSGTreeBrush Create(
-            Matrix4x4 localTransformation, BrushMeshInstance brushMesh = default
-          , CSGOperationType operation = CSGOperationType.Additive, CSGTreeBrushFlags flags = CSGTreeBrushFlags.Default
-        )
+        public static CSGTreeBrush Create(Matrix4x4 localTransformation, BrushMeshInstance brushMesh = default, CSGOperationType operation = CSGOperationType.Additive, CSGTreeBrushFlags flags = CSGTreeBrushFlags.Default)
         {
             return Create(0, localTransformation, brushMesh, operation, flags);
         }
@@ -98,10 +92,7 @@ namespace RealtimeCSG.Foundation
         /// <param name="operation">The <see cref="RealtimeCSG.Foundation.CSGOperationType"/> that needs to be performed with this <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/>.</param>
         /// <param name="flags"><see cref="RealtimeCSG.Foundation.CSGTreeBrush"/> specific flags</param>
         /// <returns>A new <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/>. May be an invalid node if it failed to create it.</returns>
-        public static CSGTreeBrush Create(
-            int userID = 0, BrushMeshInstance brushMesh = default
-          , CSGOperationType operation = CSGOperationType.Additive, CSGTreeBrushFlags flags = CSGTreeBrushFlags.Default
-        )
+        public static CSGTreeBrush Create(int userID = 0, BrushMeshInstance brushMesh = default, CSGOperationType operation = CSGOperationType.Additive, CSGTreeBrushFlags flags = CSGTreeBrushFlags.Default)
         {
             return Create(userID, default, brushMesh, operation, flags);
         }

@@ -17,26 +17,12 @@ namespace RealtimeCSG.Foundation
         private static extern bool DoesTreeContainBrush(int nodeID, int brushID);
 
         [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool GenerateMeshDescriptions(
-            int treeNodeID,
-            int meshTypeCount,
-            [In] IntPtr meshTypes,
-            VertexChannelFlags vertexChannelMask,
-            [Out] out int meshDescriptionCount
-        );
+        private static extern bool GenerateMeshDescriptions(int treeNodeID, int meshTypeCount, [In] IntPtr meshTypes, VertexChannelFlags vertexChannelMask, [Out] out int meshDescriptionCount);
 
         [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool GetMeshDescriptions(
-            int treeNodeID,
-            int meshDescriptionCount,
-            [Out] IntPtr meshDescriptions
-        );
+        private static extern bool GetMeshDescriptions(int treeNodeID, int meshDescriptionCount, [Out] IntPtr meshDescriptions);
 
-        private static GeneratedMeshDescription[] GetMeshDescriptions(
-            int treeNodeID,
-            MeshQuery[] meshTypes,
-            VertexChannelFlags vertexChannelMask
-        )
+        private static GeneratedMeshDescription[] GetMeshDescriptions(int treeNodeID, MeshQuery[] meshTypes, VertexChannelFlags vertexChannelMask)
         {
             if(meshTypes == null)
             {
@@ -51,9 +37,7 @@ namespace RealtimeCSG.Foundation
             GCHandle nativeMeshTypeHandle = GCHandle.Alloc(meshTypes, GCHandleType.Pinned);
             IntPtr   nativeMeshTypePtr    = nativeMeshTypeHandle.AddrOfPinnedObject();
 
-            bool result = GenerateMeshDescriptions(
-                treeNodeID, meshTypes.Length, nativeMeshTypePtr, vertexChannelMask, out int meshDescriptionCount
-            );
+            bool result = GenerateMeshDescriptions(treeNodeID, meshTypes.Length, nativeMeshTypePtr, vertexChannelMask, out int meshDescriptionCount);
 
             nativeMeshTypeHandle.Free();
 
@@ -70,9 +54,7 @@ namespace RealtimeCSG.Foundation
 
             meshDescriptionsHandle.Free();
 
-            if(!result ||
-               meshDescriptions[0].vertexCount <= 0 ||
-               meshDescriptions[0].indexCount <= 0)
+            if(!result || meshDescriptions[0].vertexCount <= 0 || meshDescriptions[0].indexCount <= 0)
             {
                 return null;
             }
@@ -81,51 +63,35 @@ namespace RealtimeCSG.Foundation
         }
 
         [DllImport(CSGManager.NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool GetGeneratedMesh(
-            int treeNodeID,
-            int meshIndex,
-            int subMeshIndex,
-            int indexCount,
-            [Out] IntPtr indices,
-            int vertexCount,
-            [Out] IntPtr positions,
-            [Out] IntPtr tangents,
-            [Out] IntPtr normals,
-            [Out] IntPtr uvs,
-            out Vector3 boundsCenter,
-            out Vector3 boundsSize
-        );
+        private static extern bool GetGeneratedMesh(int treeNodeID, int meshIndex, int subMeshIndex, int indexCount, [Out] IntPtr indices, int vertexCount, [Out] IntPtr positions, [Out] IntPtr tangents, [Out] IntPtr normals, [Out] IntPtr uvs, out Vector3 boundsCenter, out Vector3 boundsSize);
 
         private static GeneratedMeshContents GetGeneratedMesh(int treeNodeID, GeneratedMeshDescription meshDescription)
         {
-            if(meshDescription.vertexCount <= 0 ||
-               meshDescription.indexCount <= 0)
+            if(meshDescription.vertexCount <= 0 || meshDescription.indexCount <= 0)
             {
-                Debug.LogWarning(
-                    $"{nameof(CSGTree)} called with a {nameof(GeneratedMeshDescription)} that isn't valid"
-                );
+                Debug.LogWarning($"{nameof(CSGTree)} called with a {nameof(GeneratedMeshDescription)} that isn't valid");
 
                 return null;
             }
 
             GeneratedMeshContents generatedMesh      = new GeneratedMeshContents();
             VertexChannelFlags    usedVertexChannels = meshDescription.meshQuery.UsedVertexChannels;
-            int                   vertexCount        = meshDescription.vertexCount;
-            int                   indexCount         = meshDescription.indexCount;
-            int                   meshIndex          = meshDescription.meshQueryIndex;
-            int                   subMeshIndex       = meshDescription.subMeshQueryIndex;
+
+            int vertexCount  = meshDescription.vertexCount;
+            int indexCount   = meshDescription.indexCount;
+            int meshIndex    = meshDescription.meshQueryIndex;
+            int subMeshIndex = meshDescription.subMeshQueryIndex;
+
             generatedMesh.description = meshDescription;
 
             // create our arrays on the managed side with the correct size
-            generatedMesh.tangents =
-                (usedVertexChannels & VertexChannelFlags.Tangent) != 0 ? new Vector4[vertexCount] : null;
+            generatedMesh.tangents = (usedVertexChannels & VertexChannelFlags.Tangent) != 0 ? new Vector4[vertexCount] : null;
 
-            generatedMesh.normals =
-                (usedVertexChannels & VertexChannelFlags.Normal) != 0 ? new Vector3[vertexCount] : null;
+            generatedMesh.normals = (usedVertexChannels & VertexChannelFlags.Normal) != 0 ? new Vector3[vertexCount] : null;
 
-            generatedMesh.uv0 = (usedVertexChannels & VertexChannelFlags.UV0) != 0 ? new Vector2[vertexCount] : null;
+            generatedMesh.uv0       = (usedVertexChannels & VertexChannelFlags.UV0) != 0 ? new Vector2[vertexCount] : null;
             generatedMesh.positions = new Vector3[vertexCount];
-            generatedMesh.indices = new int[indexCount];
+            generatedMesh.indices   = new int[indexCount];
 
             GCHandle indicesHandle  = GCHandle.Alloc(generatedMesh.indices, GCHandleType.Pinned);
             GCHandle positionHandle = GCHandle.Alloc(generatedMesh.positions, GCHandleType.Pinned);
@@ -157,20 +123,7 @@ namespace RealtimeCSG.Foundation
                 uv0Ptr    = uv0Handle.AddrOfPinnedObject();
             }
 
-            bool result = GetGeneratedMesh(
-                treeNodeID,
-                meshIndex,
-                subMeshIndex,
-                indexCount,
-                indicesPtr,
-                vertexCount,
-                positionPtr,
-                tangentPtr,
-                normalPtr,
-                uv0Ptr,
-                out Vector3 boundsCenter,
-                out Vector3 boundsSize
-            );
+            bool result = GetGeneratedMesh(treeNodeID, meshIndex, subMeshIndex, indexCount, indicesPtr, vertexCount, positionPtr, tangentPtr, normalPtr, uv0Ptr, out Vector3 boundsCenter, out Vector3 boundsSize);
 
             if(generatedMesh.uv0 != null)
             {
