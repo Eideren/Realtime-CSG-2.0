@@ -569,7 +569,6 @@ namespace RealtimeCSG
 
                     if(EditModeCommonGUI.IndentableButton(exportToButtonLabel) && ExportType.HasValue)
                     {
-                        MeshInstanceManager.Export(models[0], ExportType.Value, ExportColliders ?? true);
                     }
 
                     EditorGUI.EndDisabledGroup();
