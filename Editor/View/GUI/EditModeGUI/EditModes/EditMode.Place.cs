@@ -2169,6 +2169,7 @@ namespace RealtimeCSG
                         if(!_mouseIsDragging)
                         {
                             SelectionUtility.DoSelectionClick(sceneView);
+                            Event.current.Use();
                         }
 
                         _mouseIsDragging = false;
