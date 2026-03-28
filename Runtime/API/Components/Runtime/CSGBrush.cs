@@ -2,6 +2,7 @@
 using UnityEngine;
 using RealtimeCSG.Legacy;
 using InternalRealtimeCSG;
+using UnityEngine.Serialization;
 using CSGOperationType = RealtimeCSG.Foundation.CSGOperationType;
 
 namespace RealtimeCSG.Components
@@ -17,17 +18,17 @@ namespace RealtimeCSG.Components
 #if UNITY_EDITOR
     [AddComponentMenu("CSG/Brush"), ExecuteInEditMode]
 #endif
-    public sealed partial class CSGBrush : CSGNode
+    public sealed class CSGBrush : CSGNode
     {
-        public const float CurrentVersion = 2.1f;
+        public const float CURRENT_VERSION = 2.1f;
 
         /// <value>The version number of this instance of a <see cref="CSGBrush" /></value>
-        [HideInInspector] public float Version = CurrentVersion;
+        public float version = CURRENT_VERSION;
 
 #if UNITY_EDITOR
         public bool IsRegistered
         {
-            get => brushNodeID != InvalidNodeID;
+            get => brushNodeID != INVALID_NODE_ID;
         }
 #endif
 
@@ -36,18 +37,17 @@ namespace RealtimeCSG.Components
 #if UNITY_EDITOR
 
         /// <value>The CSG operation to perform with this brush</value>
-        public CSGOperationType OperationType = CSGOperationType.Additive;
+        public CSGOperationType operationType = CSGOperationType.Additive;
 
-        [UnityEngine.Serialization.FormerlySerializedAs("flags")]
-        public BrushFlags Flags = BrushFlags.None;
+       public BrushFlags flags = BrushFlags.None;
 
-        /// <value>The <see cref="Shape"/> that defines the shape by this brush together with its <see cref="ControlMesh"/>.</value>
+        /// <value>The <see cref="shape"/> that defines the shape by this brush together with its <see cref="controlMesh"/>.</value>
         /// <remarks><note>This will be replaced by <see cref="RealtimeCSG.Foundation.BrushMesh"/> eventually</note></remarks>
-        public Shape Shape;
+        public Shape shape;
 
-        /// <value>The <see cref="ControlMesh"/> that defines the shape by this brush together with its <see cref="Shape"/>.</value>
+        /// <value>The <see cref="controlMesh"/> that defines the shape by this brush together with its <see cref="shape"/>.</value>
         /// <remarks><note>This will be replaced by <see cref="RealtimeCSG.Foundation.BrushMesh"/> eventually</note></remarks>
-        public ControlMesh ControlMesh;
+        public ControlMesh controlMesh;
 
 #endif
 
@@ -56,24 +56,24 @@ namespace RealtimeCSG.Components
 #region Cached values
 
 #if UNITY_EDITOR
-        [HideInInspector, NonSerialized] public int brushNodeID = InvalidNodeID;
-        [HideInInspector, NonSerialized] public Color? outlineColor;
-        [HideInInspector, NonSerialized] public readonly ChildNodeData ChildData = new ChildNodeData();
-        [HideInInspector, NonSerialized] public readonly HierarchyItem hierarchyItem = new HierarchyItem();
-        [HideInInspector, NonSerialized] public GeometryWireframe outline = null;
-        [HideInInspector, NonSerialized] public CSGOperationType prevOperation = CSGOperationType.Additive;
-        [HideInInspector, NonSerialized] public int controlMeshGeneration = 0;
+        [NonSerialized] public int brushNodeID = INVALID_NODE_ID;
+        [NonSerialized] public Color? outlineColor;
+        [NonSerialized] public readonly ChildNodeData childData = new ChildNodeData();
+        [NonSerialized] public readonly HierarchyItem hierarchyItem = new HierarchyItem();
+        [NonSerialized] public GeometryWireframe outline;
+        [NonSerialized] public CSGOperationType prevOperation = CSGOperationType.Additive;
+        [NonSerialized] public int controlMeshGeneration;
 
         // this allows us to determine if our brush has changed it's transformation
-        [HideInInspector, NonSerialized]
+        [NonSerialized]
         public readonly CompareTransformation compareTransformation = new CompareTransformation();
 
         // this allows us to determine if our brush has any of it's surfaces changed
-        [HideInInspector, NonSerialized] public readonly CompareShape compareShape = new CompareShape();
+        [NonSerialized] public readonly CompareShape compareShape = new CompareShape();
 
         public void ClearCache()
         {
-            ChildData.Reset();
+            childData.Reset();
             hierarchyItem.Reset();
             compareShape.Reset();
             compareTransformation.Reset();
@@ -93,7 +93,7 @@ namespace RealtimeCSG.Components
         {
             // cannot change visibility since this might have an effect on exporter
             hideFlags   |= HideFlags.DontSaveInBuild;
-            brushNodeID =  InvalidNodeID;
+            brushNodeID =  INVALID_NODE_ID;
             ComponentUpgrader.UpgradeWhenNecessary(this);
 
             if(CSGSceneManagerRedirector.Interface != null)

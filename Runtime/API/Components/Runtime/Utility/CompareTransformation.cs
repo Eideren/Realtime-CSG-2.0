@@ -14,12 +14,9 @@ namespace RealtimeCSG
 
         public void EnsureInitialized(Transform transform, Transform modelTransform)
         {
-            localToWorldMatrix = transform.localToWorldMatrix; //worldToLocalMatrix;
+            localToWorldMatrix = transform.localToWorldMatrix;
 
-            brushToModelSpaceMatrix = modelTransform == null
-                ? localToWorldMatrix
-                : modelTransform.worldToLocalMatrix *
-                localToWorldMatrix;
+            brushToModelSpaceMatrix = modelTransform == null ? localToWorldMatrix : modelTransform.worldToLocalMatrix * localToWorldMatrix;
         }
 
         public void Reset()

@@ -8,7 +8,7 @@ namespace InternalRealtimeCSG
         {
             Quaternion rotationQuaternion = Quaternion.AngleAxis(rotationAngle, rotationAxis);
 
-            if(Mathf.Abs(rotationAngle) < MathConstants.EqualityEpsilon)
+            if(Mathf.Abs(rotationAngle) < MathConstants.EQUALITY_EPSILON)
             {
                 for(int t = 0; t < selection.transforms.Length; t++)
                 {

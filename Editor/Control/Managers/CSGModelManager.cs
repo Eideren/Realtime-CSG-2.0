@@ -67,7 +67,7 @@ namespace RealtimeCSG
             for(int i = 0; i < meshInstances.Length; i++)
             {
                 if(!meshInstances[i] ||
-                   meshInstances[i].RenderSurfaceType != RenderSurfaceType.Normal)
+                   meshInstances[i].renderSurfaceType != RenderSurfaceType.Normal)
                 {
                     continue;
                 }

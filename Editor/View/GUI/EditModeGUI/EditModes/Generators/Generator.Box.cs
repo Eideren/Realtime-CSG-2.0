@@ -195,7 +195,7 @@ namespace RealtimeCSG
                         settings.AddPoint(_worldPosition);
                     }
 
-                    if((settings.vertices[0] - settings.vertices[1]).magnitude <= MathConstants.EqualityEpsilon)
+                    if((settings.vertices[0] - settings.vertices[1]).magnitude <= MathConstants.EQUALITY_EPSILON)
                     {
                         Cancel();
 
@@ -238,16 +238,16 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                Shape shape = brush.Shape;
+                Shape shape = brush.shape;
 
-                for(int m = 0; m < shape.TexGens.Length; m++)
+                for(int m = 0; m < shape.texGens.Length; m++)
                 {
-                    shape.TexGens[m].RenderMaterial = defaultMaterial;
+                    shape.texGens[m].RenderMaterial = defaultMaterial;
                 }
 
-                if(brush.ControlMesh != null)
+                if(brush.controlMesh != null)
                 {
-                    brush.ControlMesh.SetDirty();
+                    brush.controlMesh.SetDirty();
                 }
             }
         }
@@ -292,7 +292,7 @@ namespace RealtimeCSG
             {
                 CSGPlane realPlane = _geometryPlane;
 
-                return Vector3.Dot(realPlane.normal, buildPlane.normal) < 0;
+                return Vector3.Dot(realPlane.Normal, buildPlane.Normal) < 0;
             }
         }
 
@@ -337,7 +337,7 @@ namespace RealtimeCSG
 
         internal override bool CreateControlMeshForBrushIndex(CSGBrush brush, ShapePolygon polygon, Matrix4x4 localToWorld, float height, out ControlMesh newControlMesh, out Shape newShape)
         {
-            Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.normal;
+            Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.Normal;
 
             if(!ShapePolygonUtility.GenerateControlMeshFromVertices(polygon, localToWorld, GeometryUtility.RotatePointIntoPlaneSpace(buildPlane, direction), height, new TexGen(), false, true, out newControlMesh, out newShape))
             {
@@ -353,8 +353,8 @@ namespace RealtimeCSG
                 ControlMeshUtility.InvertShape(newShape);
             }
 
-            brush.Shape       = newShape;
-            brush.ControlMesh = newControlMesh;
+            brush.shape       = newShape;
+            brush.controlMesh = newControlMesh;
 
             InternalCSGModelManager.ValidateBrush(brush, true);
             ControlMeshUtility.RebuildShape(brush);
@@ -488,7 +488,7 @@ namespace RealtimeCSG
                 Vector3 point1 = _firstSnappedEdges[i + 1];
 
                 Vector3 binormal = (point1 - point0).normalized;
-                Vector3 tangent  = buildPlane.normal;
+                Vector3 tangent  = buildPlane.Normal;
                 Vector3 normal   = Vector3.Cross(binormal, tangent);
 
                 CSGPlane worldPlane = new CSGPlane(normal, point0);
@@ -498,12 +498,12 @@ namespace RealtimeCSG
                 Matrix4x4 transform = _firstSnappedBrush.transform.localToWorldMatrix;
 
                 CSGPlane  localPlane      = GeometryUtility.InverseTransformPlane(transform, worldPlane);
-                Vector3[] vertices        = _firstSnappedBrush.ControlMesh.Vertices;
+                Vector3[] vertices        = _firstSnappedBrush.controlMesh.vertices;
                 bool      planeIsInversed = false;
 
                 for(int v = 0; v < vertices.Length; v++)
                 {
-                    if(localPlane.Distance(vertices[v]) > MathConstants.DistanceEpsilon)
+                    if(localPlane.Distance(vertices[v]) > MathConstants.DISTANCE_EPSILON)
                     {
                         planeIsInversed = true;
 
@@ -589,7 +589,7 @@ namespace RealtimeCSG
 
                     if(settings.vertices.Length == 1)
                     {
-                        if(hoverBuildPlane.normal != MathConstants.zeroVector3)
+                        if(hoverBuildPlane.Normal != MathConstants.zeroVector3)
                         {
                             editMode = EditMode.CreateShape;
                         }
@@ -621,9 +621,9 @@ namespace RealtimeCSG
 
                 if(geometryModel == null && vertexOnBrush != null)
                 {
-                    if(vertexOnBrush.ChildData != null && vertexOnBrush.ChildData.Model)
+                    if(vertexOnBrush.childData != null && vertexOnBrush.childData.model)
                     {
-                        geometryModel = vertexOnBrush.ChildData.Model;
+                        geometryModel = vertexOnBrush.childData.model;
                     }
                 }
 
@@ -729,7 +729,7 @@ namespace RealtimeCSG
                            !float.IsNaN(_worldPosition.y) && !float.IsInfinity(_worldPosition.y) &&
                            !float.IsNaN(_worldPosition.z) && !float.IsInfinity(_worldPosition.z))
                         {
-                            if(hoverBuildPlane.normal.sqrMagnitude != 0)
+                            if(hoverBuildPlane.Normal.sqrMagnitude != 0)
                             {
                                 buildPlane = hoverBuildPlane;
                             }
@@ -767,7 +767,7 @@ namespace RealtimeCSG
 
                                     for(int i = 0; i < _firstSnappedPlanes.Length; i++)
                                     {
-                                        if(_firstSnappedPlanes[i].Distance(_worldPosition) <= MathConstants.DistanceEpsilon)
+                                        if(_firstSnappedPlanes[i].Distance(_worldPosition) <= MathConstants.DISTANCE_EPSILON)
                                         {
                                             outside = false;
 
@@ -901,7 +901,7 @@ namespace RealtimeCSG
 
                 if(visualSnappedBrush != null)
                 {
-                    if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.ChildData != null && visualSnappedBrush.ChildData.ModelTransform)
+                    if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.childData != null && visualSnappedBrush.childData.modelTransform)
                     {
                         Matrix4x4 brushTransformation = visualSnappedBrush.compareTransformation.localToWorldMatrix;
 
@@ -1047,7 +1047,7 @@ namespace RealtimeCSG
                             Ray mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
                             CSGGrid.SetForcedGrid(camera, buildPlane);
 
-                            CSGPlane alignedPlane = new CSGPlane(CSGGrid.CurrentWorkGridPlane.normal, settings.vertices[0]);
+                            CSGPlane alignedPlane = new CSGPlane(CSGGrid.CurrentWorkGridPlane.Normal, settings.vertices[0]);
 
                             Vector3 worldPosition = buildPlane.Project(alignedPlane.RayIntersection(mouseRay));
 

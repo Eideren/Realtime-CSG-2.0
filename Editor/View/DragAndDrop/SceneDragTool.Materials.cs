@@ -404,12 +404,12 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = _hoverBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null || brush.ChildData.Model == null)
+                    if(brush.childData == null || brush.childData.model == null)
                     {
                         continue;
                     }
 
-                    CSGModel model = brush.ChildData.Model;
+                    CSGModel model = brush.childData.model;
                     updateModels.Add(model);
                     updateBrushes.Add(brush);
                 }
@@ -509,7 +509,7 @@ namespace RealtimeCSG
             foreach(CSGBrush brush in brushes)
             {
                 brush.EnsureInitialized();
-                ShapeUtility.CheckMaterials(brush.Shape);
+                ShapeUtility.CheckMaterials(brush.shape);
             }
 
             foreach(CSGBrush brush in brushes)
@@ -563,12 +563,12 @@ namespace RealtimeCSG
             {
                 CSGBrush brush = hoverBrushSurfaces[i].brush;
 
-                if(brush.ChildData == null || brush.ChildData.Model == null)
+                if(brush.childData == null || brush.childData.model == null)
                 {
                     continue;
                 }
 
-                CSGModel model = brush.ChildData.Model;
+                CSGModel model = brush.childData.model;
                 updateModels.Add(model);
                 updateBrushes.Add(brush);
             }
@@ -601,15 +601,15 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = hoverBrushSurfaces[i].brush;
 
-                    if(brush.ChildData == null || brush.ChildData.Model == null)
+                    if(brush.childData == null || brush.childData.model == null)
                     {
                         continue;
                     }
 
-                    Shape    shape = brush.Shape;
-                    CSGModel model = brush.ChildData.Model;
+                    Shape    shape = brush.shape;
+                    CSGModel model = brush.childData.model;
 
-                    TexGen[] texGens = shape.TexGens;
+                    TexGen[] texGens = shape.texGens;
 
                     bool modified = false;
 
@@ -645,7 +645,7 @@ namespace RealtimeCSG
                         if(highlightSurface >= 0)
                         {
                             Material material        = GetMaterial();
-                            int      highlightTEXGen = shape.Surfaces[highlightSurface].TexGenIndex;
+                            int      highlightTEXGen = shape.surfaces[highlightSurface].TexGenIndex;
 
                             if(texGens[highlightTEXGen].RenderMaterial != material)
                             {
@@ -664,7 +664,7 @@ namespace RealtimeCSG
 
                     if(modified)
                     {
-                        shape.TexGens = texGens.ToArray();
+                        shape.texGens = texGens.ToArray();
                         updateModels.Add(model);
                         updateBrushes.Add(brush);
                     }
@@ -702,7 +702,7 @@ namespace RealtimeCSG
                         int       highlightSurface    = selectedBrushSurfaces[i].surfaceIndex;
                         Matrix4x4 brushTransformation = brush.compareTransformation.localToWorldMatrix;
 
-                        CSGRenderer.DrawSurfaceOutlines(brush.brushNodeID, brush.Shape, brushTransformation, highlightSurface, ColorSettings.SurfaceInnerStateColor[2], ColorSettings.SurfaceOuterStateColor[2], GUIConstants.OLD_THIN_LINE_SCALE);
+                        CSGRenderer.DrawSurfaceOutlines(brush.brushNodeID, brush.shape, brushTransformation, highlightSurface, ColorSettings.SurfaceInnerStateColor[2], ColorSettings.SurfaceOuterStateColor[2], GUIConstants.OLD_THIN_LINE_SCALE);
                     }
                 }
             }
@@ -719,11 +719,11 @@ namespace RealtimeCSG
 
                     if(highlightSurface == -1 || _selectAllSurfaces)
                     {
-                        CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline, 0, _selectAllSurfaces, GUIConstants.OLD_LINE_SCALE);
+                        CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.shape, brushTransformation, ColorSettings.WireframeOutline, 0, _selectAllSurfaces, GUIConstants.OLD_LINE_SCALE);
                     }
                     else
                     {
-                        CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline, highlightSurface, _selectAllSurfaces, GUIConstants.OLD_LINE_SCALE);
+                        CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.shape, brushTransformation, ColorSettings.WireframeOutline, highlightSurface, _selectAllSurfaces, GUIConstants.OLD_LINE_SCALE);
                     }
                 }
             }

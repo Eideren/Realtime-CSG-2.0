@@ -29,8 +29,8 @@ namespace InternalRealtimeCSG
 
                 transforms.Add(brushTransform);
 
-                ControlMesh controlMesh = brushes[b].ControlMesh;
-                Vector3[]   points      = controlMesh.Vertices;
+                ControlMesh controlMesh = brushes[b].controlMesh;
+                Vector3[]   points      = controlMesh.vertices;
                 Vector3[]   worldPoints = new Vector3[points.Length];
 
                 for(int p = 0; p < points.Length; p++)
@@ -84,53 +84,53 @@ namespace InternalRealtimeCSG
                 brushFlip = Matrix4x4.TRS(brushCenter, Quaternion.identity, Vector3.one) * brushFlip * Matrix4x4.TRS(-brushCenter, Quaternion.identity, Vector3.one);
 
                 brush.EnsureInitialized();
-                Shape shape = brush.Shape;
+                Shape shape = brush.shape;
 
-                for(int s = 0; s < shape.Surfaces.Length; s++)
+                for(int s = 0; s < shape.surfaces.Length; s++)
                 {
-                    CSGPlane plane = shape.Surfaces[s].Plane;
+                    CSGPlane plane = shape.surfaces[s].Plane;
 
-                    Vector3 normal   = brushFlip.MultiplyVector(plane.normal);
-                    Vector3 biNormal = brushFlip.MultiplyVector(shape.Surfaces[s].BiNormal);
-                    Vector3 tangent  = brushFlip.MultiplyVector(shape.Surfaces[s].Tangent);
+                    Vector3 normal   = brushFlip.MultiplyVector(plane.Normal);
+                    Vector3 biNormal = brushFlip.MultiplyVector(shape.surfaces[s].BiNormal);
+                    Vector3 tangent  = brushFlip.MultiplyVector(shape.surfaces[s].Tangent);
 
-                    Vector3 pointOnPlane = plane.pointOnPlane;
+                    Vector3 pointOnPlane = plane.PointOnPlane;
                     pointOnPlane = brushFlip.MultiplyPoint(pointOnPlane);
 
-                    shape.Surfaces[s].Plane    = new CSGPlane(normal, pointOnPlane);
-                    shape.Surfaces[s].BiNormal = biNormal;
-                    shape.Surfaces[s].Tangent  = tangent;
+                    shape.surfaces[s].Plane    = new CSGPlane(normal, pointOnPlane);
+                    shape.surfaces[s].BiNormal = biNormal;
+                    shape.surfaces[s].Tangent  = tangent;
                 }
 
-                ControlMesh controlMesh = brush.ControlMesh;
-                Vector3[]   vertices    = controlMesh.Vertices;
+                ControlMesh controlMesh = brush.controlMesh;
+                Vector3[]   vertices    = controlMesh.vertices;
 
                 for(int v = 0; v < vertices.Length; v++)
                 {
                     vertices[v] = brushFlip.MultiplyPoint(vertices[v]);
                 }
 
-                Polygon[] polygons = controlMesh.Polygons;
+                Polygon[] polygons = controlMesh.polygons;
 
                 for(int p = 0; p < polygons.Length; p++)
                 {
-                    Array.Reverse(polygons[p].EdgeIndices);
+                    Array.Reverse(polygons[p].edgeIndices);
                 }
 
-                HalfEdge[] edges        = controlMesh.Edges;
+                HalfEdge[] edges        = controlMesh.edges;
                 short[]    twinVertices = new short[edges.Length];
 
                 for(int e = 0; e < edges.Length; e++)
                 {
-                    twinVertices[e] = edges[edges[e].TwinIndex].VertexIndex;
+                    twinVertices[e] = edges[edges[e].twinIndex].vertexIndex;
                 }
 
                 for(int e = 0; e < edges.Length; e++)
                 {
-                    edges[e].VertexIndex = twinVertices[e];
+                    edges[e].vertexIndex = twinVertices[e];
                 }
 
-                brush.ControlMesh.SetDirty();
+                brush.controlMesh.SetDirty();
                 EditorUtility.SetDirty(brush);
 
                 InternalCSGModelManager.CheckSurfaceModifications(brush, true);

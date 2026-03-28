@@ -40,7 +40,7 @@ namespace InternalRealtimeCSG
 
         public static GeometryWireframe GetBrushOutline(int brushNodeId)
         {
-            if(brushNodeId == CSGNode.InvalidNodeID)
+            if(brushNodeId == CSGNode.INVALID_NODE_ID)
             {
                 return null;
             }
@@ -78,7 +78,7 @@ namespace InternalRealtimeCSG
             {
                 int brushNodeId = brushNodeIDs[i];
 
-                if(brushNodeId == CSGNode.InvalidNodeID)
+                if(brushNodeId == CSGNode.INVALID_NODE_ID)
                 {
                     wireframes[i] = null;
 
@@ -128,7 +128,7 @@ namespace InternalRealtimeCSG
             {
                 CSGBrush brush = selectedSurfaces[i].brush;
 
-                if(!brush || brush.brushNodeID == CSGNode.InvalidNodeID)
+                if(!brush || brush.brushNodeID == CSGNode.INVALID_NODE_ID)
                 {
                     wireframes[i] = null;
 

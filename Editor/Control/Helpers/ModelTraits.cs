@@ -99,15 +99,15 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    if(generatedMeshInstance.SharedMesh)
+                    if(generatedMeshInstance.sharedMesh)
                     {
-                        newMeshes.Add(generatedMeshInstance.SharedMesh);
+                        newMeshes.Add(generatedMeshInstance.sharedMesh);
                     }
                 }
 
                 foreach(HelperSurfaceDescription helperSurface in generatedMeshesInstance.HelperSurfaces)
                 {
-                    newMeshes.Add(helperSurface.SharedMesh);
+                    newMeshes.Add(helperSurface.sharedMesh);
                 }
             }
 

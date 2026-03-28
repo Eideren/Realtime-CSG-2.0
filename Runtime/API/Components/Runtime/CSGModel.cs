@@ -1,14 +1,15 @@
 ﻿using System;
 using UnityEngine;
 using InternalRealtimeCSG;
+using RealtimeCSG.Foundation;
+using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace RealtimeCSG.Components
 {
     [Flags, Serializable]
     public enum ModelSettingsFlags
     {
-//		ShadowCastingModeFlags	= 1|2|4,
-//		DoNotReceiveShadows		= 8,
         DoNotRender = 16
       , NoCollider = 32
       , IsTrigger = 64
@@ -44,89 +45,89 @@ namespace RealtimeCSG.Components
 #endif
     public sealed class CSGModel : CSGNode
     {
-        public const float CurrentVersion = 1.1f;
+        public const float CURRENT_VERSION = 1.1f;
 
         public static ModelSettingsFlags DefaultSettings =
-            (ModelSettingsFlags)UnityEngine.Rendering.ShadowCastingMode.On | ModelSettingsFlags.PreserveUVs
+            (ModelSettingsFlags)ShadowCastingMode.On | ModelSettingsFlags.PreserveUVs
           | ModelSettingsFlags.AutoUpdateRigidBody;
 
         /// <value>The version number of this instance of a <see cref="CSGModel" /></value>
-        [HideInInspector] public float Version = CurrentVersion;
+        [HideInInspector] public float version = CURRENT_VERSION;
 
         public bool IsRenderable
         {
-            get => (Settings & ModelSettingsFlags.DoNotRender) == (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.DoNotRender) == 0;
         }
 
         public bool IsTwoSidedShadows
         {
-            get => (Settings & ModelSettingsFlags.TwoSidedShadows) != (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.TwoSidedShadows) != 0;
         }
 
         public bool HaveCollider
         {
-            get => (Settings & ModelSettingsFlags.NoCollider) == (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.NoCollider) == 0;
         }
 
         public bool IsTrigger
         {
-            get => (Settings & ModelSettingsFlags.IsTrigger) != (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.IsTrigger) != 0;
         }
 
         public bool InvertedWorld
         {
-            get => (Settings & ModelSettingsFlags.InvertedWorld) != (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.InvertedWorld) != 0;
         }
 
         public bool SetColliderConvex
         {
-            get => (Settings & ModelSettingsFlags.SetColliderConvex) != (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.SetColliderConvex) != 0;
         }
 
         public bool NeedAutoUpdateRigidBody
         {
-            get => (Settings & ModelSettingsFlags.AutoUpdateRigidBody) == (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.AutoUpdateRigidBody) == 0;
         }
 
         public bool PreserveUVs
         {
-            get => (Settings & ModelSettingsFlags.PreserveUVs) != (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.PreserveUVs) != 0;
         }
 
         public bool StitchLightmapSeams
         {
-            get => (Settings & ModelSettingsFlags.StitchLightmapSeams) != (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.StitchLightmapSeams) != 0;
         }
 
         public bool AutoRebuildUVs
         {
-            get => (Settings & ModelSettingsFlags.AutoRebuildUVs) != (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.AutoRebuildUVs) != 0;
         }
 
         public bool IgnoreNormals
         {
-            get => (Settings & ModelSettingsFlags.IgnoreNormals) != (ModelSettingsFlags)0;
+            get => (settings & ModelSettingsFlags.IgnoreNormals) != 0;
         }
 
 #if UNITY_EDITOR
         public bool IsRegistered
         {
-            get => modelNodeID != InvalidNodeID;
+            get => modelNodeID != INVALID_NODE_ID;
         }
 #endif
 
 #region Cached values
 
 #if UNITY_EDITOR
-        [HideInInspector, NonSerialized] public int modelNodeID = InvalidNodeID;
-        [HideInInspector, NonSerialized] public readonly ParentNodeData parentData = new ParentNodeData();
-        [HideInInspector, NonSerialized] public GeneratedMeshes generatedMeshes;
-        [HideInInspector, NonSerialized] public Transform cachedTransform = null;
-        [HideInInspector, SerializeField] public CSGBrush infiniteBrush = null;
-        [HideInInspector, NonSerialized] public bool forceUpdate = false;
+        [NonSerialized] public int modelNodeID = INVALID_NODE_ID;
+        [NonSerialized] public readonly ParentNodeData parentData = new ParentNodeData();
+        [NonSerialized] public GeneratedMeshes generatedMeshes;
+        [NonSerialized] public Transform cachedTransform = null;
+        [HideInInspector, SerializeField] public CSGBrush infiniteBrush;
+        [NonSerialized] public bool forceUpdate;
 
-        [HideInInspector, NonSerialized]
-        public bool isActive = false; // this allows us to detect if we're enabled/disabled
+        [NonSerialized]
+        public bool isActive; // this allows us to detect if we're enabled/disabled
 
         public void ClearCache()
         {
@@ -141,18 +142,14 @@ namespace RealtimeCSG.Components
 
 #region Settings
 
-        [EnumAsFlags] public ModelSettingsFlags Settings = DefaultSettings;
-        [EnumAsFlags] public Foundation.VertexChannelFlags VertexChannels = Foundation.VertexChannelFlags.All;
-#if UNITY_2019_2_OR_NEWER
-        [EnumAsFlags] public ReceiveGI ReceiveGI = ReceiveGI.LightProbes;
-#endif
+        [EnumAsFlags] public ModelSettingsFlags settings = DefaultSettings;
+        [EnumAsFlags] public VertexChannelFlags vertexChannels = VertexChannelFlags.All;
+        [EnumAsFlags] public ReceiveGI receiveGI = ReceiveGI.Lightmaps;
 
-#if UNITY_2017_3_OR_NEWER
-        [EnumAsFlags] public MeshColliderCookingOptions MeshColliderCookingOptions =
+        [EnumAsFlags] public MeshColliderCookingOptions meshColliderCookingOptions =
             MeshColliderCookingOptions.CookForFasterSimulation |
             MeshColliderCookingOptions.EnableMeshCleaning |
             MeshColliderCookingOptions.WeldColocatedVertices;
-#endif
 
 #endregion
 
@@ -160,15 +157,15 @@ namespace RealtimeCSG.Components
 
 #if UNITY_EDITOR
 
-        public bool ShowGeneratedMeshes = false;
-        public PhysicsMaterial DefaultPhysicsMaterial = null;
+        public bool showGeneratedMeshes;
+        public PhysicsMaterial defaultPhysicsMaterial;
 
 #region Export settings
 
         public ExportType exportType = ExportType.FBX;
         public OriginType originType = OriginType.ModelCenter;
-        public bool exportColliders = false;
-        public string exportPath = null;
+        public bool exportColliders;
+        public string exportPath;
 
 #endregion
 
@@ -176,16 +173,16 @@ namespace RealtimeCSG.Components
 
 #region Lightmap settings
 
-        public const float MinAngleError = 0.001f;
-        public const float MinAreaError = 0.001f;
-        public const float MaxAngleError = 1.000f;
-        public const float MaxAreaError = 1.000f;
+        public const float MIN_ANGLE_ERROR = 0.001f;
+        public const float MIN_AREA_ERROR = 0.001f;
+        public const float MAX_ANGLE_ERROR = 1.000f;
+        public const float MAX_AREA_ERROR = 1.000f;
 
         // Note: contents of UnityEditor.UnwrapParam, which is not marked serializable :(
-        public float angleError = 1.00f; //0.08f;
-        public float areaError = 1.00f;  //0.15f;
-        public float hardAngle = 60.0f;  //88.0f;
-        public float packMargin = 20.0f; //4.0f / 1024.0f;
+        public float angleError = 1.00f;
+        public float areaError = 1.00f;
+        public float hardAngle = 60.0f;
+        public float packMargin = 20.0f;
 
         public float scaleInLightmap = 1.0f;
         public float autoUVMaxDistance = 0.5f;
@@ -264,12 +261,5 @@ namespace RealtimeCSG.Components
 #endif
 
 #endregion
-
-#if UNITY_EDITOR
-        public void EnsureInitialized()
-        {
-            CSGSceneManagerRedirector.Interface.EnsureInitialized(this);
-        }
-#endif
     }
 }

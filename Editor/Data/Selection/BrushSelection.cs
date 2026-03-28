@@ -110,14 +110,14 @@ namespace InternalRealtimeCSG
         {
             for(int i = 0; i < brushes.Length; i++)
             {
-                if(!brushes[i] || brushes[i].ControlMesh == null)
+                if(!brushes[i] || brushes[i].controlMesh == null)
                 {
                     continue;
                 }
 
-                if(!brushes[i].ControlMesh.Valid)
+                if(!brushes[i].controlMesh.Valid)
                 {
-                    brushes[i].ControlMesh.Valid = ControlMeshUtility.Validate(brushes[i].ControlMesh, brushes[i].Shape);
+                    brushes[i].controlMesh.Valid = ControlMeshUtility.Validate(brushes[i].controlMesh, brushes[i].shape);
                 }
 
                 localToWorld[i] = brushes[i].transform.localToWorldMatrix;
@@ -128,8 +128,8 @@ namespace InternalRealtimeCSG
                 }
 
                 states[i]              = new ControlMeshState(brushes[i]);
-                backupControlMeshes[i] = brushes[i].ControlMesh != null ? brushes[i].ControlMesh.Clone() : null;
-                backupShapes[i]        = brushes[i].Shape != null ? brushes[i].Shape.Clone() : null;
+                backupControlMeshes[i] = brushes[i].controlMesh != null ? brushes[i].controlMesh.Clone() : null;
+                backupShapes[i]        = brushes[i].shape != null ? brushes[i].shape.Clone() : null;
 
                 controlMeshes[i] = backupControlMeshes[i];
                 shapes[i]        = backupShapes[i];
@@ -147,12 +147,12 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                if(brushes[i].ChildData == null || brushes[i].ChildData.ModelTransform == null)
+                if(brushes[i].childData == null || brushes[i].childData.modelTransform == null)
                 {
                     continue;
                 }
 
-                modelTransforms[i] = brushes[i].ChildData.ModelTransform;
+                modelTransforms[i] = brushes[i].childData.modelTransform;
             }
         }
 
@@ -235,7 +235,7 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                ControlMesh      controlMesh = brushes[t].ControlMesh;
+                ControlMesh      controlMesh = brushes[t].controlMesh;
                 ControlMeshState state       = states[t];
                 state.UpdatePoints(controlMesh);
             }
@@ -257,8 +257,8 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                shapes[t]              = brushes[t].Shape.Clone();
-                controlMeshes[t]       = brushes[t].ControlMesh.Clone();
+                shapes[t]              = brushes[t].shape.Clone();
+                controlMeshes[t]       = brushes[t].controlMesh.Clone();
                 backupShapes[t]        = shapes[t];
                 backupControlMeshes[t] = controlMeshes[t];
             }

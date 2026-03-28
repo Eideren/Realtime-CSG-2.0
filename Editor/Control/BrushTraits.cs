@@ -12,14 +12,14 @@ namespace RealtimeCSG
                 return true;
             }
 
-            Shape shape = brush.Shape;
+            Shape shape = brush.shape;
 
             if(shape == null)
             {
                 return true;
             }
 
-            Surface[] surfaces = shape.Surfaces;
+            Surface[] surfaces = shape.surfaces;
 
             if(surfaces == null)
             {
@@ -32,7 +32,7 @@ namespace RealtimeCSG
             }
 
             int           texGenIndex = surfaces[surfaceIndex].TexGenIndex;
-            TexGenFlags[] texGenFlags = shape.TexGenFlags;
+            TexGenFlags[] texGenFlags = shape.texGenFlags;
 
             if(texGenFlags == null || texGenIndex < 0 || texGenIndex >= texGenFlags.Length)
             {

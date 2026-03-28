@@ -123,16 +123,16 @@ namespace RealtimeCSG
             buildPlane     = plane;
             CSGPlane newPlane = GeometryUtility.CalcPolygonPlane(realVertices);
 
-            if(newPlane.normal.sqrMagnitude != 0)
+            if(newPlane.Normal.sqrMagnitude != 0)
             {
                 buildPlane = newPlane;
             }
 
             CSGGrid.SetForcedGrid(camera, newPlane);
 
-            if(brush.ChildData != null && brush.ChildData.Model)
+            if(brush.childData != null && brush.childData.model)
             {
-                geometryModel = brush.ChildData.Model;
+                geometryModel = brush.childData.model;
             }
 
             if(StartEditMode(camera))
@@ -438,16 +438,16 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                Shape shape = brush.Shape;
+                Shape shape = brush.shape;
 
-                for(int m = 0; m < shape.TexGens.Length; m++)
+                for(int m = 0; m < shape.texGens.Length; m++)
                 {
-                    shape.TexGens[m].RenderMaterial = defaultMaterial;
+                    shape.texGens[m].RenderMaterial = defaultMaterial;
                 }
 
-                if(brush.ControlMesh != null)
+                if(brush.controlMesh != null)
                 {
-                    brush.ControlMesh.SetDirty();
+                    brush.controlMesh.SetDirty();
                 }
             }
         }
@@ -585,7 +585,7 @@ namespace RealtimeCSG
             {
                 CSGPlane realPlane = _geometryPlane;
 
-                return Vector3.Dot(realPlane.normal, buildPlane.normal) < 0;
+                return Vector3.Dot(realPlane.Normal, buildPlane.Normal) < 0;
             }
         }
 
@@ -610,7 +610,7 @@ namespace RealtimeCSG
             Vector3[] outlineVertices = settings.GetCurvedVertices(buildPlane, CurveSides, out int[][] curvedEdges);
             ShapePolygonUtility.RemoveDuplicatePoints(ref outlineVertices);
 
-            settings.UpdateEdgeMaterials(buildPlane.normal);
+            settings.UpdateEdgeMaterials(buildPlane.Normal);
 
             HashSet<uint> usedSmoothingGroupIndices = SurfaceUtility.GetUsedSmoothingGroupIndices();
             List<TexGen>  curvedEdgeTexgensList     = new List<TexGen>();
@@ -681,7 +681,7 @@ namespace RealtimeCSG
 
         internal override bool CreateControlMeshForBrushIndex(CSGBrush brush, ShapePolygon polygon, Matrix4x4 localToWorld, float height, out ControlMesh newControlMesh, out Shape newShape)
         {
-            Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.normal;
+            Vector3 direction = haveForcedDirection ? forcedDirection : buildPlane.Normal;
 
             if(!ShapePolygonUtility.GenerateControlMeshFromVertices(polygon, localToWorld, GeometryUtility.RotatePointIntoPlaneSpace(buildPlane, direction), height, settings.planeTexgen, null, true, out newControlMesh, out newShape))
             {
@@ -697,8 +697,8 @@ namespace RealtimeCSG
                 ControlMeshUtility.InvertShape(newShape);
             }
 
-            brush.Shape       = newShape;
-            brush.ControlMesh = newControlMesh;
+            brush.shape       = newShape;
+            brush.controlMesh = newControlMesh;
             InternalCSGModelManager.ValidateBrush(brush, true);
             ControlMeshUtility.RebuildShape(brush);
 
@@ -784,7 +784,7 @@ namespace RealtimeCSG
 
                     if(newPolygons != null)
                     {
-                        Matrix4x4 matrix = Matrix4x4.TRS(buildPlane.pointOnPlane, Quaternion.FromToRotation(MathConstants.upVector3, buildPlane.normal), MathConstants.oneVector3);
+                        Matrix4x4 matrix = Matrix4x4.TRS(buildPlane.PointOnPlane, Quaternion.FromToRotation(MathConstants.upVector3, buildPlane.Normal), MathConstants.oneVector3);
                         Color     color  = ColorSettings.ShapeDrawingFill;
 
                         for(int i = 0; i < newPolygons.Count; i++)
@@ -988,7 +988,7 @@ namespace RealtimeCSG
                     {
                         hoverBuildPlane = GeometryUtility.CalcPolygonPlane(settings.GetVertices());
 
-                        if(hoverBuildPlane.normal.sqrMagnitude != 0)
+                        if(hoverBuildPlane.Normal.sqrMagnitude != 0)
                         {
                             buildPlane = hoverBuildPlane;
                             editMode   = EditMode.CreateShape;
@@ -1014,7 +1014,7 @@ namespace RealtimeCSG
                         Ray mouseRay = HandleUtility.GUIPointToWorldRay(current.mousePosition);
                         _worldPosition = hoverBuildPlane.RayIntersection(mouseRay);
 
-                        if(hoverBuildPlane.normal.sqrMagnitude != 0)
+                        if(hoverBuildPlane.Normal.sqrMagnitude != 0)
                         {
                             vertexOnPlane = hoverBuildPlane;
                             buildPlane    = hoverBuildPlane;
@@ -1058,9 +1058,9 @@ namespace RealtimeCSG
 
                 if(geometryModel == null && vertexOnBrush != null)
                 {
-                    if(vertexOnBrush.ChildData != null && vertexOnBrush.ChildData.Model)
+                    if(vertexOnBrush.childData != null && vertexOnBrush.childData.model)
                     {
-                        geometryModel = vertexOnBrush.ChildData.Model;
+                        geometryModel = vertexOnBrush.childData.model;
                     }
                 }
 
@@ -1193,7 +1193,7 @@ namespace RealtimeCSG
                            !float.IsNaN(_worldPosition.y) && !float.IsInfinity(_worldPosition.y) &&
                            !float.IsNaN(_worldPosition.z) && !float.IsInfinity(_worldPosition.z))
                         {
-                            if(hoverBuildPlane.normal.sqrMagnitude != 0)
+                            if(hoverBuildPlane.Normal.sqrMagnitude != 0)
                             {
                                 buildPlane = hoverBuildPlane;
                             }
@@ -1505,7 +1505,7 @@ namespace RealtimeCSG
 
                 if(visualSnappedBrush)
                 {
-                    if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.ChildData != null && visualSnappedBrush.ChildData.ModelTransform)
+                    if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.childData != null && visualSnappedBrush.childData.modelTransform)
                     {
                         Matrix4x4 brushTransformation = visualSnappedBrush.compareTransformation.localToWorldMatrix;
 
@@ -1583,7 +1583,7 @@ namespace RealtimeCSG
 
                 if(visualSnappedBrush)
                 {
-                    if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.ChildData != null && visualSnappedBrush.ChildData.ModelTransform)
+                    if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.childData != null && visualSnappedBrush.childData.modelTransform)
                     {
                         Matrix4x4 brushTransformation = visualSnappedBrush.compareTransformation.localToWorldMatrix;
 
@@ -2236,7 +2236,7 @@ namespace RealtimeCSG
 
                                 Vector3 vertex = settings.backupCurve.points[i / 2] - settings.backupCurve.tangents[i].tangent;
 
-                                CSGPlane alignedPlane = new CSGPlane(CSGGrid.CurrentWorkGridPlane.normal, vertex);
+                                CSGPlane alignedPlane = new CSGPlane(CSGGrid.CurrentWorkGridPlane.Normal, vertex);
                                 _worldPosition = buildPlane.Project(alignedPlane.RayIntersection(mouseRay));
 
                                 if(float.IsInfinity(_worldPosition.x) || float.IsNaN(_worldPosition.x) ||
@@ -2428,7 +2428,7 @@ namespace RealtimeCSG
                             }
 
                             Ray      mouseRay      = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-                            CSGPlane alignedPlane  = new CSGPlane(CSGGrid.CurrentWorkGridPlane.normal, settings.backupCurve.points[i]);
+                            CSGPlane alignedPlane  = new CSGPlane(CSGGrid.CurrentWorkGridPlane.Normal, settings.backupCurve.points[i]);
                             Vector3  worldPosition = buildPlane.Project(alignedPlane.RayIntersection(mouseRay));
 
                             if(float.IsInfinity(worldPosition.x) || float.IsNaN(worldPosition.x) ||

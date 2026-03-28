@@ -107,12 +107,12 @@ namespace RealtimeCSG
         {
             if(curve.points.Length > 1)
             {
-                if((curve.points[curve.points.Length - 1] - position).sqrMagnitude < MathConstants.EqualityEpsilonSqr)
+                if((curve.points[curve.points.Length - 1] - position).sqrMagnitude < MathConstants.EQUALITY_EPSILON_SQR)
                 {
                     return;
                 }
 
-                if((curve.points[0] - position).sqrMagnitude < MathConstants.EqualityEpsilonSqr)
+                if((curve.points[0] - position).sqrMagnitude < MathConstants.EQUALITY_EPSILON_SQR)
                 {
                     return;
                 }
@@ -586,9 +586,9 @@ namespace RealtimeCSG
             foreach(CSGBrush brush in uniqueBrushes)
             {
                 int       planeIndex = 0;
-                Shape     shape      = brush.Shape;
-                Surface[] surfaces   = shape.Surfaces;
-                TexGen[]  texgens    = shape.TexGens;
+                Shape     shape      = brush.shape;
+                Surface[] surfaces   = shape.surfaces;
+                TexGen[]  texgens    = shape.texGens;
 
                 Matrix4x4 worldToLocalMatrix = brush.transform.worldToLocalMatrix;
                 Vector3   localVertex0       = worldToLocalMatrix.MultiplyPoint(vertex0);
@@ -600,14 +600,14 @@ namespace RealtimeCSG
                     Surface surface = surfaces[surfaceIndex];
                     float   dist1   = Mathf.Abs(surface.Plane.Distance(localVertex0));
 
-                    if(dist1 > MathConstants.DistanceEpsilon)
+                    if(dist1 > MathConstants.DISTANCE_EPSILON)
                     {
                         continue;
                     }
 
                     float dist2 = Mathf.Abs(surface.Plane.Distance(localVertex1));
 
-                    if(dist2 > MathConstants.DistanceEpsilon)
+                    if(dist2 > MathConstants.DISTANCE_EPSILON)
                     {
                         continue;
                     }
@@ -617,8 +617,8 @@ namespace RealtimeCSG
 
                     if(planeIndex == 2)
                     {
-                        float alignment1 = Mathf.Abs(Vector3.Dot(surfaces[planeIndices[0]].Plane.normal, localDirection));
-                        float alignment2 = Mathf.Abs(Vector3.Dot(surfaces[planeIndices[1]].Plane.normal, localDirection));
+                        float alignment1 = Mathf.Abs(Vector3.Dot(surfaces[planeIndices[0]].Plane.Normal, localDirection));
+                        float alignment2 = Mathf.Abs(Vector3.Dot(surfaces[planeIndices[1]].Plane.Normal, localDirection));
 
                         int texGenIndex = alignment1 < alignment2 ? surfaces[planeIndices[0]].TexGenIndex : surfaces[planeIndices[1]].TexGenIndex;
 
@@ -644,27 +644,27 @@ namespace RealtimeCSG
 
             foreach(CSGBrush brush in uniqueBrushes)
             {
-                Shape     shape    = brush.Shape;
-                Surface[] surfaces = shape.Surfaces;
-                TexGen[]  texgens  = shape.TexGens;
+                Shape     shape    = brush.shape;
+                Surface[] surfaces = shape.surfaces;
+                TexGen[]  texgens  = shape.texGens;
 
                 Matrix4x4 worldToLocalMatrix = brush.transform.worldToLocalMatrix;
-                Vector3   localPosition      = worldToLocalMatrix.MultiplyPoint(buildPlane.pointOnPlane);
-                Vector3   localDirection     = worldToLocalMatrix.MultiplyVector(buildPlane.normal);
+                Vector3   localPosition      = worldToLocalMatrix.MultiplyPoint(buildPlane.PointOnPlane);
+                Vector3   localDirection     = worldToLocalMatrix.MultiplyVector(buildPlane.Normal);
 
                 for(int surfaceIndex = 0; surfaceIndex < surfaces.Length; surfaceIndex++)
                 {
                     Surface surface = surfaces[surfaceIndex];
                     float   dist    = Mathf.Abs(surface.Plane.Distance(localPosition));
 
-                    if(dist > MathConstants.DistanceEpsilon)
+                    if(dist > MathConstants.DISTANCE_EPSILON)
                     {
                         continue;
                     }
 
-                    float alignment = Mathf.Abs(Vector3.Dot(surface.Plane.normal, localDirection));
+                    float alignment = Mathf.Abs(Vector3.Dot(surface.Plane.Normal, localDirection));
 
-                    if(alignment < 1 - MathConstants.NormalEpsilon)
+                    if(alignment < 1 - MathConstants.NORMAL_EPSILON)
                     {
                         continue;
                     }
@@ -784,7 +784,7 @@ namespace RealtimeCSG
 
                     Vector3 centerA  = (vertex0 + vertex1 + vertex2) / 3;
                     Vector3 deltaA   = centerA - vertex1;
-                    Vector3 tangentA = Vector3.Cross(buildPlane.normal, deltaA);
+                    Vector3 tangentA = Vector3.Cross(buildPlane.Normal, deltaA);
 
                     if(side == 0)
                     {
@@ -888,7 +888,7 @@ namespace RealtimeCSG
             Vector3[] vertices3d = CurvedEdges(curveSides, out curvedEdges);
             Vector2[] vertices2d = GeometryUtility.RotatePlaneTo2D(vertices3d, buildPlane);
 
-            if((vertices2d[0] - vertices2d[vertices2d.Length - 1]).sqrMagnitude < MathConstants.EqualityEpsilonSqr)
+            if((vertices2d[0] - vertices2d[vertices2d.Length - 1]).sqrMagnitude < MathConstants.EQUALITY_EPSILON_SQR)
             {
                 if(vertices2d.Length == 3)
                 {

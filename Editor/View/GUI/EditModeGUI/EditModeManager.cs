@@ -682,8 +682,8 @@ namespace RealtimeCSG
                                 continue;
                             }
 
-                            if(brush.ChildData == null ||
-                               !brush.ChildData.Model)
+                            if(brush.childData == null ||
+                               !brush.childData.model)
                             {
                                 continue;
                             }
@@ -808,9 +808,9 @@ namespace RealtimeCSG
 
                 foreach(CSGBrush childBrush in childBrushes)
                 {
-                    for(int g = 0; g < childBrush.Shape.TexGens.Length; g++)
+                    for(int g = 0; g < childBrush.shape.texGens.Length; g++)
                     {
-                        uint smoothingGroup = childBrush.Shape.TexGens[g].SmoothingGroup;
+                        uint smoothingGroup = childBrush.shape.texGens[g].SmoothingGroup;
 
                         if(smoothingGroup == 0)
                         {
@@ -823,7 +823,7 @@ namespace RealtimeCSG
                             uniqueSmoothingGroups[smoothingGroup] = newSmoothingGroup;
                         }
 
-                        childBrush.Shape.TexGens[g].SmoothingGroup = newSmoothingGroup;
+                        childBrush.shape.texGens[g].SmoothingGroup = newSmoothingGroup;
                     }
                 }
 

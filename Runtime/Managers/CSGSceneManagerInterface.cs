@@ -3,7 +3,7 @@ using RealtimeCSG.Components;
 
 namespace InternalRealtimeCSG
 {
-    public interface CSGSceneManagerInterface
+    public interface ICSGSceneManager
     {
         void OnCreated(CSGBrush component);
         void OnEnabled(CSGBrush component);

@@ -58,11 +58,11 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = obj as CSGBrush;
 
-                    if(brush.OperationType != operationType)
+                    if(brush.operationType != operationType)
                     {
                         modified = true;
                         Undo.RecordObject(brush, "Modifying csg operation of brush component");
-                        brush.OperationType = operationType;
+                        brush.operationType = operationType;
                     }
                 }
 
@@ -72,7 +72,7 @@ namespace RealtimeCSG
                 {
                     CSGOperation operation = obj as CSGOperation;
 
-                    if(operation.OperationType == operationType)
+                    if(operation.operationType == operationType)
                     {
                         continue;
                     }
@@ -80,7 +80,7 @@ namespace RealtimeCSG
                     modified = true;
                     Undo.RecordObject(operation, "Modifying csg operation of operation component");
                     operation.PassThrough   = false;
-                    operation.OperationType = operationType;
+                    operation.operationType = operationType;
                 }
             }
 
@@ -233,7 +233,7 @@ namespace RealtimeCSG
 
             gameObject.transform.SetParent(parent, true);
             gameObject.transform.position = new Vector3(0.5f, 0.5f, 0.5f); // this aligns it's vertices to the grid
-            BrushFactory.CreateCubeControlMesh(out brush.ControlMesh, out brush.Shape, Vector3.one);
+            BrushFactory.CreateCubeControlMesh(out brush.controlMesh, out brush.shape, Vector3.one);
 
             Selection.activeGameObject = gameObject;
             Undo.RegisterCreatedObjectUndo(gameObject, "Created brush");

@@ -136,14 +136,14 @@ namespace RealtimeCSG
 
                 if(operation != null)
                 {
-                    operation.OperationType = opType;
+                    operation.operationType = opType;
                 }
 
                 CSGBrush brush = operationGameObject.GetComponent<CSGBrush>();
 
                 if(brush != null)
                 {
-                    brush.OperationType = opType;
+                    brush.operationType = opType;
                 }
             }
 
@@ -208,7 +208,7 @@ namespace RealtimeCSG
             CSGPlane newPlane = buildPlane;
             ShapeSettings.CalculatePlane(ref newPlane);
 
-            if(newPlane.normal.sqrMagnitude != 0)
+            if(newPlane.Normal.sqrMagnitude != 0)
             {
                 buildPlane = newPlane;
             }
@@ -264,7 +264,7 @@ namespace RealtimeCSG
 
             if(visualSnappedBrush != null)
             {
-                if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.ChildData != null && visualSnappedBrush.ChildData.ModelTransform)
+                if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.childData != null && visualSnappedBrush.childData.modelTransform)
                 {
                     Color     color               = ColorSettings.HoverOutlines;
                     Matrix4x4 brushTransformation = visualSnappedBrush.compareTransformation.localToWorldMatrix;
@@ -278,7 +278,7 @@ namespace RealtimeCSG
 
         protected void SetBrushTransformation(Transform transform)
         {
-            Vector3 direction = buildPlane.normal;
+            Vector3 direction = buildPlane.Normal;
             Quaternion rotation = brushRotation.HasValue ? brushRotation.Value : Quaternion.FromToRotation(MathConstants.upVector3, direction);
 
             if(!ignoreModelRotation)
@@ -393,7 +393,7 @@ namespace RealtimeCSG
                 CSGGrid.UpdateGridOrientation(camera);
             }
 
-            Vector3 gridSpaceNormal = CSGGrid.VectorToGridSpace(buildPlane.normal);
+            Vector3 gridSpaceNormal = CSGGrid.VectorToGridSpace(buildPlane.Normal);
 
             GeometryUtility.CalculateTangents(gridSpaceNormal, out Vector3 gridSpaceTangent, out Vector3 gridSpaceBinormal);
 
@@ -475,19 +475,19 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
+                        if(brush.childData == null || brush.childData.modelTransform == null)
                         {
                             continue;
                         }
 
-                        CSGModel model = brush.ChildData.Model;
+                        CSGModel model = brush.childData.model;
 
                         if(!model || !model.isActiveAndEnabled)
                         {
                             continue;
                         }
 
-                        lastUsedModelTransform = brush.ChildData.ModelTransform;
+                        lastUsedModelTransform = brush.childData.modelTransform;
 
                         break;
                     }
@@ -564,10 +564,10 @@ namespace RealtimeCSG
 
                         if(CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
                         {
-                            operation.OperationType = CurrentCSGOperationType;
+                            operation.operationType = CurrentCSGOperationType;
                         }
 
-                        operation.HandleAsOne = true;
+                        operation.handleAsOne = true;
                         Undo.RegisterCreatedObjectUndo(operationGameObject, "Created operation");
                         parentTransform = operationGameObject.transform;
                     }
@@ -588,10 +588,10 @@ namespace RealtimeCSG
 
                     if(CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
                     {
-                        operation.OperationType = CurrentCSGOperationType;
+                        operation.operationType = CurrentCSGOperationType;
                     }
 
-                    operation.HandleAsOne = true;
+                    operation.handleAsOne = true;
                     parentTransform       = operationGameObject.transform;
                     Undo.RegisterCreatedObjectUndo(parentGameObject, "Created brush");
                 }
@@ -619,7 +619,7 @@ namespace RealtimeCSG
                     {
                         if(CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
                         {
-                            brushComponent.OperationType = CurrentCSGOperationType;
+                            brushComponent.operationType = CurrentCSGOperationType;
                         }
 
                         operationGameObject = gameObject;
@@ -628,8 +628,8 @@ namespace RealtimeCSG
                     }
 
                     generatedBrushes[p]             = brushComponent;
-                    generatedBrushes[p].ControlMesh = new ControlMesh();
-                    generatedBrushes[p].Shape       = new Shape();
+                    generatedBrushes[p].controlMesh = new ControlMesh();
+                    generatedBrushes[p].shape       = new Shape();
                     Undo.RegisterCreatedObjectUndo(gameObject, "Created brush");
                     generatedGameObjects[p] = gameObject;
                 }

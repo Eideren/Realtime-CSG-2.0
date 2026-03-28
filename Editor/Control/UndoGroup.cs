@@ -65,7 +65,7 @@ namespace RealtimeCSG
                             }
 
                             _brushes[i].EnsureInitialized();
-                            ShapeUtility.CheckMaterials(_brushes[i].Shape);
+                            ShapeUtility.CheckMaterials(_brushes[i].shape);
                         }
 
                         for(int i = 0; i < _brushes.Length; i++)

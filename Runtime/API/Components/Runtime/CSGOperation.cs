@@ -1,7 +1,6 @@
 ﻿using System;
-using UnityEngine;
 using InternalRealtimeCSG;
-using UnityEngine.Serialization;
+using UnityEngine;
 using CSGOperationType = RealtimeCSG.Foundation.CSGOperationType;
 
 namespace RealtimeCSG.Components
@@ -13,15 +12,15 @@ namespace RealtimeCSG.Components
 #endif
     public sealed class CSGOperation : CSGNode
     {
-        public const float CurrentVersion = 1.1f;
+        public const float CURRENT_VERSION = 1.1f;
 
         /// <value>The version number of this instance of a <see cref="CSGOperation" /></value>
-        [HideInInspector] public float Version = CurrentVersion;
+        [HideInInspector] public float version = CURRENT_VERSION;
 
 #if UNITY_EDITOR
         public bool IsRegistered
         {
-            get => operationNodeID != InvalidNodeID;
+            get => operationNodeID != INVALID_NODE_ID;
         }
 #endif
 
@@ -30,9 +29,9 @@ namespace RealtimeCSG.Components
 #if UNITY_EDITOR
 
         /// <value>The CSG operation to perform with this CSG branch</value>
-        public CSGOperationType OperationType = CSGOperationType.Additive;
+        public CSGOperationType operationType = CSGOperationType.Additive;
 
-        [HideInInspector, SerializeField] internal bool passThrough = false;
+        [HideInInspector, SerializeField] internal bool passThrough;
         public bool PassThrough
         {
             get => passThrough;
@@ -60,9 +59,7 @@ namespace RealtimeCSG.Components
 #region Editor Settings
 
 #if UNITY_EDITOR
-
-        [FormerlySerializedAs("selectOnChild")]
-        public bool HandleAsOne = false;
+        public bool handleAsOne;
 #endif
 
 #endregion
@@ -70,20 +67,18 @@ namespace RealtimeCSG.Components
 #region Cached values
 
 #if UNITY_EDITOR
-        [HideInInspector, NonSerialized] public int operationNodeID = InvalidNodeID;
-        [HideInInspector, NonSerialized] public ParentNodeData ParentData = new ParentNodeData();
-        [HideInInspector, NonSerialized] public ChildNodeData ChildData = new ChildNodeData();
+        [NonSerialized] public int operationNodeID = INVALID_NODE_ID;
+        [NonSerialized] public readonly ParentNodeData parentData = new ParentNodeData();
+        [NonSerialized] public readonly ChildNodeData childData = new ChildNodeData();
 
         // this allows us to detect if our operation has been modified
-        [HideInInspector, NonSerialized] public CSGOperationType PrevOperation = (CSGOperationType)0xff;
-        [HideInInspector, NonSerialized] public bool PrevPassThrough = false;
+        [NonSerialized] public CSGOperationType prevOperation = (CSGOperationType)0xff;
 
         public void ClearCache()
         {
-            ParentData.Reset();
-            ChildData.Reset();
-            PrevOperation   = (CSGOperationType)0xff;
-            PrevPassThrough = false;
+            parentData.Reset();
+            childData.Reset();
+            prevOperation = (CSGOperationType)0xff;
         }
 #endif
 
@@ -98,7 +93,6 @@ namespace RealtimeCSG.Components
             // cannot change visibility since this might have an effect on exporter
             hideFlags |= HideFlags.DontSaveInBuild;
             ComponentUpgrader.UpgradeWhenNecessary(this);
-            ;
 
             if(CSGSceneManagerRedirector.Interface != null)
             {

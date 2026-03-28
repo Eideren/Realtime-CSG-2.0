@@ -437,11 +437,11 @@ namespace RealtimeCSG
                 backupData[dstIndex].brush          = srcBrush;
                 backupData[dstIndex].removeOnCommit = false;
                 backupData[dstIndex].active         = srcBrush.gameObject.activeSelf;
-                backupData[dstIndex].controlMesh    = srcBrush.ControlMesh.Clone();
-                backupData[dstIndex].shape          = srcBrush.Shape.Clone();
+                backupData[dstIndex].controlMesh    = srcBrush.controlMesh.Clone();
+                backupData[dstIndex].shape          = srcBrush.shape.Clone();
                 backupData[dstIndex].wireFrame      = BrushOutlineManager.GetBrushOutline(srcBrush.brushNodeID);
 
-                if(srcBrush.ChildData == null || !srcBrush.ChildData.Model)
+                if(srcBrush.childData == null || !srcBrush.childData.model)
                 {
                     backupData[dstIndex].localToWorldMatrix = Matrix4x4.identity;
                     backupData[dstIndex].model              = null;
@@ -450,7 +450,7 @@ namespace RealtimeCSG
                 }
 
                 backupData[dstIndex].localToWorldMatrix = srcBrush.compareTransformation.localToWorldMatrix;
-                backupData[dstIndex].model              = srcBrush.ChildData.Model;
+                backupData[dstIndex].model              = srcBrush.childData.model;
             }
 
             return offset;
@@ -542,13 +542,13 @@ namespace RealtimeCSG
                         }
                     }
 
-                    brush.ControlMesh = backupData[t].controlMesh.Clone();
-                    brush.Shape       = backupData[t].shape.Clone();
+                    brush.controlMesh = backupData[t].controlMesh.Clone();
+                    brush.shape       = backupData[t].shape.Clone();
                     ControlMeshUtility.RebuildShape(brush);
 
-                    if(brush.ControlMesh != null)
+                    if(brush.controlMesh != null)
                     {
-                        brush.ControlMesh.SetDirty();
+                        brush.controlMesh.SetDirty();
                     }
 
                     InternalCSGModelManager.CheckSurfaceModifications(brush, true);
@@ -639,14 +639,14 @@ namespace RealtimeCSG
                 Matrix4x4 matrix            = brushTransform.localToWorldMatrix;
                 CSGPlane  localCuttingPlane = GeometryUtility.InverseTransformPlane(matrix, cuttingPlane);
 
-                Vector3[] vertices = backupData[t].controlMesh.Vertices;
+                Vector3[] vertices = backupData[t].controlMesh.vertices;
 
                 int inFrontCount = 0;
                 int behindCount  = 0;
 
                 for(int p = 0; p < vertices.Length; p++)
                 {
-                    if(localCuttingPlane.Distance(vertices[p]) > MathConstants.DistanceEpsilon)
+                    if(localCuttingPlane.Distance(vertices[p]) > MathConstants.DISTANCE_EPSILON)
                     {
                         behindCount++;
                     }
@@ -692,8 +692,8 @@ namespace RealtimeCSG
                     CSGBrush brush             = backupData[t].brush;
                     CSGPlane localCuttingPlane = clipLocalPlane[t];
 
-                    brush.ControlMesh = backupData[t].controlMesh.Clone();
-                    brush.Shape       = backupData[t].shape.Clone();
+                    brush.controlMesh = backupData[t].controlMesh.Clone();
+                    brush.shape       = backupData[t].shape.Clone();
 
                     if(brush.gameObject.activeSelf != backupData[t].active)
                     {
@@ -711,15 +711,15 @@ namespace RealtimeCSG
                     {
                         List<int> selectedEdges = new List<int>();
 
-                        if(ControlMeshUtility.CutMesh(brush.ControlMesh, brush.Shape, localCuttingPlane, ref selectedEdges))
+                        if(ControlMeshUtility.CutMesh(brush.controlMesh, brush.shape, localCuttingPlane, ref selectedEdges))
                         {
-                            List<int> edgeLoop = ControlMeshUtility.FindEdgeLoop(brush.ControlMesh, ref selectedEdges);
+                            List<int> edgeLoop = ControlMeshUtility.FindEdgeLoop(brush.controlMesh, ref selectedEdges);
 
                             if(edgeLoop != null)
                             {
-                                if(ControlMeshUtility.SplitEdgeLoop(brush.ControlMesh, brush.Shape, edgeLoop))
+                                if(ControlMeshUtility.SplitEdgeLoop(brush.controlMesh, brush.shape, edgeLoop))
                                 {
-                                    if(ControlMeshUtility.FindAndDetachSeparatePiece(brush.ControlMesh, brush.Shape, localCuttingPlane, out ControlMesh foundControlMesh, out Shape foundShape))
+                                    if(ControlMeshUtility.FindAndDetachSeparatePiece(brush.controlMesh, brush.shape, localCuttingPlane, out ControlMesh foundControlMesh, out Shape foundShape))
                                     {
                                         if(needCopies)
                                         {
@@ -728,18 +728,18 @@ namespace RealtimeCSG
                                                 backupData[t].brushCopy = GetDeepCopy(brush);
                                             }
 
-                                            backupData[t].brushCopy.Shape       = brush.Shape.Clone();
-                                            backupData[t].brushCopy.ControlMesh = brush.ControlMesh.Clone();
-                                            backupData[t].brushCopy.ControlMesh.SetDirty();
+                                            backupData[t].brushCopy.shape       = brush.shape.Clone();
+                                            backupData[t].brushCopy.controlMesh = brush.controlMesh.Clone();
+                                            backupData[t].brushCopy.controlMesh.SetDirty();
 
                                             backupData[t].brushCopy.gameObject.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSaveInBuild;
 
                                             backupData[t].keepCopy = true;
                                         }
 
-                                        brush.Shape       = foundShape;
-                                        brush.ControlMesh = foundControlMesh;
-                                        brush.ControlMesh.SetDirty();
+                                        brush.shape       = foundShape;
+                                        brush.controlMesh = foundControlMesh;
+                                        brush.controlMesh.SetDirty();
                                     }
                                 }
                             }
@@ -817,9 +817,9 @@ namespace RealtimeCSG
                         ControlMeshUtility.RebuildShape(backupData[t].brushCopy);
                         InternalCSGModelManager.CheckSurfaceModifications(backupData[t].brushCopy, true);
 
-                        if(backupData[t].brushCopy.ControlMesh != null)
+                        if(backupData[t].brushCopy.controlMesh != null)
                         {
-                            backupData[t].brushCopy.ControlMesh.SetDirty();
+                            backupData[t].brushCopy.controlMesh.SetDirty();
                         }
 
                         InternalCSGModelManager.CheckSurfaceModifications(backupData[t].brushCopy, true);
@@ -832,9 +832,9 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    if(backupData[t].brush.ControlMesh != null)
+                    if(backupData[t].brush.controlMesh != null)
                     {
-                        backupData[t].brush.ControlMesh.SetDirty();
+                        backupData[t].brush.controlMesh.SetDirty();
                     }
 
                     InternalCSGModelManager.CheckSurfaceModifications(backupData[t].brush, true);
@@ -930,7 +930,7 @@ namespace RealtimeCSG
         {
             if(!CreateClipPlane())
             {
-                points[2] = points[1] - movePlane.normal * 2.0f;
+                points[2] = points[1] - movePlane.Normal * 2.0f;
 
                 CreateClipPlane();
             }
@@ -949,9 +949,9 @@ namespace RealtimeCSG
 
         private bool CreateClipPlane()
         {
-            if(Mathf.Abs(movePlane.Distance(points[0])) < MathConstants.DistanceEpsilon &&
-               Mathf.Abs(movePlane.Distance(points[1])) < MathConstants.DistanceEpsilon &&
-               Mathf.Abs(movePlane.Distance(points[2])) < MathConstants.DistanceEpsilon)
+            if(Mathf.Abs(movePlane.Distance(points[0])) < MathConstants.DISTANCE_EPSILON &&
+               Mathf.Abs(movePlane.Distance(points[1])) < MathConstants.DISTANCE_EPSILON &&
+               Mathf.Abs(movePlane.Distance(points[2])) < MathConstants.DISTANCE_EPSILON)
             {
                 return false;
             }
@@ -962,7 +962,7 @@ namespace RealtimeCSG
                float.IsNaN(newClipPlane.b) || float.IsInfinity(newClipPlane.b) ||
                float.IsNaN(newClipPlane.c) || float.IsInfinity(newClipPlane.c) ||
                float.IsNaN(newClipPlane.d) || float.IsInfinity(newClipPlane.d) ||
-               newClipPlane.normal.magnitude < 0.75f)
+               newClipPlane.Normal.magnitude < 0.75f)
             {
                 clipPlaneValid = false;
 
@@ -972,7 +972,7 @@ namespace RealtimeCSG
             clipPlane      = newClipPlane;
             clipPlaneValid = true;
 
-            GeometryUtility.CalculateTangents(clipPlane.normal, out clipPlaneTangent, out clipPlaneBinormal);
+            GeometryUtility.CalculateTangents(clipPlane.Normal, out clipPlaneTangent, out clipPlaneBinormal);
 
             return true;
         }
@@ -1076,7 +1076,7 @@ namespace RealtimeCSG
             points[1] = intersectionPoint;
             points[2] = intersectionPoint;
 
-            Vector3 normal = movePlane.normal;
+            Vector3 normal = movePlane.Normal;
 
             if(camera != null && assume2DView)
             {
@@ -1085,12 +1085,12 @@ namespace RealtimeCSG
 
             if(_currentOnBrush != null)
             {
-                if(_currentOnBrush.ChildData != null && _currentOnBrush.ChildData.ModelTransform != null)
+                if(_currentOnBrush.childData != null && _currentOnBrush.childData.modelTransform != null)
                 {
                     Vector3 rayStart = intersectionPoint - normal * camera.farClipPlane;
                     Vector3 rayEnd   = intersectionPoint + normal * camera.farClipPlane;
 
-                    if(SceneQueryUtility.FindBrushIntersection(_currentOnBrush, _currentOnBrush.ChildData.ModelTransform.localToWorldMatrix, rayStart, rayEnd, out LegacyBrushIntersection intersectionFar))
+                    if(SceneQueryUtility.FindBrushIntersection(_currentOnBrush, _currentOnBrush.childData.modelTransform.localToWorldMatrix, rayStart, rayEnd, out LegacyBrushIntersection intersectionFar))
                     {
                         points[2] = intersectionFar.worldIntersection;
                     }
@@ -1255,7 +1255,7 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
+                        if(brush.childData == null || brush.childData.modelTransform == null)
                         {
                             continue;
                         }
@@ -1759,7 +1759,7 @@ namespace RealtimeCSG
                                     Undo.RegisterCompleteObjectUndo(this, "Updated clip plane");
 
                                     movePlane = CSGGrid.CurrentGridPlane;
-                                    movePlane = new CSGPlane(movePlane.normal, points[i]);
+                                    movePlane = new CSGPlane(movePlane.Normal, points[i]);
 
                                     GUIUtility.hotControl             = ids[i];
                                     GUIUtility.keyboardControl        = ids[i];

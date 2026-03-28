@@ -52,7 +52,7 @@ namespace RealtimeCSG
                         EditorGUIUtility.editingTextField = false;
 
                         m_MovePlane = CSGGrid.CurrentGridPlane;
-                        m_MovePlane = new CSGPlane(m_MovePlane.normal, position);
+                        m_MovePlane = new CSGPlane(m_MovePlane.Normal, position);
 
                         m_StartMousePosition = Event.current.mousePosition;
 

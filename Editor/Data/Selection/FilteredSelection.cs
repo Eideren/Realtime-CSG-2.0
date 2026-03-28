@@ -32,14 +32,14 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = targets[i];
 
-                    if((brush.Flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
+                    if((brush.flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
                     {
                         continue;
                     }
 
                     brush.EnsureInitialized();
 
-                    if(brush.ControlMesh == null || brush.Shape == null)
+                    if(brush.controlMesh == null || brush.shape == null)
                     {
                         continue;
                     }
@@ -61,14 +61,14 @@ namespace RealtimeCSG
                     {
                         CSGBrush brush = operationBrushes[j];
 
-                        if((brush.Flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
+                        if((brush.flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
                         {
                             continue;
                         }
 
                         brush.EnsureInitialized();
 
-                        if(brush.ControlMesh == null || brush.Shape == null)
+                        if(brush.controlMesh == null || brush.shape == null)
                         {
                             continue;
                         }
@@ -91,14 +91,14 @@ namespace RealtimeCSG
                     {
                         CSGBrush brush = modelBrushes[j];
 
-                        if((brush.Flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
+                        if((brush.flags & BrushFlags.InfiniteBrush) == BrushFlags.InfiniteBrush)
                         {
                             continue;
                         }
 
                         brush.EnsureInitialized();
 
-                        if(brush.ControlMesh == null || brush.Shape == null)
+                        if(brush.controlMesh == null || brush.shape == null)
                         {
                             continue;
                         }
@@ -472,12 +472,12 @@ namespace RealtimeCSG
 
                 if(brush != null)
                 {
-                    if(brush.ChildData == null || brush.ChildData.Model == null)
+                    if(brush.childData == null || brush.childData.model == null)
                     {
                         continue;
                     }
 
-                    CSGModel childModel = brush.ChildData.Model;
+                    CSGModel childModel = brush.childData.model;
 
                     if(ModelTraits.IsModelEditable(childModel))
                     {
@@ -491,12 +491,12 @@ namespace RealtimeCSG
 
                 if(operation != null)
                 {
-                    if(operation.ChildData == null || operation.ChildData.Model == null)
+                    if(operation.childData == null || operation.childData.model == null)
                     {
                         continue;
                     }
 
-                    SelectionUtility.LastUsedModel = operation.ChildData.Model;
+                    SelectionUtility.LastUsedModel = operation.childData.model;
 
                     break;
                 }

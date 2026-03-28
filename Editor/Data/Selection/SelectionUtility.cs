@@ -540,12 +540,12 @@ namespace RealtimeCSG
                 {
                     CSGBrush brush = item as CSGBrush;
 
-                    if(brush.ChildData == null || !ModelTraits.IsModelEditable(brush.ChildData.Model))
+                    if(brush.childData == null || !ModelTraits.IsModelEditable(brush.childData.model))
                     {
                         continue;
                     }
 
-                    LastUsedModel = brush.ChildData.Model;
+                    LastUsedModel = brush.childData.model;
 
                     break;
                 }
@@ -556,12 +556,12 @@ namespace RealtimeCSG
 
                 if(brush != null)
                 {
-                    if(brush.ChildData == null || !ModelTraits.IsModelEditable(brush.ChildData.Model))
+                    if(brush.childData == null || !ModelTraits.IsModelEditable(brush.childData.model))
                     {
                         return;
                     }
 
-                    LastUsedModel = brush.ChildData.Model;
+                    LastUsedModel = brush.childData.model;
                 }
             }
         }

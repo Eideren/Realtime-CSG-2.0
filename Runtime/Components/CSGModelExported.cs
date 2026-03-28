@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using RealtimeCSG.Components;
+using UnityEngine.Serialization;
 
 namespace InternalRealtimeCSG
 {
@@ -15,7 +16,7 @@ namespace InternalRealtimeCSG
     [ExecuteInEditMode, DisallowMultipleComponent, SelectionBase]
     public sealed class CSGModelExported : MonoBehaviour
     {
-        [HideInInspector] public float Version = 1.00f;
+        [HideInInspector] public float version = 1.00f;
         [HideInInspector, SerializeField] public CSGModel containedModel;
         [HideInInspector, SerializeField] public GameObject containedExportedModel;
         [HideInInspector, SerializeField] public HiddenComponentData[] hiddenComponents;

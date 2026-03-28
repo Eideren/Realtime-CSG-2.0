@@ -7,14 +7,14 @@ namespace RealtimeCSG
     [Serializable]
     public sealed class GeometryWireframe
     {
-        public Vector3[] vertices = null;
-        public int[] visibleOuterLines = null;
-        public int[] visibleInnerLines = null;
-        public int[] visibleTriangles = null;
-        public int[] invisibleOuterLines = null;
-        public int[] invisibleInnerLines = null;
-        public int[] invalidLines = null;
-        public ulong outlineGeneration = 0;
+        public Vector3[] vertices;
+        public int[] visibleOuterLines;
+        public int[] visibleInnerLines;
+        public int[] visibleTriangles;
+        public int[] invisibleOuterLines;
+        public int[] invisibleInnerLines;
+        public int[] invalidLines;
+        public ulong outlineGeneration;
     }
 #endif
 }

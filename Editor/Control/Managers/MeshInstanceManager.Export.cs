@@ -46,17 +46,17 @@ namespace InternalRealtimeCSG
                 }
             }
 
-            model.ShowGeneratedMeshes = false;
+            model.showGeneratedMeshes = false;
             CSGModel[] foundModels = model.GetComponentsInChildren<CSGModel>(true);
 
             for(int index = 0; index < foundModels.Length; index++)
             {
-                if(!foundModels[index].ShowGeneratedMeshes)
+                if(!foundModels[index].showGeneratedMeshes)
                 {
                     continue;
                 }
 
-                foundModels[index].ShowGeneratedMeshes = false;
+                foundModels[index].showGeneratedMeshes = false;
                 UpdateGeneratedMeshesVisibility(foundModels[index]);
             }
 
@@ -116,7 +116,7 @@ namespace InternalRealtimeCSG
 
                     Refresh(instance, model, true);
 
-                    RenderSurfaceType surfaceType = GetSurfaceType(instance.MeshDescription, owner.Settings);
+                    RenderSurfaceType surfaceType = GetSurfaceType(instance.meshDescription, owner.settings);
 
                     if(surfaceType != RenderSurfaceType.Normal && surfaceType != RenderSurfaceType.ShadowOnly && surfaceType != RenderSurfaceType.Collider)
                     {
@@ -125,9 +125,9 @@ namespace InternalRealtimeCSG
 
                     int counter = 0;
 
-                    if(instance.RenderMaterial)
+                    if(instance.renderMaterial)
                     {
-                        if(!materialMeshCounters.TryGetValue(instance.RenderMaterial, out counter))
+                        if(!materialMeshCounters.TryGetValue(instance.renderMaterial, out counter))
                         {
                             counter = 1;
                         }
@@ -137,7 +137,7 @@ namespace InternalRealtimeCSG
                         }
                     }
 
-                    Mesh mesh = instance.SharedMesh;
+                    Mesh mesh = instance.sharedMesh;
 
                     if(mesh.isReadable)
                     {
@@ -181,7 +181,7 @@ namespace InternalRealtimeCSG
                         }
                         else
                         {
-                            Material renderMaterial = instance.RenderMaterial;
+                            Material renderMaterial = instance.renderMaterial;
 
                             if(!renderMaterial)
                             {
@@ -194,7 +194,7 @@ namespace InternalRealtimeCSG
                             }
 
                             counter++;
-                            materialMeshCounters[instance.RenderMaterial] = counter;
+                            materialMeshCounters[instance.renderMaterial] = counter;
                         }
 
                         MeshFilter meshFilter = subObj.GetComponent<MeshFilter>();

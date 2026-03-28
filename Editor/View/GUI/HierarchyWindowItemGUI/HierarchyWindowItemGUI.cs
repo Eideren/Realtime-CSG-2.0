@@ -42,7 +42,7 @@ namespace RealtimeCSG
 
             if(brush != null)
             {
-                operationType = brush.OperationType;
+                operationType = brush.operationType;
                 CSGSkin skin = CsgguiStyleUtility.Skin;
 
                 GUI.Label(selectionRect, skin.hierarchyOperations[(int)operationType], CsgguiStyleUtility.RightAlignedLabel);
@@ -58,7 +58,7 @@ namespace RealtimeCSG
 
                 if(!operation.PassThrough)
                 {
-                    operationType = operation.OperationType;
+                    operationType = operation.operationType;
                     int operationTypeIndex = (int)operationType;
 
                     if(operationTypeIndex >= 0 && operationTypeIndex < skin.hierarchyOperations.Length)

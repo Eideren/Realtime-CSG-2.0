@@ -58,7 +58,6 @@ namespace RealtimeCSG.Legacy
             float tx = Translation.x;
             float ty = Translation.y;
 
-            //*
             Matrix4x4 scaleMatrix = new Matrix4x4
             {
                 m00 = -sx
@@ -119,18 +118,7 @@ namespace RealtimeCSG.Legacy
               , m33 = 1.0f
             };
 
-            return translationMatrix
-              * scaleMatrix
-              * rotationMatrix;
-            /*/
-            return new Matrix4x4()
-            {
-                m00 = -sx * rc, m10 = sy * -rs, m20 = 0, m30 = 0,
-                m01 = -sx * rs, m11 = sy *  rc, m21 = 0, m31 = 0,
-                m02 = 0,        m12 = 0,        m22 = 1, m32 = 0,
-                m03 = tx,       m13 = ty,       m23 = 0, m33 = 1
-            };
-            //*/
+            return translationMatrix * scaleMatrix * rotationMatrix;
         }
     }
 }

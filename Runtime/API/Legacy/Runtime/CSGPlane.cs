@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using InternalRealtimeCSG;
+using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
 using Matrix4x4 = UnityEngine.Matrix4x4;
@@ -31,7 +32,7 @@ namespace RealtimeCSG.Legacy
         public float d;
 
         /// <value>Gets or sets the normal of this plane</value>
-        public Vector3 normal
+        public Vector3 Normal
         {
             get => new Vector3(a, b, c);
             set
@@ -43,17 +44,16 @@ namespace RealtimeCSG.Legacy
         }
 
         /// <value>Point on the plane</value>
-        public Vector3 pointOnPlane
+        public Vector3 PointOnPlane
         {
-            get => normal * d;
+            get => Normal * d;
         }
 
 #region Constructors
 
         /// <summary>Create a plane with a normal and the distance to the origin</summary>
-        /// <param name="inNormal">The normal of the plane</param>
-        /// <param name="inD">The distance to the origin</param>
-        public CSGPlane(UnityEngine.Plane plane)
+        /// <param name="plane"></param>
+        public CSGPlane(Plane plane)
         {
             a = plane.normal.x;
             b = plane.normal.y;
@@ -137,28 +137,23 @@ namespace RealtimeCSG.Legacy
         /// <returns>The intersection point.</returns>
         public Vector3 RayIntersection(Ray ray)
         {
-            double start_x = (double)ray.origin.x;
-            double start_y = (double)ray.origin.y;
-            double start_z = (double)ray.origin.z;
+            double startX = ray.origin.x;
+            double startY = ray.origin.y;
+            double startZ = ray.origin.z;
 
-            double direction_x = (double)ray.direction.x;
-            double direction_y = (double)ray.direction.y;
-            double direction_z = (double)ray.direction.z;
+            double directionX = ray.direction.x;
+            double directionY = ray.direction.y;
+            double directionZ = ray.direction.z;
 
-            double distanceA = a * start_x +
-                b * start_y +
-                c * start_z -
-                d;
+            double distanceA = a * startX + b * startY + c * startZ - d;
 
-            double length = a * direction_x +
-                b * direction_y +
-                c * direction_z;
+            double length = a * directionX + b * directionY + c * directionZ;
 
             double delta = distanceA / length;
 
-            double x = start_x - delta * direction_x;
-            double y = start_y - delta * direction_y;
-            double z = start_z - delta * direction_z;
+            double x = startX - delta * directionX;
+            double y = startY - delta * directionY;
+            double z = startZ - delta * directionZ;
 
             return new Vector3((float)x, (float)y, (float)z);
         }
@@ -234,34 +229,34 @@ namespace RealtimeCSG.Legacy
         {
             try
             {
-                decimal plane1a = (decimal)inPlane1.a;
-                decimal plane1b = (decimal)inPlane1.b;
-                decimal plane1c = (decimal)inPlane1.c;
+                decimal plane1A = (decimal)inPlane1.a;
+                decimal plane1B = (decimal)inPlane1.b;
+                decimal plane1C = (decimal)inPlane1.c;
                 decimal plane1d = (decimal)inPlane1.d;
 
-                decimal plane2a = (decimal)inPlane2.a;
-                decimal plane2b = (decimal)inPlane2.b;
-                decimal plane2c = (decimal)inPlane2.c;
+                decimal plane2A = (decimal)inPlane2.a;
+                decimal plane2B = (decimal)inPlane2.b;
+                decimal plane2C = (decimal)inPlane2.c;
                 decimal plane2d = (decimal)inPlane2.d;
 
-                decimal plane3a = (decimal)inPlane3.a;
-                decimal plane3b = (decimal)inPlane3.b;
-                decimal plane3c = (decimal)inPlane3.c;
+                decimal plane3A = (decimal)inPlane3.a;
+                decimal plane3B = (decimal)inPlane3.b;
+                decimal plane3C = (decimal)inPlane3.c;
                 decimal plane3d = (decimal)inPlane3.d;
 
-                decimal bc1 = plane1b * plane3c - plane3b * plane1c;
-                decimal bc2 = plane2b * plane1c - plane1b * plane2c;
-                decimal bc3 = plane3b * plane2c - plane2b * plane3c;
+                decimal bc1 = plane1B * plane3C - plane3B * plane1C;
+                decimal bc2 = plane2B * plane1C - plane1B * plane2C;
+                decimal bc3 = plane3B * plane2C - plane2B * plane3C;
 
-                decimal w = -(plane1a * bc3 + plane2a * bc1 + plane3a * bc2);
+                decimal w = -(plane1A * bc3 + plane2A * bc1 + plane3A * bc2);
 
-                decimal ad1 = plane1a * plane3d - plane3a * plane1d;
-                decimal ad2 = plane2a * plane1d - plane1a * plane2d;
-                decimal ad3 = plane3a * plane2d - plane2a * plane3d;
+                decimal ad1 = plane1A * plane3d - plane3A * plane1d;
+                decimal ad2 = plane2A * plane1d - plane1A * plane2d;
+                decimal ad3 = plane3A * plane2d - plane2A * plane3d;
 
                 decimal x = -(plane1d * bc3 + plane2d * bc1 + plane3d * bc2);
-                decimal y = -(plane1c * ad3 + plane2c * ad1 + plane3c * ad2);
-                decimal z = +(plane1b * ad3 + plane2b * ad1 + plane3b * ad2);
+                decimal y = -(plane1C * ad3 + plane2C * ad1 + plane3C * ad2);
+                decimal z = +(plane1B * ad3 + plane2B * ad1 + plane3B * ad2);
 
                 x /= w;
                 y /= w;
@@ -273,14 +268,14 @@ namespace RealtimeCSG.Legacy
                    float.IsNaN(result.y) || float.IsInfinity(result.y) ||
                    float.IsNaN(result.z) || float.IsInfinity(result.z))
                 {
-                    return MathConstants.NaNVector3;
+                    return MathConstants.naNVector3;
                 }
 
                 return result;
             }
             catch
             {
-                return MathConstants.NaNVector3;
+                return MathConstants.naNVector3;
             }
         }
 
@@ -291,11 +286,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>The distance from the point to the plane</returns>
         public float Distance(Vector3 point)
         {
-            return
-                a * point.x +
-                b * point.y +
-                c * point.z -
-                d;
+            return a * point.x + b * point.y + c * point.z - d;
         }
 
         /// <summary>Normalize the normal of the plane</summary>
@@ -351,9 +342,9 @@ namespace RealtimeCSG.Legacy
             float py = point.y;
             float pz = point.z;
 
-            float nx = normal.x;
-            float ny = normal.y;
-            float nz = normal.z;
+            float nx = Normal.x;
+            float ny = Normal.y;
+            float nz = Normal.z;
 
             float ax  = (px - nx * d) * nx;
             float ay  = (py - ny * d) * ny;
@@ -371,10 +362,7 @@ namespace RealtimeCSG.Legacy
 
         public override int GetHashCode()
         {
-            return a.GetHashCode() ^
-                b.GetHashCode() ^
-                c.GetHashCode() ^
-                d.GetHashCode();
+            return a.GetHashCode() ^ b.GetHashCode() ^ c.GetHashCode() ^ d.GetHashCode();
         }
 
         public bool Equals(CSGPlane other)
@@ -389,11 +377,11 @@ namespace RealtimeCSG.Legacy
                 return false;
             }
 
-            return Mathf.Abs(Distance(other.pointOnPlane)) <= MathConstants.DistanceEpsilon &&
-                Mathf.Abs(other.Distance(pointOnPlane)) <= MathConstants.DistanceEpsilon &&
-                Mathf.Abs(a - other.a) <= MathConstants.NormalEpsilon &&
-                Mathf.Abs(b - other.b) <= MathConstants.NormalEpsilon &&
-                Mathf.Abs(c - other.c) <= MathConstants.NormalEpsilon;
+            return Mathf.Abs(Distance(other.PointOnPlane)) <= MathConstants.DISTANCE_EPSILON &&
+                Mathf.Abs(other.Distance(PointOnPlane)) <= MathConstants.DISTANCE_EPSILON &&
+                Mathf.Abs(a - other.a) <= MathConstants.NORMAL_EPSILON &&
+                Mathf.Abs(b - other.b) <= MathConstants.NORMAL_EPSILON &&
+                Mathf.Abs(c - other.c) <= MathConstants.NORMAL_EPSILON;
         }
 
         public override bool Equals(object obj)
@@ -403,23 +391,21 @@ namespace RealtimeCSG.Legacy
                 return true;
             }
 
-            if(!(obj is CSGPlane))
+            if(!(obj is CSGPlane other))
             {
                 return false;
             }
-
-            CSGPlane other = (CSGPlane)obj;
 
             if(ReferenceEquals(other, null))
             {
                 return false;
             }
 
-            return Mathf.Abs(Distance(other.pointOnPlane)) <= MathConstants.DistanceEpsilon &&
-                Mathf.Abs(other.Distance(pointOnPlane)) <= MathConstants.DistanceEpsilon &&
-                Mathf.Abs(a - other.a) <= MathConstants.NormalEpsilon &&
-                Mathf.Abs(b - other.b) <= MathConstants.NormalEpsilon &&
-                Mathf.Abs(c - other.c) <= MathConstants.NormalEpsilon;
+            return Mathf.Abs(Distance(other.PointOnPlane)) <= MathConstants.DISTANCE_EPSILON &&
+                Mathf.Abs(other.Distance(PointOnPlane)) <= MathConstants.DISTANCE_EPSILON &&
+                Mathf.Abs(a - other.a) <= MathConstants.NORMAL_EPSILON &&
+                Mathf.Abs(b - other.b) <= MathConstants.NORMAL_EPSILON &&
+                Mathf.Abs(c - other.c) <= MathConstants.NORMAL_EPSILON;
         }
 
         public static bool operator ==(CSGPlane left, CSGPlane right)
@@ -435,11 +421,11 @@ namespace RealtimeCSG.Legacy
                 return false;
             }
 
-            return Mathf.Abs(left.Distance(right.pointOnPlane)) <= MathConstants.DistanceEpsilon &&
-                Mathf.Abs(right.Distance(left.pointOnPlane)) <= MathConstants.DistanceEpsilon &&
-                Mathf.Abs(left.a - right.a) <= MathConstants.NormalEpsilon &&
-                Mathf.Abs(left.b - right.b) <= MathConstants.NormalEpsilon &&
-                Mathf.Abs(left.c - right.c) <= MathConstants.NormalEpsilon;
+            return Mathf.Abs(left.Distance(right.PointOnPlane)) <= MathConstants.DISTANCE_EPSILON &&
+                Mathf.Abs(right.Distance(left.PointOnPlane)) <= MathConstants.DISTANCE_EPSILON &&
+                Mathf.Abs(left.a - right.a) <= MathConstants.NORMAL_EPSILON &&
+                Mathf.Abs(left.b - right.b) <= MathConstants.NORMAL_EPSILON &&
+                Mathf.Abs(left.c - right.c) <= MathConstants.NORMAL_EPSILON;
         }
 
         public static bool operator !=(CSGPlane left, CSGPlane right)
@@ -455,11 +441,11 @@ namespace RealtimeCSG.Legacy
                 return true;
             }
 
-            return (Mathf.Abs(left.Distance(right.pointOnPlane)) > MathConstants.DistanceEpsilon &&
-                    Mathf.Abs(right.Distance(left.pointOnPlane)) > MathConstants.DistanceEpsilon &&
-                    Mathf.Abs(left.a - right.a) > MathConstants.NormalEpsilon) ||
-                Mathf.Abs(left.b - right.b) > MathConstants.NormalEpsilon ||
-                Mathf.Abs(left.c - right.c) > MathConstants.NormalEpsilon;
+            return (Mathf.Abs(left.Distance(right.PointOnPlane)) > MathConstants.DISTANCE_EPSILON &&
+                    Mathf.Abs(right.Distance(left.PointOnPlane)) > MathConstants.DISTANCE_EPSILON &&
+                    Mathf.Abs(left.a - right.a) > MathConstants.NORMAL_EPSILON) ||
+                Mathf.Abs(left.b - right.b) > MathConstants.NORMAL_EPSILON ||
+                Mathf.Abs(left.c - right.c) > MathConstants.NORMAL_EPSILON;
         }
 
 #endregion

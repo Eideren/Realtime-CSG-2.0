@@ -277,33 +277,33 @@ namespace RealtimeCSG
 
             bool dirty = false;
 
-            bool statement1 = component.hierarchyItem.TransformID == 0;
-            bool statement3 = component.brushNodeID != CSGNode.InvalidNodeID;
+            bool statement1 = component.hierarchyItem.transformID == 0;
+            bool statement3 = component.brushNodeID != CSGNode.INVALID_NODE_ID;
             bool statement4 = statement1 && statement3;
 
             if(statement4)
             {
-                dirty                                        = component.hierarchyItem.TransformInitialized;
-                component.hierarchyItem.Transform            = component.transform;
-                component.hierarchyItem.TransformID          = component.transform.GetInstanceID();
-                component.hierarchyItem.NodeID               = component.brushNodeID;
-                component.hierarchyItem.TransformInitialized = true;
+                dirty                                        = component.hierarchyItem.transformInitialized;
+                component.hierarchyItem.transform            = component.transform;
+                component.hierarchyItem.transformID          = component.transform.GetInstanceID();
+                component.hierarchyItem.nodeID               = component.brushNodeID;
+                component.hierarchyItem.transformInitialized = true;
             }
 
             // make sure that the surface array is not empty,
             //  otherwise nothing can get rendered
-            if(component.Shape == null || component.Shape.Surfaces == null || component.Shape.Surfaces.Length == 0 || component.Shape.TexGens == null || component.Shape.TexGens.Length == 0)
+            if(component.shape == null || component.shape.surfaces == null || component.shape.surfaces.Length == 0 || component.shape.texGens == null || component.shape.texGens.Length == 0)
             {
                 dirty = true;
-                BrushFactory.CreateCubeControlMesh(out component.ControlMesh, out component.Shape, Vector3.one);
+                BrushFactory.CreateCubeControlMesh(out component.controlMesh, out component.shape, Vector3.one);
             }
 
-            if(component.ControlMesh == null)
+            if(component.controlMesh == null)
             {
-                component.ControlMesh = ControlMeshUtility.EnsureValidControlMesh(component);
+                component.controlMesh = ControlMeshUtility.EnsureValidControlMesh(component);
             }
 
-            dirty = ShapeUtility.EnsureInitialized(component.Shape) || dirty;
+            dirty = ShapeUtility.EnsureInitialized(component.shape) || dirty;
 
             if(dirty)
             {
@@ -315,9 +315,9 @@ namespace RealtimeCSG
         {
             if(component.IsRegistered)
             {
-                if(component.ChildData != null)
+                if(component.childData != null)
                 {
-                    component.ChildData.Reset();
+                    component.childData.Reset();
                 }
 
                 if(component.hierarchyItem != null)
@@ -326,7 +326,7 @@ namespace RealtimeCSG
                 }
             }
 
-            component.brushNodeID = CSGNode.InvalidNodeID;
+            component.brushNodeID = CSGNode.INVALID_NODE_ID;
         }
 
 #endregion
@@ -369,7 +369,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            CSGOperation parent = component.ChildData.Parent;
+            CSGOperation parent = component.childData.parent;
 
             if(parent)
             {
@@ -377,7 +377,7 @@ namespace RealtimeCSG
             }
             else
             {
-                CSGModel model = component.ChildData.Model;
+                CSGModel model = component.childData.model;
 
                 if(model)
                 {
@@ -415,11 +415,11 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(component.ParentData.TransformID == 0 && component.operationNodeID != CSGNode.InvalidNodeID)
+            if(component.parentData.transformID == 0 && component.operationNodeID != CSGNode.INVALID_NODE_ID)
             {
-                component.ParentData.Transform   = component.transform;
-                component.ParentData.TransformID = component.transform.GetInstanceID();
-                component.ParentData.NodeID      = component.operationNodeID;
+                component.parentData.transform   = component.transform;
+                component.parentData.transformID = component.transform.GetInstanceID();
+                component.parentData.nodeID      = component.operationNodeID;
             }
         }
 
@@ -427,18 +427,18 @@ namespace RealtimeCSG
         {
             if(component.IsRegistered)
             {
-                if(component.ParentData != null)
+                if(component.parentData != null)
                 {
-                    component.ParentData.Reset();
+                    component.parentData.Reset();
                 }
 
-                if(component.ChildData != null)
+                if(component.childData != null)
                 {
-                    component.ChildData.Reset();
+                    component.childData.Reset();
                 }
             }
 
-            component.operationNodeID = CSGNode.InvalidNodeID;
+            component.operationNodeID = CSGNode.INVALID_NODE_ID;
         }
 
 #endregion
@@ -522,12 +522,12 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(component.parentData.TransformID == 0 &&
-               component.modelNodeID != CSGNode.InvalidNodeID)
+            if(component.parentData.transformID == 0 &&
+               component.modelNodeID != CSGNode.INVALID_NODE_ID)
             {
-                component.parentData.Transform   = component.transform;
-                component.parentData.TransformID = component.transform.GetInstanceID();
-                component.parentData.NodeID      = component.modelNodeID;
+                component.parentData.transform   = component.transform;
+                component.parentData.transformID = component.transform.GetInstanceID();
+                component.parentData.nodeID      = component.modelNodeID;
             }
         }
 
@@ -541,7 +541,7 @@ namespace RealtimeCSG
                 }
             }
 
-            component.modelNodeID = CSGNode.InvalidNodeID;
+            component.modelNodeID = CSGNode.INVALID_NODE_ID;
         }
 
 #endregion
@@ -556,17 +556,17 @@ namespace RealtimeCSG
             }
 
             // make sure our model has actually been initialized
-            if(childData.Model && !childData.Model.IsRegistered)
+            if(childData.model && !childData.model.IsRegistered)
             {
-                RegisterModel(childData.Model);
+                RegisterModel(childData.model);
             }
 
             // make sure our parent (if any) has actually been initialized
-            if(childData.Parent && !childData.Parent.IsRegistered)
+            if(childData.parent && !childData.parent.IsRegistered)
             {
-                registerOperations.Remove(childData.Parent);
-                unregisterOperations.Remove(childData.Parent);
-                RegisterOperation(childData.Parent);
+                registerOperations.Remove(childData.parent);
+                unregisterOperations.Remove(childData.parent);
+                RegisterOperation(childData.parent);
             }
         }
 
@@ -589,25 +589,25 @@ namespace RealtimeCSG
             }
 
             Transform brushTransform = brush.transform;
-            InitializeHierarchy(brush.ChildData, brushTransform);
+            InitializeHierarchy(brush.childData, brushTransform);
             InitializeHierarchy(brush, brushTransform);
 
-            brush.prevOperation = brush.OperationType;
+            brush.prevOperation = brush.operationType;
             EnsureInitialized(brush);
 
-            brush.controlMeshGeneration = brush.ControlMesh.Generation;
-            brush.compareShape.EnsureInitialized(brush.Shape);
+            brush.controlMeshGeneration = brush.controlMesh.generation;
+            brush.compareShape.EnsureInitialized(brush.shape);
 
-            RegisterChild(brush.ChildData);
+            RegisterChild(brush.childData);
 
             int brushNodeID = brush.brushNodeID;
 
-            if(brush.ChildData.Model == null)
+            if(brush.childData.model == null)
             {
-                if(brush.brushNodeID != CSGNode.InvalidNodeID)
+                if(brush.brushNodeID != CSGNode.INVALID_NODE_ID)
                 {
                     External.destroyNode(brush.brushNodeID);
-                    brush.brushNodeID = CSGNode.InvalidNodeID;
+                    brush.brushNodeID = CSGNode.INVALID_NODE_ID;
                 }
 
                 Debug.LogError("Brush has no registered model?");
@@ -615,7 +615,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            ParentNodeData parentData = GetParentData(brush.ChildData);
+            ParentNodeData parentData = GetParentData(brush.childData);
 
             if(parentData == null)
             {
@@ -624,23 +624,23 @@ namespace RealtimeCSG
 
             EnsureInitialized(brush);
 
-            brush.ChildData.OwnerParentData = parentData;
-            brush.ChildData.ModelTransform  = !brush.ChildData.Model ? null : brush.ChildData.Model.transform;
+            brush.childData.ownerParentData = parentData;
+            brush.childData.modelTransform  = !brush.childData.model ? null : brush.childData.model.transform;
 
             parentData.AddNode(brush.hierarchyItem);
 
-            if(brush.Shape == null || brush.Shape.Surfaces == null || brush.Shape.Surfaces.Length < 4)
+            if(brush.shape == null || brush.shape.surfaces == null || brush.shape.surfaces.Length < 4)
             {
                 Debug.LogError($"The brush ({brush.name}) is infinitely thin and is invalid", brush);
-                brush.ControlMesh.Valid = false;
+                brush.controlMesh.Valid = false;
             }
             else
             {
                 Matrix4x4 brushToModelSpace = brush.compareTransformation.brushToModelSpaceMatrix;
                 External.setBrushToModelSpace(brushNodeID, brushToModelSpace);
-                External.setBrushOperationType(brushNodeID, brush.OperationType);
+                External.setBrushOperationType(brushNodeID, brush.operationType);
 
-                if((brush.Flags & BrushFlags.InfiniteBrush) != BrushFlags.InfiniteBrush)
+                if((brush.flags & BrushFlags.InfiniteBrush) != BrushFlags.InfiniteBrush)
                 {
                     External.setBrushFlags(brushNodeID, CSGTreeBrushFlags.Default);
                     SetBrushMesh(brush);
@@ -676,25 +676,24 @@ namespace RealtimeCSG
 
             EnsureInitialized(op);
 
-            InitializeHierarchy(op.ChildData, op.transform);
-            op.PrevOperation   = op.OperationType;
-            op.PrevPassThrough = op.PassThrough;
+            InitializeHierarchy(op.childData, op.transform);
+            op.prevOperation   = op.operationType;
 
             UpdateChildrenParent(op, op.transform);
 
-            RegisterChild(op.ChildData);
+            RegisterChild(op.childData);
 
-            if(!op.ChildData.Model)
+            if(!op.childData.model)
             {
                 External.destroyNode(op.operationNodeID);
-                op.operationNodeID   = CSGNode.InvalidNodeID;
-                op.ParentData.NodeID = CSGNode.InvalidNodeID;
+                op.operationNodeID   = CSGNode.INVALID_NODE_ID;
+                op.parentData.nodeID = CSGNode.INVALID_NODE_ID;
                 Debug.LogError("Operation has no registered model?");
 
                 return;
             }
 
-            ParentNodeData parentData = GetParentData(op.ChildData);
+            ParentNodeData parentData = GetParentData(op.childData);
 
             if(parentData == null)
             {
@@ -703,16 +702,16 @@ namespace RealtimeCSG
                 return;
             }
 
-            op.ChildData.OwnerParentData = parentData;
-            op.ChildData.ModelTransform  = !op.ChildData.Model ? null : op.ChildData.Model.transform;
+            op.childData.ownerParentData = parentData;
+            op.childData.modelTransform  = !op.childData.model ? null : op.childData.model.transform;
 
-            parentData.AddNode(op.ParentData);
+            parentData.AddNode(op.parentData);
 
             int opID = op.operationNodeID;
 
-            External.setOperationOperationType(opID, op.OperationType);
+            External.setOperationOperationType(opID, op.operationType);
             Operations.Add(op);
-            op.ParentData.NodeID  = opID;
+            op.parentData.nodeID  = opID;
             m_IsHierarchyModified = true;
         }
 
@@ -737,9 +736,9 @@ namespace RealtimeCSG
                 Debug.LogWarning($"Model named {model.name} marked as registered, but wasn't actually registered", model);
             }
 
-            if(!model.DefaultPhysicsMaterial)
+            if(!model.defaultPhysicsMaterial)
             {
-                model.DefaultPhysicsMaterial = MaterialUtility.DefaultPhysicsMaterial;
+                model.defaultPhysicsMaterial = MaterialUtility.DefaultPhysicsMaterial;
             }
 
             if(!External.generateModel(model.GetInstanceID(), out model.modelNodeID))
@@ -773,10 +772,10 @@ namespace RealtimeCSG
                 return false;
             }
 
-            Shape       shape       = brush.Shape;
-            ControlMesh controlMesh = brush.ControlMesh;
+            Shape       shape       = brush.shape;
+            ControlMesh controlMesh = brush.controlMesh;
 
-            BrushMesh brushMesh = BrushFactory.GenerateFromControlMesh(controlMesh, shape, brush.ChildData.Model.DefaultPhysicsMaterial);
+            BrushMesh brushMesh = BrushFactory.GenerateFromControlMesh(controlMesh, shape, brush.childData.model.defaultPhysicsMaterial);
 
             if(brushMesh == null)
             {
@@ -785,7 +784,7 @@ namespace RealtimeCSG
 
             int brushMeshID = External.getBrushMeshID(brush.brushNodeID);
 
-            if(brushMeshID != CSGNode.InvalidNodeID)
+            if(brushMeshID != CSGNode.INVALID_NODE_ID)
             {
                 return External.updateBrushMesh(brushMeshID, brushMesh);
             }
@@ -833,9 +832,9 @@ namespace RealtimeCSG
 
             int brushNodeID = brush.brushNodeID;
 
-            if(brush.ChildData != null && brush.ChildData.Model && brush.ChildData.Model.IsRegistered)
+            if(brush.childData != null && brush.childData.model && brush.childData.model.IsRegistered)
             {
-                ParentNodeData parentData = GetParentData(brush.ChildData);
+                ParentNodeData parentData = GetParentData(brush.childData);
 
                 if(parentData != null)
                 {
@@ -858,7 +857,7 @@ namespace RealtimeCSG
                 }
             }
 
-            brush.brushNodeID = CSGNode.InvalidNodeID;
+            brush.brushNodeID = CSGNode.INVALID_NODE_ID;
             brush.ClearCache();
         }
 
@@ -885,13 +884,13 @@ namespace RealtimeCSG
 
             int opID = op.operationNodeID;
 
-            if(op.ChildData.Model && op.ChildData.Model.IsRegistered)
+            if(op.childData.model && op.childData.model.IsRegistered)
             {
-                ParentNodeData parentData = GetParentData(op.ChildData);
+                ParentNodeData parentData = GetParentData(op.childData);
 
-                if(parentData != null && op.ParentData != null)
+                if(parentData != null && op.parentData != null)
                 {
-                    parentData.RemoveNode(op.ParentData);
+                    parentData.RemoveNode(op.parentData);
                 }
             }
 
@@ -910,7 +909,7 @@ namespace RealtimeCSG
                 }
             }
 
-            op.operationNodeID = CSGNode.InvalidNodeID;
+            op.operationNodeID = CSGNode.INVALID_NODE_ID;
 
             op.ClearCache();
         }
@@ -956,7 +955,7 @@ namespace RealtimeCSG
             ArrayUtility.Remove(ref Models, model);
             modelLookup.Remove(model);
 
-            model.modelNodeID = CSGNode.InvalidNodeID;
+            model.modelNodeID = CSGNode.INVALID_NODE_ID;
 
             MeshGeneration++;
         }
@@ -1054,11 +1053,11 @@ namespace RealtimeCSG
                 }
             }
 
-            if(op.OperationType != op.PrevOperation)
+            if(op.operationType != op.prevOperation)
             {
-                op.PrevOperation = op.OperationType;
+                op.prevOperation = op.operationType;
 
-                External.setOperationOperationType(op.operationNodeID, op.OperationType);
+                External.setOperationOperationType(op.operationNodeID, op.operationType);
             }
         }
 
@@ -1082,17 +1081,17 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(brush.Shape == null || brush.Shape.Surfaces == null || brush.Shape.Surfaces.Length < 4)
+            if(brush.shape == null || brush.shape.surfaces == null || brush.shape.surfaces.Length < 4)
             {
-                if(brush.ControlMesh != null)
+                if(brush.controlMesh != null)
                 {
-                    brush.ControlMesh.Valid = false;
+                    brush.controlMesh.Valid = false;
                 }
 
                 return;
             }
 
-            Shape        shape        = brush.Shape;
+            Shape        shape        = brush.shape;
             CompareShape compareShape = brush.compareShape;
 
             if(compareShape.prevSurfaces == null || compareShape.prevTexGens == null)
@@ -1102,17 +1101,17 @@ namespace RealtimeCSG
                 return;
             }
 
-            bool updateTexGens = compareShape.prevTexGens == null || compareShape.prevTexGens.Length != shape.TexGens.Length || surfacesModified;
+            bool updateTexGens = compareShape.prevTexGens == null || compareShape.prevTexGens.Length != shape.texGens.Length || surfacesModified;
 
             if(!updateTexGens)
             {
-                for(int i = 0; i < shape.TexGens.Length; i++)
+                for(int i = 0; i < shape.texGens.Length; i++)
                 {
-                    if(shape.TexGens[i].RotationAngle == compareShape.prevTexGens[i].RotationAngle &&
-                       shape.TexGens[i].Scale == compareShape.prevTexGens[i].Scale &&
-                       shape.TexGens[i].Translation == compareShape.prevTexGens[i].Translation &&
-                       shape.TexGens[i].SmoothingGroup == compareShape.prevTexGens[i].SmoothingGroup &&
-                       shape.TexGenFlags[i] == compareShape.prevTexGenFlags[i])
+                    if(shape.texGens[i].RotationAngle == compareShape.prevTexGens[i].RotationAngle &&
+                       shape.texGens[i].Scale == compareShape.prevTexGens[i].Scale &&
+                       shape.texGens[i].Translation == compareShape.prevTexGens[i].Translation &&
+                       shape.texGens[i].SmoothingGroup == compareShape.prevTexGens[i].SmoothingGroup &&
+                       shape.texGenFlags[i] == compareShape.prevTexGenFlags[i])
                     {
                         continue;
                     }
@@ -1124,9 +1123,9 @@ namespace RealtimeCSG
 
                 if(!updateTexGens)
                 {
-                    for(int i = 0; i < shape.TexGens.Length; i++)
+                    for(int i = 0; i < shape.texGens.Length; i++)
                     {
-                        if(shape.TexGens[i].RenderMaterial == compareShape.prevTexGens[i].RenderMaterial)
+                        if(shape.texGens[i].RenderMaterial == compareShape.prevTexGens[i].RenderMaterial)
                         {
                             continue;
                         }
@@ -1138,32 +1137,32 @@ namespace RealtimeCSG
                 }
             }
 
-            if(compareShape.prevSurfaces.Length != shape.Surfaces.Length)
+            if(compareShape.prevSurfaces.Length != shape.surfaces.Length)
             {
                 surfacesModified = true;
             }
             else if(!surfacesModified)
             {
-                if(shape == null || shape.Surfaces == null || shape.Surfaces.Length < 4)
+                if(shape == null || shape.surfaces == null || shape.surfaces.Length < 4)
                 {
                     Debug.LogError("Shape is infinitely thin and is invalid");
-                    brush.ControlMesh.Valid = false;
+                    brush.controlMesh.Valid = false;
                 }
                 else
                 {
-                    for(int surfaceIndex = 0; surfaceIndex < shape.Surfaces.Length; surfaceIndex++)
+                    for(int surfaceIndex = 0; surfaceIndex < shape.surfaces.Length; surfaceIndex++)
                     {
-                        if(shape.Surfaces[surfaceIndex].Plane.normal
-                        != compareShape.prevSurfaces[surfaceIndex].Plane.normal ||
-                           shape.Surfaces[surfaceIndex].Plane.d != compareShape.prevSurfaces[surfaceIndex].Plane.d ||
-                           shape.Surfaces[surfaceIndex].Tangent != compareShape.prevSurfaces[surfaceIndex].Tangent)
+                        if(shape.surfaces[surfaceIndex].Plane.Normal
+                        != compareShape.prevSurfaces[surfaceIndex].Plane.Normal ||
+                           shape.surfaces[surfaceIndex].Plane.d != compareShape.prevSurfaces[surfaceIndex].Plane.d ||
+                           shape.surfaces[surfaceIndex].Tangent != compareShape.prevSurfaces[surfaceIndex].Tangent)
                         {
                             surfacesModified = true;
 
                             break;
                         }
 
-                        if(shape.Surfaces[surfaceIndex].TexGenIndex != compareShape.prevSurfaces[surfaceIndex].TexGenIndex)
+                        if(shape.surfaces[surfaceIndex].TexGenIndex != compareShape.prevSurfaces[surfaceIndex].TexGenIndex)
                         {
                             updateTexGens = true;
                         }
@@ -1173,24 +1172,24 @@ namespace RealtimeCSG
 
             if(updateTexGens || surfacesModified)
             {
-                if(shape == null || shape.Surfaces == null || shape.Surfaces.Length < 4)
+                if(shape == null || shape.surfaces == null || shape.surfaces.Length < 4)
                 {
                     Debug.LogError("Shape is infinitely thin and is invalid");
-                    brush.ControlMesh.Valid = false;
+                    brush.controlMesh.Valid = false;
                 }
                 else
                 {
                     SetBrushMeshSurfaces(brush);
                     surfacesModified = false;
 
-                    if(compareShape.prevSurfaces == null || compareShape.prevSurfaces.Length != shape.Surfaces.Length)
+                    if(compareShape.prevSurfaces == null || compareShape.prevSurfaces.Length != shape.surfaces.Length)
                     {
-                        compareShape.prevSurfaces = new Surface[shape.Surfaces.Length];
+                        compareShape.prevSurfaces = new Surface[shape.surfaces.Length];
                     }
 
-                    if(shape.Surfaces.Length > 0)
+                    if(shape.surfaces.Length > 0)
                     {
-                        Array.Copy(shape.Surfaces, compareShape.prevSurfaces, shape.Surfaces.Length);
+                        Array.Copy(shape.surfaces, compareShape.prevSurfaces, shape.surfaces.Length);
                     }
                 }
             }
@@ -1235,19 +1234,19 @@ namespace RealtimeCSG
 
             bool wasRegistered = brush.IsRegistered;
 
-            if(brush.OperationType != brush.prevOperation)
+            if(brush.operationType != brush.prevOperation)
             {
-                brush.prevOperation = brush.OperationType;
+                brush.prevOperation = brush.operationType;
 
-                External.setBrushOperationType(brush.brushNodeID, brush.OperationType);
+                External.setBrushOperationType(brush.brushNodeID, brush.operationType);
             }
 
             // check if surfaces changed
             CheckSurfaceModifications(brush, surfacesModified);
 
-            if(wasRegistered && brush.controlMeshGeneration != brush.ControlMesh.Generation)
+            if(wasRegistered && brush.controlMeshGeneration != brush.controlMesh.generation)
             {
-                brush.controlMeshGeneration = brush.ControlMesh.Generation;
+                brush.controlMeshGeneration = brush.controlMesh.generation;
                 ControlMeshUtility.RebuildShape(brush);
             }
         }
@@ -1397,7 +1396,7 @@ namespace RealtimeCSG
 
                     CSGNode parentNode = parentNodeObj as CSGNode;
 
-                    if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
+                    if(parentNode.prefabBehaviour != PrefabInstantiateBehaviour.Copy)
                     {
                         continue;
                     }
@@ -1444,7 +1443,7 @@ namespace RealtimeCSG
 
                     CSGNode parentNode = parentNodeObj as CSGNode;
 
-                    if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
+                    if(parentNode.prefabBehaviour != PrefabInstantiateBehaviour.Copy)
                     {
                         continue;
                     }
@@ -1491,7 +1490,7 @@ namespace RealtimeCSG
 
                     CSGNode parentNode = parentNodeObj as CSGNode;
 
-                    if(parentNode.PrefabBehaviour != PrefabInstantiateBehaviour.Copy)
+                    if(parentNode.prefabBehaviour != PrefabInstantiateBehaviour.Copy)
                     {
                         continue;
                     }

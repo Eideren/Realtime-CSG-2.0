@@ -28,17 +28,17 @@ namespace RealtimeCSG.Legacy
                 return null;
             }
 
-            brush.ControlMesh = controlMesh;
-            brush.Shape       = shape;
+            brush.controlMesh = controlMesh;
+            brush.shape       = shape;
 
-            if(brush.ControlMesh != null)
+            if(brush.controlMesh != null)
             {
-                brush.ControlMesh.SetDirty();
+                brush.controlMesh.SetDirty();
             }
 
-            if(brush.Shape != null)
+            if(brush.shape != null)
             {
-                ShapeUtility.EnsureInitialized(brush.Shape);
+                ShapeUtility.EnsureInitialized(brush.shape);
             }
 
             return brush;
@@ -57,17 +57,17 @@ namespace RealtimeCSG.Legacy
                 return null;
             }
 
-            brush.ControlMesh = controlMesh;
-            brush.Shape       = shape;
+            brush.controlMesh = controlMesh;
+            brush.shape       = shape;
 
-            if(brush.ControlMesh != null)
+            if(brush.controlMesh != null)
             {
-                brush.ControlMesh.SetDirty();
+                brush.controlMesh.SetDirty();
             }
 
-            if(brush.Shape != null)
+            if(brush.shape != null)
             {
-                ShapeUtility.EnsureInitialized(brush.Shape);
+                ShapeUtility.EnsureInitialized(brush.shape);
             }
 
             return brush;
@@ -119,17 +119,17 @@ namespace RealtimeCSG.Legacy
                 return false;
             }
 
-            brush.ControlMesh = controlMesh;
-            brush.Shape       = shape;
+            brush.controlMesh = controlMesh;
+            brush.shape       = shape;
 
-            if(brush.ControlMesh != null)
+            if(brush.controlMesh != null)
             {
-                brush.ControlMesh.SetDirty();
+                brush.controlMesh.SetDirty();
             }
 
-            if(brush.Shape != null)
+            if(brush.shape != null)
             {
-                ShapeUtility.EnsureInitialized(brush.Shape);
+                ShapeUtility.EnsureInitialized(brush.shape);
             }
 
             return true;
@@ -164,7 +164,7 @@ namespace RealtimeCSG.Legacy
 
             controlMesh = new ControlMesh();
 
-            controlMesh.Vertices = new[]
+            controlMesh.vertices = new[]
             {
                 new Vector3(min.x, min.y, min.z) // 0
               , new Vector3(min.x, max.y, min.z) // 1
@@ -176,155 +176,155 @@ namespace RealtimeCSG.Legacy
               , new Vector3(min.x, max.y, max.z) // 7
             };
 
-            controlMesh.Edges = new[]
+            controlMesh.edges = new[]
             {
                 new HalfEdge
                 {
-                    PolygonIndex = 0
-                  , TwinIndex    = 21
-                  , VertexIndex  = 0
+                    polygonIndex = 0
+                  , twinIndex    = 21
+                  , vertexIndex  = 0
                 } //  0
               , new HalfEdge
                 {
-                    PolygonIndex = 0
-                  , TwinIndex    = 8
-                  , VertexIndex  = 1
+                    polygonIndex = 0
+                  , twinIndex    = 8
+                  , vertexIndex  = 1
                 } //  1
               , new HalfEdge
                 {
-                    PolygonIndex = 0
-                  , TwinIndex    = 12
-                  , VertexIndex  = 2
+                    polygonIndex = 0
+                  , twinIndex    = 12
+                  , vertexIndex  = 2
                 } //  2
               , new HalfEdge
                 {
-                    PolygonIndex = 0
-                  , TwinIndex    = 17
-                  , VertexIndex  = 3
+                    polygonIndex = 0
+                  , twinIndex    = 17
+                  , vertexIndex  = 3
                 } //  3
               , new HalfEdge
                 {
-                    PolygonIndex = 1
-                  , TwinIndex    = 10
-                  , VertexIndex  = 4
+                    polygonIndex = 1
+                  , twinIndex    = 10
+                  , vertexIndex  = 4
                 } //  4
               , new HalfEdge
                 {
-                    PolygonIndex = 1
-                  , TwinIndex    = 23
-                  , VertexIndex  = 5
+                    polygonIndex = 1
+                  , twinIndex    = 23
+                  , vertexIndex  = 5
                 } //  5
               , new HalfEdge
                 {
-                    PolygonIndex = 1
-                  , TwinIndex    = 19
-                  , VertexIndex  = 6
+                    polygonIndex = 1
+                  , twinIndex    = 19
+                  , vertexIndex  = 6
                 } //  6
               , new HalfEdge
                 {
-                    PolygonIndex = 1
-                  , TwinIndex    = 14
-                  , VertexIndex  = 7
+                    polygonIndex = 1
+                  , twinIndex    = 14
+                  , vertexIndex  = 7
                 } //  7
               , new HalfEdge
                 {
-                    PolygonIndex = 2
-                  , TwinIndex    = 1
-                  , VertexIndex  = 0
+                    polygonIndex = 2
+                  , twinIndex    = 1
+                  , vertexIndex  = 0
                 } //  8
               , new HalfEdge
                 {
-                    PolygonIndex = 2
-                  , TwinIndex    = 20
-                  , VertexIndex  = 4
+                    polygonIndex = 2
+                  , twinIndex    = 20
+                  , vertexIndex  = 4
                 } //  9
               , new HalfEdge
                 {
-                    PolygonIndex = 2
-                  , TwinIndex    = 4
-                  , VertexIndex  = 7
+                    polygonIndex = 2
+                  , twinIndex    = 4
+                  , vertexIndex  = 7
                 } // 10
               , new HalfEdge
                 {
-                    PolygonIndex = 2
-                  , TwinIndex    = 13
-                  , VertexIndex  = 1
+                    polygonIndex = 2
+                  , twinIndex    = 13
+                  , vertexIndex  = 1
                 } // 11
               , new HalfEdge
                 {
-                    PolygonIndex = 3
-                  , TwinIndex    = 2
-                  , VertexIndex  = 1
+                    polygonIndex = 3
+                  , twinIndex    = 2
+                  , vertexIndex  = 1
                 } // 12
               , new HalfEdge
                 {
-                    PolygonIndex = 3
-                  , TwinIndex    = 11
-                  , VertexIndex  = 7
+                    polygonIndex = 3
+                  , twinIndex    = 11
+                  , vertexIndex  = 7
                 } // 13
               , new HalfEdge
                 {
-                    PolygonIndex = 3
-                  , TwinIndex    = 7
-                  , VertexIndex  = 6
+                    polygonIndex = 3
+                  , twinIndex    = 7
+                  , vertexIndex  = 6
                 } // 14
               , new HalfEdge
                 {
-                    PolygonIndex = 3
-                  , TwinIndex    = 18
-                  , VertexIndex  = 2
+                    polygonIndex = 3
+                  , twinIndex    = 18
+                  , vertexIndex  = 2
                 } // 15
               , new HalfEdge
                 {
-                    PolygonIndex = 4
-                  , TwinIndex    = 22
-                  , VertexIndex  = 3
+                    polygonIndex = 4
+                  , twinIndex    = 22
+                  , vertexIndex  = 3
                 } // 16
               , new HalfEdge
                 {
-                    PolygonIndex = 4
-                  , TwinIndex    = 3
-                  , VertexIndex  = 2
+                    polygonIndex = 4
+                  , twinIndex    = 3
+                  , vertexIndex  = 2
                 } // 17
               , new HalfEdge
                 {
-                    PolygonIndex = 4
-                  , TwinIndex    = 15
-                  , VertexIndex  = 6
+                    polygonIndex = 4
+                  , twinIndex    = 15
+                  , vertexIndex  = 6
                 } // 18
               , new HalfEdge
                 {
-                    PolygonIndex = 4
-                  , TwinIndex    = 6
-                  , VertexIndex  = 5
+                    polygonIndex = 4
+                  , twinIndex    = 6
+                  , vertexIndex  = 5
                 } // 19
               , new HalfEdge
                 {
-                    PolygonIndex = 5
-                  , TwinIndex    = 9
-                  , VertexIndex  = 0
+                    polygonIndex = 5
+                  , twinIndex    = 9
+                  , vertexIndex  = 0
                 } // 20
               , new HalfEdge
                 {
-                    PolygonIndex = 5
-                  , TwinIndex    = 0
-                  , VertexIndex  = 3
+                    polygonIndex = 5
+                  , twinIndex    = 0
+                  , vertexIndex  = 3
                 } // 21
               , new HalfEdge
                 {
-                    PolygonIndex = 5
-                  , TwinIndex    = 16
-                  , VertexIndex  = 5
+                    polygonIndex = 5
+                  , twinIndex    = 16
+                  , vertexIndex  = 5
                 } // 22
               , new HalfEdge
                 {
-                    PolygonIndex = 5
-                  , TwinIndex    = 5
-                  , VertexIndex  = 4
+                    polygonIndex = 5
+                  , twinIndex    = 5
+                  , vertexIndex  = 4
                 } // 23
             };
 
-            controlMesh.Polygons = new[]
+            controlMesh.polygons = new[]
             {
                 // left/right
                 new Polygon(new[] { 0, 1, 2, 3 }, 0) // 0
@@ -341,51 +341,51 @@ namespace RealtimeCSG.Legacy
 
             shape = new Shape();
 
-            shape.Surfaces = new Surface[6];
+            shape.surfaces = new Surface[6];
 
-            shape.Surfaces[0].TexGenIndex = 0;
-            shape.Surfaces[1].TexGenIndex = 1;
-            shape.Surfaces[2].TexGenIndex = 2;
-            shape.Surfaces[3].TexGenIndex = 3;
-            shape.Surfaces[4].TexGenIndex = 4;
-            shape.Surfaces[5].TexGenIndex = 5;
+            shape.surfaces[0].TexGenIndex = 0;
+            shape.surfaces[1].TexGenIndex = 1;
+            shape.surfaces[2].TexGenIndex = 2;
+            shape.surfaces[3].TexGenIndex = 3;
+            shape.surfaces[4].TexGenIndex = 4;
+            shape.surfaces[5].TexGenIndex = 5;
 
-            shape.Surfaces[0].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 0);
-            shape.Surfaces[1].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 1);
-            shape.Surfaces[2].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 2);
-            shape.Surfaces[3].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 3);
-            shape.Surfaces[4].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 4);
-            shape.Surfaces[5].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 5);
+            shape.surfaces[0].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 0);
+            shape.surfaces[1].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 1);
+            shape.surfaces[2].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 2);
+            shape.surfaces[3].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 3);
+            shape.surfaces[4].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 4);
+            shape.surfaces[5].Plane = GeometryUtility.CalcPolygonPlane(controlMesh, 5);
 
-            GeometryUtility.CalculateTangents(shape.Surfaces[0].Plane.normal, out shape.Surfaces[0].Tangent, out shape.Surfaces[0].BiNormal);
-            GeometryUtility.CalculateTangents(shape.Surfaces[1].Plane.normal, out shape.Surfaces[1].Tangent, out shape.Surfaces[1].BiNormal);
-            GeometryUtility.CalculateTangents(shape.Surfaces[2].Plane.normal, out shape.Surfaces[2].Tangent, out shape.Surfaces[2].BiNormal);
-            GeometryUtility.CalculateTangents(shape.Surfaces[3].Plane.normal, out shape.Surfaces[3].Tangent, out shape.Surfaces[3].BiNormal);
-            GeometryUtility.CalculateTangents(shape.Surfaces[4].Plane.normal, out shape.Surfaces[4].Tangent, out shape.Surfaces[4].BiNormal);
-            GeometryUtility.CalculateTangents(shape.Surfaces[5].Plane.normal, out shape.Surfaces[5].Tangent, out shape.Surfaces[5].BiNormal);
+            GeometryUtility.CalculateTangents(shape.surfaces[0].Plane.Normal, out shape.surfaces[0].Tangent, out shape.surfaces[0].BiNormal);
+            GeometryUtility.CalculateTangents(shape.surfaces[1].Plane.Normal, out shape.surfaces[1].Tangent, out shape.surfaces[1].BiNormal);
+            GeometryUtility.CalculateTangents(shape.surfaces[2].Plane.Normal, out shape.surfaces[2].Tangent, out shape.surfaces[2].BiNormal);
+            GeometryUtility.CalculateTangents(shape.surfaces[3].Plane.Normal, out shape.surfaces[3].Tangent, out shape.surfaces[3].BiNormal);
+            GeometryUtility.CalculateTangents(shape.surfaces[4].Plane.Normal, out shape.surfaces[4].Tangent, out shape.surfaces[4].BiNormal);
+            GeometryUtility.CalculateTangents(shape.surfaces[5].Plane.Normal, out shape.surfaces[5].Tangent, out shape.surfaces[5].BiNormal);
 
             if(material == null)
             {
                 material = CSGSettings.DefaultMaterial;
             }
 
-            shape.TexGens = new TexGen[6];
+            shape.texGens = new TexGen[6];
 
-            shape.TexGens[0].RenderMaterial = material;
-            shape.TexGens[1].RenderMaterial = material;
-            shape.TexGens[2].RenderMaterial = material;
-            shape.TexGens[3].RenderMaterial = material;
-            shape.TexGens[4].RenderMaterial = material;
-            shape.TexGens[5].RenderMaterial = material;
+            shape.texGens[0].RenderMaterial = material;
+            shape.texGens[1].RenderMaterial = material;
+            shape.texGens[2].RenderMaterial = material;
+            shape.texGens[3].RenderMaterial = material;
+            shape.texGens[4].RenderMaterial = material;
+            shape.texGens[5].RenderMaterial = material;
 
-            shape.TexGens[0].Scale = MathConstants.oneVector3;
-            shape.TexGens[1].Scale = MathConstants.oneVector3;
-            shape.TexGens[2].Scale = MathConstants.oneVector3;
-            shape.TexGens[3].Scale = MathConstants.oneVector3;
-            shape.TexGens[4].Scale = MathConstants.oneVector3;
-            shape.TexGens[5].Scale = MathConstants.oneVector3;
+            shape.texGens[0].Scale = MathConstants.oneVector3;
+            shape.texGens[1].Scale = MathConstants.oneVector3;
+            shape.texGens[2].Scale = MathConstants.oneVector3;
+            shape.texGens[3].Scale = MathConstants.oneVector3;
+            shape.texGens[4].Scale = MathConstants.oneVector3;
+            shape.texGens[5].Scale = MathConstants.oneVector3;
 
-            shape.TexGenFlags = new[] { CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags };
+            shape.texGenFlags = new[] { CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags, CSGSettings.DefaultTexGenFlags };
 
             ShapeUtility.EnsureInitialized(shape);
             controlMesh.Valid = ControlMeshUtility.Validate(controlMesh, shape);
@@ -406,17 +406,17 @@ namespace RealtimeCSG.Legacy
 
             CreateCubeControlMesh(out ControlMesh controlMesh, out Shape shape, size);
 
-            brush.ControlMesh = controlMesh;
-            brush.Shape       = shape;
+            brush.controlMesh = controlMesh;
+            brush.shape       = shape;
 
-            if(brush.ControlMesh != null)
+            if(brush.controlMesh != null)
             {
-                brush.ControlMesh.SetDirty();
+                brush.controlMesh.SetDirty();
             }
 
-            if(brush.Shape != null)
+            if(brush.shape != null)
             {
-                ShapeUtility.EnsureInitialized(brush.Shape);
+                ShapeUtility.EnsureInitialized(brush.shape);
             }
 
             return true;
@@ -467,18 +467,18 @@ namespace RealtimeCSG.Legacy
                 return null;
             }
 
-            Vector3[]  vertices    = controlMesh.Vertices;
-            HalfEdge[] srcEdges    = controlMesh.Edges;
-            Polygon[]  srcPolygons = controlMesh.Polygons;
+            Vector3[]  vertices    = controlMesh.vertices;
+            HalfEdge[] srcEdges    = controlMesh.edges;
+            Polygon[]  srcPolygons = controlMesh.polygons;
 
             if(vertices == null || srcEdges == null || srcPolygons == null)
             {
                 return null;
             }
 
-            Surface[]     surfaces    = shape.Surfaces;
-            TexGen[]      texgens     = shape.TexGens;
-            TexGenFlags[] texgenFlags = shape.TexGenFlags;
+            Surface[]     surfaces    = shape.surfaces;
+            TexGen[]      texgens     = shape.texGens;
+            TexGenFlags[] texgenFlags = shape.texGenFlags;
 
             if(surfaces == null || texgens == null || texgenFlags == null)
             {
@@ -519,7 +519,7 @@ namespace RealtimeCSG.Legacy
 
             for(int i = 0; i < polygonCount; i++)
             {
-                int[] edgeIndices = srcPolygons[i].EdgeIndices;
+                int[] edgeIndices = srcPolygons[i].edgeIndices;
                 brushMesh.polygons[i].firstEdge =  counter;
                 brushMesh.polygons[i].edgeCount =  edgeIndices.Length;
                 counter                         += edgeIndices.Length;
@@ -531,16 +531,16 @@ namespace RealtimeCSG.Legacy
 
             for(int i = 0; i < polygonCount; i++)
             {
-                int[] edgeIndices = srcPolygons[i].EdgeIndices;
+                int[] edgeIndices = srcPolygons[i].edgeIndices;
 
                 for(int v = 0; v < edgeIndices.Length; v++)
                 {
                     HalfEdge edge = srcEdges[edgeIndices[v]];
-                    brushMesh.halfEdges[counter + v].vertexIndex = edge.VertexIndex;
+                    brushMesh.halfEdges[counter + v].vertexIndex = edge.vertexIndex;
 
-                    int   twinIndex        = edge.TwinIndex;
-                    short twinPolygonIndex = srcEdges[twinIndex].PolygonIndex;
-                    int[] twinEdges        = srcPolygons[twinPolygonIndex].EdgeIndices;
+                    int   twinIndex        = edge.twinIndex;
+                    short twinPolygonIndex = srcEdges[twinIndex].polygonIndex;
+                    int[] twinEdges        = srcPolygons[twinPolygonIndex].edgeIndices;
                     bool  found            = false;
 
                     for(int t = 0; t < twinEdges.Length; t++)
@@ -622,13 +622,13 @@ namespace RealtimeCSG.Legacy
             }
 
             shape             = new Shape();
-            shape.TexGenFlags = new TexGenFlags[planes.Length];
-            shape.Surfaces    = new Surface[planes.Length];
-            shape.TexGens     = new TexGen[planes.Length];
+            shape.texGenFlags = new TexGenFlags[planes.Length];
+            shape.surfaces    = new Surface[planes.Length];
+            shape.texGens     = new TexGen[planes.Length];
 
             for(int i = 0; i < planes.Length; i++)
             {
-                shape.Surfaces[i].Plane = new CSGPlane(planes[i].normal, -planes[i].distance);
+                shape.surfaces[i].Plane = new CSGPlane(planes[i].normal, -planes[i].distance);
 
                 Vector3 tangent, binormal;
 
@@ -642,23 +642,23 @@ namespace RealtimeCSG.Legacy
                     GeometryUtility.CalculateTangents(planes[i].normal, out tangent, out binormal);
                 }
 
-                shape.Surfaces[i].Tangent     = -tangent;
-                shape.Surfaces[i].BiNormal    = -binormal;
-                shape.Surfaces[i].TexGenIndex = i;
-                shape.TexGens[i]              = new TexGen(materials[i]);
+                shape.surfaces[i].Tangent     = -tangent;
+                shape.surfaces[i].BiNormal    = -binormal;
+                shape.surfaces[i].TexGenIndex = i;
+                shape.texGens[i]              = new TexGen(materials[i]);
 
                 if(smoothingGroups != null)
                 {
-                    shape.TexGens[i].SmoothingGroup = smoothingGroups[i];
+                    shape.texGens[i].SmoothingGroup = smoothingGroups[i];
                 }
 
                 if(texGenFlags != null)
                 {
-                    shape.TexGenFlags[i] = texGenFlags[i];
+                    shape.texGenFlags[i] = texGenFlags[i];
                 }
                 else
                 {
-                    shape.TexGenFlags[i] = CSGSettings.DefaultTexGenFlags;
+                    shape.texGenFlags[i] = CSGSettings.DefaultTexGenFlags;
                 }
             }
 
@@ -680,14 +680,14 @@ namespace RealtimeCSG.Legacy
 
                 for(int i = 0; i < planes.Length; i++)
                 {
-                    if(shape.Surfaces[n].TexGenIndex != i)
+                    if(shape.surfaces[n].TexGenIndex != i)
                     {
                         continue;
                     }
 
-                    shape.Surfaces[n].TexGenIndex = n;
+                    shape.surfaces[n].TexGenIndex = n;
 
-                    SurfaceUtility.AlignTextureSpaces(textureMatrices[i], textureMatrixSpace == TextureMatrixSpace.PlaneSpace, ref shape.TexGens[n], ref shape.Surfaces[n]);
+                    SurfaceUtility.AlignTextureSpaces(textureMatrices[i], textureMatrixSpace == TextureMatrixSpace.PlaneSpace, ref shape.texGens[n], ref shape.surfaces[n]);
 
                     n++;
                 }

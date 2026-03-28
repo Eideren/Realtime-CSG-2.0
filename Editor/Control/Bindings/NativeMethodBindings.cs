@@ -241,7 +241,7 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    if(ignoreBrushes[i].brushNodeID == CSGNode.InvalidNodeID)
+                    if(ignoreBrushes[i].brushNodeID == CSGNode.INVALID_NODE_ID)
                     {
                         continue;
                     }
@@ -365,7 +365,7 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    if(ignoreBrushes[i].brushNodeID == CSGNode.InvalidNodeID)
+                    if(ignoreBrushes[i].brushNodeID == CSGNode.INVALID_NODE_ID)
                     {
                         continue;
                     }
@@ -482,7 +482,7 @@ namespace RealtimeCSG
 
         private static bool RayCastIntoBrush(int brushNodeID, Vector3 rayStart, Vector3 rayEnd, Matrix4x4 modelLocalToWorldMatrix, out LegacyBrushIntersection intersection, bool ignoreInvisiblePolygons)
         {
-            if(brushNodeID == CSGNode.InvalidNodeID || !RayCastIntoBrush(brushNodeID, ref rayStart, ref rayEnd, ref modelLocalToWorldMatrix, ignoreInvisiblePolygons, out CSGTreeBrushIntersection outputBrushIntersection))
+            if(brushNodeID == CSGNode.INVALID_NODE_ID || !RayCastIntoBrush(brushNodeID, ref rayStart, ref rayEnd, ref modelLocalToWorldMatrix, ignoreInvisiblePolygons, out CSGTreeBrushIntersection outputBrushIntersection))
             {
                 intersection = null;
 
@@ -510,7 +510,7 @@ namespace RealtimeCSG
 
         private static bool RayCastIntoBrushSurface(int brushNodeID, int surfaceID, Vector3 rayStart, Vector3 rayEnd, Matrix4x4 modelLocalToWorldMatrix, out LegacySurfaceIntersection intersection)
         {
-            if(brushNodeID == CSGNode.InvalidNodeID || !RayCastIntoBrushSurface(brushNodeID, surfaceID, ref rayStart, ref rayEnd, ref modelLocalToWorldMatrix, out CSGSurfaceIntersection outputSurfaceIntersection))
+            if(brushNodeID == CSGNode.INVALID_NODE_ID || !RayCastIntoBrushSurface(brushNodeID, surfaceID, ref rayStart, ref rayEnd, ref modelLocalToWorldMatrix, out CSGSurfaceIntersection outputSurfaceIntersection))
             {
                 intersection = null;
 
@@ -684,7 +684,7 @@ namespace RealtimeCSG
             if(brushMesh.vertices == null || brushMesh.halfEdges == null || brushMesh.polygons == null
             || brushMesh.vertices.Length < 5 || brushMesh.halfEdges.Length < 16 || brushMesh.polygons.Length < 5)
             {
-                return CSGNode.InvalidNodeID;
+                return CSGNode.INVALID_NODE_ID;
             }
 
             GCHandle verticesHandle  = GCHandle.Alloc(brushMesh.vertices, GCHandleType.Pinned);
@@ -810,7 +810,7 @@ namespace RealtimeCSG
 
         private static bool GetMeshDescriptions(CSGModel model, ref GeneratedMeshDescription[] meshDescriptions)
         {
-            return GetMeshDescriptions(model.modelNodeID, InternalCSGModelManager.GetMeshTypesForModel(model), model.VertexChannels, ref meshDescriptions);
+            return GetMeshDescriptions(model.modelNodeID, InternalCSGModelManager.GetMeshTypesForModel(model), model.vertexChannels, ref meshDescriptions);
         }
 
         [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]

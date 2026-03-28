@@ -78,7 +78,7 @@ namespace RealtimeCSG
                 unselectedOuterOccludedColor.a *= 0.5f;
                 unselectedInnerOccludedColor.a *= 0.5f;
 
-                if(surfaceIndex >= 0 && surfaceIndex < shape.Surfaces.Length)
+                if(surfaceIndex >= 0 && surfaceIndex < shape.surfaces.Length)
                 {
                     DrawSurfaceOutlines(brushNodeID, shape, transformation, surfaceIndex, wireframeColor, selectedInnerColor);
                 }
@@ -90,12 +90,12 @@ namespace RealtimeCSG
         public static void DrawSurfaceOutlines(int brushNodeID, Shape shape, Matrix4x4 transformation, int surfaceIndex, Color outerColor, Color innerColor, float thickness = GUIConstants.OLD_THICK_LINE_SCALE)
         {
             // .. could be a prefab
-            if(brushNodeID == CSGNode.InvalidNodeID || surfaceIndex == -1)
+            if(brushNodeID == CSGNode.INVALID_NODE_ID || surfaceIndex == -1)
             {
                 return;
             }
 
-            if(surfaceIndex < 0 || surfaceIndex >= shape.Surfaces.Length)
+            if(surfaceIndex < 0 || surfaceIndex >= shape.surfaces.Length)
             {
                 return;
             }
@@ -483,7 +483,7 @@ namespace RealtimeCSG
         public static void DrawOutlines(int brushNodeID, Matrix4x4 transformation, Color outerColor, Color outerColorOccluded, Color innerColor, Color innerColorOccluded, float thickness = -1)
         {
             // .. could be a prefab
-            if(brushNodeID == CSGNode.InvalidNodeID)
+            if(brushNodeID == CSGNode.INVALID_NODE_ID)
             {
                 return;
             }
@@ -526,7 +526,7 @@ namespace RealtimeCSG
         public static void DrawSimpleOutlines(LineMeshManager lineMeshManager, int brushNodeID, Matrix4x4 transformation, Color color)
         {
             // .. could be a prefab
-            if(brushNodeID == CSGNode.InvalidNodeID)
+            if(brushNodeID == CSGNode.INVALID_NODE_ID)
             {
                 return;
             }

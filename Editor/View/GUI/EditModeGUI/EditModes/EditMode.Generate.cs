@@ -383,11 +383,11 @@ namespace RealtimeCSG
                         {
                             CSGBrush brush = brushes[i];
 
-                            if(brush.brushNodeID == CSGNode.InvalidNodeID || // could be a prefab
+                            if(brush.brushNodeID == CSGNode.INVALID_NODE_ID || // could be a prefab
                                brush.compareTransformation == null ||
-                               brush.ChildData == null ||
-                               brush.ChildData.ModelTransform == null ||
-                               !brush.ChildData.ModelTransform)
+                               brush.childData == null ||
+                               brush.childData.modelTransform == null ||
+                               !brush.childData.modelTransform)
                             {
                                 ArrayUtility.RemoveAt(ref brushTransformation, i);
                                 ArrayUtility.RemoveAt(ref brushNodeIDs, i);

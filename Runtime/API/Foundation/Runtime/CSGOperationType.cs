@@ -10,14 +10,10 @@ namespace RealtimeCSG.Foundation
     public enum CSGOperationType : byte
     {
         /// <summary>The given <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/> or <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/> is added to the <see cref="RealtimeCSG.Foundation.CSGTree"/> and removes all the geometry inside it.</summary>
-        Additive = 0
-
-       ,
+        Additive = 0,
 
         /// <summary>The given <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/> or <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/> removes all the geometry that are inside it.</summary>
-        Subtractive = 1
-
-       ,
+        Subtractive = 1,
 
         /// <summary>The given <see cref="RealtimeCSG.Foundation.CSGTreeBrush"/> or <see cref="RealtimeCSG.Foundation.CSGTreeBranch"/> removes all the geometry that is outside it.</summary>
         Intersecting = 2

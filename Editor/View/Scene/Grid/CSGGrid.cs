@@ -485,7 +485,7 @@ namespace RealtimeCSG
 
         public static CSGPlane PlaneToGridSpace(CSGPlane p)
         {
-            return new CSGPlane(VectorToGridSpace(p.normal), PointToGridSpace(p.pointOnPlane));
+            return new CSGPlane(VectorToGridSpace(p.Normal), PointToGridSpace(p.PointOnPlane));
         }
 
         public static Vector3 PointFromGridSpace(Vector3 pos)
@@ -500,7 +500,7 @@ namespace RealtimeCSG
 
         public static CSGPlane PlaneFromGridSpace(CSGPlane p)
         {
-            return new CSGPlane(VectorFromGridSpace(p.normal), PointFromGridSpace(p.pointOnPlane));
+            return new CSGPlane(VectorFromGridSpace(p.Normal), PointFromGridSpace(p.PointOnPlane));
         }
 
         private static Vector3 DeltaSnapRoundPosition(Vector3 currentPosition, Vector3 snapVector)
@@ -570,9 +570,9 @@ namespace RealtimeCSG
             Vector3   snappedGridPoint = SnapRoundPosition(gridPoint, snapVector);
             const int lineSize         = 10000;
 
-            CSGPlane gridPlane = new CSGPlane(CurrentWorkGridPlane.normal, point);
+            CSGPlane gridPlane = new CSGPlane(CurrentWorkGridPlane.Normal, point);
 
-            if(Math.Abs(gridPoint.x - snappedGridPoint.x) < MathConstants.EqualityEpsilon)
+            if(Math.Abs(gridPoint.x - snappedGridPoint.x) < MathConstants.EQUALITY_EPSILON)
             {
                 Vector3 pointA = new Vector3(-lineSize, gridPoint.y, gridPoint.z);
                 Vector3 pointB = new Vector3(lineSize, gridPoint.y, gridPoint.z);
@@ -581,7 +581,7 @@ namespace RealtimeCSG
                 lines.Add(gridPlane.Project(PointFromGridSpace(pointB)));
             }
 
-            if(Math.Abs(gridPoint.y - snappedGridPoint.y) < MathConstants.EqualityEpsilon)
+            if(Math.Abs(gridPoint.y - snappedGridPoint.y) < MathConstants.EQUALITY_EPSILON)
             {
                 Vector3 pointA = new Vector3(gridPoint.x, -lineSize, gridPoint.z);
                 Vector3 pointB = new Vector3(gridPoint.x, lineSize, gridPoint.z);
@@ -590,7 +590,7 @@ namespace RealtimeCSG
                 lines.Add(gridPlane.Project(PointFromGridSpace(pointB)));
             }
 
-            if(Math.Abs(gridPoint.z - snappedGridPoint.z) < MathConstants.EqualityEpsilon)
+            if(Math.Abs(gridPoint.z - snappedGridPoint.z) < MathConstants.EQUALITY_EPSILON)
             {
                 Vector3 pointA = new Vector3(gridPoint.x, gridPoint.y, -lineSize);
                 Vector3 pointB = new Vector3(gridPoint.x, gridPoint.y, lineSize);
@@ -732,24 +732,24 @@ namespace RealtimeCSG
 
             if(snapToGridPlane)
             {
-                scaleVector.x *= Mathf.Abs(gridLocalPlane.a) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
-                scaleVector.y *= Mathf.Abs(gridLocalPlane.b) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
-                scaleVector.z *= Mathf.Abs(gridLocalPlane.c) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
+                scaleVector.x *= Mathf.Abs(gridLocalPlane.a) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
+                scaleVector.y *= Mathf.Abs(gridLocalPlane.b) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
+                scaleVector.z *= Mathf.Abs(gridLocalPlane.c) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
             }
 
             Vector3 snappedDeltaMovement = gridLocalDeltaMovement;
 
-            if(Mathf.Abs(scaleVector.x) < MathConstants.EqualityEpsilon)
+            if(Mathf.Abs(scaleVector.x) < MathConstants.EQUALITY_EPSILON)
             {
                 snappedDeltaMovement.x = 0;
             }
 
-            if(Mathf.Abs(scaleVector.y) < MathConstants.EqualityEpsilon)
+            if(Mathf.Abs(scaleVector.y) < MathConstants.EQUALITY_EPSILON)
             {
                 snappedDeltaMovement.y = 0;
             }
 
-            if(Mathf.Abs(scaleVector.z) < MathConstants.EqualityEpsilon)
+            if(Mathf.Abs(scaleVector.z) < MathConstants.EQUALITY_EPSILON)
             {
                 snappedDeltaMovement.z = 0;
             }
@@ -896,9 +896,9 @@ namespace RealtimeCSG
 
             if(snapToGridPlane)
             {
-                scaleVector.x *= Mathf.Abs(gridLocalPlane.a) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
-                scaleVector.y *= Mathf.Abs(gridLocalPlane.b) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
-                scaleVector.z *= Mathf.Abs(gridLocalPlane.c) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
+                scaleVector.x *= Mathf.Abs(gridLocalPlane.a) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
+                scaleVector.y *= Mathf.Abs(gridLocalPlane.b) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
+                scaleVector.z *= Mathf.Abs(gridLocalPlane.c) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
             }
 
             Vector3 snappedDeltaMovement = gridLocalDeltaMovement;
@@ -953,23 +953,23 @@ namespace RealtimeCSG
             Vector3 localLineDir       = VectorToGridSpace(worldRay.direction);
             Vector3 localLineOrg       = PointToGridSpace(worldRay.origin);
 
-            scaleVector.x *= Mathf.Abs(localLineDir.y) >= 1 - MathConstants.EqualityEpsilon || Mathf.Abs(localLineDir.z) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
-            scaleVector.y *= Mathf.Abs(localLineDir.x) >= 1 - MathConstants.EqualityEpsilon || Mathf.Abs(localLineDir.z) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
-            scaleVector.z *= Mathf.Abs(localLineDir.x) >= 1 - MathConstants.EqualityEpsilon || Mathf.Abs(localLineDir.y) >= 1 - MathConstants.EqualityEpsilon ? 0 : 1;
+            scaleVector.x *= Mathf.Abs(localLineDir.y) >= 1 - MathConstants.EQUALITY_EPSILON || Mathf.Abs(localLineDir.z) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
+            scaleVector.y *= Mathf.Abs(localLineDir.x) >= 1 - MathConstants.EQUALITY_EPSILON || Mathf.Abs(localLineDir.z) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
+            scaleVector.z *= Mathf.Abs(localLineDir.x) >= 1 - MathConstants.EQUALITY_EPSILON || Mathf.Abs(localLineDir.y) >= 1 - MathConstants.EQUALITY_EPSILON ? 0 : 1;
 
             Vector3 snappedDeltaMovement = localDeltaMovement;
 
-            if(Mathf.Abs(scaleVector.x) < MathConstants.EqualityEpsilon)
+            if(Mathf.Abs(scaleVector.x) < MathConstants.EQUALITY_EPSILON)
             {
                 snappedDeltaMovement.x = 0;
             }
 
-            if(Mathf.Abs(scaleVector.y) < MathConstants.EqualityEpsilon)
+            if(Mathf.Abs(scaleVector.y) < MathConstants.EQUALITY_EPSILON)
             {
                 snappedDeltaMovement.y = 0;
             }
 
-            if(Mathf.Abs(scaleVector.z) < MathConstants.EqualityEpsilon)
+            if(Mathf.Abs(scaleVector.z) < MathConstants.EQUALITY_EPSILON)
             {
                 snappedDeltaMovement.z = 0;
             }
@@ -1096,7 +1096,7 @@ namespace RealtimeCSG
                 return true;
             }
 
-            Vector3 normal = CurrentGridPlane.normal;
+            Vector3 normal = CurrentGridPlane.Normal;
 
             workPlane = new CSGPlane(GridUtility.CleanNormal(normal), worldCenterPoint);
 
@@ -1165,7 +1165,7 @@ namespace RealtimeCSG
         public static Vector3 CubeProject(Camera camera, CSGPlane plane, Vector3 pos)
         {
             UpdateGridOrientation(camera);
-            Vector3 closestAxis  = GeometryUtility.SnapToClosestAxis(plane.normal);
+            Vector3 closestAxis  = GeometryUtility.SnapToClosestAxis(plane.Normal);
             Vector3 intersection = plane.LineIntersection(pos, pos + closestAxis);
 
             if(float.IsNaN(intersection.x) || float.IsInfinity(intersection.x) ||
@@ -1185,7 +1185,7 @@ namespace RealtimeCSG
                float.IsNaN(plane.b) || float.IsInfinity(plane.b) ||
                float.IsNaN(plane.c) || float.IsInfinity(plane.c) ||
                float.IsNaN(plane.d) || float.IsInfinity(plane.d) ||
-               plane.normal.sqrMagnitude < MathConstants.NormalEpsilon)
+               plane.Normal.sqrMagnitude < MathConstants.NORMAL_EPSILON)
             {
                 Debug.LogWarning("Invalid plane passed to SetForcedGrid");
 
@@ -1197,9 +1197,9 @@ namespace RealtimeCSG
             UpdateGridOrientation(camera);
             Vector3 center = CubeProject(camera, plane, gridOrientation.gridCenter);
 
-            Vector3 normal = Quaternion.Inverse(gridOrientation.gridRotation) * plane.normal;
+            Vector3 normal = Quaternion.Inverse(gridOrientation.gridRotation) * plane.Normal;
 
-            if(normal.sqrMagnitude < MathConstants.NormalEpsilon)
+            if(normal.sqrMagnitude < MathConstants.NORMAL_EPSILON)
             {
                 return false;
             }

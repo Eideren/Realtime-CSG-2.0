@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using RealtimeCSG.Legacy;
 
 namespace RealtimeCSG.Components
 {
@@ -8,104 +7,67 @@ namespace RealtimeCSG.Components
     {
         public static void UpgradeWhenNecessary(CSGModel model)
         {
-            if(model.Version >= CSGModel.CurrentVersion)
+            if(model.version >= CSGModel.CURRENT_VERSION)
             {
                 return;
             }
 
-            if(model.Version < 1.0f)
+            if(model.version < 1.0f)
             {
-                model.Version = 1.0f;
+                model.version = 1.0f;
             }
 
-            if(model.Version == 1.0f)
+            if(model.version == 1.0f)
             {
-//if !PACKAGE_GENERATOR_ACTIVE
-                // Unity defaults are horrible
-                //UnityEditor.UnwrapParam uvGenerationSettings;
-                //UnityEditor.UnwrapParam.SetDefaults(out uvGenerationSettings);
-                model.angleError = 1;  //uvGenerationSettings.angleError;
-                model.areaError  = 1;  //uvGenerationSettings.areaError;
-                model.hardAngle  = 60; //uvGenerationSettings.hardAngle;
-                model.packMargin = 20; //uvGenerationSettings.packMargin;
-//#endif
-                model.Version = 1.1f;
+                model.angleError = 1;
+                model.areaError  = 1;
+                model.hardAngle  = 60;
+                model.packMargin = 20;
+                model.version    = 1.1f;
             }
 
-            model.angleError = Mathf.Clamp(model.angleError, CSGModel.MinAngleError, CSGModel.MaxAngleError);
-            model.areaError  = Mathf.Clamp(model.areaError, CSGModel.MinAreaError, CSGModel.MaxAreaError);
+            model.angleError = Mathf.Clamp(model.angleError, CSGModel.MIN_ANGLE_ERROR, CSGModel.MAX_ANGLE_ERROR);
+            model.areaError  = Mathf.Clamp(model.areaError, CSGModel.MIN_AREA_ERROR, CSGModel.MAX_AREA_ERROR);
 
-            model.Version = CSGModel.CurrentVersion;
+            model.version = CSGModel.CURRENT_VERSION;
         }
 
         public static void UpgradeWhenNecessary(CSGBrush brush)
         {
-            if(brush.Version >= CSGBrush.CurrentVersion)
+            if(brush.version >= CSGBrush.CURRENT_VERSION)
             {
                 return;
             }
 
-            if(brush.Version < 1.0f)
+            if(brush.version < 1.0f)
             {
-                brush.Version = 1.0f;
+                brush.version = 1.0f;
             }
 
-            if(brush.Version == 1.0f)
+            if(brush.version == 1.0f)
             {
 #pragma warning disable 618 // Type is now obsolete
-                if(brush.Shape.Materials != null && brush.Shape.Materials.Length > 0)
+                if(brush.shape.materials != null && brush.shape.materials.Length > 0)
                 {
                     // update textures
-                    if(brush.Shape.TexGens != null)
+                    if(brush.shape.texGens != null)
                     {
-                        for(int i = 0; i < brush.Shape.TexGens.Length; i++)
+                        for(int i = 0; i < brush.shape.texGens.Length; i++)
                         {
-                            brush.Shape.TexGens[i].RenderMaterial = null;
+                            brush.shape.texGens[i].RenderMaterial = null;
                         }
 
 #pragma warning disable 618 // Type is now obsolete
-                        for(int i = 0; i < Mathf.Min(brush.Shape.Materials.Length, brush.Shape.TexGens.Length); i++)
+                        for(int i = 0; i < Mathf.Min(brush.shape.materials.Length, brush.shape.texGens.Length); i++)
                         {
 #pragma warning disable 618 // Type is now obsolete
-                            brush.Shape.TexGens[i].RenderMaterial = brush.Shape.Materials[i];
-                        }
-
-                        for(int i = 0; i < brush.Shape.TexGenFlags.Length; i++)
-                        {
-                            int  oldFlags            = (int)brush.Shape.TexGenFlags[i];
-                            bool isWorldSpaceTexture = (oldFlags & 1) == 1;
-
-                            bool isNotVisible        = (oldFlags & 2) == 2;
-                            bool isNoCollision       = isNotVisible;
-                            bool isNotCastingShadows = (oldFlags & 4) == 0 && !isNotVisible;
-
-                            TexGenFlags newFlags = (TexGenFlags)0;
-
-                            if(isNotVisible)
-                            {
-                                newFlags |= TexGenFlags.NoRender;
-                            }
-
-                            if(isNoCollision)
-                            {
-                                newFlags |= TexGenFlags.NoCollision;
-                            }
-
-                            if(isNotCastingShadows)
-                            {
-                                newFlags |= TexGenFlags.NoCastShadows;
-                            }
-
-                            if(isWorldSpaceTexture)
-                            {
-                                newFlags |= TexGenFlags.WorldSpaceTexture;
-                            }
+                            brush.shape.texGens[i].RenderMaterial = brush.shape.materials[i];
                         }
                     }
                 }
             }
 
-            if(brush.Version == 2.0f)
+            if(brush.version == 2.0f)
             {
                 if(brush.CompareTag("EditorOnly"))
                 {
@@ -113,22 +75,22 @@ namespace RealtimeCSG.Components
                 }
             }
 
-            brush.Version = CSGBrush.CurrentVersion;
+            brush.version = CSGBrush.CURRENT_VERSION;
         }
 
         public static void UpgradeWhenNecessary(CSGOperation operation)
         {
-            if(operation.Version >= CSGOperation.CurrentVersion)
+            if(operation.version >= CSGOperation.CURRENT_VERSION)
             {
                 return;
             }
 
-            if(operation.Version < 1.0f)
+            if(operation.version < 1.0f)
             {
-                operation.Version = 1.0f;
+                operation.version = 1.0f;
             }
 
-            if(operation.Version == 1.0f)
+            if(operation.version == 1.0f)
             {
                 if(operation.CompareTag("EditorOnly"))
                 {
@@ -136,7 +98,7 @@ namespace RealtimeCSG.Components
                 }
             }
 
-            operation.Version = CSGOperation.CurrentVersion;
+            operation.version = CSGOperation.CURRENT_VERSION;
         }
     }
 #endif

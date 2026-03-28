@@ -896,7 +896,7 @@ namespace RealtimeCSG
             moveSnapVector.y = Mathf.Max(1.0f / 1024.0f, moveSnapVector.y);
             moveSnapVector.z = Mathf.Max(1.0f / 1024.0f, moveSnapVector.z);
 
-            scaleSnap = Mathf.Max(MathConstants.MinimumScale, scaleSnap);
+            scaleSnap = Mathf.Max(MathConstants.MINIMUM_SCALE, scaleSnap);
 
             CSGSettings.SnapMode              = snapMode;
             CSGSettings.SnapVector            = moveSnapVector;

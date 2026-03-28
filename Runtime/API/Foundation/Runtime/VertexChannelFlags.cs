@@ -11,25 +11,17 @@ namespace RealtimeCSG.Foundation
     public enum VertexChannelFlags : byte
     {
         /// <summary>When flag is set, includes vertex positions in the generated mesh. Required, always set.</summary>
-        Position = 0
-
-       ,
+        Position = 0,
 
         /// <summary>When flag is set, includes vertex tangents in the generated mesh.</summary>
-        Tangent = 2
-
-       ,
+        Tangent = 2,
 
         /// <summary>When flag is set, includes vertex normals in the generated mesh.</summary>
-        Normal = 4
-
-       ,
+        Normal = 4,
 
         /// <summary>When flag is set, includes vertex uv0 channel in the generated mesh.</summary>
         /// <remarks><note>Currently only one uv channel is supported, more might be added eventually.</note></remarks>
-        UV0 = 8
-
-       ,
+        UV0 = 8,
 
         /// <summary>All supported vertex channels</summary>
         All = Position | Tangent | Normal | UV0

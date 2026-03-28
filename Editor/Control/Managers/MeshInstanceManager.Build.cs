@@ -66,7 +66,7 @@ namespace InternalRealtimeCSG
                         continue;
                     }
 
-                    RenderSurfaceType surfaceType = GetSurfaceType(instance.MeshDescription, model.Settings);
+                    RenderSurfaceType surfaceType = GetSurfaceType(instance.meshDescription, model.settings);
 
                     if(surfaceType == RenderSurfaceType.ShadowOnly)
                     {
@@ -138,9 +138,9 @@ namespace InternalRealtimeCSG
                     child.gameObject.hideFlags = HideFlags.None;
                     child.transform.hideFlags  = HideFlags.None;
 
-                    if(child.SharedMesh && !UsesLightmapUVs(model))
+                    if(child.sharedMesh && !UsesLightmapUVs(model))
                     {
-                        MeshUtility.Optimize(child.SharedMesh);
+                        MeshUtility.Optimize(child.sharedMesh);
 
                         MeshCollider currentMeshCollider = child.gameObject.GetComponent<MeshCollider>();
 

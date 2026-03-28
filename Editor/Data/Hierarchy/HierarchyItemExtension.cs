@@ -8,34 +8,34 @@ namespace RealtimeCSG
     {
         internal static bool FindSiblingIndex(this HierarchyItem self, int siblingIndex, int searchTransformID, out int index)
         {
-            if(self.ChildNodes == null || self.ChildNodes.Length == 0)
+            if(self.childNodes == null || self.childNodes.Length == 0)
             {
                 index = 0;
 
                 return false;
             }
 
-            int last             = self.ChildNodes.Length - 1;
+            int last             = self.childNodes.Length - 1;
             int currentLoopCount = HierarchyItem.CurrentLoopCount;
 
-            if(self.ChildNodes[last].LastLoopCount != currentLoopCount)
+            if(self.childNodes[last].lastLoopCount != currentLoopCount)
             {
-                if(self.ChildNodes[last].Transform != null && self.ChildNodes[last].Transform)
+                if(self.childNodes[last].transform != null && self.childNodes[last].transform)
                 {
-                    self.ChildNodes[last].CachedTransformSiblingIndex =
-                        self.ChildNodes[last].Transform.GetSiblingIndex();
+                    self.childNodes[last].cachedTransformSiblingIndex =
+                        self.childNodes[last].transform.GetSiblingIndex();
                 }
                 else
                 {
-                    self.ChildNodes[last].CachedTransformSiblingIndex = -1;
+                    self.childNodes[last].cachedTransformSiblingIndex = -1;
                 }
 
-                self.ChildNodes[last].LastLoopCount = currentLoopCount;
+                self.childNodes[last].lastLoopCount = currentLoopCount;
             }
 
-            if(self.ChildNodes[last].CachedTransformSiblingIndex < siblingIndex)
+            if(self.childNodes[last].cachedTransformSiblingIndex < siblingIndex)
             {
-                index = self.ChildNodes.Length;
+                index = self.childNodes.Length;
 
                 return false;
             }
@@ -49,21 +49,21 @@ namespace RealtimeCSG
                 // calculate the midpoint for roughly equal partition
                 int imid = (imin + imax) / 2;
 
-                if(self.ChildNodes[imid].LastLoopCount != currentLoopCount)
+                if(self.childNodes[imid].lastLoopCount != currentLoopCount)
                 {
-                    if(self.ChildNodes[imid].Transform != null && self.ChildNodes[imid].Transform)
+                    if(self.childNodes[imid].transform != null && self.childNodes[imid].transform)
                     {
-                        self.ChildNodes[imid].CachedTransformSiblingIndex = self.ChildNodes[imid].Transform.GetSiblingIndex();
+                        self.childNodes[imid].cachedTransformSiblingIndex = self.childNodes[imid].transform.GetSiblingIndex();
                     }
                     else
                     {
-                        self.ChildNodes[imid].CachedTransformSiblingIndex = -1;
+                        self.childNodes[imid].cachedTransformSiblingIndex = -1;
                     }
 
-                    self.ChildNodes[imid].LastLoopCount = currentLoopCount;
+                    self.childNodes[imid].lastLoopCount = currentLoopCount;
                 }
 
-                int midKey2 = self.ChildNodes[imid].CachedTransformSiblingIndex;
+                int midKey2 = self.childNodes[imid].cachedTransformSiblingIndex;
 
                 // determine which subarray to search
                 if(midKey2 < siblingIndex)
@@ -79,33 +79,33 @@ namespace RealtimeCSG
 
                         index = imid;
 
-                        return searchTransformID == self.ChildNodes[imid].TransformID;
+                        return searchTransformID == self.childNodes[imid].transformID;
                     }
 
                     if(imid > 0)
                     {
-                        if(self.ChildNodes[imid - 1].LastLoopCount != currentLoopCount)
+                        if(self.childNodes[imid - 1].lastLoopCount != currentLoopCount)
                         {
-                            if(self.ChildNodes[imid - 1].Transform != null && self.ChildNodes[imid - 1].Transform)
+                            if(self.childNodes[imid - 1].transform != null && self.childNodes[imid - 1].transform)
                             {
-                                self.ChildNodes[imid - 1].CachedTransformSiblingIndex = self.ChildNodes[imid - 1].Transform.GetSiblingIndex();
+                                self.childNodes[imid - 1].cachedTransformSiblingIndex = self.childNodes[imid - 1].transform.GetSiblingIndex();
                             }
                             else
                             {
-                                self.ChildNodes[imid - 1].CachedTransformSiblingIndex = -1;
+                                self.childNodes[imid - 1].cachedTransformSiblingIndex = -1;
                             }
 
-                            self.ChildNodes[imid - 1].LastLoopCount = currentLoopCount;
+                            self.childNodes[imid - 1].lastLoopCount = currentLoopCount;
                         }
 
-                        int midKey1 = self.ChildNodes[imid - 1].CachedTransformSiblingIndex;
+                        int midKey1 = self.childNodes[imid - 1].cachedTransformSiblingIndex;
 
                         if(midKey1 < siblingIndex)
                         {
                             // key found at index imid
                             index = imid;
 
-                            return searchTransformID == self.ChildNodes[imid].TransformID;
+                            return searchTransformID == self.childNodes[imid].transformID;
                         }
                     }
 
@@ -121,16 +121,16 @@ namespace RealtimeCSG
 
         internal static bool FindSiblingIndex(this HierarchyItem self, HierarchyItem item, out int index)
         {
-            if(self.ChildNodes == null || self.ChildNodes.Length == 0)
+            if(self.childNodes == null || self.childNodes.Length == 0)
             {
                 index = 0;
 
                 return false;
             }
 
-            for(int i = 0; i < self.ChildNodes.Length; i++)
+            for(int i = 0; i < self.childNodes.Length; i++)
             {
-                if(item != self.ChildNodes[i])
+                if(item != self.childNodes[i])
                 {
                     continue;
                 }
@@ -155,27 +155,27 @@ namespace RealtimeCSG
 
             int currentLoopCount = HierarchyItem.CurrentLoopCount;
 
-            if(item.LastLoopCount != currentLoopCount)
+            if(item.lastLoopCount != currentLoopCount)
             {
-                item.CachedTransformSiblingIndex = item.Transform.GetSiblingIndex();
-                item.LastLoopCount               = currentLoopCount;
+                item.cachedTransformSiblingIndex = item.transform.GetSiblingIndex();
+                item.lastLoopCount               = currentLoopCount;
             }
 
-            if(self.FindSiblingIndex(item.CachedTransformSiblingIndex, item.TransformID, out index))
+            if(self.FindSiblingIndex(item.cachedTransformSiblingIndex, item.transformID, out index))
             {
                 return false;
             }
 
             // make sure item is added in the correct position within the array
-            UnityEditor.ArrayUtility.Insert(ref self.ChildNodes, index, item);
-            item.SiblingIndex = index;
+            UnityEditor.ArrayUtility.Insert(ref self.childNodes, index, item);
+            item.siblingIndex = index;
 
             if(self is ParentNodeData parentData)
             {
-                parentData.ChildrenModified = true;
+                parentData.childrenModified = true;
             }
 
-            Debug.Assert(self.ChildNodes[index] == item);
+            Debug.Assert(self.childNodes[index] == item);
 
             return true;
         }
@@ -189,16 +189,16 @@ namespace RealtimeCSG
             }
 
             // make sure item is removed from the array
-            UnityEditor.ArrayUtility.RemoveAt(ref self.ChildNodes, index);
+            UnityEditor.ArrayUtility.RemoveAt(ref self.childNodes, index);
 
             return true;
         }
 
         public static void Init(this HierarchyItem self, CSGNode node, int nodeID)
         {
-            self.Transform   = node.transform;
-            self.TransformID = node.transform.GetInstanceID();
-            self.NodeID      = nodeID;
+            self.transform   = node.transform;
+            self.transformID = node.transform.GetInstanceID();
+            self.nodeID      = nodeID;
         }
     }
 }

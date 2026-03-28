@@ -398,26 +398,26 @@ namespace RealtimeCSG
 
                         int surfaceIndex = selectedBrushSurfaces[i].surfaceIndex;
 
-                        if(surfaceIndex >= brush.Shape.Surfaces.Length)
+                        if(surfaceIndex >= brush.shape.surfaces.Length)
                         {
                             Debug.LogWarning("surface_index >= brush.Shape.Surfaces.Length");
 
                             continue;
                         }
 
-                        int texGenIndex = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
+                        int texGenIndex = brush.shape.surfaces[surfaceIndex].TexGenIndex;
 
-                        if(texGenIndex >= brush.Shape.TexGens.Length)
+                        if(texGenIndex >= brush.shape.texGens.Length)
                         {
                             Debug.LogWarning("texGen_index >= brush.Shape.TexGens.Length");
 
                             continue;
                         }
 
-                        CSGModel model = brush.ChildData.Model;
+                        CSGModel model = brush.childData.model;
 
                         Material    foundMaterial;
-                        TexGenFlags texGenFlags = brush.Shape.TexGenFlags[texGenIndex];
+                        TexGenFlags texGenFlags = brush.shape.texGenFlags[texGenIndex];
 
                         if(model && !model.IsRenderable)
                         {
@@ -454,7 +454,7 @@ namespace RealtimeCSG
                         }
                         else
                         {
-                            Material surfaceMaterial = brush.Shape.TexGens[texGenIndex].RenderMaterial;
+                            Material surfaceMaterial = brush.shape.texGens[texGenIndex].RenderMaterial;
 
                             if(!foundHelperMaterial)
                             {
@@ -509,21 +509,21 @@ namespace RealtimeCSG
 
                         if(!haveTexgen)
                         {
-                            currentTexGen = brush.Shape.TexGens[texGenIndex];
+                            currentTexGen = brush.shape.texGens[texGenIndex];
                             haveTexgen    = true;
                         }
                         else
                         {
                             if(!multipleScaleX || !multipleScaleY)
                             {
-                                Vector2 scale = brush.Shape.TexGens[texGenIndex].Scale;
+                                Vector2 scale = brush.shape.texGens[texGenIndex].Scale;
                                 multipleScaleX = multipleScaleX || currentTexGen.Scale.x != scale.x;
                                 multipleScaleY = multipleScaleY || currentTexGen.Scale.y != scale.y;
                             }
 
                             if(!multipleTranslationX || !multipleTranslationY)
                             {
-                                Vector2 translation = brush.Shape.TexGens[texGenIndex].Translation;
+                                Vector2 translation = brush.shape.texGens[texGenIndex].Translation;
 
                                 multipleTranslationX = multipleTranslationX || currentTexGen.Translation.x != translation.x;
                                 multipleTranslationY = multipleTranslationY || currentTexGen.Translation.y != translation.y;
@@ -531,7 +531,7 @@ namespace RealtimeCSG
 
                             if(!multipleRotationAngle)
                             {
-                                float rotationAngle = brush.Shape.TexGens[texGenIndex].RotationAngle;
+                                float rotationAngle = brush.shape.texGens[texGenIndex].RotationAngle;
                                 multipleRotationAngle = currentTexGen.RotationAngle != rotationAngle;
                             }
                         }

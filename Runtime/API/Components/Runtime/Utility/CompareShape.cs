@@ -8,36 +8,34 @@ namespace RealtimeCSG
     [Serializable]
     public sealed class CompareShape
     {
-        public Surface[] prevSurfaces = new Surface[0];
-        public TexGen[] prevTexGens = new TexGen[0];
-        public TexGenFlags[] prevTexGenFlags = new TexGenFlags[0];
+        public Surface[] prevSurfaces = Array.Empty<Surface>();
+        public TexGen[] prevTexGens = Array.Empty<TexGen>();
+        public TexGenFlags[] prevTexGenFlags = Array.Empty<TexGenFlags>();
 
         public void EnsureInitialized(Shape shape)
         {
-            if(prevTexGens == null ||
-               prevTexGens.Length != shape.TexGens.Length)
+            if(prevTexGens == null || prevTexGens.Length != shape.texGens.Length)
             {
-                prevTexGens     = new TexGen[shape.TexGens.Length];
-                prevTexGenFlags = new TexGenFlags[shape.TexGens.Length];
+                prevTexGens     = new TexGen[shape.texGens.Length];
+                prevTexGenFlags = new TexGenFlags[shape.texGens.Length];
             }
 
-            Array.Copy(shape.TexGens, prevTexGens, shape.TexGens.Length);
-            Array.Copy(shape.TexGenFlags, prevTexGenFlags, shape.TexGenFlags.Length);
+            Array.Copy(shape.texGens, prevTexGens, shape.texGens.Length);
+            Array.Copy(shape.texGenFlags, prevTexGenFlags, shape.texGenFlags.Length);
 
-            if(prevSurfaces == null ||
-               prevSurfaces.Length != shape.Surfaces.Length)
+            if(prevSurfaces == null || prevSurfaces.Length != shape.surfaces.Length)
             {
-                prevSurfaces = new Surface[shape.Surfaces.Length];
+                prevSurfaces = new Surface[shape.surfaces.Length];
             }
 
-            Array.Copy(shape.Surfaces, prevSurfaces, shape.Surfaces.Length);
+            Array.Copy(shape.surfaces, prevSurfaces, shape.surfaces.Length);
         }
 
         public void Reset()
         {
-            prevSurfaces    = new Surface[0];
-            prevTexGens     = new TexGen[0];
-            prevTexGenFlags = new TexGenFlags[0];
+            prevSurfaces    = Array.Empty<Surface>();
+            prevTexGens     = Array.Empty<TexGen>();
+            prevTexGenFlags = Array.Empty<TexGenFlags>();
         }
     }
 #endif

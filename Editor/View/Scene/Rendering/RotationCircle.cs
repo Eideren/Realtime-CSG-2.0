@@ -38,7 +38,7 @@ namespace RealtimeCSG
 
         public void Initialize(Transform transform, Surface surface, Vector3 centerPoint)
         {
-            rotateSurfaceNormal  = transform.TransformVector(surface.Plane.normal);
+            rotateSurfaceNormal  = transform.TransformVector(surface.Plane.Normal);
             rotateSurfaceTangent = transform.TransformVector(surface.Tangent);
             rotateCenterPoint    = centerPoint;
             Clear();

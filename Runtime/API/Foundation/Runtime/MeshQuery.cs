@@ -16,8 +16,8 @@ namespace RealtimeCSG.Foundation
     [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct MeshQuery
     {
-        private const int BitShift = 24;
-        private const uint BitMask = (uint)((uint)127 << BitShift);
+        private const int BIT_SHIFT = 24;
+        private const uint BIT_MASK = (uint)127 << BIT_SHIFT;
 
         /// <summary>Constructs a <see cref="RealtimeCSG.Foundation.MeshQuery"/> to use to specify which surfaces should be combined into meshes, and should they be subdivided by a particular layer parameter index.</summary>
         /// <param name="query">Which layer combination would we like to look for and generate a mesh with.</param>
@@ -25,19 +25,15 @@ namespace RealtimeCSG.Foundation
         /// <param name="parameterIndex">Which parameter index we use to, for example, differentiate between different [UnityEngine.Material](https://docs.unity3d.com/ScriptReference/Material.html)s</param>
         /// <param name="vertexChannels">Which vertex channels need to be used for the meshes we'd like to generate.</param>
         /// <seealso cref="RealtimeCSG.Foundation.SurfaceLayers" />
-        public MeshQuery(
-            LayerUsageFlags query, LayerUsageFlags mask = LayerUsageFlags.None
-          , LayerParameterIndex parameterIndex = LayerParameterIndex.None
-          , VertexChannelFlags vertexChannels = VertexChannelFlags.Position
-        )
+        public MeshQuery(LayerUsageFlags query, LayerUsageFlags mask = LayerUsageFlags.None, LayerParameterIndex parameterIndex = LayerParameterIndex.None, VertexChannelFlags vertexChannels = VertexChannelFlags.Position)
         {
             if(mask == LayerUsageFlags.None)
             {
                 mask = query;
             }
 
-            layers          = ((uint)query & ~BitMask) | ((uint)parameterIndex << BitShift);
-            maskAndChannels = ((uint)mask & ~BitMask) | ((uint)vertexChannels << BitShift);
+            layers          = ((uint)query & ~BIT_MASK) | ((uint)parameterIndex << BIT_SHIFT);
+            maskAndChannels = ((uint)mask & ~BIT_MASK) | ((uint)vertexChannels << BIT_SHIFT);
         }
 
         [SerializeField]
@@ -51,8 +47,8 @@ namespace RealtimeCSG.Foundation
         /// <seealso cref="RealtimeCSG.Foundation.BrushMesh.Polygon" />
         public LayerUsageFlags LayerQuery
         {
-            get => (LayerUsageFlags)((uint)layers & ~BitMask);
-            set => layers = ((uint)value & ~BitMask) | ((uint)layers & BitMask);
+            get => (LayerUsageFlags)(layers & ~BIT_MASK);
+            set => layers = ((uint)value & ~BIT_MASK) | (layers & BIT_MASK);
         }
 
         /// <value>What layers do we ignore, and what layers do we include in our comparison</value>
@@ -60,8 +56,8 @@ namespace RealtimeCSG.Foundation
         /// <seealso cref="RealtimeCSG.Foundation.BrushMesh.Polygon" />
         public LayerUsageFlags LayerQueryMask
         {
-            get => (LayerUsageFlags)((uint)maskAndChannels & ~BitMask);
-            set => maskAndChannels = ((uint)value & ~BitMask) | ((uint)maskAndChannels & BitMask);
+            get => (LayerUsageFlags)(maskAndChannels & ~BIT_MASK);
+            set => maskAndChannels = ((uint)value & ~BIT_MASK) | (maskAndChannels & BIT_MASK);
         }
 
         /// <value>Which parameter index we use to, for example, differentiate between different [UnityEngine.Material](https://docs.unity3d.com/ScriptReference/Material.html)s.</value>
@@ -70,21 +66,21 @@ namespace RealtimeCSG.Foundation
         /// <seealso cref="RealtimeCSG.Foundation.BrushMesh.Polygon" />
         public LayerParameterIndex LayerParameterIndex
         {
-            get => (LayerParameterIndex)(((uint)layers & BitMask) >> BitShift);
-            set => layers = ((uint)layers & ~BitMask) | ((uint)value << BitShift);
+            get => (LayerParameterIndex)((layers & BIT_MASK) >> BIT_SHIFT);
+            set => layers = (layers & ~BIT_MASK) | ((uint)value << BIT_SHIFT);
         }
 
         /// <value>Which vertex channels need to be used for the meshes we'd like to generate</value>
         /// <seealso cref="RealtimeCSG.Foundation.CSGTree.GetMeshDescriptions" />
         public VertexChannelFlags UsedVertexChannels
         {
-            get => (VertexChannelFlags)(((uint)maskAndChannels & BitMask) >> BitShift);
-            set => maskAndChannels = ((uint)maskAndChannels & ~BitMask) | ((uint)value << BitShift);
+            get => (VertexChannelFlags)((maskAndChannels & BIT_MASK) >> BIT_SHIFT);
+            set => maskAndChannels = (maskAndChannels & ~BIT_MASK) | ((uint)value << BIT_SHIFT);
         }
 
         public override string ToString()
         {
-            return string.Format("({0}, {1})", layers, maskAndChannels);
+            return $"({layers}, {maskAndChannels})";
         }
 
 #region Comparison
@@ -104,12 +100,10 @@ namespace RealtimeCSG.Foundation
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override bool Equals(object obj)
         {
-            if(!(obj is MeshQuery))
+            if(!(obj is MeshQuery other))
             {
                 return false;
             }
-
-            MeshQuery other = (MeshQuery)obj;
 
             return layers == other.layers && maskAndChannels == other.maskAndChannels;
         }
@@ -130,9 +124,9 @@ namespace RealtimeCSG.Foundation
         public override int GetHashCode()
         {
             int hashCode = -1385006369;
-            hashCode = hashCode * -1521134295;
-            hashCode = hashCode * -1521134295 + (int)layers;
-            hashCode = hashCode * -1521134295 + (int)maskAndChannels;
+            hashCode *= -1521134295;
+            hashCode =  hashCode * -1521134295 + (int)layers;
+            hashCode =  hashCode * -1521134295 + (int)maskAndChannels;
 
             return hashCode;
         }

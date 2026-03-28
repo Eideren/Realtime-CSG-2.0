@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace InternalRealtimeCSG
 {
-    internal sealed class CSGSceneManagerInstance : CSGSceneManagerInterface
+    internal sealed class CSGSceneManagerInstance : ICSGSceneManager
     {
         public void OnCreated(GeneratedMeshes container)
         {

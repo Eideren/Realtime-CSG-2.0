@@ -30,10 +30,10 @@ namespace RealtimeCSG.Legacy
         /// <returns>Transformation matrix from local brush to plane space</returns>
         public Matrix4x4 GenerateLocalBrushSpaceToPlaneSpaceMatrix()
         {
-            Vector3 normal       = Plane.normal;
+            Vector3 normal       = Plane.Normal;
             Vector3 tangent      = Tangent;
             Vector3 biNormal     = BiNormal;
-            Vector3 pointOnPlane = Plane.pointOnPlane;
+            Vector3 pointOnPlane = Plane.PointOnPlane;
 
             return new Matrix4x4
             {
@@ -58,7 +58,7 @@ namespace RealtimeCSG.Legacy
 
         public override string ToString()
         {
-            return string.Format("Plane: {0} Tangent: {1} BiNormal: {2} TexGenIndex: {3}", Plane, Tangent, BiNormal, TexGenIndex);
+            return $"Plane: {Plane} Tangent: {Tangent} BiNormal: {BiNormal} TexGenIndex: {TexGenIndex}";
         }
     }
 }

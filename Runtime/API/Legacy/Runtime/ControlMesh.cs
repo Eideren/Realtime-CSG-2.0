@@ -1,7 +1,6 @@
-﻿using InternalRealtimeCSG;
-using System;
+﻿using System;
+using InternalRealtimeCSG;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace RealtimeCSG.Legacy
 {
@@ -20,23 +19,23 @@ namespace RealtimeCSG.Legacy
         /// <param name="vertexIndex">The index to a vertex in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.HalfEdge"/> belongs to.</param>
         public HalfEdge(short polygonIndex, int twinIndex, short vertexIndex, bool hardEdge = true)
         {
-            TwinIndex    = twinIndex;
-            PolygonIndex = polygonIndex;
-            HardEdge     = hardEdge;
-            VertexIndex  = vertexIndex;
+            this.twinIndex    = twinIndex;
+            this.polygonIndex = polygonIndex;
+            this.hardEdge     = hardEdge;
+            this.vertexIndex  = vertexIndex;
         }
 
         /// <value>Index to the twin edge <see cref="RealtimeCSG.Legacy.HalfEdge"/> in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.HalfEdge"/> belongs to.</value>
-        [FormerlySerializedAs("twinIndex")] public int TwinIndex;
+        public int twinIndex;
 
         /// <value>Index to the <see cref="RealtimeCSG.Legacy.Polygon"/> in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.HalfEdge"/> belongs to.</value>
-        [FormerlySerializedAs("polygonIndex")] public short PolygonIndex;
+        public short polygonIndex;
 
         /// <value>Is this edge considered an internal or external (hard) edge</value>
-        [FormerlySerializedAs("hardEdge")] public bool HardEdge;
+        public bool hardEdge;
 
         /// <value>Index to a vertex in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.HalfEdge"/> belongs to.</value>
-        [FormerlySerializedAs("vertexIndex")] public short VertexIndex;
+        public short vertexIndex;
     }
 
     /// <summary>A <see cref="RealtimeCSG.Legacy.Polygon"/> of a <see cref="RealtimeCSG.Legacy.ControlMesh"/>.</summary>
@@ -55,17 +54,15 @@ namespace RealtimeCSG.Legacy
         /// <param name="texGenIndex">An index to the <see cref="RealtimeCSG.Legacy.TexGen"/> in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> that this <see cref="RealtimeCSG.Legacy.Polygon"/> uses.</param>
         public Polygon(int[] edges, int texGenIndex)
         {
-            EdgeIndices = edges;
-            TexGenIndex = texGenIndex;
+            edgeIndices      = edges;
+            this.texGenIndex = texGenIndex;
         }
 
         /// <value>indices to <see cref="RealtimeCSG.Legacy.HalfEdge"/>s in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.Polygon"/> belongs to.</value>
-        [FormerlySerializedAs("edgeIndices")]
-        public int[] EdgeIndices;
+        public int[] edgeIndices;
 
         /// <value>Index to the <see cref="RealtimeCSG.Legacy.TexGen"/> in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> that this <see cref="RealtimeCSG.Legacy.Polygon"/> uses.</value>
-        [FormerlySerializedAs("surfaceIndex"), FormerlySerializedAs("texGenIndex")]
-        public int TexGenIndex;
+        public int texGenIndex;
     }
 
     /// <summary>Defines the shape of a convex brush that can be used in CSG operations.</summary>
@@ -80,14 +77,13 @@ namespace RealtimeCSG.Legacy
     public sealed class ControlMesh
     {
         /// <value>Vertices that are used by this <see cref="RealtimeCSG.Legacy.ControlMesh"/></value>
-        [FormerlySerializedAs("points"), FormerlySerializedAs("vertices")]
-        public Vector3[] Vertices;
+        public Vector3[] vertices;
 
         /// <value><see cref="RealtimeCSG.Legacy.HalfEdge"/>s that are used by this <see cref="RealtimeCSG.Legacy.ControlMesh"/></value>
-        [FormerlySerializedAs("edges")] public HalfEdge[] Edges;
+        public HalfEdge[] edges;
 
         /// <value><see cref="RealtimeCSG.Legacy.Polygon"/>s that are used by this <see cref="RealtimeCSG.Legacy.ControlMesh"/></value>
-        [FormerlySerializedAs("polygons")] public Polygon[] Polygons;
+        public Polygon[] polygons;
 
         /// <value><b>true</b> if valid, <b>false</b> if not.</value>
         public bool Valid
@@ -99,7 +95,7 @@ namespace RealtimeCSG.Legacy
         internal bool valid;
 
         /// <value>Every time this ControlMesh changes, this value can be increased to easily detect modifications over time.</value>
-        public int Generation = 0;
+        public int generation;
 
         /// <summary>Create an uninitialized <see cref="RealtimeCSG.Legacy.ControlMesh"/></summary>
         public ControlMesh()
@@ -113,20 +109,20 @@ namespace RealtimeCSG.Legacy
             CopyFrom(other);
         }
 
-        /// <summary>Increase the <see cref="RealtimeCSG.Legacy.ControlMesh.Generation"/> of this <see cref="RealtimeCSG.Legacy.ControlMesh"/> so that we can detect that its been changed.</summary>
+        /// <summary>Increase the <see cref="generation"/> of this <see cref="RealtimeCSG.Legacy.ControlMesh"/> so that we can detect that its been changed.</summary>
         public void SetDirty()
         {
-            Generation++;
+            generation++;
         }
 
         /// <summary>Clear the contents of this <see cref="RealtimeCSG.Legacy.ControlMesh"/>.</summary>
         public void Reset()
         {
-            Vertices   = null;
-            Edges      = null;
-            Polygons   = null;
+            vertices   = null;
+            edges      = null;
+            polygons   = null;
             valid      = false;
-            Generation = 0;
+            generation = 0;
         }
 
         /// <summary>Copy the contents of another <see cref="RealtimeCSG.Legacy.ControlMesh"/> to this <see cref="RealtimeCSG.Legacy.ControlMesh"/>.</summary>
@@ -140,61 +136,60 @@ namespace RealtimeCSG.Legacy
                 return;
             }
 
-            if(other.Vertices != null)
+            if(other.vertices != null)
             {
-                if(Vertices == null || Vertices.Length != other.Vertices.Length)
+                if(vertices == null || vertices.Length != other.vertices.Length)
                 {
-                    Vertices = new Vector3[other.Vertices.Length];
+                    vertices = new Vector3[other.vertices.Length];
                 }
 
-                Array.Copy(other.Vertices, Vertices, other.Vertices.Length);
+                Array.Copy(other.vertices, vertices, other.vertices.Length);
             }
             else
             {
-                Vertices = null;
+                vertices = null;
             }
 
-            if(other.Edges != null)
+            if(other.edges != null)
             {
-                if(Edges == null || Edges.Length != other.Edges.Length)
+                if(edges == null || edges.Length != other.edges.Length)
                 {
-                    Edges = new HalfEdge[other.Edges.Length];
+                    edges = new HalfEdge[other.edges.Length];
                 }
 
-                Array.Copy(other.Edges, Edges, other.Edges.Length);
+                Array.Copy(other.edges, edges, other.edges.Length);
             }
             else
             {
-                Edges = null;
+                edges = null;
             }
 
-            if(other.Polygons != null)
+            if(other.polygons != null)
             {
-                if(Polygons == null || Polygons.Length != other.Polygons.Length)
+                if(polygons == null || polygons.Length != other.polygons.Length)
                 {
-                    Polygons = new Polygon[other.Polygons.Length];
+                    polygons = new Polygon[other.polygons.Length];
                 }
 
-                for(int p = 0; p < other.Polygons.Length; p++)
+                for(int p = 0; p < other.polygons.Length; p++)
                 {
-                    if(other.Polygons[p].EdgeIndices == null ||
-                       other.Polygons[p].EdgeIndices.Length == 0)
+                    if(other.polygons[p].edgeIndices == null || other.polygons[p].edgeIndices.Length == 0)
                     {
                         continue;
                     }
 
-                    int[] newEdges = new int[other.Polygons[p].EdgeIndices.Length];
-                    Array.Copy(other.Polygons[p].EdgeIndices, newEdges, other.Polygons[p].EdgeIndices.Length);
-                    Polygons[p] = new Polygon(newEdges, other.Polygons[p].TexGenIndex);
+                    int[] newEdges = new int[other.polygons[p].edgeIndices.Length];
+                    Array.Copy(other.polygons[p].edgeIndices, newEdges, other.polygons[p].edgeIndices.Length);
+                    polygons[p] = new Polygon(newEdges, other.polygons[p].texGenIndex);
                 }
             }
             else
             {
-                Polygons = null;
+                polygons = null;
             }
 
             valid      = other.valid;
-            Generation = other.Generation;
+            generation = other.generation;
         }
 
         /// <summary>Return a copy of this <see cref="RealtimeCSG.Legacy.ControlMesh"/>.</summary>
@@ -209,19 +204,19 @@ namespace RealtimeCSG.Legacy
         /// <returns>A vertex that belongs to a <see cref="RealtimeCSG.Legacy.HalfEdge"/>. If the <paramref name="halfEdgeIndex"/> was invalid it returns a zero vertex.</returns>
         public Vector3 GetVertex(int halfEdgeIndex)
         {
-            if(halfEdgeIndex < 0 || halfEdgeIndex >= Edges.Length)
+            if(halfEdgeIndex < 0 || halfEdgeIndex >= edges.Length)
             {
                 return MathConstants.zeroVector3;
             }
 
-            short vertexIndex = Edges[halfEdgeIndex].VertexIndex;
+            short vertexIndex = edges[halfEdgeIndex].vertexIndex;
 
-            if(vertexIndex < 0 || vertexIndex >= Vertices.Length)
+            if(vertexIndex < 0 || vertexIndex >= vertices.Length)
             {
                 return MathConstants.zeroVector3;
             }
 
-            return Vertices[vertexIndex];
+            return vertices[vertexIndex];
         }
 
         /// <summary>Returns the vertices for the given array of indices to <see cref="RealtimeCSG.Legacy.HalfEdge"/>s.</summary>
@@ -229,32 +224,32 @@ namespace RealtimeCSG.Legacy
         /// <returns>An array of vertices</returns>
         public Vector3[] GetVertices(int[] halfEdgeIndices)
         {
-            Vector3[] vertices = new Vector3[halfEdgeIndices.Length];
+            Vector3[] verts = new Vector3[halfEdgeIndices.Length];
 
             for(int i = 0; i < halfEdgeIndices.Length; i++)
             {
                 int halfEdgeIndex = halfEdgeIndices[i];
 
-                if(halfEdgeIndex < 0 || halfEdgeIndex >= Edges.Length)
+                if(halfEdgeIndex < 0 || halfEdgeIndex >= edges.Length)
                 {
-                    vertices[i] = MathConstants.zeroVector3;
+                    verts[i] = MathConstants.zeroVector3;
 
                     continue;
                 }
 
-                short vertexIndex = Edges[halfEdgeIndex].VertexIndex;
+                short vertexIndex = edges[halfEdgeIndex].vertexIndex;
 
-                if(vertexIndex < 0 || vertexIndex >= Vertices.Length)
+                if(vertexIndex < 0 || vertexIndex >= vertices.Length)
                 {
-                    vertices[i] = MathConstants.zeroVector3;
+                    verts[i] = MathConstants.zeroVector3;
 
                     continue;
                 }
 
-                vertices[i] = Vertices[vertexIndex];
+                verts[i] = vertices[vertexIndex];
             }
 
-            return vertices;
+            return verts;
         }
 
         /// <summary>Get the vertex that is associated with the given <see cref="RealtimeCSG.Legacy.HalfEdge"/></summary>
@@ -262,7 +257,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A vertex</returns>
         public Vector3 GetVertex(ref HalfEdge halfEdge)
         {
-            return Vertices[halfEdge.VertexIndex];
+            return vertices[halfEdge.vertexIndex];
         }
 
         /// <summary>Get the vertex index that is associated with the given <see cref="RealtimeCSG.Legacy.HalfEdge"/> that is found using <paramref name="halfEdgeIndex"/></summary>
@@ -270,7 +265,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a vertex in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public short GetVertexIndex(int halfEdgeIndex)
         {
-            return Edges[halfEdgeIndex].VertexIndex;
+            return edges[halfEdgeIndex].vertexIndex;
         }
 
         /// <summary>Get the vertex index that is associated with the given <see cref="RealtimeCSG.Legacy.HalfEdge"/></summary>
@@ -278,7 +273,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a vertex in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public short GetVertexIndex(ref HalfEdge halfEdge)
         {
-            return halfEdge.VertexIndex;
+            return halfEdge.vertexIndex;
         }
 
         /// <summary>Get the vertex of the twin of the given <see cref="RealtimeCSG.Legacy.HalfEdge"/></summary>
@@ -286,7 +281,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A vertex in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public Vector3 GetTwinEdgeVertex(ref HalfEdge halfEdge)
         {
-            return Vertices[Edges[halfEdge.TwinIndex].VertexIndex];
+            return vertices[edges[halfEdge.twinIndex].vertexIndex];
         }
 
         /// <summary>Get the vertex of the twin of the given <see cref="RealtimeCSG.Legacy.HalfEdge"/> that is found using <paramref name="halfEdgeIndex"/></summary>
@@ -294,7 +289,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A vertex in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public Vector3 GetTwinEdgeVertex(int halfEdgeIndex)
         {
-            return Vertices[Edges[Edges[halfEdgeIndex].TwinIndex].VertexIndex];
+            return vertices[edges[edges[halfEdgeIndex].twinIndex].vertexIndex];
         }
 
         /// <summary>Get the index to the vertex of the twin of the given <see cref="RealtimeCSG.Legacy.HalfEdge"/></summary>
@@ -302,7 +297,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a vertex in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public short GetTwinEdgeVertexIndex(ref HalfEdge halfEdge)
         {
-            return Edges[halfEdge.TwinIndex].VertexIndex;
+            return edges[halfEdge.twinIndex].vertexIndex;
         }
 
         /// <summary>Get the index to the vertex of the twin of the given <see cref="RealtimeCSG.Legacy.HalfEdge"/> that is found using <paramref name="halfEdgeIndex"/></summary>
@@ -310,7 +305,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a vertex in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public short GetTwinEdgeVertexIndex(int halfEdgeIndex)
         {
-            return Edges[Edges[halfEdgeIndex].TwinIndex].VertexIndex;
+            return edges[edges[halfEdgeIndex].twinIndex].vertexIndex;
         }
 
         /// <summary>Get the index to twin <see cref="RealtimeCSG.Legacy.HalfEdge"/> of the given <see cref="RealtimeCSG.Legacy.HalfEdge"/></summary>
@@ -318,7 +313,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a <see cref="RealtimeCSG.Legacy.HalfEdge"/> in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public int GetTwinEdgeIndex(ref HalfEdge halfEdge)
         {
-            return halfEdge.TwinIndex;
+            return halfEdge.twinIndex;
         }
 
         /// <summary>Get the index to twin <see cref="RealtimeCSG.Legacy.HalfEdge"/> of the given <see cref="RealtimeCSG.Legacy.HalfEdge"/> that is found using <paramref name="halfEdgeIndex"/></summary>
@@ -326,7 +321,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a <see cref="RealtimeCSG.Legacy.HalfEdge"/> in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public int GetTwinEdgeIndex(int halfEdgeIndex)
         {
-            return Edges[halfEdgeIndex].TwinIndex;
+            return edges[halfEdgeIndex].twinIndex;
         }
 
         /// <summary>Get the index to the polygon of the twin <see cref="RealtimeCSG.Legacy.HalfEdge"/> of the given <see cref="RealtimeCSG.Legacy.HalfEdge"/> that is found using <paramref name="halfEdgeIndex"/></summary>
@@ -334,7 +329,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a <see cref="RealtimeCSG.Legacy.Polygon"/> in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public short GetTwinEdgePolygonIndex(int halfEdgeIndex)
         {
-            return Edges[Edges[halfEdgeIndex].TwinIndex].PolygonIndex;
+            return edges[edges[halfEdgeIndex].twinIndex].polygonIndex;
         }
 
         /// <summary>Get the index to the polygon of the given <see cref="RealtimeCSG.Legacy.HalfEdge"/> that is found using <paramref name="halfEdgeIndex"/></summary>
@@ -342,7 +337,7 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a <see cref="RealtimeCSG.Legacy.Polygon"/> in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public short GetEdgePolygonIndex(int halfEdgeIndex)
         {
-            return Edges[halfEdgeIndex].PolygonIndex;
+            return edges[halfEdgeIndex].polygonIndex;
         }
 
         /// <summary>Get the next index to a <see cref="RealtimeCSG.Legacy.HalfEdge"/> around the vertex associated with the <see cref="RealtimeCSG.Legacy.HalfEdge"/> found with the given <paramref name="halfEdgeIndex"/></summary>
@@ -358,15 +353,15 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a <see cref="RealtimeCSG.Legacy.HalfEdge"/> in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public int GetPrevEdgeIndex(int halfEdgeIndex)
         {
-            HalfEdge edge         = Edges[halfEdgeIndex];
-            short    polygonIndex = edge.PolygonIndex;
+            HalfEdge edge         = edges[halfEdgeIndex];
+            short    polygonIndex = edge.polygonIndex;
 
-            if(polygonIndex < 0 || polygonIndex >= Polygons.Length)
+            if(polygonIndex < 0 || polygonIndex >= polygons.Length)
             {
                 return -1;
             }
 
-            int[] edgeIndices = Polygons[polygonIndex].EdgeIndices;
+            int[] edgeIndices = polygons[polygonIndex].edgeIndices;
 
             for(int i = 1; i < edgeIndices.Length; i++)
             {
@@ -384,15 +379,15 @@ namespace RealtimeCSG.Legacy
         /// <returns>A index to a <see cref="RealtimeCSG.Legacy.HalfEdge"/> in this <see cref="RealtimeCSG.Legacy.ControlMesh"/></returns>
         public int GetNextEdgeIndex(int halfEdgeIndex)
         {
-            HalfEdge edge         = Edges[halfEdgeIndex];
-            short    polygonIndex = edge.PolygonIndex;
+            HalfEdge edge         = edges[halfEdgeIndex];
+            short    polygonIndex = edge.polygonIndex;
 
-            if(polygonIndex < 0 || polygonIndex >= Polygons.Length)
+            if(polygonIndex < 0 || polygonIndex >= polygons.Length)
             {
                 return -1;
             }
 
-            int[] edgeIndices = Polygons[polygonIndex].EdgeIndices;
+            int[] edgeIndices = polygons[polygonIndex].edgeIndices;
 
             for(int i = 0; i < edgeIndices.Length - 1; i++)
             {

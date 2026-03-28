@@ -73,32 +73,32 @@ namespace RealtimeCSG
         {
             UpdateTransforms(brush);
 
-            ControlMesh controlMesh = brush.ControlMesh;
+            ControlMesh controlMesh = brush.controlMesh;
 
             if(controlMesh == null)
             {
-                brush.ControlMesh = new ControlMesh();
-                controlMesh       = brush.ControlMesh;
+                brush.controlMesh = new ControlMesh();
+                controlMesh       = brush.controlMesh;
             }
 
-            if(controlMesh.Vertices == null)
+            if(controlMesh.vertices == null)
             {
-                controlMesh.Vertices = Array.Empty<Vector3>();
+                controlMesh.vertices = Array.Empty<Vector3>();
             }
 
-            if(controlMesh.Edges == null)
+            if(controlMesh.edges == null)
             {
-                controlMesh.Edges = Array.Empty<HalfEdge>();
+                controlMesh.edges = Array.Empty<HalfEdge>();
             }
 
-            if(controlMesh.Polygons == null)
+            if(controlMesh.polygons == null)
             {
-                controlMesh.Polygons = Array.Empty<Polygon>();
+                controlMesh.polygons = Array.Empty<Polygon>();
             }
 
-            AllocatePoints(controlMesh.Vertices.Length);
-            AllocateEdges(controlMesh.Edges.Length);
-            AllocatePolygons(controlMesh.Polygons.Length);
+            AllocatePoints(controlMesh.vertices.Length);
+            AllocateEdges(controlMesh.edges.Length);
+            AllocatePolygons(controlMesh.polygons.Length);
         }
 
         private void AllocatePoints(int pointCount)
@@ -193,14 +193,14 @@ namespace RealtimeCSG
 
         public void UpdateMesh(ControlMesh controlMesh, Vector3[] vertices = null)
         {
-            if(controlMesh == null || controlMesh.Vertices == null || controlMesh.Edges == null || controlMesh.Polygons == null || polygonPointIndices == null)
+            if(controlMesh == null || controlMesh.vertices == null || controlMesh.edges == null || controlMesh.polygons == null || polygonPointIndices == null)
             {
                 return;
             }
 
             if(vertices == null)
             {
-                vertices = controlMesh.Vertices;
+                vertices = controlMesh.vertices;
             }
 
             if(!brushTransform)
@@ -215,14 +215,14 @@ namespace RealtimeCSG
                 AllocatePoints(pointCount);
             }
 
-            int edgeCount = controlMesh.Edges.Length;
+            int edgeCount = controlMesh.edges.Length;
 
             if(edges.Length != edgeCount)
             {
                 AllocateEdges(edgeCount);
             }
 
-            int polygonCount = controlMesh.Polygons.Length;
+            int polygonCount = controlMesh.polygons.Length;
 
             if(polygonControlId.Length != polygonCount)
             {
@@ -233,36 +233,36 @@ namespace RealtimeCSG
 
             for(int e = 0; e < edgeCount; e++)
             {
-                if(e >= controlMesh.Edges.Length ||
+                if(e >= controlMesh.edges.Length ||
                    index >= edges.Length)
                 {
                     continue;
                 }
 
-                int twin = controlMesh.Edges[e].TwinIndex;
+                int twin = controlMesh.edges[e].twinIndex;
 
                 // if it's less than e then we've already handled our twin
-                if(twin < e || twin >= controlMesh.Edges.Length)
+                if(twin < e || twin >= controlMesh.edges.Length)
                 {
                     continue;
                 }
 
-                short polygonIndex = controlMesh.Edges[e].PolygonIndex;
+                short polygonIndex = controlMesh.edges[e].polygonIndex;
 
-                if(polygonIndex < 0 || polygonIndex >= controlMesh.Polygons.Length)
+                if(polygonIndex < 0 || polygonIndex >= controlMesh.polygons.Length)
                 {
                     continue;
                 }
 
-                short twinPolygonIndex = controlMesh.Edges[twin].PolygonIndex;
+                short twinPolygonIndex = controlMesh.edges[twin].polygonIndex;
 
-                if(twinPolygonIndex < 0 || twinPolygonIndex >= controlMesh.Polygons.Length)
+                if(twinPolygonIndex < 0 || twinPolygonIndex >= controlMesh.polygons.Length)
                 {
                     continue;
                 }
 
-                short vertexIndex1 = controlMesh.Edges[e].VertexIndex;
-                short vertexIndex2 = controlMesh.Edges[twin].VertexIndex;
+                short vertexIndex1 = controlMesh.edges[e].vertexIndex;
+                short vertexIndex2 = controlMesh.edges[twin].vertexIndex;
 
                 if(vertexIndex1 < 0 || vertexIndex1 >= selection.points.Length || vertexIndex2 < 0 || vertexIndex2 >= selection.points.Length)
                 {
@@ -307,14 +307,14 @@ namespace RealtimeCSG
 
         public void UpdatePoints(ControlMesh controlMesh, Vector3[] vertices = null)
         {
-            if(controlMesh == null || controlMesh.Vertices == null || controlMesh.Edges == null || controlMesh.Polygons == null || polygonPointIndices == null)
+            if(controlMesh == null || controlMesh.vertices == null || controlMesh.edges == null || controlMesh.polygons == null || polygonPointIndices == null)
             {
                 return;
             }
 
             if(vertices == null)
             {
-                vertices = controlMesh.Vertices;
+                vertices = controlMesh.vertices;
             }
 
             if(!brushTransform)
@@ -329,14 +329,14 @@ namespace RealtimeCSG
                 AllocatePoints(pointCount);
             }
 
-            int edgeCount = controlMesh.Edges.Length;
+            int edgeCount = controlMesh.edges.Length;
 
             if(edges.Length != edgeCount)
             {
                 AllocateEdges(edgeCount);
             }
 
-            int polygonCount = controlMesh.Polygons.Length;
+            int polygonCount = controlMesh.polygons.Length;
 
             if(polygonControlId.Length != polygonCount)
             {
@@ -358,14 +358,14 @@ namespace RealtimeCSG
             {
                 Vector3 localCenterPoint = MathConstants.zeroVector3;
                 float   totalLength      = 0.0f;
-                Polygon polygon          = controlMesh.Polygons[p];
+                Polygon polygon          = controlMesh.polygons[p];
 
                 if(polygon == null)
                 {
                     continue;
                 }
 
-                int[] edgeIndices = polygon.EdgeIndices;
+                int[] edgeIndices = polygon.edgeIndices;
 
                 if(edgeIndices == null || edgeIndices.Length == 0)
                 {
@@ -374,12 +374,12 @@ namespace RealtimeCSG
 
                 int halfEdgeIndex0 = edgeIndices[edgeIndices.Length - 1];
 
-                if(halfEdgeIndex0 < 0 || halfEdgeIndex0 >= controlMesh.Edges.Length)
+                if(halfEdgeIndex0 < 0 || halfEdgeIndex0 >= controlMesh.edges.Length)
                 {
                     continue;
                 }
 
-                short vertexIndex0 = controlMesh.Edges[halfEdgeIndex0].VertexIndex;
+                short vertexIndex0 = controlMesh.edges[halfEdgeIndex0].vertexIndex;
 
                 if(vertexIndex0 < 0 || vertexIndex0 >= vertices.Length)
                 {
@@ -399,12 +399,12 @@ namespace RealtimeCSG
                 {
                     int halfEdgeIndex1 = edgeIndices[i];
 
-                    if(halfEdgeIndex1 < 0 || halfEdgeIndex1 >= controlMesh.Edges.Length)
+                    if(halfEdgeIndex1 < 0 || halfEdgeIndex1 >= controlMesh.edges.Length)
                     {
                         continue;
                     }
 
-                    short vertexIndex1 = controlMesh.Edges[halfEdgeIndex1].VertexIndex;
+                    short vertexIndex1 = controlMesh.edges[halfEdgeIndex1].vertexIndex;
 
                     if(vertexIndex1 < 0 || vertexIndex1 >= vertices.Length)
                     {
@@ -422,14 +422,14 @@ namespace RealtimeCSG
                     vertex0 = vertex1;
                 }
 
-                Vector3 worldCenterPoint = Mathf.Abs(totalLength) < MathConstants.EqualityEpsilon ? localToWorldMatrix.MultiplyPoint(vertex0) : localToWorldMatrix.MultiplyPoint(localCenterPoint / totalLength);
+                Vector3 worldCenterPoint = Mathf.Abs(totalLength) < MathConstants.EQUALITY_EPSILON ? localToWorldMatrix.MultiplyPoint(vertex0) : localToWorldMatrix.MultiplyPoint(localCenterPoint / totalLength);
 
                 brushCenter            += localCenterPoint;
                 polygonCenterPoints[p] =  worldCenterPoint;
                 polygonCenterPlanes[p] =  GeometryUtility.CalcPolygonPlane(controlMesh, (short)p);
             }
 
-            if(Mathf.Abs(brushTotalLength) >= MathConstants.EqualityEpsilon)
+            if(Mathf.Abs(brushTotalLength) >= MathConstants.EQUALITY_EPSILON)
             {
                 brushCenter /= brushTotalLength;
             }
@@ -504,7 +504,7 @@ namespace RealtimeCSG
 
         public void UpdateHandles(Camera camera, ControlMesh controlMesh)
         {
-            if(controlMesh == null || controlMesh.Vertices == null || controlMesh.Edges == null || controlMesh.Polygons == null || polygonPointIndices == null)
+            if(controlMesh == null || controlMesh.vertices == null || controlMesh.edges == null || controlMesh.polygons == null || polygonPointIndices == null)
             {
                 return;
             }
@@ -534,7 +534,7 @@ namespace RealtimeCSG
                 Vector3 delta2     = (polygonCenterPoints[p] - cameraPosition).normalized;
                 float   dot        = Vector3.Dot(delta1, delta2);
 
-                bool polygonBackfaced = Mathf.Abs(dot) > 1 - MathConstants.AngleEpsilon;
+                bool polygonBackfaced = Mathf.Abs(dot) > 1 - MathConstants.ANGLE_EPSILON;
 
                 if(cameraOrtho && polygonBackfaced)
                 {
@@ -630,7 +630,7 @@ namespace RealtimeCSG
                 Vector3 delta2 = (polygonCenterPoints[p] - cameraPosition).normalized;
                 float   dot    = Vector3.Dot(delta1, delta2);
 
-                if(!cameraOrtho || Mathf.Abs(dot) <= 1 - MathConstants.AngleEpsilon)
+                if(!cameraOrtho || Mathf.Abs(dot) <= 1 - MathConstants.ANGLE_EPSILON)
                 {
                     color1.a *= GUIConstants.BACKFACE_TRANSPARENCY;
                     color2.a *= GUIConstants.BACKFACE_TRANSPARENCY;

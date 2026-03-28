@@ -54,7 +54,7 @@ namespace InternalRealtimeCSG
             Vector3   realCenter = transform.position;
             Vector3   difference = newCenter - realCenter;
 
-            if(difference.magnitude < MathConstants.ConsideredZero)
+            if(difference.magnitude < MathConstants.CONSIDERED_ZERO)
             {
                 return;
             }
@@ -68,7 +68,7 @@ namespace InternalRealtimeCSG
 
         public static void TranslatePivot(CSGBrush[] brushes, Vector3 offset)
         {
-            if(brushes == null || brushes.Length == 0 || offset.magnitude < MathConstants.ConsideredZero)
+            if(brushes == null || brushes.Length == 0 || offset.magnitude < MathConstants.CONSIDERED_ZERO)
             {
                 return;
             }

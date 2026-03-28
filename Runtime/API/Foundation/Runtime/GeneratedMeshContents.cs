@@ -34,7 +34,7 @@ namespace RealtimeCSG.Foundation
         public UnityEngine.Vector3[] normals;
 
         /// <value>First uv channel for each vertex.</value>
-        /// <remarks>These are created by multiplying the vertices of the <seealso cref="RealtimeCSG.Foundation.BrushMesh"/>, which was used to generate this geometry, 
+        /// <remarks>These are created by multiplying the vertices of the <seealso cref="RealtimeCSG.Foundation.BrushMesh"/>, which was used to generate this geometry,
         /// by the <seealso cref="RealtimeCSG.Foundation.SurfaceDescription.UV0" /> <seealso cref="RealtimeCSG.Foundation.UVMatrix"/> of the <seealso cref="RealtimeCSG.Foundation.SurfaceDescription"/> of the vertex.
         /// <note>Can be null when the <see cref="description"/> has no <seealso cref="RealtimeCSG.Foundation.VertexChannelFlags.UV0" /> set in its <see cref="RealtimeCSG.Foundation.MeshQuery.UsedVertexChannels"/>.</note>
         /// </remarks>
@@ -59,16 +59,15 @@ namespace RealtimeCSG.Foundation
         {
             if(ReferenceEquals(mesh, null))
             {
-                throw new ArgumentNullException("mesh");
+                throw new ArgumentNullException(nameof(mesh));
             }
 
             if(!mesh)
             {
-                throw new ArgumentException("mesh", "mesh is not valid, it might've already be destroyed");
+                throw new ArgumentException("mesh is not valid, it might've already be destroyed", nameof(mesh));
             }
 
-            if(description.vertexCount < 3 ||
-               description.indexCount < 3)
+            if(description.vertexCount < 3 || description.indexCount < 3)
             {
                 mesh.Clear();
 
@@ -93,7 +92,6 @@ namespace RealtimeCSG.Foundation
             }
 
             mesh.SetTriangles(indices, 0, true);
-            //mesh.bounds = bounds;
         }
-    };
+    }
 }

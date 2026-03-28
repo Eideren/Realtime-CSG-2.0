@@ -1843,7 +1843,7 @@ namespace RealtimeCSG
                         vectorO0 = vectorO1;
                     }
 
-                    if(steps * step + deltaAngle > MathConstants.EqualityEpsilon)
+                    if(steps * step + deltaAngle > MathConstants.EQUALITY_EPSILON)
                     {
                         GL.Vertex(vectorO0);
                         GL.Vertex(endPointO);
@@ -1871,7 +1871,7 @@ namespace RealtimeCSG
                         vectorI0 = vectorI1;
                     }
 
-                    if(steps * step + deltaAngle > MathConstants.EqualityEpsilon)
+                    if(steps * step + deltaAngle > MathConstants.EQUALITY_EPSILON)
                     {
                         Vector3 deltaI = center + Quaternion.AngleAxis(endAngle, normal) * innerDistance;
                         Vector3 deltaO = center + Quaternion.AngleAxis(endAngle, normal) * outerDistance;
@@ -2372,12 +2372,12 @@ namespace RealtimeCSG
                 Vector3 vertex = vertices[BoundsUtilities.aabbSidePointIndices[i][0]];
                 planes[i] = new CSGPlane(BoundsUtilities.aabbSideNormal[i], vertex);
 
-                backfaced[i] = Vector3.Dot(planes[i].normal, cameraPosition - vertex) < 0;
+                backfaced[i] = Vector3.Dot(planes[i].Normal, cameraPosition - vertex) < 0;
             }
 
-            bool disabledX = ortho && Mathf.Abs(Vector3.Dot(planes[0].normal, cameraDirection)) > 0.99f;
-            bool disabledY = ortho && Mathf.Abs(Vector3.Dot(planes[2].normal, cameraDirection)) > 0.99f;
-            bool disabledZ = ortho && Mathf.Abs(Vector3.Dot(planes[4].normal, cameraDirection)) > 0.99f;
+            bool disabledX = ortho && Mathf.Abs(Vector3.Dot(planes[0].Normal, cameraDirection)) > 0.99f;
+            bool disabledY = ortho && Mathf.Abs(Vector3.Dot(planes[2].Normal, cameraDirection)) > 0.99f;
+            bool disabledZ = ortho && Mathf.Abs(Vector3.Dot(planes[4].Normal, cameraDirection)) > 0.99f;
 
             for(int i = 0; i < 4; i++)
             {
@@ -2390,7 +2390,7 @@ namespace RealtimeCSG
                     Vector3 a = vertices[BoundsUtilities.aabbEdgeIndices[edgeIndex][0]];
                     Vector3 b = vertices[BoundsUtilities.aabbEdgeIndices[edgeIndex][1]];
 
-                    if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                    if((a - b).sqrMagnitude > MathConstants.EQUALITY_EPSILON_SQR)
                     {
                         Vector3 c    = (a + b) * 0.5f;
                         float   dist = cameraPosition.x - c.x;
@@ -2417,7 +2417,7 @@ namespace RealtimeCSG
                     Vector3 a = vertices[BoundsUtilities.aabbEdgeIndices[edgeIndex][0]];
                     Vector3 b = vertices[BoundsUtilities.aabbEdgeIndices[edgeIndex][1]];
 
-                    if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                    if((a - b).sqrMagnitude > MathConstants.EQUALITY_EPSILON_SQR)
                     {
                         Vector3 c    = (a + b) * 0.5f;
                         float   dist = cameraPosition.z - c.z;
@@ -2459,7 +2459,7 @@ namespace RealtimeCSG
                         Vector3 a = vertices[BoundsUtilities.aabbEdgeIndices[edgeIndex][0]];
                         Vector3 b = vertices[BoundsUtilities.aabbEdgeIndices[edgeIndex][1]];
 
-                        if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                        if((a - b).sqrMagnitude > MathConstants.EQUALITY_EPSILON_SQR)
                         {
                             Vector3 c    = (a + b) * 0.5f;
                             float   dist = cameraPosition.y - c.y;
@@ -2507,7 +2507,7 @@ namespace RealtimeCSG
                             Vector3 a = vertices[aIndex];
                             Vector3 b = vertices[bIndex];
 
-                            if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                            if((a - b).sqrMagnitude > MathConstants.EQUALITY_EPSILON_SQR)
                             {
                                 Vector3 c    = (a + b) * 0.5f;
                                 float   dist = cameraPosition.y - c.y;
@@ -2546,7 +2546,7 @@ namespace RealtimeCSG
                                 Vector3 a = vertices[aIndex];
                                 Vector3 b = vertices[bIndex];
 
-                                if((a - b).sqrMagnitude > MathConstants.EqualityEpsilonSqr)
+                                if((a - b).sqrMagnitude > MathConstants.EQUALITY_EPSILON_SQR)
                                 {
                                     Vector3 c    = (a + b) * 0.5f;
                                     float   dist = cameraPosition.y - c.y;

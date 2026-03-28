@@ -18,37 +18,37 @@ namespace RealtimeCSG
 
         public TexGenState(CSGBrush brush)
         {
-            Shape shape = brush.Shape;
-            AllocateSurfaces(shape.Surfaces.Length);
+            Shape shape = brush.shape;
+            AllocateSurfaces(shape.surfaces.Length);
         }
 
         public void UpdateTexGenState(CSGBrush brush)
         {
-            Shape shape = brush.Shape;
+            Shape shape = brush.shape;
 
             if(surfaceSelectState == null || surfaceControlID == null)
             {
-                AllocateSurfaces(shape.Surfaces.Length);
+                AllocateSurfaces(shape.surfaces.Length);
 
                 return;
             }
 
-            while(shape.Surfaces.Length < surfaceSelectState.Length)
+            while(shape.surfaces.Length < surfaceSelectState.Length)
             {
                 ArrayUtility.RemoveAt(ref surfaceSelectState, surfaceSelectState.Length - 1);
             }
 
-            while(shape.Surfaces.Length < surfaceControlID.Length)
+            while(shape.surfaces.Length < surfaceControlID.Length)
             {
                 ArrayUtility.RemoveAt(ref surfaceControlID, surfaceControlID.Length - 1);
             }
 
-            while(shape.Surfaces.Length > surfaceSelectState.Length)
+            while(shape.surfaces.Length > surfaceSelectState.Length)
             {
                 ArrayUtility.Add(ref surfaceSelectState, SelectState.None);
             }
 
-            while(shape.Surfaces.Length > surfaceControlID.Length)
+            while(shape.surfaces.Length > surfaceControlID.Length)
             {
                 ArrayUtility.Add(ref surfaceControlID, -1);
             }
@@ -62,8 +62,8 @@ namespace RealtimeCSG
 
         public void UpdateLayout(CSGBrush brush)
         {
-            Shape shape        = brush.Shape;
-            int   surfaceCount = shape.Surfaces.Length;
+            Shape shape        = brush.shape;
+            int   surfaceCount = shape.surfaces.Length;
 
             if(surfaceControlID.Length != surfaceCount)
             {

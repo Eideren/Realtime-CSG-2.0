@@ -472,7 +472,7 @@ namespace RealtimeCSG
             get => m_LineThicknessMultiplier;
             set
             {
-                if(Math.Abs(m_LineThicknessMultiplier - value) < MathConstants.EqualityEpsilon)
+                if(Math.Abs(m_LineThicknessMultiplier - value) < MathConstants.EQUALITY_EPSILON)
                 {
                     return;
                 }
@@ -488,7 +488,7 @@ namespace RealtimeCSG
             get => m_LineDashMultiplier;
             set
             {
-                if(Math.Abs(m_LineDashMultiplier - value) < MathConstants.EqualityEpsilon)
+                if(Math.Abs(m_LineDashMultiplier - value) < MathConstants.EQUALITY_EPSILON)
                 {
                     return;
                 }
@@ -504,7 +504,7 @@ namespace RealtimeCSG
             get => m_LineAlphaMultiplier;
             set
             {
-                if(Math.Abs(m_LineAlphaMultiplier - value) < MathConstants.EqualityEpsilon)
+                if(Math.Abs(m_LineAlphaMultiplier - value) < MathConstants.EQUALITY_EPSILON)
                 {
                     return;
                 }

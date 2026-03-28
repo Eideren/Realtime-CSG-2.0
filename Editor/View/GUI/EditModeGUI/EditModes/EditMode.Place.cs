@@ -309,16 +309,16 @@ namespace RealtimeCSG
 
             for(int i = 0; i < brushes.Length; i++)
             {
-                backupShapes[i]        = brushes[i].Shape.Clone();
-                backupControlMeshes[i] = brushes[i].ControlMesh.Clone();
+                backupShapes[i]        = brushes[i].shape.Clone();
+                backupControlMeshes[i] = brushes[i].controlMesh.Clone();
 
-                if(brushes[i].ChildData == null || brushes[i].ChildData.ModelTransform == null)
+                if(brushes[i].childData == null || brushes[i].childData.modelTransform == null)
                 {
                     parentModelTransforms[i] = null;
                 }
                 else
                 {
-                    parentModelTransforms[i] = brushes[i].ChildData.ModelTransform;
+                    parentModelTransforms[i] = brushes[i].childData.modelTransform;
                 }
             }
 
@@ -538,11 +538,11 @@ namespace RealtimeCSG
 
                 if(ortho)
                 {
-                    backfaced[i] = Mathf.Abs(Vector3.Dot(planes[i].normal, cameraDirection)) > 0.9999f;
+                    backfaced[i] = Mathf.Abs(Vector3.Dot(planes[i].Normal, cameraDirection)) > 0.9999f;
                 }
                 else
                 {
-                    backfaced[i] = Vector3.Dot(planes[i].normal, cameraPosition - renderLocalCenterPoints[i]) < 0;
+                    backfaced[i] = Vector3.Dot(planes[i].Normal, cameraPosition - renderLocalCenterPoints[i]) < 0;
                 }
             }
 
@@ -712,8 +712,8 @@ namespace RealtimeCSG
 
             for(int i = 0; i < brushes.Length; i++)
             {
-                backupShapes[i]        = brushes[i].Shape.Clone();
-                backupControlMeshes[i] = brushes[i].ControlMesh.Clone();
+                backupShapes[i]        = brushes[i].shape.Clone();
+                backupControlMeshes[i] = brushes[i].controlMesh.Clone();
             }
 
             _lastLineMeshGeneration--;
@@ -885,17 +885,17 @@ namespace RealtimeCSG
 
         private Vector3 SnapMovementToPlane(Vector3 offset)
         {
-            if(Math.Abs(_movePlane.a) > 1 - MathConstants.NormalEpsilon)
+            if(Math.Abs(_movePlane.a) > 1 - MathConstants.NORMAL_EPSILON)
             {
                 offset.x = 0.0f;
             }
 
-            if(Math.Abs(_movePlane.b) > 1 - MathConstants.NormalEpsilon)
+            if(Math.Abs(_movePlane.b) > 1 - MathConstants.NORMAL_EPSILON)
             {
                 offset.y = 0.0f;
             }
 
-            if(Math.Abs(_movePlane.c) > 1 - MathConstants.NormalEpsilon)
+            if(Math.Abs(_movePlane.c) > 1 - MathConstants.NORMAL_EPSILON)
             {
                 offset.z = 0.0f;
             }
@@ -970,7 +970,7 @@ namespace RealtimeCSG
                 {
                     CSGPlane localPlane = GeometryUtility.TransformPlane(activeSpaceMatrices.activeWorldToLocal, _movePlane);
 
-                    localPlane.normal = GridUtility.CleanNormal(localPlane.normal);
+                    localPlane.Normal = GridUtility.CleanNormal(localPlane.Normal);
                     Vector3[] localPoints = originalLocalTargetBounds.GetAllCorners();
 
                     for(int i = 0; i < localPoints.Length; i++)
@@ -1170,8 +1170,8 @@ namespace RealtimeCSG
             for(int t = 0; t < brushes.Length; t++)
             {
                 CSGBrush brush = brushes[t];
-                brush.ControlMesh = backupControlMeshes[t].Clone();
-                brush.Shape       = backupShapes[t].Clone();
+                brush.controlMesh = backupControlMeshes[t].Clone();
+                brush.shape       = backupShapes[t].Clone();
             }
 
             ControlMeshUtility.TransformBrushes(brushes, worldCenterBefore, worldCenterAfter, worldScale, activeSpaceMatrices);
@@ -1266,8 +1266,8 @@ namespace RealtimeCSG
             for(int t = 0; t < brushes.Length; t++)
             {
                 CSGBrush brush = brushes[t];
-                brush.ControlMesh = backupControlMeshes[t].Clone();
-                brush.Shape       = backupShapes[t].Clone();
+                brush.controlMesh = backupControlMeshes[t].Clone();
+                brush.shape       = backupShapes[t].Clone();
             }
 
             ControlMeshUtility.TransformBrushes(brushes, worldCenterBefore, worldCenterAfter, worldScale, activeSpaceMatrices);
@@ -1482,7 +1482,7 @@ namespace RealtimeCSG
 
             PaintUtility.DrawDottedLine(_rotateCenter, _rotateMousePosition, ColorSettings.BoundsEdgeHover);
 
-            if((worldSpacePivotCenter - _rotateCenter).magnitude > MathConstants.EqualityEpsilon)
+            if((worldSpacePivotCenter - _rotateCenter).magnitude > MathConstants.EQUALITY_EPSILON)
             {
                 PaintUtility.DrawDottedLine(worldSpacePivotCenter, _rotateCenter, ColorSettings.BoundsEdgeHover);
                 PaintUtility.DrawProjectedPivot(camera, _rotateCenter, ColorSettings.BoundsEdgeHover);
@@ -1645,10 +1645,10 @@ namespace RealtimeCSG
                         {
                             CSGBrush brush = brushes[i];
 
-                            if(brush.brushNodeID == CSGNode.InvalidNodeID || // could be a prefab
+                            if(brush.brushNodeID == CSGNode.INVALID_NODE_ID || // could be a prefab
                                brush.compareTransformation == null ||
-                               brush.ChildData == null ||
-                               !brush.ChildData.ModelTransform)
+                               brush.childData == null ||
+                               !brush.childData.modelTransform)
                             {
                                 ArrayUtility.RemoveAt(ref brushTransformations, i);
                                 ArrayUtility.RemoveAt(ref brushNodeIDs, i);
@@ -2683,8 +2683,8 @@ namespace RealtimeCSG
 
                                     if(topNode)
                                     {
-                                        sourceSurfaceAlignment      = topNode.PrefabSourceAlignment;
-                                        destinationSurfaceAlignment = topNode.PrefabDestinationAlignment;
+                                        sourceSurfaceAlignment      = topNode.prefabSourceAlignment;
+                                        destinationSurfaceAlignment = topNode.prefabDestinationAlignment;
                                     }
                                 }
 
@@ -2760,7 +2760,7 @@ namespace RealtimeCSG
 
                                         LegacyBrushIntersection intersection = SceneQueryUtility.FindMeshIntersection(camera, Event.current.mousePosition);
 
-                                        Vector3    normal        = intersection.worldPlane.normal;
+                                        Vector3    normal        = intersection.worldPlane.Normal;
                                         Vector3    hoverPosition = intersection.worldIntersection;
                                         Quaternion hoverRotation = SelectionUtility.FindDragOrientation(sceneView, normal, sourceSurfaceAlignment, destinationSurfaceAlignment);
 
@@ -2871,9 +2871,9 @@ namespace RealtimeCSG
 
                             Vector3 movement = _worldDeltaMovement + _extraDeltaMovement;
 
-                            bool lockX = Mathf.Abs(movement.x) < MathConstants.ConsideredZero && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EqualityEpsilon);
-                            bool lockY = Mathf.Abs(movement.y) < MathConstants.ConsideredZero && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EqualityEpsilon);
-                            bool lockZ = Mathf.Abs(movement.z) < MathConstants.ConsideredZero && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EqualityEpsilon);
+                            bool lockX = Mathf.Abs(movement.x) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON);
+                            bool lockY = Mathf.Abs(movement.y) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON);
+                            bool lockZ = Mathf.Abs(movement.z) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON);
 
                             string text = Units.ToRoundedDistanceString(movement, lockX, lockY, lockZ);
                             PaintUtility.DrawScreenText(textCenter2D, text);

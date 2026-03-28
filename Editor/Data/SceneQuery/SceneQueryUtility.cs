@@ -238,7 +238,7 @@ namespace InternalRealtimeCSG
 
                 CSGOperation parentOp = parent.GetComponent<CSGOperation>();
 
-                if(parentOp && parentOp.HandleAsOne)
+                if(parentOp && parentOp.handleAsOne)
                 {
                     return parentOp;
                 }
@@ -274,7 +274,7 @@ namespace InternalRealtimeCSG
 
                 CSGOperation parentOp = parent.GetComponent<CSGOperation>();
 
-                if(parentOp && parentOp.HandleAsOne && !parentOp.PassThrough)
+                if(parentOp && parentOp.handleAsOne && !parentOp.PassThrough)
                 {
                     topSelected = parentOp;
                 }
@@ -478,7 +478,7 @@ namespace InternalRealtimeCSG
 
                     for(int i = 0; i < 6; i++)
                     {
-                        if(!(planes[i].GetDistanceToPoint(point) > MathConstants.DistanceEpsilon))
+                        if(!(planes[i].GetDistanceToPoint(point) > MathConstants.DISTANCE_EPSILON))
                         {
                             continue;
                         }
@@ -821,7 +821,7 @@ namespace InternalRealtimeCSG
                 {
                     return new LegacyBrushIntersection
                     {
-                        brushNodeID       = CSGNode.InvalidNodeID
+                        brushNodeID       = CSGNode.INVALID_NODE_ID
                       , surfaceIndex      = -1
                       , worldIntersection = rh.point
                       , worldPlane        = new CSGPlane(-rh.normal, rh.point)
@@ -850,16 +850,16 @@ namespace InternalRealtimeCSG
 
                 return new LegacyBrushIntersection
                 {
-                    brushNodeID       = CSGNode.InvalidNodeID
+                    brushNodeID       = CSGNode.INVALID_NODE_ID
                   , surfaceIndex      = -1
                   , worldIntersection = MathConstants.zeroVector3
-                  , worldPlane        = new CSGPlane(gridPlane.normal, intersectionPoint)
+                  , worldPlane        = new CSGPlane(gridPlane.Normal, intersectionPoint)
                 };
             }
 
             return new LegacyBrushIntersection
             {
-                brushNodeID       = CSGNode.InvalidNodeID
+                brushNodeID       = CSGNode.INVALID_NODE_ID
               , surfaceIndex      = -1
               , worldIntersection = intersectionPoint
               , worldPlane        = gridPlane
@@ -1018,7 +1018,7 @@ namespace InternalRealtimeCSG
 
                 CSGBrush brush = modelIntersection.gameObject.GetComponent<CSGBrush>();
 
-                if(BrushTraits.IsSurfaceUnselectable(brush, modelIntersection.surfaceIndex, brush.ChildData.Model.IsTrigger, ignoreInvisibleSurfaces))
+                if(BrushTraits.IsSurfaceUnselectable(brush, modelIntersection.surfaceIndex, brush.childData.model.IsTrigger, ignoreInvisibleSurfaces))
                 {
                     continue;
                 }
@@ -1068,7 +1068,7 @@ namespace InternalRealtimeCSG
                 LegacyBrushIntersection intersection = modelIntersections[i];
                 CSGBrush                brush        = intersection.gameObject.GetComponent<CSGBrush>();
 
-                if(BrushTraits.IsSurfaceUnselectable(brush, intersection.surfaceIndex, brush.ChildData.Model.IsTrigger, ignoreInvisibleSurfaces))
+                if(BrushTraits.IsSurfaceUnselectable(brush, intersection.surfaceIndex, brush.childData.model.IsTrigger, ignoreInvisibleSurfaces))
                 {
                     continue;
                 }
@@ -1140,7 +1140,7 @@ namespace InternalRealtimeCSG
                     LegacyBrushIntersection intersection = modelIntersections[i];
                     CSGBrush                brush        = intersection.gameObject.GetComponent<CSGBrush>();
 
-                    if(BrushTraits.IsSurfaceUnselectable(brush, intersection.surfaceIndex, brush.ChildData.Model.IsTrigger, ignoreInvisibleSurfaces))
+                    if(BrushTraits.IsSurfaceUnselectable(brush, intersection.surfaceIndex, brush.childData.model.IsTrigger, ignoreInvisibleSurfaces))
                     {
                         continue;
                     }
@@ -1190,7 +1190,7 @@ namespace InternalRealtimeCSG
                 return false;
             }
 
-            return !BrushTraits.IsSurfaceUnselectable(brush, intersection.surfaceIndex, brush.ChildData.Model.IsTrigger);
+            return !BrushTraits.IsSurfaceUnselectable(brush, intersection.surfaceIndex, brush.childData.model.IsTrigger);
         }
 
 #endregion
@@ -1216,7 +1216,7 @@ namespace InternalRealtimeCSG
                 return false;
             }
 
-            return !BrushTraits.IsSurfaceUnselectable(brush, surfaceIndex, brush.ChildData.Model.IsTrigger);
+            return !BrushTraits.IsSurfaceUnselectable(brush, surfaceIndex, brush.childData.model.IsTrigger);
         }
 
 #endregion

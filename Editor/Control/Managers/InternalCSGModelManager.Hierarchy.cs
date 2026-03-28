@@ -19,13 +19,13 @@ namespace RealtimeCSG
 
         public static ParentNodeData GetParentData(ChildNodeData childNode)
         {
-            CSGOperation parent = childNode.Parent;
+            CSGOperation parent = childNode.parent;
 
             if(Equals(parent, null) || !parent || !parent.transform)
             {
-                CSGModel model = childNode.Model;
+                CSGModel model = childNode.model;
 
-                if(Equals(model, null) || !model || model.modelNodeID == CSGNode.InvalidNodeID || !model.transform)
+                if(Equals(model, null) || !model || model.modelNodeID == CSGNode.INVALID_NODE_ID || !model.transform)
                 {
                     return null;
                 }
@@ -33,7 +33,7 @@ namespace RealtimeCSG
                 return model.parentData;
             }
 
-            return parent.operationNodeID == CSGNode.InvalidNodeID ? null : parent.ParentData;
+            return parent.operationNodeID == CSGNode.INVALID_NODE_ID ? null : parent.parentData;
         }
 
 #endregion
@@ -61,29 +61,29 @@ namespace RealtimeCSG
             {
                 TreePosition parent = parents[parents.Count - 1];
                 parents.RemoveAt(parents.Count - 1);
-                HierarchyItem[] children = parent.item.ChildNodes;
+                HierarchyItem[] children = parent.item.childNodes;
 
                 for(int i = parent.index; i < children.Length; i++)
                 {
                     HierarchyItem node   = children[i];
-                    int           nodeID = node.NodeID;
+                    int           nodeID = node.nodeID;
 
-                    if(nodeID == CSGNode.InvalidNodeID)
+                    if(nodeID == CSGNode.INVALID_NODE_ID)
                     {
                         CSGOperation operation =
-                            node.Transform ? node.Transform.GetComponent<CSGOperation>() : null;
+                            node.transform ? node.transform.GetComponent<CSGOperation>() : null;
 
                         if(operation)
                         {
-                            if(operation.operationNodeID != CSGNode.InvalidNodeID)
+                            if(operation.operationNodeID != CSGNode.INVALID_NODE_ID)
                             {
-                                nodeID = node.NodeID = operation.operationNodeID;
+                                nodeID = node.nodeID = operation.operationNodeID;
                             }
                         }
 
-                        if(nodeID == CSGNode.InvalidNodeID)
+                        if(nodeID == CSGNode.INVALID_NODE_ID)
                         {
-                            if(node.ChildNodes.Length > 0)
+                            if(node.childNodes.Length > 0)
                             {
                                 int nextIndex = i + 1;
 
@@ -104,10 +104,10 @@ namespace RealtimeCSG
 
                     ids.Add(nodeID);
 
-                    if(node.PrevSiblingIndex != node.SiblingIndex)
+                    if(node.prevSiblingIndex != node.siblingIndex)
                     {
                         External.setDirty(nodeID);
-                        node.PrevSiblingIndex = node.SiblingIndex;
+                        node.prevSiblingIndex = node.siblingIndex;
                     }
                 }
             }
@@ -138,14 +138,14 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                if((int)operation.PrevOperation == (int)operation.OperationType)
+                if((int)operation.prevOperation == (int)operation.operationType)
                 {
                     continue;
                 }
 
-                operation.PrevOperation = operation.OperationType;
+                operation.prevOperation = operation.operationType;
 
-                External.setOperationOperationType(operation.operationNodeID, operation.OperationType);
+                External.setOperationOperationType(operation.operationNodeID, operation.operationType);
             }
 
             for(int i = 0; i < Models.Length; i++)
@@ -175,12 +175,12 @@ namespace RealtimeCSG
                 int brushNodeID = brush.brushNodeID;
 
                 // make sure it's registered, otherwise ignore it
-                if(brushNodeID == CSGNode.InvalidNodeID)
+                if(brushNodeID == CSGNode.INVALID_NODE_ID)
                 {
                     continue;
                 }
 
-                Transform brushTransform            = brush.hierarchyItem.Transform;
+                Transform brushTransform            = brush.hierarchyItem.transform;
                 Matrix4x4 currentLocalToWorldMatrix = brushTransform.localToWorldMatrix;
                 Matrix4x4 prevTransformMatrix       = brush.compareTransformation.localToWorldMatrix;
 
@@ -197,7 +197,7 @@ namespace RealtimeCSG
                    prevTransformMatrix.m22 != currentLocalToWorldMatrix.m22 ||
                    prevTransformMatrix.m23 != currentLocalToWorldMatrix.m23)
                 {
-                    Transform modelTransform = brush.ChildData.Model.transform;
+                    Transform modelTransform = brush.childData.model.transform;
                     brush.compareTransformation.localToWorldMatrix = currentLocalToWorldMatrix;
 
                     brush.compareTransformation.brushToModelSpaceMatrix = modelTransform.worldToLocalMatrix * brush.compareTransformation.localToWorldMatrix;
@@ -205,34 +205,34 @@ namespace RealtimeCSG
                     Matrix4x4 localToModelMatrix = brush.compareTransformation.brushToModelSpaceMatrix;
                     External.setBrushToModelSpace(brushNodeID, localToModelMatrix);
 
-                    if(brush.ControlMesh != null)
+                    if(brush.controlMesh != null)
                     {
-                        brush.ControlMesh.Generation = brush.controlMeshGeneration + 1;
+                        brush.controlMesh.generation = brush.controlMeshGeneration + 1;
                     }
                 }
 
-                if(brush.OperationType != brush.prevOperation)
+                if(brush.operationType != brush.prevOperation)
                 {
-                    brush.prevOperation = brush.OperationType;
+                    brush.prevOperation = brush.operationType;
 
-                    External.setBrushOperationType(brushNodeID, brush.OperationType);
+                    External.setBrushOperationType(brushNodeID, brush.operationType);
                 }
 
-                if(brush.ControlMesh == null)
+                if(brush.controlMesh == null)
                 {
-                    brush.ControlMesh = ControlMeshUtility.EnsureValidControlMesh(brush);
+                    brush.controlMesh = ControlMeshUtility.EnsureValidControlMesh(brush);
 
-                    if(brush.ControlMesh == null)
+                    if(brush.controlMesh == null)
                     {
                         continue;
                     }
 
-                    brush.controlMeshGeneration = brush.ControlMesh.Generation;
+                    brush.controlMeshGeneration = brush.controlMesh.generation;
                     ControlMeshUtility.RebuildShape(brush);
                 }
-                else if(brush.controlMeshGeneration != brush.ControlMesh.Generation)
+                else if(brush.controlMeshGeneration != brush.controlMesh.generation)
                 {
-                    brush.controlMeshGeneration = brush.ControlMesh.Generation;
+                    brush.controlMeshGeneration = brush.controlMesh.generation;
                     ControlMeshUtility.RebuildShape(brush);
                 }
             }
@@ -261,7 +261,7 @@ namespace RealtimeCSG
 
                 if(brush)
                 {
-                    return !brush.ChildData.Parent ? !brush.ChildData.Model ? null : brush.ChildData.Model.transform : brush.ChildData.Parent.transform;
+                    return !brush.childData.parent ? !brush.childData.model ? null : brush.childData.model.transform : brush.childData.parent.transform;
                 }
             }
 
@@ -303,14 +303,14 @@ namespace RealtimeCSG
 
                 if(brush)
                 {
-                    return brush.ChildData.Model == null ? null : brush.ChildData.Model.transform;
+                    return brush.childData.model == null ? null : brush.childData.model.transform;
                 }
 
                 CSGOperation operation = currentNodeObj as CSGOperation;
 
                 if(operation && !operation.PassThrough)
                 {
-                    return operation.ChildData.Model == null ? null : operation.ChildData.Model.transform;
+                    return operation.childData.model == null ? null : operation.childData.model.transform;
                 }
             }
 
@@ -463,7 +463,7 @@ namespace RealtimeCSG
 
                     if(tempParentOp)
                     {
-                        if(tempParentOp.operationNodeID != CSGNode.InvalidNodeID && !tempParentOp.PassThrough)
+                        if(tempParentOp.operationNodeID != CSGNode.INVALID_NODE_ID && !tempParentOp.PassThrough)
                         {
                             parentOp = tempParentOp;
 
@@ -502,8 +502,8 @@ namespace RealtimeCSG
 
             if(!parentNode)
             {
-                childData.Model  = GetDefaultCSGModelForObject(childTransform);
-                childData.Parent = null;
+                childData.model  = GetDefaultCSGModelForObject(childTransform);
+                childData.parent = null;
             }
             else
             {
@@ -512,7 +512,7 @@ namespace RealtimeCSG
 
                 if(model)
                 {
-                    childData.Model = model;
+                    childData.model = model;
                 }
                 else
                 {
@@ -522,31 +522,31 @@ namespace RealtimeCSG
                     if(operation &&
                        !operation.PassThrough)
                     {
-                        childData.Parent = operation;
+                        childData.parent = operation;
                     }
 
                     // see if our parent has already found a model
-                    if(childData.Parent)
+                    if(childData.parent)
                     {
-                        if(childData.Parent.ChildData != null)
+                        if(childData.parent.childData != null)
                         {
-                            childData.Model = childData.Parent.ChildData.Model;
+                            childData.model = childData.parent.childData.model;
                         }
                     }
                 }
 
                 // haven't found a model?
-                if(!childData.Model)
+                if(!childData.model)
                 {
                     // if not, try higher up in the hierarchy ..
-                    FindParentModel(parentTransform, out childData.Model);
+                    FindParentModel(parentTransform, out childData.model);
                 }
             }
         }
 
         private static void InitializeHierarchy(CSGBrush brush, Transform brushTransform)
         {
-            CSGModel  currentModel   = brush.ChildData.Model;
+            CSGModel  currentModel   = brush.childData.model;
             Transform modelTransform = !currentModel ? null : currentModel.transform;
             brush.compareTransformation.EnsureInitialized(brushTransform, modelTransform);
         }
@@ -581,12 +581,12 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if(op.ChildData != null)
+                        if(op.childData != null)
                         {
-                            if((forceSet || op.ChildData.Parent != parent) &&
-                               op.ChildData.Model) // assume we're still initializing
+                            if((forceSet || op.childData.parent != parent) &&
+                               op.childData.model) // assume we're still initializing
                             {
-                                SetCSGOperationHierarchy(op, parent, op.ChildData.Model);
+                                SetCSGOperationHierarchy(op, parent, op.childData.model);
                             }
                         }
 
@@ -605,11 +605,11 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if(brush.ChildData != null)
+                        if(brush.childData != null)
                         {
-                            if((forceSet || brush.ChildData.Parent != parent) && brush.ChildData.Model) // assume we're still initializing
+                            if((forceSet || brush.childData.parent != parent) && brush.childData.model) // assume we're still initializing
                             {
-                                SetCSGBrushHierarchy(brush, parent, brush.ChildData.Model);
+                                SetCSGBrushHierarchy(brush, parent, brush.childData.model);
                             }
                         }
 
@@ -656,11 +656,11 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if(op.ChildData.Model != model)
+                        if(op.childData.model != model)
                         {
                             if(model) // assume we're still initializing
                             {
-                                SetCSGOperationHierarchy(op, op.ChildData.Parent, model);
+                                SetCSGOperationHierarchy(op, op.childData.parent, model);
                             }
                         }
                         else
@@ -683,11 +683,11 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if(brush.ChildData.Model != model)
+                        if(brush.childData.model != model)
                         {
                             if(model) // assume we're still initializing
                             {
-                                SetCSGBrushHierarchy(brush, brush.ChildData.Parent, model);
+                                SetCSGBrushHierarchy(brush, brush.childData.parent, model);
                                 CheckSurfaceModifications(brush);
                             }
                         }
@@ -730,10 +730,10 @@ namespace RealtimeCSG
 
         private static void SetNodeParent(ChildNodeData childData, HierarchyItem hierarchyItem, CSGOperation parentOp, CSGModel parentModel)
         {
-            ParentNodeData oldParentData = childData.OwnerParentData;
+            ParentNodeData oldParentData = childData.ownerParentData;
 
-            childData.Parent = parentOp;
-            childData.Model  = parentModel;
+            childData.parent = parentOp;
+            childData.model  = parentModel;
             ParentNodeData newParentData = GetParentData(childData);
 
             if(oldParentData != newParentData)
@@ -748,8 +748,8 @@ namespace RealtimeCSG
                     newParentData.AddNode(hierarchyItem);
                 }
 
-                childData.OwnerParentData = newParentData;
-                childData.ModelTransform  = !childData.Model ? null : childData.Model.transform;
+                childData.ownerParentData = newParentData;
+                childData.modelTransform  = !childData.model ? null : childData.model.transform;
             }
         }
 
@@ -759,7 +759,7 @@ namespace RealtimeCSG
 
         private static void SetCSGOperationHierarchy(CSGOperation op, CSGOperation parentOp, CSGModel parentModel)
         {
-            SetNodeParent(op.ChildData, op.ParentData, parentOp, parentModel);
+            SetNodeParent(op.childData, op.parentData, parentOp, parentModel);
         }
 
 #endregion
@@ -788,8 +788,8 @@ namespace RealtimeCSG
             // NOTE: returns default model when it can't find parent model
             FindParentOperationAndModel(op.transform, out CSGOperation parentOp, out CSGModel parentModel);
 
-            if(op.ChildData.Parent == parentOp &&
-               op.ChildData.Model == parentModel)
+            if(op.childData.parent == parentOp &&
+               op.childData.model == parentModel)
             {
                 return;
             }
@@ -803,7 +803,7 @@ namespace RealtimeCSG
 
         private static void SetCSGBrushHierarchy(CSGBrush brush, CSGOperation parentOp, CSGModel parentModel)
         {
-            SetNodeParent(brush.ChildData, brush.hierarchyItem, parentOp, parentModel);
+            SetNodeParent(brush.childData, brush.hierarchyItem, parentOp, parentModel);
         }
 
 #endregion
@@ -825,12 +825,12 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(brush.ChildData.Parent != parentOp || brush.ChildData.Model != parentModel)
+            if(brush.childData.parent != parentOp || brush.childData.model != parentModel)
             {
                 return;
             }
 
-            ParentNodeDataExtensions.UpdateNodePosition(brush.hierarchyItem, parentOp.ParentData);
+            ParentNodeDataExtensions.UpdateNodePosition(brush.hierarchyItem, parentOp.parentData);
         }
 
 #endregion
@@ -869,11 +869,11 @@ namespace RealtimeCSG
             // NOTE: returns default model when it can't find parent model
             FindParentOperationAndModel(brush.transform, out CSGOperation parentOp, out CSGModel parentModel);
 
-            if(brush.ChildData.Parent == parentOp && brush.ChildData.Model == parentModel)
+            if(brush.childData.parent == parentOp && brush.childData.model == parentModel)
             {
                 if(parentOp)
                 {
-                    ParentNodeDataExtensions.UpdateNodePosition(brush.hierarchyItem, parentOp.ParentData);
+                    ParentNodeDataExtensions.UpdateNodePosition(brush.hierarchyItem, parentOp.parentData);
 
                     return;
                 }
@@ -954,7 +954,7 @@ namespace RealtimeCSG
             {
                 CSGBrush item = Brushes[i];
 
-                if(item && item.brushNodeID != CSGNode.InvalidNodeID)
+                if(item && item.brushNodeID != CSGNode.INVALID_NODE_ID)
                 {
                     continue;
                 }
@@ -966,16 +966,16 @@ namespace RealtimeCSG
             {
                 CSGOperation item = Operations[i];
 
-                if(!item || item.operationNodeID == CSGNode.InvalidNodeID)
+                if(!item || item.operationNodeID == CSGNode.INVALID_NODE_ID)
                 {
                     UnregisterOperation(item);
 
                     continue;
                 }
 
-                if(!item.ParentData.Transform)
+                if(!item.parentData.transform)
                 {
-                    item.ParentData.Init(item, item.operationNodeID);
+                    item.parentData.Init(item, item.operationNodeID);
                 }
             }
 
@@ -983,14 +983,14 @@ namespace RealtimeCSG
             {
                 CSGModel item = Models[i];
 
-                if(!item || item.modelNodeID == CSGNode.InvalidNodeID)
+                if(!item || item.modelNodeID == CSGNode.INVALID_NODE_ID)
                 {
                     UnregisterModel(item);
 
                     continue;
                 }
 
-                if(!item.parentData.Transform)
+                if(!item.parentData.transform)
                 {
                     item.parentData.Init(item, item.modelNodeID);
                 }
@@ -1002,31 +1002,31 @@ namespace RealtimeCSG
             {
                 CSGOperation item = Operations[i];
 
-                if(!item || item.operationNodeID == CSGNode.InvalidNodeID)
+                if(!item || item.operationNodeID == CSGNode.INVALID_NODE_ID)
                 {
                     continue;
                 }
 
-                ParentNodeData parentData = item.ChildData.OwnerParentData;
+                ParentNodeData parentData = item.childData.ownerParentData;
 
                 if(parentData == null)
                 {
                     continue;
                 }
 
-                ParentNodeDataExtensions.UpdateNodePosition(item.ParentData, parentData);
+                ParentNodeDataExtensions.UpdateNodePosition(item.parentData, parentData);
             }
 
             for(int i = Brushes.Count - 1; i >= 0; i--)
             {
                 CSGBrush item = Brushes[i];
 
-                if(!item || item.brushNodeID == CSGNode.InvalidNodeID)
+                if(!item || item.brushNodeID == CSGNode.INVALID_NODE_ID)
                 {
                     continue;
                 }
 
-                ParentNodeData parentData = item.ChildData.OwnerParentData;
+                ParentNodeData parentData = item.childData.ownerParentData;
 
                 if(parentData == null)
                 {
@@ -1042,32 +1042,32 @@ namespace RealtimeCSG
                 {
                     CSGOperation item = Operations[i];
 
-                    if(!item || item.operationNodeID == CSGNode.InvalidNodeID)
+                    if(!item || item.operationNodeID == CSGNode.INVALID_NODE_ID)
                     {
                         continue;
                     }
 
-                    if(!item.ParentData.ChildrenModified)
+                    if(!item.parentData.childrenModified)
                     {
                         continue;
                     }
 
-                    int[] childList = UpdateChildList(item.ParentData);
+                    int[] childList = UpdateChildList(item.parentData);
 
                     External.setChildNodes(item.operationNodeID, childList.Length, childList);
-                    item.ParentData.ChildrenModified = false;
+                    item.parentData.childrenModified = false;
                 }
 
                 for(int i = 0; i < Models.Length; i++)
                 {
                     CSGModel item = Models[i];
 
-                    if(!item || item.modelNodeID == CSGNode.InvalidNodeID)
+                    if(!item || item.modelNodeID == CSGNode.INVALID_NODE_ID)
                     {
                         continue;
                     }
 
-                    if(!item.parentData.ChildrenModified)
+                    if(!item.parentData.childrenModified)
                     {
                         continue;
                     }
@@ -1075,7 +1075,7 @@ namespace RealtimeCSG
                     int[] childList = UpdateChildList(item.parentData);
 
                     External.setChildNodes(item.modelNodeID, childList.Length, childList);
-                    item.parentData.ChildrenModified = false;
+                    item.parentData.childrenModified = false;
                 }
             }
 

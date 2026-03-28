@@ -60,12 +60,10 @@ namespace RealtimeCSG.Foundation
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override bool Equals(object obj)
         {
-            if(!(obj is GeneratedMeshDescription))
+            if(!(obj is GeneratedMeshDescription description))
             {
                 return false;
             }
-
-            GeneratedMeshDescription description = (GeneratedMeshDescription)obj;
 
             return meshQuery == description.meshQuery &&
                 surfaceParameter == description.surfaceParameter &&
@@ -81,15 +79,15 @@ namespace RealtimeCSG.Foundation
         public override int GetHashCode()
         {
             int hashCode = -190551774;
-            hashCode = hashCode * -1521134295;
-            hashCode = hashCode * -1521134295 + meshQuery.GetHashCode();
-            hashCode = hashCode * -1521134295 + (int)surfaceParameter;
-            hashCode = hashCode * -1521134295 + (int)subMeshQueryIndex;
-            hashCode = hashCode * -1521134295 + (int)meshQueryIndex;
-            hashCode = hashCode * -1521134295 + (int)geometryHashValue;
-            hashCode = hashCode * -1521134295 + (int)surfaceHashValue;
-            hashCode = hashCode * -1521134295 + (int)vertexCount;
-            hashCode = hashCode * -1521134295 + (int)indexCount;
+            hashCode *= -1521134295;
+            hashCode =  hashCode * -1521134295 + meshQuery.GetHashCode();
+            hashCode =  hashCode * -1521134295 + surfaceParameter;
+            hashCode =  hashCode * -1521134295 + subMeshQueryIndex;
+            hashCode =  hashCode * -1521134295 + meshQueryIndex;
+            hashCode =  hashCode * -1521134295 + (int)geometryHashValue;
+            hashCode =  hashCode * -1521134295 + (int)surfaceHashValue;
+            hashCode =  hashCode * -1521134295 + vertexCount;
+            hashCode =  hashCode * -1521134295 + indexCount;
 
             return hashCode;
         }

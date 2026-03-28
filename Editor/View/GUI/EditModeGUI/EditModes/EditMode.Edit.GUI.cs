@@ -139,11 +139,11 @@ namespace RealtimeCSG
             {
                 if(filteredSelection.brushTargets.Length > 0)
                 {
-                    operationType = filteredSelection.brushTargets[0].OperationType;
+                    operationType = filteredSelection.brushTargets[0].operationType;
 
                     for(int i = 1; i < filteredSelection.brushTargets.Length; i++)
                     {
-                        if(filteredSelection.brushTargets[i].OperationType != operationType)
+                        if(filteredSelection.brushTargets[i].operationType != operationType)
                         {
                             mixedValues = true;
                         }
@@ -151,14 +151,14 @@ namespace RealtimeCSG
                 }
                 else if(filteredSelection.operationTargets.Length > 0)
                 {
-                    operationType = filteredSelection.operationTargets[0].OperationType;
+                    operationType = filteredSelection.operationTargets[0].operationType;
                 }
 
                 if(filteredSelection.operationTargets.Length > 0)
                 {
                     for(int i = 0; i < filteredSelection.operationTargets.Length; i++)
                     {
-                        if(filteredSelection.operationTargets[i].OperationType != operationType)
+                        if(filteredSelection.operationTargets[i].operationType != operationType)
                         {
                             mixedValues = true;
                         }
@@ -219,13 +219,13 @@ namespace RealtimeCSG
 
                     for(int i = 0; i < filteredSelection.brushTargets.Length; i++)
                     {
-                        filteredSelection.brushTargets[i].OperationType = operationType;
+                        filteredSelection.brushTargets[i].operationType = operationType;
                     }
 
                     for(int i = 0; i < filteredSelection.operationTargets.Length; i++)
                     {
                         filteredSelection.operationTargets[i].PassThrough   = false;
-                        filteredSelection.operationTargets[i].OperationType = operationType;
+                        filteredSelection.operationTargets[i].operationType = operationType;
                     }
 
                     InternalCSGModelManager.CheckForChanges();

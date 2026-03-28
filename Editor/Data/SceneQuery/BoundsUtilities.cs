@@ -40,13 +40,13 @@ namespace RealtimeCSG
                 foreach(CSGBrush brush in brushes)
                 {
                     Transform   transform   = brush.GetComponent<Transform>();
-                    ControlMesh controlMesh = brush.ControlMesh;
-                    bounds.center = transform.TransformPoint(controlMesh.Vertices[0]);
+                    ControlMesh controlMesh = brush.controlMesh;
+                    bounds.center = transform.TransformPoint(controlMesh.vertices[0]);
                     bounds.size   = MathConstants.zeroVector3;
 
-                    for(int i = 1; i < controlMesh.Vertices.Length; i++)
+                    for(int i = 1; i < controlMesh.vertices.Length; i++)
                     {
-                        bounds.Encapsulate(transform.TransformPoint(controlMesh.Vertices[i]));
+                        bounds.Encapsulate(transform.TransformPoint(controlMesh.vertices[i]));
                     }
                 }
             }
@@ -56,8 +56,8 @@ namespace RealtimeCSG
 
         public static AABB GetBounds(CSGBrush[] brushes)
         {
-            Vector3 min = MathConstants.PositiveInfinityVector3;
-            Vector3 max = MathConstants.NegativeInfinityVector3;
+            Vector3 min = MathConstants.positiveInfinityVector3;
+            Vector3 max = MathConstants.negativeInfinityVector3;
 
             for(int b = 0; b < brushes.Length; b++)
             {
@@ -66,18 +66,18 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                ControlMesh controlMesh = brushes[b].ControlMesh;
+                ControlMesh controlMesh = brushes[b].controlMesh;
 
-                if(controlMesh == null || controlMesh.Vertices == null)
+                if(controlMesh == null || controlMesh.vertices == null)
                 {
                     continue;
                 }
 
                 Matrix4x4 matrix = brushes[b].transform.localToWorldMatrix;
 
-                for(int p = 0; p < controlMesh.Vertices.Length; p++)
+                for(int p = 0; p < controlMesh.vertices.Length; p++)
                 {
-                    Vector3 point = matrix.MultiplyPoint(controlMesh.Vertices[p]);
+                    Vector3 point = matrix.MultiplyPoint(controlMesh.vertices[p]);
                     min.x = Mathf.Min(min.x, point.x);
                     min.y = Mathf.Min(min.y, point.y);
                     min.z = Mathf.Min(min.z, point.z);
@@ -101,8 +101,8 @@ namespace RealtimeCSG
 
         public static AABB GetBounds(Vector3[] points)
         {
-            Vector3 min = MathConstants.PositiveInfinityVector3;
-            Vector3 max = MathConstants.NegativeInfinityVector3;
+            Vector3 min = MathConstants.positiveInfinityVector3;
+            Vector3 max = MathConstants.negativeInfinityVector3;
 
             for(int p = 0; p < points.Length; p++)
             {
@@ -134,8 +134,8 @@ namespace RealtimeCSG
                 return new AABB();
             }
 
-            Vector3 min = MathConstants.PositiveInfinityVector3;
-            Vector3 max = MathConstants.NegativeInfinityVector3;
+            Vector3 min = MathConstants.positiveInfinityVector3;
+            Vector3 max = MathConstants.negativeInfinityVector3;
 
             Quaternion inverseRotation = Quaternion.Inverse(rotation);
 
@@ -173,24 +173,24 @@ namespace RealtimeCSG
 
         public static Vector3 GetLocalCenter(CSGBrush brush)
         {
-            Vector3 min = MathConstants.PositiveInfinityVector3;
-            Vector3 max = MathConstants.NegativeInfinityVector3;
+            Vector3 min = MathConstants.positiveInfinityVector3;
+            Vector3 max = MathConstants.negativeInfinityVector3;
 
             if(!brush)
             {
                 return min;
             }
 
-            ControlMesh controlMesh = brush.ControlMesh;
+            ControlMesh controlMesh = brush.controlMesh;
 
-            if(controlMesh == null || controlMesh.Vertices == null)
+            if(controlMesh == null || controlMesh.vertices == null)
             {
                 return min;
             }
 
-            for(int p = 0; p < controlMesh.Vertices.Length; p++)
+            for(int p = 0; p < controlMesh.vertices.Length; p++)
             {
-                Vector3 point = controlMesh.Vertices[p];
+                Vector3 point = controlMesh.vertices[p];
                 min.x = Mathf.Min(min.x, point.x);
                 min.y = Mathf.Min(min.y, point.y);
                 min.z = Mathf.Min(min.z, point.z);
@@ -205,8 +205,8 @@ namespace RealtimeCSG
 
         public static Vector3 GetCenter(CSGBrush[] brushes)
         {
-            Vector3 min = MathConstants.PositiveInfinityVector3;
-            Vector3 max = MathConstants.NegativeInfinityVector3;
+            Vector3 min = MathConstants.positiveInfinityVector3;
+            Vector3 max = MathConstants.negativeInfinityVector3;
 
             for(int b = 0; b < brushes.Length; b++)
             {
@@ -215,7 +215,7 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                ControlMesh controlMesh = brushes[b].ControlMesh;
+                ControlMesh controlMesh = brushes[b].controlMesh;
 
                 if(controlMesh == null)
                 {
@@ -224,9 +224,9 @@ namespace RealtimeCSG
 
                 Matrix4x4 matrix = brushes[b].transform.localToWorldMatrix;
 
-                for(int p = 0; p < controlMesh.Vertices.Length; p++)
+                for(int p = 0; p < controlMesh.vertices.Length; p++)
                 {
-                    Vector3 point = matrix.MultiplyPoint(controlMesh.Vertices[p]);
+                    Vector3 point = matrix.MultiplyPoint(controlMesh.vertices[p]);
                     min.x = Mathf.Min(min.x, point.x);
                     min.y = Mathf.Min(min.y, point.y);
                     min.z = Mathf.Min(min.z, point.z);
@@ -242,23 +242,23 @@ namespace RealtimeCSG
 
         public static AABB GetLocalBounds(CSGBrush[] brushes, Matrix4x4 worldToLocal)
         {
-            Vector3 min = MathConstants.PositiveInfinityVector3;
-            Vector3 max = MathConstants.NegativeInfinityVector3;
+            Vector3 min = MathConstants.positiveInfinityVector3;
+            Vector3 max = MathConstants.negativeInfinityVector3;
 
             for(int b = 0; b < brushes.Length; b++)
             {
-                ControlMesh controlMesh = brushes[b].ControlMesh;
+                ControlMesh controlMesh = brushes[b].controlMesh;
 
-                if(controlMesh == null || controlMesh.Vertices == null)
+                if(controlMesh == null || controlMesh.vertices == null)
                 {
                     continue;
                 }
 
                 Matrix4x4 brushToGridspace = worldToLocal * brushes[b].transform.localToWorldMatrix;
 
-                for(int p = 0; p < controlMesh.Vertices.Length; p++)
+                for(int p = 0; p < controlMesh.vertices.Length; p++)
                 {
-                    Vector3 point = brushToGridspace.MultiplyPoint(controlMesh.Vertices[p]);
+                    Vector3 point = brushToGridspace.MultiplyPoint(controlMesh.vertices[p]);
                     min.x = Mathf.Min(min.x, point.x);
                     min.y = Mathf.Min(min.y, point.y);
                     min.z = Mathf.Min(min.z, point.z);

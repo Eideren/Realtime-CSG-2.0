@@ -50,8 +50,8 @@ namespace RealtimeCSG
             Vector3 projectedWidth  = Vector3.Project(delta, gridTangent);
             Vector3 projectedLength = Vector3.Project(delta, gridBinormal);
 
-            isValid = projectedWidth.magnitude > MathConstants.EqualityEpsilon &&
-                projectedLength.magnitude > MathConstants.EqualityEpsilon;
+            isValid = projectedWidth.magnitude > MathConstants.EQUALITY_EPSILON &&
+                projectedLength.magnitude > MathConstants.EQUALITY_EPSILON;
 
             return new[] { GeometryUtility.ProjectPointOnPlane(buildPlane, corner0), GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedLength), GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedWidth + projectedLength), GeometryUtility.ProjectPointOnPlane(buildPlane, corner0 + projectedWidth) };
         }

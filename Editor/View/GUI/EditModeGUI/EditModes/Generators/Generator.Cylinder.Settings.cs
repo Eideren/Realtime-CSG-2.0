@@ -145,9 +145,9 @@ namespace RealtimeCSG
                 delta  /= radius;
                 radius =  value;
 
-                if(radius < MathConstants.MinimumScale)
+                if(radius < MathConstants.MINIMUM_SCALE)
                 {
-                    radius = MathConstants.MinimumScale;
+                    radius = MathConstants.MINIMUM_SCALE;
                 }
 
                 delta *= radius;
@@ -195,7 +195,7 @@ namespace RealtimeCSG
             Vector3 delta   = vertex1 - vertices[0];
             radiusA = delta.magnitude;
 
-            if(radiusA <= MathConstants.DistanceEpsilon)
+            if(radiusA <= MathConstants.DISTANCE_EPSILON)
             {
                 isValid = false;
 
@@ -205,7 +205,7 @@ namespace RealtimeCSG
             Matrix4x4 matrix       = GeometryUtility.Rotate2DToPlaneMatrix(buildPlane);
             Vector3[] realVertices = new Vector3[CircleSides];
 
-            float angleOffset = GeometryUtility.SignedAngle(gridTangent, delta / radiusA, buildPlane.normal);
+            float angleOffset = GeometryUtility.SignedAngle(gridTangent, delta / radiusA, buildPlane.Normal);
 
             if(CircleDistanceToSide)
             {

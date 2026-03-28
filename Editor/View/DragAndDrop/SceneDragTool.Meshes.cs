@@ -295,7 +295,7 @@ namespace RealtimeCSG
 
                 LegacyBrushIntersection intersection = SceneQueryUtility.FindMeshIntersection(camera, Event.current.mousePosition);
 
-                Vector3 normal = intersection.worldPlane.normal;
+                Vector3 normal = intersection.worldPlane.Normal;
 
                 _hoverPosition     = intersection.worldIntersection;
                 _hoverParent       = SelectionUtility.FindParentToAssignTo(intersection);
@@ -443,7 +443,7 @@ namespace RealtimeCSG
 
             CSGBrush brush = _hoverBrushSurface.brush;
 
-            if(brush.ChildData == null || !brush.ChildData.ModelTransform)
+            if(brush.childData == null || !brush.childData.modelTransform)
             {
                 return;
             }
@@ -451,7 +451,7 @@ namespace RealtimeCSG
             int       highlightSurface    = _hoverBrushSurface.surfaceIndex;
             Matrix4x4 brushTransformation = brush.compareTransformation.localToWorldMatrix;
 
-            CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.Shape, brushTransformation, ColorSettings.WireframeOutline, highlightSurface, false, GUIConstants.OLD_LINE_SCALE);
+            CSGRenderer.DrawSelectedBrush(brush.brushNodeID, brush.shape, brushTransformation, ColorSettings.WireframeOutline, highlightSurface, false, GUIConstants.OLD_LINE_SCALE);
         }
 
 #endregion

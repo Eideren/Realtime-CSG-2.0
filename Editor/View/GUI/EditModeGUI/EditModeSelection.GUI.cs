@@ -309,9 +309,9 @@ namespace RealtimeCSG
                 {
                     GameObject gameObject = targetNodes[0].gameObject;
                     isPrefab                   = CSGPrefabUtility.IsPrefabAsset(gameObject);
-                    prefabBehaviour            = targetNodes[0].PrefabBehaviour;
-                    prefabSourceAlignment      = targetNodes[0].PrefabSourceAlignment;
-                    prefabDestinationAlignment = targetNodes[0].PrefabDestinationAlignment;
+                    prefabBehaviour            = targetNodes[0].prefabBehaviour;
+                    prefabSourceAlignment      = targetNodes[0].prefabSourceAlignment;
+                    prefabDestinationAlignment = targetNodes[0].prefabDestinationAlignment;
 
                     for(int i = 1; i < targetNodes.Length; i++)
                     {
@@ -319,9 +319,9 @@ namespace RealtimeCSG
 
                         bool currentIsPrefab = CSGPrefabUtility.IsPrefabAsset(gameObject);
 
-                        PrefabInstantiateBehaviour currentPrefabBehaviour            = targetNodes[i].PrefabBehaviour;
-                        PrefabSourceAlignment      currentPrefabSourceAlignment      = targetNodes[i].PrefabSourceAlignment;
-                        PrefabDestinationAlignment currentPrefabDestinationAlignment = targetNodes[i].PrefabDestinationAlignment;
+                        PrefabInstantiateBehaviour currentPrefabBehaviour            = targetNodes[i].prefabBehaviour;
+                        PrefabSourceAlignment      currentPrefabSourceAlignment      = targetNodes[i].prefabSourceAlignment;
+                        PrefabDestinationAlignment currentPrefabDestinationAlignment = targetNodes[i].prefabDestinationAlignment;
 
                         if(isPrefab.HasValue && isPrefab.Value != currentIsPrefab)
                         {
@@ -378,7 +378,7 @@ namespace RealtimeCSG
 
                             for(int i = 0; i < targetNodes.Length; i++)
                             {
-                                targetNodes[i].PrefabBehaviour = prefabBehavour;
+                                targetNodes[i].prefabBehaviour = prefabBehavour;
                             }
                         }
 
@@ -401,7 +401,7 @@ namespace RealtimeCSG
 
                         for(int i = 0; i < targetNodes.Length; i++)
                         {
-                            targetNodes[i].PrefabDestinationAlignment = destinationAlignment;
+                            targetNodes[i].prefabDestinationAlignment = destinationAlignment;
                         }
                     }
 
@@ -423,7 +423,7 @@ namespace RealtimeCSG
 
                         for(int i = 0; i < targetNodes.Length; i++)
                         {
-                            targetNodes[i].PrefabSourceAlignment = sourceAlignment;
+                            targetNodes[i].prefabSourceAlignment = sourceAlignment;
                         }
                     }
 
@@ -445,14 +445,14 @@ namespace RealtimeCSG
 
                     if(targetBrushes.Length > 0)
                     {
-                        operationType = targetBrushes[0].OperationType;
+                        operationType = targetBrushes[0].operationType;
                     }
 
                     for(int b = 1; b < targetBrushes.Length; b++)
                     {
                         CSGBrush brush = targetBrushes[b];
 
-                        if(operationType != brush.OperationType)
+                        if(operationType != brush.operationType)
                         {
                             opMixedValues = true;
                         }
@@ -462,18 +462,18 @@ namespace RealtimeCSG
                     {
                         if(operationType == (CSGOperationType)invalidOperationType)
                         {
-                            operationType = operation.OperationType;
+                            operationType = operation.operationType;
                         }
-                        else if(operationType != operation.OperationType)
+                        else if(operationType != operation.operationType)
                         {
                             opMixedValues = true;
                         }
 
                         if(!handleAsOne.HasValue)
                         {
-                            handleAsOne = operation.HandleAsOne;
+                            handleAsOne = operation.handleAsOne;
                         }
-                        else if(handleAsOne.Value != operation.HandleAsOne)
+                        else if(handleAsOne.Value != operation.handleAsOne)
                         {
                             selMixedValues = true;
                         }
@@ -530,13 +530,13 @@ namespace RealtimeCSG
 
                             foreach(CSGBrush brush in targetBrushes)
                             {
-                                brush.OperationType = operationType;
+                                brush.operationType = operationType;
                             }
 
                             foreach(CSGOperation operation in targetOperations)
                             {
                                 operation.PassThrough   = false;
-                                operation.OperationType = operationType;
+                                operation.operationType = operationType;
                             }
 
                             InternalCSGModelManager.CheckForChanges();
@@ -560,16 +560,16 @@ namespace RealtimeCSG
 
                             if(m_OpenSurfaces)
                             {
-                                Shape         targetShape     = targetBrushes[0].Shape;
-                                TexGen[]      texGens         = targetShape.TexGens;
-                                TexGenFlags[] texGenFlagArray = targetShape.TexGenFlags;
+                                Shape         targetShape     = targetBrushes[0].shape;
+                                TexGen[]      texGens         = targetShape.texGens;
+                                TexGenFlags[] texGenFlagArray = targetShape.texGenFlags;
 
                                 for(int t = 0; t < texGens.Length; t++)
                                 {
                                     GUILayout.Space(2);
 
                                     TexGenFlags texGenFlags = texGenFlagArray[t];
-                                    Material    material    = targetShape.TexGens[t].RenderMaterial;
+                                    Material    material    = targetShape.texGens[t].RenderMaterial;
                                     EditorGUI.BeginChangeCheck();
 
                                     GUILayout.BeginHorizontal();
@@ -599,7 +599,7 @@ namespace RealtimeCSG
                                         using(new UndoGroup(selectedBrushSurfaces, "discarding surface"))
                                         {
                                             texGenFlagArray[t]                    = texGenFlags;
-                                            targetShape.TexGens[t].RenderMaterial = material;
+                                            targetShape.texGens[t].RenderMaterial = material;
                                         }
                                     }
 
@@ -624,7 +624,7 @@ namespace RealtimeCSG
 
                             foreach(CSGOperation operation in targetOperations)
                             {
-                                operation.HandleAsOne = handleAsOne.Value;
+                                operation.handleAsOne = handleAsOne.Value;
                             }
 
                             EditorApplication.RepaintHierarchyWindow();

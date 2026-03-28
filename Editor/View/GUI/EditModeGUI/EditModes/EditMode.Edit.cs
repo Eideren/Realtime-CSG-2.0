@@ -488,7 +488,7 @@ namespace RealtimeCSG
             }
 
             Vector2 point1 = HandleUtility.WorldToGUIPoint(meshState.polygonCenterPoints[polygonIndex]);
-            Vector2 point2 = HandleUtility.WorldToGUIPoint(meshState.polygonCenterPoints[polygonIndex] + meshState.polygonCenterPlanes[polygonIndex].normal * 10.0f);
+            Vector2 point2 = HandleUtility.WorldToGUIPoint(meshState.polygonCenterPoints[polygonIndex] + meshState.polygonCenterPlanes[polygonIndex].Normal * 10.0f);
             Vector2 delta  = (point2 - point1).normalized;
 
             _currentCursor = CursorUtility.GetCursorForDirection(delta);
@@ -499,7 +499,7 @@ namespace RealtimeCSG
         private EditMode HoverOnEdge(ControlMeshState meshState, int brushIndex, int edgeIndex)
         {
             CSGBrush  brush    = _brushSelection.brushes[brushIndex];
-            Surface[] surfaces = brush.Shape.Surfaces;
+            Surface[] surfaces = brush.shape.surfaces;
 
             int vertexIndex1 = meshState.edges[edgeIndex * 2 + 0];
             int vertexIndex2 = meshState.edges[edgeIndex * 2 + 1];
@@ -587,7 +587,7 @@ namespace RealtimeCSG
 
             ControlMeshState targetMeshState = _brushSelection.states[_hoverOnTarget];
 
-            Vector3 localNormal = targetMeshState.polygonCenterPlanes[_hoverOnPolygonIndex].normal;
+            Vector3 localNormal = targetMeshState.polygonCenterPlanes[_hoverOnPolygonIndex].Normal;
             Vector3 worldNormal = targetMeshState.brushTransform.localToWorldMatrix.MultiplyVector(localNormal).normalized;
 
             if(Tools.pivotRotation == PivotRotation.Global)
@@ -602,8 +602,8 @@ namespace RealtimeCSG
                 return;
             }
 
-            ControlMesh controlMesh = brush.ControlMesh;
-            Shape       shape       = brush.Shape;
+            ControlMesh controlMesh = brush.controlMesh;
+            Shape       shape       = brush.shape;
 
             if(controlMesh == null || shape == null)
             {
@@ -614,14 +614,14 @@ namespace RealtimeCSG
             int[]     pointIndices = targetMeshState.polygonPointIndices[_hoverOnPolygonIndex];
 
             CSGPlane polygonPlane = GeometryUtility.CalcPolygonPlane(points, pointIndices);
-            Polygon  polygon      = controlMesh.Polygons[_hoverOnPolygonIndex];
+            Polygon  polygon      = controlMesh.polygons[_hoverOnPolygonIndex];
 
             if(polygon == null)
             {
                 return;
             }
 
-            int[] edgeIndices = polygon.EdgeIndices;
+            int[] edgeIndices = polygon.edgeIndices;
 
             if(edgeIndices == null || edgeIndices.Length == 0)
             {
@@ -633,14 +633,14 @@ namespace RealtimeCSG
             for(int e = 0; e < edgeIndices.Length; e++)
             {
                 int   edgeIndex          = edgeIndices[e];
-                int   twinIndex          = controlMesh.Edges[edgeIndex].TwinIndex;
-                short twinPolygonIndex   = controlMesh.Edges[twinIndex].PolygonIndex;
-                int   twinTexGenIndex    = controlMesh.Polygons[twinPolygonIndex].TexGenIndex;
-                uint  twinSmoothingGroup = shape.TexGens[twinTexGenIndex].SmoothingGroup;
+                int   twinIndex          = controlMesh.edges[edgeIndex].twinIndex;
+                short twinPolygonIndex   = controlMesh.edges[twinIndex].polygonIndex;
+                int   twinTexGenIndex    = controlMesh.polygons[twinPolygonIndex].texGenIndex;
+                uint  twinSmoothingGroup = shape.texGens[twinTexGenIndex].SmoothingGroup;
                 smoothingGroups[e] = twinSmoothingGroup;
             }
 
-            EditModeManager.GenerateFromSurface(camera, brush, polygonPlane, worldNormal, points, pointIndices, smoothingGroups, drag, brush.OperationType, CSGSettings.AutoCommitExtrusion);
+            EditModeManager.GenerateFromSurface(camera, brush, polygonPlane, worldNormal, points, pointIndices, smoothingGroups, drag, brush.operationType, CSGSettings.AutoCommitExtrusion);
         }
 
         private void MergeDuplicatePoints()
@@ -848,11 +848,11 @@ namespace RealtimeCSG
             for(int t = 0; t < _brushSelection.brushes.Length; t++)
             {
                 ControlMesh workControlMesh = _brushSelection.controlMeshes[t];
-                _brushSelection.states[t].backupPoints = new Vector3[workControlMesh.Vertices.Length];
+                _brushSelection.states[t].backupPoints = new Vector3[workControlMesh.vertices.Length];
 
-                if(workControlMesh.Vertices.Length > 0)
+                if(workControlMesh.vertices.Length > 0)
                 {
-                    Array.Copy(workControlMesh.Vertices, _brushSelection.states[t].backupPoints, workControlMesh.Vertices.Length);
+                    Array.Copy(workControlMesh.vertices, _brushSelection.states[t].backupPoints, workControlMesh.vertices.Length);
                 }
 
                 _brushSelection.states[t].backupPolygonCenterPoints = new Vector3[_brushSelection.states[t].polygonCenterPoints.Length];
@@ -949,7 +949,7 @@ namespace RealtimeCSG
                 Matrix4x4        brushLocalToWorld = targetMeshState.brushTransform.localToWorldMatrix;
                 Vector3          worldOrigin       = targetMeshState.polygonCenterPoints[_hoverOnPolygonIndex];
 
-                Vector3 worldDirection = brushLocalToWorld.MultiplyVector(targetMeshState.polygonCenterPlanes[_hoverOnPolygonIndex].normal).normalized;
+                Vector3 worldDirection = brushLocalToWorld.MultiplyVector(targetMeshState.polygonCenterPlanes[_hoverOnPolygonIndex].Normal).normalized;
 
                 if(Tools.pivotRotation == PivotRotation.Global)
                 {
@@ -1000,17 +1000,17 @@ namespace RealtimeCSG
 
         private Vector3 SnapMovementToPlane(Vector3 offset)
         {
-            if(Math.Abs(_movePlane.a) > 1 - MathConstants.NormalEpsilon)
+            if(Math.Abs(_movePlane.a) > 1 - MathConstants.NORMAL_EPSILON)
             {
                 offset.x = 0.0f;
             }
 
-            if(Math.Abs(_movePlane.b) > 1 - MathConstants.NormalEpsilon)
+            if(Math.Abs(_movePlane.b) > 1 - MathConstants.NORMAL_EPSILON)
             {
                 offset.y = 0.0f;
             }
 
-            if(Math.Abs(_movePlane.c) > 1 - MathConstants.NormalEpsilon)
+            if(Math.Abs(_movePlane.c) > 1 - MathConstants.NORMAL_EPSILON)
             {
                 offset.z = 0.0f;
             }
@@ -1097,7 +1097,7 @@ namespace RealtimeCSG
                     break;
                 }
 
-                _brushSelection.states[t].UpdateMesh(_brushSelection.backupControlMeshes[t], _brushSelection.controlMeshes[t].Vertices);
+                _brushSelection.states[t].UpdateMesh(_brushSelection.backupControlMeshes[t], _brushSelection.controlMeshes[t].vertices);
             }
         }
 
@@ -1410,7 +1410,7 @@ namespace RealtimeCSG
                         if(p < targetMeshState.polygonCenterPoints.Length)
                         {
                             Vector3 origin      = targetMeshState.polygonCenterPoints[p];
-                            Vector3 localNormal = targetMeshState.polygonCenterPlanes[p].normal;
+                            Vector3 localNormal = targetMeshState.polygonCenterPlanes[p].Normal;
                             Vector3 worldNormal = targetMeshState.brushTransform.localToWorldMatrix.MultiplyVector(localNormal).normalized;
 
                             Handles.matrix = MathConstants.identityMatrix;
@@ -1512,9 +1512,9 @@ namespace RealtimeCSG
             Vector2 textCenter2D = Event.current.mousePosition;
             textCenter2D.y += HoverTextDistance * 2;
 
-            bool lockX = Mathf.Abs(delta.x) < MathConstants.ConsideredZero && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EqualityEpsilon);
-            bool lockY = Mathf.Abs(delta.y) < MathConstants.ConsideredZero && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EqualityEpsilon);
-            bool lockZ = Mathf.Abs(delta.z) < MathConstants.ConsideredZero && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EqualityEpsilon);
+            bool lockX = Mathf.Abs(delta.x) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON);
+            bool lockY = Mathf.Abs(delta.y) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON);
+            bool lockZ = Mathf.Abs(delta.z) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON);
 
             string text = Units.ToRoundedDistanceString(delta, lockX, lockY, lockZ);
             PaintUtility.DrawScreenText(textCenter2D, text);
@@ -1604,11 +1604,11 @@ namespace RealtimeCSG
                         }
 
                         polygonSelectedCount++;
-                        Vector3 localNormal = targetMeshState.polygonCenterPlanes[p].normal;
+                        Vector3 localNormal = targetMeshState.polygonCenterPlanes[p].Normal;
 
                         Vector3 worldNormal = targetMeshState.brushTransform.localToWorldMatrix.MultiplyVector(localNormal).normalized;
 
-                        if(worldNormal.sqrMagnitude < MathConstants.EqualityEpsilonSqr)
+                        if(worldNormal.sqrMagnitude < MathConstants.EQUALITY_EPSILON_SQR)
                         {
                             continue;
                         }
@@ -1638,10 +1638,10 @@ namespace RealtimeCSG
                 }
             }
 
-            if(rotation.x <= MathConstants.EqualityEpsilon &&
-               rotation.y <= MathConstants.EqualityEpsilon &&
-               rotation.z <= MathConstants.EqualityEpsilon &&
-               rotation.w <= MathConstants.EqualityEpsilon)
+            if(rotation.x <= MathConstants.EQUALITY_EPSILON &&
+               rotation.y <= MathConstants.EQUALITY_EPSILON &&
+               rotation.z <= MathConstants.EQUALITY_EPSILON &&
+               rotation.w <= MathConstants.EQUALITY_EPSILON)
             {
                 rotation = Quaternion.identity;
             }
@@ -1651,9 +1651,9 @@ namespace RealtimeCSG
 
         private void DrawScaleBounds(Camera camera, Quaternion rotation, Vector3 scale, Vector3 center, Vector3[] worldPoints)
         {
-            bool lockX = Mathf.Abs(scale.x) - 1 < MathConstants.ConsideredZero && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EqualityEpsilon);
-            bool lockY = Mathf.Abs(scale.y) - 1 < MathConstants.ConsideredZero && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EqualityEpsilon);
-            bool lockZ = Mathf.Abs(scale.z) - 1 < MathConstants.ConsideredZero && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EqualityEpsilon);
+            bool lockX = Mathf.Abs(scale.x) - 1 < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON);
+            bool lockY = Mathf.Abs(scale.y) - 1 < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON);
+            bool lockZ = Mathf.Abs(scale.z) - 1 < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON);
 
             string text = Units.ToRoundedScaleString(scale, lockX, lockY, lockZ);
             PaintUtility.DrawScreenText(camera, handleCenter, HoverTextDistance * 3, text);
@@ -1694,23 +1694,23 @@ namespace RealtimeCSG
             CSGBrush         hoverBrush         = _brushSelection.brushes[_hoverOnTarget];
             ControlMeshState hoverMeshState     = _brushSelection.states[_hoverOnTarget];
             Transform        transform          = hoverBrush.transform;
-            ControlMesh      controlMesh        = hoverBrush.ControlMesh;
-            Shape            shape              = hoverBrush.Shape;
+            ControlMesh      controlMesh        = hoverBrush.controlMesh;
+            Shape            shape              = hoverBrush.shape;
             Matrix4x4        localToWorldMatrix = transform.localToWorldMatrix;
 
             if(_hoverOnEdgeIndex != -1)
             {
                 _chamferMode = ChamferMode.Edge;
                 int   halfEdgEIndex = hoverMeshState.edgeStateToHalfEdge[_hoverOnEdgeIndex];
-                int   twinIndex     = controlMesh.Edges[halfEdgEIndex].TwinIndex;
-                short polygonIndex1 = controlMesh.Edges[halfEdgEIndex].PolygonIndex;
-                short polygonIndex2 = controlMesh.Edges[twinIndex].PolygonIndex;
-                int   texGenIndex1  = controlMesh.Polygons[polygonIndex1].TexGenIndex;
-                int   texGenIndex2  = controlMesh.Polygons[polygonIndex2].TexGenIndex;
+                int   twinIndex     = controlMesh.edges[halfEdgEIndex].twinIndex;
+                short polygonIndex1 = controlMesh.edges[halfEdgEIndex].polygonIndex;
+                short polygonIndex2 = controlMesh.edges[twinIndex].polygonIndex;
+                int   texGenIndex1  = controlMesh.polygons[polygonIndex1].texGenIndex;
+                int   texGenIndex2  = controlMesh.polygons[polygonIndex2].texGenIndex;
 
                 _chamferPlanes    = new CSGPlane[2];
-                _chamferPlanes[0] = shape.Surfaces[texGenIndex1].Plane;
-                _chamferPlanes[1] = shape.Surfaces[texGenIndex2].Plane;
+                _chamferPlanes[0] = shape.surfaces[texGenIndex1].Plane;
+                _chamferPlanes[1] = shape.surfaces[texGenIndex2].Plane;
 
                 for(int p = 0; p < _chamferPlanes.Length; p++)
                 {
@@ -1732,16 +1732,16 @@ namespace RealtimeCSG
 
                 List<CSGPlane> foundPlanes = new List<CSGPlane>();
 
-                for(int e = 0; e < controlMesh.Edges.Length; e++)
+                for(int e = 0; e < controlMesh.edges.Length; e++)
                 {
-                    if(controlMesh.Edges[e].VertexIndex != _hoverOnPointIndex)
+                    if(controlMesh.edges[e].vertexIndex != _hoverOnPointIndex)
                     {
                         continue;
                     }
 
-                    short    polygonIndex = controlMesh.Edges[e].PolygonIndex;
-                    int      texGenIndex  = controlMesh.Polygons[polygonIndex].TexGenIndex;
-                    CSGPlane plane        = shape.Surfaces[texGenIndex].Plane;
+                    short    polygonIndex = controlMesh.edges[e].polygonIndex;
+                    int      texGenIndex  = controlMesh.polygons[polygonIndex].texGenIndex;
+                    CSGPlane plane        = shape.surfaces[texGenIndex].Plane;
 
                     plane.Transform(localToWorldMatrix);
                     foundPlanes.Add(plane);
@@ -1766,8 +1766,8 @@ namespace RealtimeCSG
 
             for(int b = 0; b < _brushSelection.brushes.Length; b++)
             {
-                _chamferShapes[b]      = _brushSelection.brushes[b].Shape.Clone();
-                _chamferControlMesh[b] = _brushSelection.brushes[b].ControlMesh.Clone();
+                _chamferShapes[b]      = _brushSelection.brushes[b].shape.Clone();
+                _chamferControlMesh[b] = _brushSelection.brushes[b].controlMesh.Clone();
                 _chamferSelection[b]   = _brushSelection.states[b].selection.Clone();
             }
 
@@ -1796,7 +1796,7 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    if(_chamferPlanes[p1].Distance(tryIntersection) >= MathConstants.DistanceEpsilon)
+                    if(_chamferPlanes[p1].Distance(tryIntersection) >= MathConstants.DISTANCE_EPSILON)
                     {
                         tryFound = false;
 
@@ -1922,14 +1922,14 @@ namespace RealtimeCSG
 
                 planes.Clear();
 
-                if(Math.Abs(distance) > MathConstants.EqualityEpsilon)
+                if(Math.Abs(distance) > MathConstants.EQUALITY_EPSILON)
                 {
                     for(int e = 0; e < meshState.selection.edges.Length; e++)
                     {
                         int   halfEdgeIndex = meshState.edgeStateToHalfEdge[e];
-                        int   twinIndex     = controlMesh.Edges[halfEdgeIndex].TwinIndex;
-                        short polygonIndex1 = controlMesh.Edges[halfEdgeIndex].PolygonIndex;
-                        short polygonIndex2 = controlMesh.Edges[twinIndex].PolygonIndex;
+                        int   twinIndex     = controlMesh.edges[halfEdgeIndex].twinIndex;
+                        short polygonIndex1 = controlMesh.edges[halfEdgeIndex].polygonIndex;
+                        short polygonIndex2 = controlMesh.edges[twinIndex].polygonIndex;
 
                         if((meshState.selection.edges[e] & (SelectState.Selected | SelectState.Hovering)) == SelectState.None && (meshState.selection.polygons[polygonIndex1] & SelectState.Selected) != SelectState.Selected && (meshState.selection.polygons[polygonIndex2] & SelectState.Selected) != SelectState.Selected)
                         {
@@ -1939,10 +1939,10 @@ namespace RealtimeCSG
                         int pointIndex1 = meshState.edges[e * 2 + 0];
                         int pointIndex2 = meshState.edges[e * 2 + 1];
 
-                        int      texGenIndex1   = controlMesh.Polygons[polygonIndex1].TexGenIndex;
-                        int      texGenIndex2   = controlMesh.Polygons[polygonIndex2].TexGenIndex;
-                        CSGPlane chamferPlanes0 = shape.Surfaces[texGenIndex1].Plane;
-                        CSGPlane chamferPlanes1 = shape.Surfaces[texGenIndex2].Plane;
+                        int      texGenIndex1   = controlMesh.polygons[polygonIndex1].texGenIndex;
+                        int      texGenIndex2   = controlMesh.polygons[polygonIndex2].texGenIndex;
+                        CSGPlane chamferPlanes0 = shape.surfaces[texGenIndex1].Plane;
+                        CSGPlane chamferPlanes1 = shape.surfaces[texGenIndex2].Plane;
 
                         Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
 
@@ -1954,8 +1954,8 @@ namespace RealtimeCSG
 
                         Vector3 chamferEdge = (chamferEdgePoints1 - chamferEdgePoints0).normalized;
 
-                        Vector3 chamferTangents0 = Vector3.Cross(chamferPlanes0.normal, chamferEdge);
-                        Vector3 chamferTangents1 = Vector3.Cross(chamferPlanes1.normal, chamferEdge);
+                        Vector3 chamferTangents0 = Vector3.Cross(chamferPlanes0.Normal, chamferEdge);
+                        Vector3 chamferTangents1 = Vector3.Cross(chamferPlanes1.Normal, chamferEdge);
 
                         if(chamferPlanes1.Distance(chamferEdgePoints0 + chamferTangents0) > 0)
                         {
@@ -2007,21 +2007,21 @@ namespace RealtimeCSG
 
                         Matrix4x4 localToWorldMatrix = brush.transform.localToWorldMatrix;
 
-                        Vector3 currPoint = localToWorldMatrix.MultiplyPoint(controlMesh.Vertices[p]);
+                        Vector3 currPoint = localToWorldMatrix.MultiplyPoint(controlMesh.vertices[p]);
 
                         foundPoints.Clear();
 
-                        for(int e = 0; e < controlMesh.Edges.Length; e++)
+                        for(int e = 0; e < controlMesh.edges.Length; e++)
                         {
-                            if(controlMesh.Edges[e].VertexIndex != p)
+                            if(controlMesh.edges[e].vertexIndex != p)
                             {
                                 continue;
                             }
 
-                            int   twinIndex      = controlMesh.Edges[e].TwinIndex;
-                            short twinPointIndex = controlMesh.Edges[twinIndex].VertexIndex;
+                            int   twinIndex      = controlMesh.edges[e].twinIndex;
+                            short twinPointIndex = controlMesh.edges[twinIndex].vertexIndex;
 
-                            Vector3 twinPoint = localToWorldMatrix.MultiplyPoint(controlMesh.Vertices[twinPointIndex]);
+                            Vector3 twinPoint = localToWorldMatrix.MultiplyPoint(controlMesh.vertices[twinPointIndex]);
                             Vector3 direction = (twinPoint - currPoint).normalized;
 
                             foundPoints.Add(currPoint + direction * distance);
@@ -2067,9 +2067,9 @@ namespace RealtimeCSG
                 {
                     anyBrushModified         = true;
                     _chamferBrushModified[b] = brushModified;
-                    brush.ControlMesh        = controlMesh;
-                    brush.Shape              = shape;
-                    brush.ControlMesh.SetDirty();
+                    brush.controlMesh        = controlMesh;
+                    brush.shape              = shape;
+                    brush.controlMesh.SetDirty();
                     ControlMeshUtility.RebuildShape(brush);
                     InternalCSGModelManager.CheckSurfaceModifications(brush, true);
                     UpdateWorkControlMesh();
@@ -2297,17 +2297,17 @@ namespace RealtimeCSG
                                 newScale = Vector3.zero;
                             }
 
-                            if(newScale.x <= MathConstants.EqualityEpsilon)
+                            if(newScale.x <= MathConstants.EQUALITY_EPSILON)
                             {
                                 newScale.x = 0.0f;
                             }
 
-                            if(newScale.y <= MathConstants.EqualityEpsilon)
+                            if(newScale.y <= MathConstants.EQUALITY_EPSILON)
                             {
                                 newScale.y = 0.0f;
                             }
 
-                            if(newScale.z <= MathConstants.EqualityEpsilon)
+                            if(newScale.z <= MathConstants.EQUALITY_EPSILON)
                             {
                                 newScale.z = 0.0f;
                             }
@@ -2367,9 +2367,9 @@ namespace RealtimeCSG
 
                         if(_usingControl)
                         {
-                            bool lockX = Mathf.Abs(_worldDeltaMovement.x) < MathConstants.ConsideredZero && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EqualityEpsilon);
-                            bool lockY = Mathf.Abs(_worldDeltaMovement.y) < MathConstants.ConsideredZero && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EqualityEpsilon);
-                            bool lockZ = Mathf.Abs(_worldDeltaMovement.z) < MathConstants.ConsideredZero && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EqualityEpsilon);
+                            bool lockX = Mathf.Abs(_worldDeltaMovement.x) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON);
+                            bool lockY = Mathf.Abs(_worldDeltaMovement.y) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON);
+                            bool lockZ = Mathf.Abs(_worldDeltaMovement.z) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON);
 
                             string text = Units.ToRoundedDistanceString(_worldDeltaMovement, lockX, lockY, lockZ);
 
@@ -2817,7 +2817,7 @@ namespace RealtimeCSG
 
                                     Vector3 center = meshState.polygonCenterPoints[p];
 
-                                    if(useHandleCenter && (handleCenter - center).sqrMagnitude <= MathConstants.EqualityEpsilonSqr)
+                                    if(useHandleCenter && (handleCenter - center).sqrMagnitude <= MathConstants.EQUALITY_EPSILON_SQR)
                                     {
                                         continue;
                                     }
@@ -2838,7 +2838,7 @@ namespace RealtimeCSG
 
                                     Vector3 center = meshState.worldPoints[p];
 
-                                    if((useHandleCenter && (handleCenter - center).sqrMagnitude <= MathConstants.EqualityEpsilonSqr) || p >= cameraState.worldPointSizes.Length)
+                                    if((useHandleCenter && (handleCenter - center).sqrMagnitude <= MathConstants.EQUALITY_EPSILON_SQR) || p >= cameraState.worldPointSizes.Length)
                                     {
                                         continue;
                                     }
@@ -2927,7 +2927,7 @@ namespace RealtimeCSG
 
                                                     for(int p2 = 0; p2 < meshState2.worldPoints.Length; p2++)
                                                     {
-                                                        if((worldPoint - meshState2.worldPoints[p2]).sqrMagnitude < MathConstants.EqualityEpsilonSqr)
+                                                        if((worldPoint - meshState2.worldPoints[p2]).sqrMagnitude < MathConstants.EQUALITY_EPSILON_SQR)
                                                         {
                                                             meshState2.selection.points[p2] |= SelectState.Hovering;
 
@@ -3008,7 +3008,7 @@ namespace RealtimeCSG
 
                             if(!_showMarquee)
                             {
-                                if((_startMousePoint - Event.current.mousePosition).magnitude > MathConstants.MinimumMouseMovement * MathConstants.MinimumMouseMovement)
+                                if((_startMousePoint - Event.current.mousePosition).magnitude > MathConstants.MINIMUM_MOUSE_MOVEMENT * MathConstants.MINIMUM_MOUSE_MOVEMENT)
                                 {
                                     _brushSelection.BackupSelection();
                                     _showMarquee = true;
@@ -3179,9 +3179,9 @@ namespace RealtimeCSG
                                             _extraDeltaMovement += _worldDeltaMovement;
                                         }
 
-                                        bool lockX = CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EqualityEpsilon;
-                                        bool lockY = CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EqualityEpsilon;
-                                        bool lockZ = CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EqualityEpsilon;
+                                        bool lockX = CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON;
+                                        bool lockY = CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON;
+                                        bool lockZ = CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON;
 
                                         if(CSGSettings.SnapVector == MathConstants.zeroVector3)
                                         {
@@ -3444,9 +3444,9 @@ namespace RealtimeCSG
                                             _extraDeltaMovement += _worldDeltaMovement;
                                         }
 
-                                        bool lockX = CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EqualityEpsilon;
-                                        bool lockY = CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EqualityEpsilon;
-                                        bool lockZ = CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EqualityEpsilon;
+                                        bool lockX = CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON;
+                                        bool lockY = CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON;
+                                        bool lockZ = CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON;
 
                                         if(CSGSettings.SnapVector == MathConstants.zeroVector3)
                                         {
@@ -3541,17 +3541,17 @@ namespace RealtimeCSG
                                             Vector3 oldDistance = inverseRotation * (start - startHandleCenter);
                                             Vector3 newDistance = inverseRotation * (end - startHandleCenter);
 
-                                            if(Mathf.Abs(oldDistance.x) > MathConstants.DistanceEpsilon)
+                                            if(Mathf.Abs(oldDistance.x) > MathConstants.DISTANCE_EPSILON)
                                             {
                                                 dragEdgeScale.x = newDistance.x / oldDistance.x;
                                             }
 
-                                            if(Mathf.Abs(oldDistance.y) > MathConstants.DistanceEpsilon)
+                                            if(Mathf.Abs(oldDistance.y) > MathConstants.DISTANCE_EPSILON)
                                             {
                                                 dragEdgeScale.y = newDistance.y / oldDistance.y;
                                             }
 
-                                            if(Mathf.Abs(oldDistance.z) > MathConstants.DistanceEpsilon)
+                                            if(Mathf.Abs(oldDistance.z) > MathConstants.DISTANCE_EPSILON)
                                             {
                                                 dragEdgeScale.z = newDistance.z / oldDistance.z;
                                             }
@@ -3775,9 +3775,9 @@ namespace RealtimeCSG
                                             _extraDeltaMovement += _worldDeltaMovement;
                                         }
 
-                                        bool lockX = CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EqualityEpsilon;
-                                        bool lockY = CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EqualityEpsilon;
-                                        bool lockZ = CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EqualityEpsilon;
+                                        bool lockX = CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON;
+                                        bool lockY = CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON;
+                                        bool lockZ = CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON;
 
                                         if(CSGSettings.SnapVector == MathConstants.zeroVector3)
                                         {

@@ -45,7 +45,7 @@ namespace InternalRealtimeCSG
                         continue;
                     }
 
-                    targetControlMesh.Vertices[p] = GridUtility.CleanPosition(targetMeshState.backupPoints[p] + localDeltaMovement);
+                    targetControlMesh.vertices[p] = GridUtility.CleanPosition(targetMeshState.backupPoints[p] + localDeltaMovement);
                 }
 
                 ControlMeshUtility.RebuildShapeFrom(targetBrush, targetControlMesh, targetShape);
@@ -96,7 +96,7 @@ namespace InternalRealtimeCSG
 
                     point = localCombinedMatrix.MultiplyPoint(point);
 
-                    targetControlMesh.Vertices[p] = GridUtility.CleanPosition(point);
+                    targetControlMesh.vertices[p] = GridUtility.CleanPosition(point);
                 }
 
                 selection.controlMeshes[t] = targetControlMesh;
@@ -134,17 +134,17 @@ namespace InternalRealtimeCSG
                 scale = Vector3.zero;
             }
 
-            if(scale.x <= MathConstants.EqualityEpsilon)
+            if(scale.x <= MathConstants.EQUALITY_EPSILON)
             {
                 scale.x = 0.0f;
             }
 
-            if(scale.y <= MathConstants.EqualityEpsilon)
+            if(scale.y <= MathConstants.EQUALITY_EPSILON)
             {
                 scale.y = 0.0f;
             }
 
-            if(scale.z <= MathConstants.EqualityEpsilon)
+            if(scale.z <= MathConstants.EQUALITY_EPSILON)
             {
                 scale.z = 0.0f;
             }
@@ -175,26 +175,26 @@ namespace InternalRealtimeCSG
                     continue;
                 }
 
-                ControlMesh controlMesh    = brush.ControlMesh;
-                Vector3[]   points         = controlMesh.Vertices;
+                ControlMesh controlMesh    = brush.controlMesh;
+                Vector3[]   points         = controlMesh.vertices;
                 bool        vertexModified = false;
 
                 for(int i = 0; i < points.Length; i++)
                 {
                     Vector3 cleanedPoint = GridUtility.CleanPosition(points[i]);
 
-                    if(controlMesh.Vertices[i].x == cleanedPoint.x && controlMesh.Vertices[i].y == cleanedPoint.y && controlMesh.Vertices[i].z == cleanedPoint.z)
+                    if(controlMesh.vertices[i].x == cleanedPoint.x && controlMesh.vertices[i].y == cleanedPoint.y && controlMesh.vertices[i].z == cleanedPoint.z)
                     {
                         continue;
                     }
 
-                    controlMesh.Vertices[i] = cleanedPoint;
+                    controlMesh.vertices[i] = cleanedPoint;
                     vertexModified          = true;
                 }
 
                 if(vertexModified)
                 {
-                    brush.ControlMesh.SetDirty();
+                    brush.controlMesh.SetDirty();
                     brushModified = true;
                 }
             }
@@ -207,7 +207,7 @@ namespace InternalRealtimeCSG
 
         public static void PointSnapToGrid(this BrushSelection selection, Camera camera)
         {
-            Vector3 minWorldDeltaMovement = MathConstants.PositiveInfinityVector3;
+            Vector3 minWorldDeltaMovement = MathConstants.positiveInfinityVector3;
 
             for(int t = 0; t < selection.states.Length; t++)
             {
@@ -223,8 +223,8 @@ namespace InternalRealtimeCSG
                 Matrix4x4        brushLocalToWorld = brushTransform.localToWorldMatrix;
                 Matrix4x4        brushWorldToLocal = brushTransform.worldToLocalMatrix;
 
-                ControlMesh controlMesh = brush.ControlMesh;
-                Vector3[]   points      = controlMesh.Vertices;
+                ControlMesh controlMesh = brush.controlMesh;
+                Vector3[]   points      = controlMesh.vertices;
 
                 List<Vector3>  localPoints     = new List<Vector3>(points.Length);
                 HashSet<short> selectedIndices = controlMeshState.GetSelectedPointIndices();
@@ -277,8 +277,8 @@ namespace InternalRealtimeCSG
                 Matrix4x4 brushLocalToWorld = brushTransform.localToWorldMatrix;
                 Matrix4x4 brushWorldToLocal = brushTransform.worldToLocalMatrix;
 
-                ControlMesh    controlMesh     = brush.ControlMesh;
-                Vector3[]      points          = controlMesh.Vertices;
+                ControlMesh    controlMesh     = brush.controlMesh;
+                Vector3[]      points          = controlMesh.vertices;
                 HashSet<short> selectedIndices = controlMeshState.GetSelectedPointIndices();
                 bool           vertexModified  = false;
 
@@ -289,18 +289,18 @@ namespace InternalRealtimeCSG
                     Vector3 localPoint   = brushWorldToLocal.MultiplyPoint(worldPoint);
                     Vector3 snappedPoint = GridUtility.CleanPosition(localPoint);
 
-                    if(controlMesh.Vertices[index].x == snappedPoint.x && controlMesh.Vertices[index].y == snappedPoint.y && controlMesh.Vertices[index].z == snappedPoint.z)
+                    if(controlMesh.vertices[index].x == snappedPoint.x && controlMesh.vertices[index].y == snappedPoint.y && controlMesh.vertices[index].z == snappedPoint.z)
                     {
                         continue;
                     }
 
-                    controlMesh.Vertices[index] = snappedPoint;
+                    controlMesh.vertices[index] = snappedPoint;
                     vertexModified              = true;
                 }
 
                 if(vertexModified)
                 {
-                    brush.ControlMesh.SetDirty();
+                    brush.controlMesh.SetDirty();
                     brushModified = true;
                 }
             }

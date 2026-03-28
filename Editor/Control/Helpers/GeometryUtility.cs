@@ -84,9 +84,9 @@ namespace RealtimeCSG
 
         public static Vector3 ProjectPointOnPlane(CSGPlane plane, Vector3 point)
         {
-            float distance = -Vector3.Dot(plane.normal, point - plane.pointOnPlane);
+            float distance = -Vector3.Dot(plane.Normal, point - plane.PointOnPlane);
 
-            return point + plane.normal * distance;
+            return point + plane.Normal * distance;
         }
 
         public static float CounterClockwise(Vector2 a, Vector2 b, Vector2 c)
@@ -213,14 +213,14 @@ namespace RealtimeCSG
         public static Matrix4x4 RotatePlaneTo2DMatrix(CSGPlane plane)
         {
             return Matrix4x4.TRS(
-                MathConstants.zeroVector3, Quaternion.FromToRotation(plane.normal, MathConstants.upVector3)
+                MathConstants.zeroVector3, Quaternion.FromToRotation(plane.Normal, MathConstants.upVector3)
               , MathConstants.oneVector3
             );
         }
 
         public static Matrix4x4 RotateSurfaceTo2DMatrix(Surface surface)
         {
-            Quaternion from = Quaternion.LookRotation(surface.BiNormal, -surface.Plane.normal);
+            Quaternion from = Quaternion.LookRotation(surface.BiNormal, -surface.Plane.Normal);
 
             return Matrix4x4.TRS(MathConstants.zeroVector3, Quaternion.Inverse(from), MathConstants.oneVector3);
         }
@@ -233,7 +233,7 @@ namespace RealtimeCSG
         public static void RotateTransform2DToPlane(CSGPlane plane, Vector3 origin, Transform transform)
         {
             // rotate upward shape into direction of plane
-            transform.rotation = Quaternion.FromToRotation(MathConstants.upVector3, plane.normal);
+            transform.rotation = Quaternion.FromToRotation(MathConstants.upVector3, plane.Normal);
             transform.position = origin;
         }
 
@@ -307,7 +307,7 @@ namespace RealtimeCSG
 
             fractLength = Mathf.Round(fractLength * 1000.0f) / 1000.0f;
 
-            const float epsilon = MathConstants.EqualityEpsilon;
+            const float epsilon = MathConstants.EQUALITY_EPSILON;
 
             if(fractLength >= -epsilon && fractLength < epsilon)
             {
@@ -456,12 +456,12 @@ namespace RealtimeCSG
 
         public static CSGPlane CalcPolygonPlane(ControlMesh controlMesh, short polygonIndex)
         {
-            if(controlMesh == null || controlMesh.Polygons == null || polygonIndex >= controlMesh.Polygons.Length)
+            if(controlMesh == null || controlMesh.polygons == null || polygonIndex >= controlMesh.polygons.Length)
             {
                 return new CSGPlane(MathConstants.upVector3, 0);
             }
 
-            int[] edgeIndices = controlMesh.Polygons[polygonIndex].EdgeIndices;
+            int[] edgeIndices = controlMesh.polygons[polygonIndex].edgeIndices;
 
             if(edgeIndices.Length == 3)
             {
@@ -602,7 +602,7 @@ namespace RealtimeCSG
 
         public static Quaternion GetOrientationForPlane(CSGPlane plane)
         {
-            Vector3    normal  = plane.normal;
+            Vector3    normal  = plane.Normal;
             Vector3    tangent = Vector3.Cross(normal, Vector3.Cross(normal, CalculateTangent(normal)).normalized).normalized;
             Quaternion q       = Quaternion.LookRotation(tangent, normal);
 
@@ -635,18 +635,18 @@ namespace RealtimeCSG
         {
             for(int b = 0; b < brushes.Length; b++)
             {
-                ControlMesh controlMesh = brushes[b].ControlMesh;
+                ControlMesh controlMesh = brushes[b].controlMesh;
 
-                if(controlMesh == null || controlMesh.Vertices == null)
+                if(controlMesh == null || controlMesh.vertices == null)
                 {
                     continue;
                 }
 
                 Vector3 localOffset = brushes[b].transform.worldToLocalMatrix.MultiplyVector(offset);
 
-                for(int p = 0; p < controlMesh.Vertices.Length; p++)
+                for(int p = 0; p < controlMesh.vertices.Length; p++)
                 {
-                    controlMesh.Vertices[p] = GridUtility.CleanPosition(controlMesh.Vertices[p] + localOffset);
+                    controlMesh.vertices[p] = GridUtility.CleanPosition(controlMesh.vertices[p] + localOffset);
                 }
             }
         }
@@ -658,18 +658,18 @@ namespace RealtimeCSG
                 return;
             }
 
-            ControlMesh controlMesh = brush.ControlMesh;
+            ControlMesh controlMesh = brush.controlMesh;
 
-            if(controlMesh == null || controlMesh.Vertices == null)
+            if(controlMesh == null || controlMesh.vertices == null)
             {
                 return;
             }
 
             Vector3 localOffset = brush.transform.worldToLocalMatrix.MultiplyVector(offset);
 
-            for(int p = 0; p < controlMesh.Vertices.Length; p++)
+            for(int p = 0; p < controlMesh.vertices.Length; p++)
             {
-                controlMesh.Vertices[p] = GridUtility.CleanPosition(controlMesh.Vertices[p] + localOffset);
+                controlMesh.vertices[p] = GridUtility.CleanPosition(controlMesh.vertices[p] + localOffset);
             }
         }
 
@@ -735,15 +735,15 @@ namespace RealtimeCSG
 
         public static bool ContinueTexGenFromSurfaceToSurface(CSGBrush brush, int srcSurfaceIndex, int dstSurfaceIndex)
         {
-            if(srcSurfaceIndex < 0 || srcSurfaceIndex >= brush.Shape.TexGens.Length || !brush)
+            if(srcSurfaceIndex < 0 || srcSurfaceIndex >= brush.shape.texGens.Length || !brush)
             {
                 return false;
             }
 
-            Shape         shape       = brush.Shape;
-            TexGen[]      texGens     = shape.TexGens;
-            TexGenFlags[] texGenFlags = shape.TexGenFlags;
-            Surface[]     surfaces    = shape.Surfaces;
+            Shape         shape       = brush.shape;
+            TexGen[]      texGens     = shape.texGens;
+            TexGenFlags[] texGenFlags = shape.texGenFlags;
+            Surface[]     surfaces    = shape.surfaces;
 
             int srcTexGenIndex = surfaces[srcSurfaceIndex].TexGenIndex;
             int dstTexGenIndex = surfaces[dstSurfaceIndex].TexGenIndex;
@@ -762,19 +762,19 @@ namespace RealtimeCSG
             CSGPlane dstWorldPlane = InverseTransformPlane(localFromWorld, dstLocalPlane);
             CSGPlane srcWorldPlane = InverseTransformPlane(localFromWorld, srcLocalPlane);
 
-            Vector3 dstWorldNormal = dstWorldPlane.normal;
-            Vector3 srcWorldNormal = srcWorldPlane.normal;
+            Vector3 dstWorldNormal = dstWorldPlane.Normal;
+            Vector3 srcWorldNormal = srcWorldPlane.Normal;
 
-            shape.TexGens[dstSurfaceIndex].RenderMaterial = shape.TexGens[srcSurfaceIndex].RenderMaterial;
+            shape.texGens[dstSurfaceIndex].RenderMaterial = shape.texGens[srcSurfaceIndex].RenderMaterial;
             Vector3 srcWorldPoint1, srcWorldPoint2;
             Vector3 dstWorldPoint1, dstWorldPoint2;
             Vector3 edgeDirection = Vector3.Cross(dstWorldNormal, srcWorldNormal);
             float   det           = edgeDirection.sqrMagnitude;
 
-            if(det < MathConstants.AlignmentTestEpsilon)
+            if(det < MathConstants.ALIGNMENT_TEST_EPSILON)
             {
                 // Find 2 points on intersection of 2 planes
-                srcWorldPoint1 = srcWorldPlane.pointOnPlane;
+                srcWorldPoint1 = srcWorldPlane.PointOnPlane;
                 srcWorldPoint2 = ProjectPointOnPlane(srcWorldPlane, srcWorldPoint1 + MathConstants.oneVector3);
 
                 dstWorldPoint1 = ProjectPointOnPlane(dstWorldPlane, srcWorldPoint1);

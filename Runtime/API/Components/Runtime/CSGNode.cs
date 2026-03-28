@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using InternalRealtimeCSG;
+using UnityEngine.Serialization;
 
 namespace RealtimeCSG.Components
 {
@@ -31,13 +32,11 @@ namespace RealtimeCSG.Components
     public abstract class CSGNode : MonoBehaviour
     {
 #if UNITY_EDITOR
-        [SerializeField] public PrefabInstantiateBehaviour PrefabBehaviour = PrefabInstantiateBehaviour.Reference;
-        [SerializeField] public PrefabSourceAlignment PrefabSourceAlignment = PrefabSourceAlignment.AlignedTop;
+        [SerializeField] public PrefabInstantiateBehaviour prefabBehaviour = PrefabInstantiateBehaviour.Reference;
+        [SerializeField] public PrefabSourceAlignment prefabSourceAlignment = PrefabSourceAlignment.AlignedTop;
+        [SerializeField] public PrefabDestinationAlignment prefabDestinationAlignment = PrefabDestinationAlignment.AlignToSurface;
 
-        [SerializeField]
-        public PrefabDestinationAlignment PrefabDestinationAlignment = PrefabDestinationAlignment.AlignToSurface;
-
-        public const int InvalidNodeID = 0;
+        public const int INVALID_NODE_ID = 0;
 #endif
     }
 }

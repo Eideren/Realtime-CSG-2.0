@@ -82,9 +82,9 @@ namespace RealtimeCSG
             {
                 foreach(CSGBrush brush in Brushes)
                 {
-                    if(brush.Shape != null)
+                    if(brush.shape != null)
                     {
-                        ShapeUtility.CheckMaterials(brush.Shape);
+                        ShapeUtility.CheckMaterials(brush.shape);
                     }
                 }
 

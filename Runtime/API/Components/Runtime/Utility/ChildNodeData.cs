@@ -1,4 +1,5 @@
 using System;
+using RealtimeCSG.Components;
 using UnityEngine;
 
 namespace RealtimeCSG
@@ -8,27 +9,27 @@ namespace RealtimeCSG
     public sealed class ChildNodeData
     {
         // this allows us to help detect when the operation has been modified in the hierarchy
-        public Components.CSGOperation Parent = null;
-        public Components.CSGModel Model = null;
-        public Transform ModelTransform = null;
-        public ParentNodeData OwnerParentData = null; // link to parents' parentData
+        public CSGOperation parent;
+        public CSGModel model;
+        public Transform modelTransform;
+        public ParentNodeData ownerParentData; // link to parents' parentData
 
         public int ParentNodeID
         {
-            get => Parent != null ? Parent.operationNodeID : Components.CSGNode.InvalidNodeID;
+            get => parent != null ? parent.operationNodeID : CSGNode.INVALID_NODE_ID;
         }
 
         public int ModelNodeID
         {
-            get => Model != null ? Model.modelNodeID : Components.CSGNode.InvalidNodeID;
+            get => model != null ? model.modelNodeID : CSGNode.INVALID_NODE_ID;
         }
 
         public void Reset()
         {
-            Parent          = null;
-            Model           = null;
-            OwnerParentData = null;
-            ModelTransform  = null;
+            parent          = null;
+            model           = null;
+            ownerParentData = null;
+            modelTransform  = null;
         }
     }
 #endif

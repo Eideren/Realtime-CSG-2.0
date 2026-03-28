@@ -6,12 +6,12 @@ namespace RealtimeCSG
     [Serializable]
     public sealed class ParentNodeData : HierarchyItem
     {
-        public bool ChildrenModified = true;
+        public bool childrenModified = true;
 
         public override void Reset()
         {
             base.Reset();
-            ChildrenModified = true;
+            childrenModified = true;
         }
     }
 #endif

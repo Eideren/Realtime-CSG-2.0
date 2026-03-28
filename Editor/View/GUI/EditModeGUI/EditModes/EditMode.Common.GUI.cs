@@ -100,23 +100,23 @@ namespace InternalRealtimeCSG
                         CSGBrush brush        = selectedBrushSurfaces[i].brush;
                         int      surfaceIndex = selectedBrushSurfaces[i].surfaceIndex;
 
-                        if(surfaceIndex >= brush.Shape.Surfaces.Length)
+                        if(surfaceIndex >= brush.shape.surfaces.Length)
                         {
                             Debug.LogWarning("surface_index >= brush.Shape.Surfaces.Length");
 
                             continue;
                         }
 
-                        int texGenIndex = brush.Shape.Surfaces[surfaceIndex].TexGenIndex;
+                        int texGenIndex = brush.shape.surfaces[surfaceIndex].TexGenIndex;
 
-                        if(texGenIndex >= brush.Shape.TexGens.Length)
+                        if(texGenIndex >= brush.shape.texGens.Length)
                         {
                             Debug.LogWarning("texGen_index >= brush.Shape.TexGens.Length");
 
                             continue;
                         }
 
-                        TexGenFlags texGenFlags        = brush.Shape.TexGenFlags[texGenIndex];
+                        TexGenFlags texGenFlags        = brush.shape.texGenFlags[texGenIndex];
                         bool        surfaceNoRender    = (texGenFlags & TexGenFlags.NoRender) == TexGenFlags.NoRender;
                         bool        surfaceNoCollision = (texGenFlags & TexGenFlags.NoCollision) == TexGenFlags.NoCollision;
 

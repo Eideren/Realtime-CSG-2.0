@@ -9,7 +9,7 @@ namespace RealtimeCSG
         // returns true on success
         internal static bool RemoveNode(HierarchyItem node, ParentNodeData top)
         {
-            if(node.Parent == null)
+            if(node.parent == null)
             {
                 return false;
             }
@@ -20,7 +20,7 @@ namespace RealtimeCSG
 
             do
             {
-                HierarchyItem parent = iterator.Parent;
+                HierarchyItem parent = iterator.parent;
 
                 if(parent == null)
                 {
@@ -36,10 +36,10 @@ namespace RealtimeCSG
 
                 iterator = parent;
             }
-            while(iterator.ChildNodes.Length == 0);
+            while(iterator.childNodes.Length == 0);
 
-            node.Parent          = null;
-            top.ChildrenModified = true;
+            node.parent          = null;
+            top.childrenModified = true;
 
             return true;
         }
@@ -50,12 +50,12 @@ namespace RealtimeCSG
             // on each level, compare sibling position to nodes before and after it.
             // if it's different, remove self and find new position in array.
             // continue to next parent.
-            HierarchyItem iteratorParent = node.Parent;
+            HierarchyItem iteratorParent = node.parent;
 
             if(iteratorParent == null)
             {
                 AddNode(node, top);
-                top.ChildrenModified = true;
+                top.childrenModified = true;
 
                 return true;
             }
@@ -66,20 +66,20 @@ namespace RealtimeCSG
 
             while(iteratorParent != null)
             {
-                int iteratorTransformID = iterator.TransformID;
+                int iteratorTransformID = iterator.transformID;
 
                 if(iteratorTransformID == 0)
                 {
                     Debug.LogWarning("iterator_transform == null");
                 }
-                else if(iterator.LastLoopCount != currentLoopCount)
+                else if(iterator.lastLoopCount != currentLoopCount)
                 {
-                    Transform iteratorTransform = iterator.Transform;
+                    Transform iteratorTransform = iterator.transform;
 
                     int iteratorParentTransformID = iteratorTransform.parent == null ? 0 : iteratorTransform.parent.GetInstanceID();
 
                     // Compare the unity parent transform to the stored parent transform
-                    if(iteratorParent.TransformID != iteratorParentTransformID)
+                    if(iteratorParent.transformID != iteratorParentTransformID)
                     {
                         int defaultCSGInstanceID = 0;
 
@@ -91,50 +91,50 @@ namespace RealtimeCSG
                             defaultCSGInstanceID = defaultCSGModel.transform.GetInstanceID();
                         }
 
-                        if(defaultCSGInstanceID == 0 || defaultCSGInstanceID != iteratorParent.TransformID)
+                        if(defaultCSGInstanceID == 0 || defaultCSGInstanceID != iteratorParent.transformID)
                         {
                             RemoveNode(node, top);
                             AddNode(node, top);
-                            top.ChildrenModified = true;
+                            top.childrenModified = true;
 
                             return true;
                         }
                     }
 
-                    if(iterator.LastLoopCount != currentLoopCount)
+                    if(iterator.lastLoopCount != currentLoopCount)
                     {
-                        iterator.CachedTransformSiblingIndex = iteratorTransform.GetSiblingIndex();
-                        iterator.LastLoopCount               = currentLoopCount;
+                        iterator.cachedTransformSiblingIndex = iteratorTransform.GetSiblingIndex();
+                        iterator.lastLoopCount               = currentLoopCount;
                     }
 
                     // Does the child even exist in the parent transform?
-                    if(!iteratorParent.FindSiblingIndex(iterator.CachedTransformSiblingIndex, iteratorTransformID, out int iteratorChildIndex))
+                    if(!iteratorParent.FindSiblingIndex(iterator.cachedTransformSiblingIndex, iteratorTransformID, out int iteratorChildIndex))
                     {
                         RemoveNode(node, top);
                         AddNode(node, top);
-                        top.ChildrenModified = true;
+                        top.childrenModified = true;
 
                         return true;
                     }
 
                     // See if the position of the child has changed ..
-                    if(iteratorChildIndex != iterator.SiblingIndex)
+                    if(iteratorChildIndex != iterator.siblingIndex)
                     {
-                        iterator.SiblingIndex = iteratorChildIndex;
+                        iterator.siblingIndex = iteratorChildIndex;
                         RemoveNode(node, top);
                         AddNode(node, top);
-                        top.ChildrenModified = true;
+                        top.childrenModified = true;
 
                         return true;
                     }
 
                     // Compare the child index to the one before and after it ..
-                    HierarchyItem[] iteratorParentChildNodes = iteratorParent.ChildNodes;
+                    HierarchyItem[] iteratorParentChildNodes = iteratorParent.childNodes;
                     int             iteratorSiblingIndex     = iteratorTransform.GetSiblingIndex();
 
                     if(iteratorChildIndex > 0)
                     {
-                        Transform prevTransform = iteratorParentChildNodes[iteratorChildIndex - 1].Transform;
+                        Transform prevTransform = iteratorParentChildNodes[iteratorChildIndex - 1].transform;
 
                         if(!prevTransform)
                         {
@@ -147,14 +147,14 @@ namespace RealtimeCSG
                         {
                             RemoveNode(node, top);
                             AddNode(node, top);
-                            top.ChildrenModified = true;
+                            top.childrenModified = true;
 
                             return true;
                         }
                     }
                     else if(iteratorChildIndex < iteratorParentChildNodes.Length - 1)
                     {
-                        Transform nextTransform = iteratorParentChildNodes[iteratorChildIndex + 1].Transform;
+                        Transform nextTransform = iteratorParentChildNodes[iteratorChildIndex + 1].transform;
 
                         if(!nextTransform)
                         {
@@ -167,7 +167,7 @@ namespace RealtimeCSG
                         {
                             RemoveNode(node, top);
                             AddNode(node, top);
-                            top.ChildrenModified = true;
+                            top.childrenModified = true;
 
                             return true;
                         }
@@ -175,7 +175,7 @@ namespace RealtimeCSG
                 }
 
                 iterator       = iteratorParent;
-                iteratorParent = iterator.Parent;
+                iteratorParent = iterator.parent;
             }
 
             return false;
@@ -184,18 +184,18 @@ namespace RealtimeCSG
         // returns true on success
         internal static bool AddNode(HierarchyItem node, ParentNodeData top)
         {
-            if(node.Parent != null)
+            if(node.parent != null)
             {
                 return false;
             }
 
-            if(!top.Transform)
+            if(!top.transform)
             {
                 return false;
             }
 
             List<Transform> ancestors     = new List<Transform>();
-            Transform       leafTransform = node.Transform;
+            Transform       leafTransform = node.transform;
 
             if(leafTransform == null)
             {
@@ -204,7 +204,7 @@ namespace RealtimeCSG
 
             Transform iterator = leafTransform.parent;
 
-            while(iterator != null && iterator != top.Transform)
+            while(iterator != null && iterator != top.transform)
             {
                 ancestors.Add(iterator);
                 iterator = iterator.parent;
@@ -219,8 +219,8 @@ namespace RealtimeCSG
 
             Transform defaultModelTransform = defaultModel.transform;
 
-            if(iterator == null || top.Transform == null ||
-               top.Transform == defaultModelTransform)
+            if(iterator == null || top.transform == null ||
+               top.transform == defaultModelTransform)
             {
                 iterator = defaultModelTransform;
             }
@@ -245,16 +245,16 @@ namespace RealtimeCSG
                     break;
                 }
 
-                lastParent = lastParent.ChildNodes[childIndex];
+                lastParent = lastParent.childNodes[childIndex];
                 ancestorDepth--;
             }
 
             while(ancestorDepth >= 0)
             {
                 HierarchyItem newAncestor = new HierarchyItem();
-                newAncestor.Transform   = ancestors[ancestorDepth];
-                newAncestor.TransformID = newAncestor.Transform.GetInstanceID();
-                newAncestor.Parent      = lastParent;
+                newAncestor.transform   = ancestors[ancestorDepth];
+                newAncestor.transformID = newAncestor.transform.GetInstanceID();
+                newAncestor.parent      = lastParent;
 
                 if(!lastParent.AddChildItem(newAncestor))
                 {
@@ -265,8 +265,8 @@ namespace RealtimeCSG
                 ancestorDepth--;
             }
 
-            node.Parent          = lastParent;
-            top.ChildrenModified = true;
+            node.parent          = lastParent;
+            top.childrenModified = true;
 
             return lastParent.AddChildItem(node);
         }

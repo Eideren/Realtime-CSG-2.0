@@ -60,7 +60,7 @@ namespace RealtimeCSG
         [NonSerialized] private int _textureCopyDragControlID = -1;
 
         [NonSerialized] private int _hoverOnSurfaceIndex = -1;
-        [NonSerialized] private int _hoverOnBrushNodeID = CSGNode.InvalidNodeID;
+        [NonSerialized] private int _hoverOnBrushNodeID = CSGNode.INVALID_NODE_ID;
         [NonSerialized] private int _hoverOnTarget = -1;
         [NonSerialized] private int _currentControl = -1;
         [NonSerialized] private int _hoverOnlyTarget = -1;
@@ -87,7 +87,7 @@ namespace RealtimeCSG
             {
                 brushTargets        = Array.Empty<CSGBrush>();
                 surfaceStates       = Array.Empty<TexGenState>();
-                _hoverOnBrushNodeID = CSGNode.InvalidNodeID;
+                _hoverOnBrushNodeID = CSGNode.INVALID_NODE_ID;
                 _hoverOnTarget      = -1;
             }
 
@@ -110,7 +110,7 @@ namespace RealtimeCSG
                 else if(_hoverOnTarget == i)
                 {
                     _hoverOnTarget      = -1;
-                    _hoverOnBrushNodeID = CSGNode.InvalidNodeID;
+                    _hoverOnBrushNodeID = CSGNode.INVALID_NODE_ID;
                 }
             }
 
@@ -175,7 +175,7 @@ namespace RealtimeCSG
                         else if(_hoverOnTarget == i)
                         {
                             _hoverOnTarget      = -1;
-                            _hoverOnBrushNodeID = CSGNode.InvalidNodeID;
+                            _hoverOnBrushNodeID = CSGNode.INVALID_NODE_ID;
                         }
 
                         continue;
@@ -189,7 +189,7 @@ namespace RealtimeCSG
                 brushTargets        = Array.Empty<CSGBrush>();
                 surfaceStates       = Array.Empty<TexGenState>();
                 _hoverOnTarget      = -1;
-                _hoverOnBrushNodeID = CSGNode.InvalidNodeID;
+                _hoverOnBrushNodeID = CSGNode.INVALID_NODE_ID;
             }
 
             if(brushSurfaces != null && brushSurfaces.Length > 0)
@@ -504,11 +504,11 @@ namespace RealtimeCSG
             for(int t = 0; t < brushTargets.Length; t++)
             {
                 CSGBrush targetBrush = brushTargets[t];
-                Shape    targetShape = targetBrush.Shape;
+                Shape    targetShape = targetBrush.shape;
 
-                surfaceStates[t].backupTexGens = new TexGen[targetShape.TexGens.Length];
+                surfaceStates[t].backupTexGens = new TexGen[targetShape.texGens.Length];
 
-                Array.Copy(targetShape.TexGens, surfaceStates[t].backupTexGens, targetShape.TexGens.Length);
+                Array.Copy(targetShape.texGens, surfaceStates[t].backupTexGens, targetShape.texGens.Length);
             }
         }
 
@@ -517,11 +517,11 @@ namespace RealtimeCSG
             for(int t = 0; t < brushTargets.Length; t++)
             {
                 CSGBrush targetBrush = brushTargets[t];
-                Shape    targetShape = targetBrush.Shape;
+                Shape    targetShape = targetBrush.shape;
 
-                for(int s = 0; s < targetShape.Surfaces.Length; s++)
+                for(int s = 0; s < targetShape.surfaces.Length; s++)
                 {
-                    int texGenIndex = targetShape.Surfaces[s].TexGenIndex;
+                    int texGenIndex = targetShape.surfaces[s].TexGenIndex;
 
                     if(surfaceStates.Length <= t)
                     {
@@ -537,14 +537,14 @@ namespace RealtimeCSG
                         continue;
                     }
 
-                    if(targetShape.TexGens.Length <= texGenIndex)
+                    if(targetShape.texGens.Length <= texGenIndex)
                     {
                         Debug.LogWarning("targetShape.TexGens.Length <= texGenIndex");
 
                         continue;
                     }
 
-                    targetShape.TexGens[texGenIndex] = surfaceStates[t].backupTexGens[texGenIndex];
+                    targetShape.texGens[texGenIndex] = surfaceStates[t].backupTexGens[texGenIndex];
                 }
             }
         }
@@ -581,24 +581,24 @@ namespace RealtimeCSG
         private bool UpdateGrid(Camera camera)
         {
             CSGBrush brush      = brushTargets[_hoverOnTarget];
-            Shape    brushShape = brush.Shape;
+            Shape    brushShape = brush.shape;
 
-            int hoverOnTexGenIndex = brushShape.Surfaces[_hoverOnSurfaceIndex].TexGenIndex;
+            int hoverOnTexGenIndex = brushShape.surfaces[_hoverOnSurfaceIndex].TexGenIndex;
 
-            Vector2 oldTranslation = brushShape.TexGens[hoverOnTexGenIndex].Translation;
-            brushShape.TexGens[hoverOnTexGenIndex].Translation = MathConstants.zeroVector2;
+            Vector2 oldTranslation = brushShape.texGens[hoverOnTexGenIndex].Translation;
+            brushShape.texGens[hoverOnTexGenIndex].Translation = MathConstants.zeroVector2;
             InternalCSGModelManager.SetBrushMeshSurfaces(brush);
 
             Vector3 zeroPoint = SurfaceUtility.ConvertTextureToModelSpace(brush, _hoverOnSurfaceIndex, MathConstants.zeroVector2);
 
-            brushShape.TexGens[hoverOnTexGenIndex].Translation = oldTranslation;
+            brushShape.texGens[hoverOnTexGenIndex].Translation = oldTranslation;
             InternalCSGModelManager.SetBrushMeshSurfaces(brush);
 
-            CSGPlane  movePlane      = brushShape.Surfaces[_hoverOnSurfaceIndex].Plane;
+            CSGPlane  movePlane      = brushShape.surfaces[_hoverOnSurfaceIndex].Plane;
             Transform brushTransform = brush.GetComponent<Transform>();
 
             movePlane = GeometryUtility.InverseTransformPlane(brushTransform.worldToLocalMatrix, movePlane);
-            movePlane = new CSGPlane(movePlane.normal, zeroPoint);
+            movePlane = new CSGPlane(movePlane.Normal, zeroPoint);
 
             CSGGrid.SetForcedGrid(camera, movePlane);
 
@@ -678,12 +678,12 @@ namespace RealtimeCSG
 
             CSGBrush brush = brushTargets[_hoverOnTarget];
 
-            if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
+            if(brush.childData == null || brush.childData.modelTransform == null)
             {
                 return false;
             }
 
-            Transform modelTransform      = brush.ChildData.ModelTransform;
+            Transform modelTransform      = brush.childData.modelTransform;
             Matrix4x4 modelTransformation = modelTransform.localToWorldMatrix;
 
             if(_firstMove)
@@ -697,8 +697,8 @@ namespace RealtimeCSG
                 _firstMove            = false;
             }
 
-            Shape       hoverOnShape       = brushTargets[_hoverOnTarget].Shape;
-            int         hoverOnTexGenIndex = hoverOnShape.Surfaces[_hoverOnSurfaceIndex].TexGenIndex;
+            Shape       hoverOnShape       = brushTargets[_hoverOnTarget].shape;
+            int         hoverOnTexGenIndex = hoverOnShape.surfaces[_hoverOnSurfaceIndex].TexGenIndex;
             TexGenState hoverSurfaceState  = surfaceStates[_hoverOnTarget];
             TexGen      backupTexGen       = hoverSurfaceState.backupTexGens[hoverOnTexGenIndex];
 
@@ -728,7 +728,7 @@ namespace RealtimeCSG
 
                 if(SurfaceUtility.TranslateSurfaces(selectedSurfaces, oldWorldPosition, newWorldPosition))
                 {
-                    _deltaMovement = hoverOnShape.TexGens[hoverOnTexGenIndex].Translation - backupTexGen.Translation;
+                    _deltaMovement = hoverOnShape.texGens[hoverOnTexGenIndex].Translation - backupTexGen.Translation;
                 }
             }
 
@@ -744,12 +744,12 @@ namespace RealtimeCSG
 
             CSGBrush brush = brushTargets[_hoverOnTarget];
 
-            if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
+            if(brush.childData == null || brush.childData.modelTransform == null)
             {
                 return false;
             }
 
-            Transform modelTransform      = brush.ChildData.ModelTransform;
+            Transform modelTransform      = brush.childData.modelTransform;
             Matrix4x4 modelTransformation = modelTransform.localToWorldMatrix;
 
             if(_firstMove)
@@ -760,8 +760,8 @@ namespace RealtimeCSG
                 _firstMove = false;
             }
 
-            Shape       hoverOnShape       = brushTargets[_hoverOnTarget].Shape;
-            int         hoverOnTexGenIndex = hoverOnShape.Surfaces[_hoverOnSurfaceIndex].TexGenIndex;
+            Shape       hoverOnShape       = brushTargets[_hoverOnTarget].shape;
+            int         hoverOnTexGenIndex = hoverOnShape.surfaces[_hoverOnSurfaceIndex].TexGenIndex;
             TexGenState hoverSurfaceState  = surfaceStates[_hoverOnTarget];
             TexGen      backupTexGen       = hoverSurfaceState.backupTexGens[hoverOnTexGenIndex];
 
@@ -795,7 +795,7 @@ namespace RealtimeCSG
 
         [NonSerialized] private int _outlineGeneration = -1;
         [NonSerialized] private int _prevHoverSurfaceIndex = -1;
-        [NonSerialized] private int _prevHoverBrushNodeID = CSGNode.InvalidNodeID;
+        [NonSerialized] private int _prevHoverBrushNodeID = CSGNode.INVALID_NODE_ID;
 
         private void OnDestroy()
         {
@@ -844,22 +844,22 @@ namespace RealtimeCSG
                     CSGBrush    brush        = brushTargets[t];
                     TexGenState surfaceState = surfaceStates[t];
 
-                    if(!brush.ChildData.ModelTransform)
+                    if(!brush.childData.modelTransform)
                     {
                         continue;
                     }
 
                     Matrix4x4 brushTransformation = brush.compareTransformation.localToWorldMatrix;
-                    Shape     brushShape          = brush.Shape;
+                    Shape     brushShape          = brush.shape;
 
                     for(int s = 0; s < surfaceState.surfaceSelectState.Length; s++)
                     {
-                        if(s < 0 || s >= brushShape.Surfaces.Length)
+                        if(s < 0 || s >= brushShape.surfaces.Length)
                         {
                             continue;
                         }
 
-                        int texGenIndex = brushShape.Surfaces[s].TexGenIndex;
+                        int texGenIndex = brushShape.surfaces[s].TexGenIndex;
 
                         if(texGenIndex < 0 || texGenIndex >= surfaceState.surfaceSelectState.Length)
                         {
@@ -951,22 +951,22 @@ namespace RealtimeCSG
                     CSGBrush    brush        = brushTargets[t];
                     TexGenState surfaceState = surfaceStates[t];
 
-                    if(!brush.ChildData.ModelTransform)
+                    if(!brush.childData.modelTransform)
                     {
                         continue;
                     }
 
                     Matrix4x4 brushTranslation = brush.compareTransformation.localToWorldMatrix;
-                    Shape     brushShape       = brush.Shape;
+                    Shape     brushShape       = brush.shape;
 
                     for(int s = 0; s < surfaceState.surfaceSelectState.Length; s++)
                     {
-                        if(s >= brushShape.Surfaces.Length)
+                        if(s >= brushShape.surfaces.Length)
                         {
                             continue;
                         }
 
-                        int texGenIndex = brushShape.Surfaces[s].TexGenIndex;
+                        int texGenIndex = brushShape.surfaces[s].TexGenIndex;
 
                         if(texGenIndex >= surfaceState.surfaceSelectState.Length)
                         {
@@ -1255,7 +1255,7 @@ namespace RealtimeCSG
                         {
                             CSGBrush brush = brushTargets[_hoverOnTarget];
 
-                            _rotationCircle.Initialize(brush.GetComponent<Transform>(), brush.Shape.Surfaces[_hoverOnSurfaceIndex], surfaceStates[_hoverOnTarget].rayIntersectionWorldPoint);
+                            _rotationCircle.Initialize(brush.GetComponent<Transform>(), brush.shape.surfaces[_hoverOnSurfaceIndex], surfaceStates[_hoverOnTarget].rayIntersectionWorldPoint);
                         }
                         else if(Tools.current == Tool.Move)
                         {
@@ -1488,7 +1488,7 @@ namespace RealtimeCSG
                                 CSGBrush    brush        = brushTargets[t];
                                 TexGenState surfaceState = surfaceStates[t];
 
-                                if(brush.ChildData == null || brush.ChildData.ModelTransform == null)
+                                if(brush.childData == null || brush.childData.modelTransform == null)
                                 {
                                     continue;
                                 }
