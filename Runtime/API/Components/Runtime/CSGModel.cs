@@ -23,21 +23,6 @@ namespace RealtimeCSG.Components
       , TwoSidedShadows = 16384
     }
 
-    [Serializable]
-    public enum ExportType
-    {
-        FBX
-      , UnityMesh
-    }
-
-    [Serializable]
-    public enum OriginType
-    {
-        ModelCenter
-      , ModelPivot
-      , WorldSpace
-    }
-
     /// <summary>Holds a CSG tree and generates meshes for that CSG tree</summary>
     /// <remarks>The CSG tree that defines a model is defined by its child [UnityEngine.GameObject](https://docs.unity3d.com/ScriptReference/GameObject.html)s.</remarks>
 #if UNITY_EDITOR
@@ -159,15 +144,6 @@ namespace RealtimeCSG.Components
 
         public bool showGeneratedMeshes;
         public PhysicsMaterial defaultPhysicsMaterial;
-
-#region Export settings
-
-        public ExportType exportType = ExportType.FBX;
-        public OriginType originType = OriginType.ModelCenter;
-        public bool exportColliders;
-        public string exportPath;
-
-#endregion
 
 #endif
 

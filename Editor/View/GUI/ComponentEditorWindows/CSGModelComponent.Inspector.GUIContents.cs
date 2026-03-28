@@ -4,10 +4,6 @@ namespace RealtimeCSG
 {
     internal sealed partial class CSGModelComponentInspectorGUI
     {
-        private static readonly GUIContent exportLabel = new GUIContent("Export");
-        private static readonly GUIContent exportOriginLabel = new GUIContent("Origin");
-        private static readonly GUIContent exportColliderLabel = new GUIContent("Export Colliders");
-        private static readonly GUIContent exportToButtonLabel = new GUIContent("Export to ...");
         private static readonly GUIContent generateColliderContent = new GUIContent("Generate Collider");
         private static readonly GUIContent modelIsTriggerContent = new GUIContent("Model Is Trigger");
         private static readonly GUIContent colliderSetToConvexContent = new GUIContent("Convex Collider", "Set generated collider to convex");

@@ -1,4 +1,4 @@
-//#define SHOW_GENERATED_MESHES
+﻿//#define SHOW_GENERATED_MESHES
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using Object = UnityEngine.Object;
 
 namespace InternalRealtimeCSG
 {
-    internal sealed partial class MeshInstanceManager
+    internal static partial class MeshInstanceManager
     {
         public const HideFlags COMPONENT_HIDE_FLAGS = HideFlags.None | HideFlags.HideInHierarchy | HideFlags.DontSaveInBuild;
 

@@ -214,11 +214,8 @@ namespace RealtimeCSG
             ModelSettingsFlags         Settings          = models[0].settings;
             VertexChannelFlags         VertexChannels    = models[0].vertexChannels;
             MeshColliderCookingOptions CookingOptions    = models[0].meshColliderCookingOptions;
-            ExportType?                ExportType        = models[0].exportType;
-            OriginType?                OriginType        = models[0].originType;
             ReceiveGI?                 MeshReceiveGI     = models[0].receiveGI;
 
-            bool? ExportColliders         = models[0].exportColliders;
             bool? VertexChannelTangent    = (VertexChannels & VertexChannelFlags.Tangent) == VertexChannelFlags.Tangent;
             bool? VertexChannelNormal     = (VertexChannels & VertexChannelFlags.Normal) == VertexChannelFlags.Normal;
             bool? VertexChannelUV0        = (VertexChannels & VertexChannelFlags.UV0) == VertexChannelFlags.UV0;
@@ -256,11 +253,8 @@ namespace RealtimeCSG
 
                 bool currGenerateLightMaps = (currStaticFlags & StaticEditorFlags.ContributeGI) == StaticEditorFlags.ContributeGI;
 
-                ExportType currExportType = models[i].exportType;
-                OriginType currOriginType = models[i].originType;
                 ReceiveGI  currReceiveGI  = models[i].receiveGI;
 
-                bool  currExportColliders = models[i].exportColliders;
                 float currAngleError      = models[i].angleError;
                 float currAreaError       = models[i].areaError;
                 float currHardAngle       = models[i].hardAngle;
@@ -305,24 +299,9 @@ namespace RealtimeCSG
                     VertexChannelUV0 = null;
                 }
 
-                if(ExportType.HasValue && ExportType.Value != currExportType)
-                {
-                    ExportType = null;
-                }
-
-                if(OriginType.HasValue && OriginType.Value != currOriginType)
-                {
-                    OriginType = null;
-                }
-
                 if(MeshReceiveGI.HasValue && MeshReceiveGI.Value != currReceiveGI)
                 {
                     MeshReceiveGI = null;
-                }
-
-                if(ExportColliders.HasValue && ExportColliders.Value != currExportColliders)
-                {
-                    ExportColliders = null;
                 }
 
                 if(InvertedWorld.HasValue && InvertedWorld.Value != currInvertedWorld)
@@ -447,7 +426,6 @@ namespace RealtimeCSG
             }
 
             bool behaviourVisible    = SessionState.GetBool("CSGModel.Behaviour", true);
-            bool exportVisible       = SessionState.GetBool("CSGModel.Export", true);
             bool physicsVisible      = SessionState.GetBool("CSGModel.Physics", true);
             bool renderingVisible    = SessionState.GetBool("CSGModel.Rendering", true);
             bool UVSettingsVisible   = SessionState.GetBool("CSGModel.UVSettings", true);
@@ -503,100 +481,6 @@ namespace RealtimeCSG
             if(behaviourVisible)
             {
                 GUILayout.Space(10);
-            }
-
-            if(models != null && models.Length == 1)
-            {
-                GUILayout.BeginVertical(GUI.skin.box);
-
-                EditorGUI.BeginChangeCheck();
-                exportVisible = EditorGUILayout.Foldout(exportVisible, exportLabel);
-
-                if(EditorGUI.EndChangeCheck())
-                {
-                    SessionState.SetBool("CSGModel.Export", exportVisible);
-                }
-
-                if(exportVisible)
-                {
-                    GUILayout.BeginHorizontal();
-
-                    GUILayout.Space(20);
-                    EditorGUI.BeginChangeCheck();
-
-                    EditorGUI.showMixedValue = !OriginType.HasValue;
-
-                    OriginType = (OriginType)EditorGUILayout.EnumPopup(exportOriginLabel, OriginType ?? Components.OriginType.ModelCenter, m_PopupStyle);
-
-                    EditorGUI.showMixedValue = false;
-
-                    if(EditorGUI.EndChangeCheck() && OriginType.HasValue)
-                    {
-                        for(int i = 0; i < models.Length; i++)
-                        {
-                            models[i].originType = OriginType.Value;
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-                    GUILayout.BeginHorizontal();
-
-                    GUILayout.Space(20);
-                    bool exportColliderToggle = ExportColliders ?? true;
-                    EditorGUI.BeginChangeCheck();
-
-                    EditorGUI.showMixedValue = !OriginType.HasValue;
-
-                    exportColliderToggle = EditorGUILayout.Toggle(exportColliderLabel, exportColliderToggle);
-
-                    EditorGUI.showMixedValue = false;
-
-                    if(EditorGUI.EndChangeCheck() && OriginType.HasValue)
-                    {
-                        for(int i = 0; i < models.Length; i++)
-                        {
-                            models[i].exportColliders = exportColliderToggle;
-                        }
-
-                        ExportColliders = exportColliderToggle;
-                    }
-
-                    GUILayout.EndHorizontal();
-                    GUILayout.BeginHorizontal();
-
-                    GUILayout.Space(20);
-                    EditorGUI.BeginDisabledGroup(!ExportType.HasValue);
-
-                    if(EditModeCommonGUI.IndentableButton(exportToButtonLabel) && ExportType.HasValue)
-                    {
-                    }
-
-                    EditorGUI.EndDisabledGroup();
-                    EditorGUI.BeginChangeCheck();
-
-                    EditorGUI.showMixedValue = !ExportType.HasValue;
-
-                    ExportType = (ExportType)EditorGUILayout.EnumPopup(ExportType ?? Components.ExportType.FBX, m_PopupStyle);
-
-                    EditorGUI.showMixedValue = false;
-
-                    if(EditorGUI.EndChangeCheck() && ExportType.HasValue)
-                    {
-                        for(int i = 0; i < models.Length; i++)
-                        {
-                            models[i].exportType = ExportType.Value;
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-                }
-
-                GUILayout.EndVertical();
-
-                if(exportVisible)
-                {
-                    GUILayout.Space(10);
-                }
             }
 
             GUILayout.BeginVertical(GUI.skin.box);

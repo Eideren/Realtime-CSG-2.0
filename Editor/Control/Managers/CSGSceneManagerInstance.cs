@@ -1,7 +1,6 @@
 ﻿using RealtimeCSG;
 using RealtimeCSG.Components;
 using UnityEditor;
-using UnityEngine;
 
 namespace InternalRealtimeCSG
 {
@@ -265,53 +264,6 @@ namespace InternalRealtimeCSG
             }
 
             InternalCSGModelManager.OnTransformChildrenChanged(component);
-        }
-
-        public void DestroyExportedModel(CSGModelExported exportedModel, bool undoable = false)
-        {
-            if(EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                return;
-            }
-
-            if(undoable)
-            {
-                Undo.RegisterCompleteObjectUndo(exportedModel, "Destroying model");
-            }
-
-            if(exportedModel.hiddenComponents != null)
-            {
-                foreach(HiddenComponentData hiddenComponent in exportedModel.hiddenComponents)
-                {
-                    MonoBehaviour behaviour = hiddenComponent.behaviour;
-
-                    if(!behaviour)
-                    {
-                        continue;
-                    }
-
-                    if(undoable)
-                    {
-                        Undo.DestroyObjectImmediate(behaviour);
-                    }
-                    else
-                    {
-                        Object.DestroyImmediate(behaviour);
-                    }
-                }
-            }
-
-            if(exportedModel.containedModel)
-            {
-                if(undoable)
-                {
-                    Undo.DestroyObjectImmediate(exportedModel.containedModel);
-                }
-                else
-                {
-                    Object.DestroyImmediate(exportedModel.containedModel);
-                }
-            }
         }
     }
 }

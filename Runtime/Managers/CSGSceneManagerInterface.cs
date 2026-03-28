@@ -35,8 +35,6 @@ namespace InternalRealtimeCSG
         void OnDestroyed(GeneratedMeshes container);
 
         void OnCreated(GeneratedMeshInstance component);
-
-        void DestroyExportedModel(CSGModelExported exportedModel, bool undoable = false);
     }
 }
 #endif
