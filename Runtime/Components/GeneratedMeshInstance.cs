@@ -52,7 +52,7 @@ namespace InternalRealtimeCSG
 
         public bool Equals(MeshInstanceKey other)
         {
-            if(object.Equals(this, other))
+            if(ReferenceEquals(this, other))
             {
                 return true;
             }
@@ -62,7 +62,7 @@ namespace InternalRealtimeCSG
 
         public override bool Equals(object obj)
         {
-            if(object.Equals(this, obj))
+            if(ReferenceEquals(this, obj))
             {
                 return true;
             }
@@ -77,7 +77,7 @@ namespace InternalRealtimeCSG
 
         public bool Equals(MeshInstanceKey left, MeshInstanceKey right)
         {
-            if(object.Equals(left, right))
+            if(ReferenceEquals(left, right))
             {
                 return true;
             }
@@ -87,7 +87,7 @@ namespace InternalRealtimeCSG
 
         public static bool operator ==(MeshInstanceKey left, MeshInstanceKey right)
         {
-            if(object.Equals(left, right))
+            if(ReferenceEquals(left, right))
             {
                 return true;
             }
@@ -97,7 +97,7 @@ namespace InternalRealtimeCSG
 
         public static bool operator !=(MeshInstanceKey left, MeshInstanceKey right)
         {
-            if(object.Equals(left, right))
+            if(ReferenceEquals(left, right))
             {
                 return false;
             }
