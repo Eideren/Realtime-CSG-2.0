@@ -5,7 +5,7 @@ namespace RealtimeCSG.Foundation
 {
     sealed partial class CSGManager
     {
-        internal const string NATIVE_PLUGIN_NAME = "RealtimeCSG[" + Versioning.PLUGIN_DLL_VERSION + "]";
+        internal const string NATIVE_PLUGIN_NAME = "RealtimeCSG[" + VersionManager.PLUGIN_DLL_VERSION + "]";
 
         [DllImport(NATIVE_PLUGIN_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern bool HasBeenCompiledInDebugMode();

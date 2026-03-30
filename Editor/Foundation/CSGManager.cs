@@ -84,7 +84,7 @@ namespace RealtimeCSG.Foundation
         // <value>Returns the version string of RealtimeCSG</value>
         public static string VersionName
         {
-            get => $"v {Versioning.PLUGIN_VERSION.Replace('_', '.')}{(HasBeenCompiledInDebugMode() ? " (C++ DEBUG)" : string.Empty)}";
+            get => $"v {VersionManager.Version.ToString()}{(HasBeenCompiledInDebugMode() ? " (C++ DEBUG)" : string.Empty)}";
         }
     }
 }
