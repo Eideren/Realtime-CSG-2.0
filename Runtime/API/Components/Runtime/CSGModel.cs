@@ -191,6 +191,9 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnEnabled(this);
             }
+
+            UnityEditor.SceneVisibilityManager.visibilityChanged += OnSceneVisibilityChanged;
+            UnityEditor.SceneVisibilityManager.pickingChanged += OnScenePickingChanged;
         }
 
         internal void OnDisable()
@@ -199,6 +202,9 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnDisabled(this);
             }
+
+            UnityEditor.SceneVisibilityManager.visibilityChanged -= OnSceneVisibilityChanged;
+            UnityEditor.SceneVisibilityManager.pickingChanged -= OnScenePickingChanged;
         }
 
         internal void OnDestroy()
@@ -207,6 +213,9 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnDestroyed(this);
             }
+
+            UnityEditor.SceneVisibilityManager.visibilityChanged -= OnSceneVisibilityChanged;
+            UnityEditor.SceneVisibilityManager.pickingChanged -= OnScenePickingChanged;
         }
 
         internal void OnTransformChildrenChanged()
@@ -233,7 +242,10 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnUpdate(this);
             }
+        }
 
+        void OnSceneVisibilityChanged()
+        {
             //Ensure children match model's scene visibility
             if (UnityEditor.SceneVisibilityManager.instance.IsHidden(gameObject))
             {
@@ -249,7 +261,10 @@ namespace RealtimeCSG.Components
                     UnityEditor.SceneVisibilityManager.instance.Show(gameObject, true);
                 }
             }
+        }
 
+        void OnScenePickingChanged()
+        {
             //Ensure children match model's scene pickability
             if (UnityEditor.SceneVisibilityManager.instance.IsPickingDisabled(gameObject))
             {
@@ -268,6 +283,6 @@ namespace RealtimeCSG.Components
         }
 #endif
 
-#endregion
+        #endregion
     }
 }
