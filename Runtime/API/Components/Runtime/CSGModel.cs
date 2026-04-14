@@ -233,6 +233,38 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnUpdate(this);
             }
+
+            //Ensure children match model's scene visibility
+            if (UnityEditor.SceneVisibilityManager.instance.IsHidden(gameObject))
+            {
+                if (UnityEditor.SceneVisibilityManager.instance.AreAllDescendantsHidden(gameObject) == false)
+                {
+                    UnityEditor.SceneVisibilityManager.instance.Hide(gameObject, true);
+                }
+            }
+            else
+            {
+                if (UnityEditor.SceneVisibilityManager.instance.AreAllDescendantsVisible(gameObject) == false)
+                {
+                    UnityEditor.SceneVisibilityManager.instance.Show(gameObject, true);
+                }
+            }
+
+            //Ensure children match model's scene pickability
+            if (UnityEditor.SceneVisibilityManager.instance.IsPickingDisabled(gameObject))
+            {
+                if (UnityEditor.SceneVisibilityManager.instance.IsPickingDisabledOnAllDescendants(gameObject) == false)
+                {
+                    UnityEditor.SceneVisibilityManager.instance.DisablePicking(gameObject, true);
+                }
+            }
+            else
+            {
+                if (UnityEditor.SceneVisibilityManager.instance.IsPickingEnabledOnAllDescendants(gameObject) == false)
+                {
+                    UnityEditor.SceneVisibilityManager.instance.EnablePicking(gameObject, true);
+                }
+            }
         }
 #endif
 
