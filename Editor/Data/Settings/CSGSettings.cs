@@ -290,6 +290,25 @@ namespace RealtimeCSG
 
         public static bool ShowTooltips = true;
 
+        static public float DefaultUVScale = 1.0f;
+
+        static public Vector2 InitalUVScale
+        {
+            get
+            {
+                bool MatchingSurface = EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
+
+                if (MatchingSurface == true && EditMode == ToolEditMode.Generate)
+                {
+                    return GeneratorBase.MatchedUVScale;
+                }
+                else
+                {
+                    return new Vector2(DefaultUVScale, DefaultUVScale);
+                }
+            }
+        }
+
         public static bool DefaultPreserveUVs
         {
             get => (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs;
@@ -700,6 +719,8 @@ namespace RealtimeCSG
             HiddenSurfacesNotSelectable = EditorPrefs.GetBool("HiddenSurfacesNotSelectable", true);
             ShowTooltips                = EditorPrefs.GetBool("ShowTooltips", true);
 
+            DefaultUVScale              = EditorPrefs.GetFloat("DefaultUVScale", 1.0f);
+
             AutoRigidbody = EditorPrefs.GetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 
             DefaultPreserveUVs = EditorPrefs.GetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
@@ -791,6 +812,8 @@ namespace RealtimeCSG
             EditorPrefs.SetBool("HiddenSurfacesNotSelectable", HiddenSurfacesNotSelectable);
 
             EditorPrefs.SetBool("ShowTooltips", ShowTooltips);
+
+            EditorPrefs.SetFloat("DefaultUVScale", DefaultUVScale);
 
             EditorPrefs.SetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 

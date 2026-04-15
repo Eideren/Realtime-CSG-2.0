@@ -42,7 +42,9 @@ namespace RealtimeCSG
 
             CSGSettings.ShowSceneInfo = EditorGUILayout.ToggleLeft("Show Scene Info", CSGSettings.ShowSceneInfo);
 
-            if(EditorGUI.EndChangeCheck())
+            CSGSettings.DefaultUVScale = EditorGUILayout.FloatField("Default UV Scale", CSGSettings.DefaultUVScale);
+
+            if (EditorGUI.EndChangeCheck())
             {
                 CSGSettings.Save();
             }

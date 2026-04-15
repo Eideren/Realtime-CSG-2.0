@@ -943,6 +943,8 @@ namespace RealtimeCSG
 
                 visualSnappedGrid  = CSGGrid.FindAllGridEdgesThatTouchPoint(camera, _worldPosition);
                 visualSnappedBrush = vertexOnBrush;
+
+                MatchSurfaceMaterial(camera, vertexOnBrush, hoverBuildPlane.Normal);
             }
 
             CSGGrid.SetForcedGrid(camera, hoverBuildPlane);
