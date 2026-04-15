@@ -859,18 +859,23 @@ namespace RealtimeCSG
 
                     for (int i = 0; i < _vertexOnBrush.shape.texGens.Length; i++)
                     {
-                        bool intersects = SceneQueryUtility.FindSurfaceIntersection(_camera, _vertexOnBrush, _vertexOnBrush.childData.modelTransform.localToWorldMatrix, i, Event.current.mousePosition, out LegacySurfaceIntersection _intersection);
+                        bool intersects = SceneQueryUtility.FindSurfaceIntersection(_camera, _vertexOnBrush, _vertexOnBrush.childData.modelTransform.localToWorldMatrix, i, Event.current.mousePosition, out LegacySurfaceIntersection _surfaceIntersection);
 
                         if (intersects)
                         {
-                            float NormalAlignment = Vector3.Dot(_intersection.localPlane.Normal, _hoverBuildPlaneNormal);
+                            Vector3 SurfacePlaneNormal = _surfaceIntersection.localPlane.Normal;
 
-                            if (Mathf.Abs(NormalAlignment) == 1.0f)
+                            if(_vertexOnBrush.operationType == CSGOperationType.Subtractive)
                             {
-                                if (_intersection.distance < closestDistance)
+                                SurfacePlaneNormal *= -1;
+                            }
+
+                            if (SurfacePlaneNormal == _hoverBuildPlaneNormal)
+                            {
+                                if (_surfaceIntersection.distance < closestDistance)
                                 {
                                     closestIndex = i;
-                                    closestDistance = _intersection.distance;
+                                    closestDistance = _surfaceIntersection.distance;
                                 }
                             }
                         }
