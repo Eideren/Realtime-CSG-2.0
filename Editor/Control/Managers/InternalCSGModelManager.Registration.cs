@@ -203,9 +203,7 @@ namespace RealtimeCSG
 
             const StaticEditorFlags defaultFlags =
                 StaticEditorFlags.BatchingStatic |
-                StaticEditorFlags.NavigationStatic | // TODO: fix navigation flags
                 StaticEditorFlags.OccludeeStatic |
-                StaticEditorFlags.OffMeshLinkGeneration |
                 StaticEditorFlags.ReflectionProbeStatic;
 
             GameObjectUtility.SetStaticEditorFlags(gameObject, defaultFlags);
