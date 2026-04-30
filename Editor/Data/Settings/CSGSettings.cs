@@ -50,6 +50,26 @@ namespace RealtimeCSG
       , Split
     }
 
+    public enum PresetCategory
+    {
+        UV_Scale,
+        Grid_Size,
+        Angle_Snap,
+        Scale_Snap
+    }
+
+    public class Preset
+    {
+        public Preset(string _label, float _value)
+        {
+            Label = _label;
+            Value = _value;
+        }
+
+        public string Label;
+        public float Value;
+    }
+
     public static class CSGSettings
     {
         public static bool ShowVisibleSurfaces
@@ -289,6 +309,9 @@ namespace RealtimeCSG
         public static bool HiddenSurfacesNotSelectable = true;
 
         public static bool ShowTooltips = true;
+
+        [SerializeField]
+        public static Dictionary<PresetCategory, List<Preset>> Presets = new Dictionary<PresetCategory, List<Preset>>();
 
         public static bool DefaultPreserveUVs
         {
@@ -734,6 +757,24 @@ namespace RealtimeCSG
             LinearStairsLengthOffset = EditorPrefs.GetFloat("LinearStairsLengthOffset", 0.0f);
             LinearStairsHeightOffset = EditorPrefs.GetFloat("LinearStairsHeightOffset", 0.0f);
 
+            Dictionary<PresetCategory, List<Preset>> loadedPresets = new Dictionary<PresetCategory, List<Preset>>();
+
+            try
+            {
+                loadedPresets = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<PresetCategory, List<Preset>>>(EditorPrefs.GetString("CSGPresets"));
+            }
+            catch
+            {
+                loadedPresets = new Dictionary<PresetCategory, List<Preset>>();
+
+                for (int i = 0; i < System.Enum.GetValues(typeof(PresetCategory)).Length; i++)
+                {
+                    loadedPresets[(PresetCategory)i] = new List<Preset>();
+                }
+            }
+
+            Presets = loadedPresets;
+
             DistanceUnit = GetEnum("DistanceUnit", DistanceUnit.Meters);
 
             ShowSceneInfo = EditorPrefs.GetBool("ShowSceneInfo", false);
@@ -826,6 +867,8 @@ namespace RealtimeCSG
             EditorPrefs.SetFloat("LinearStairsHeight", LinearStairsHeight);
             EditorPrefs.SetFloat("LinearStairsLengthOffset", LinearStairsLengthOffset);
             EditorPrefs.SetFloat("LinearStairsHeightOffset", LinearStairsHeightOffset);
+
+            EditorPrefs.SetString("CSGPresets", Newtonsoft.Json.JsonConvert.SerializeObject(Presets));
 
             SetMaterial("DefaultMaterial", DefaultMaterial);
 
