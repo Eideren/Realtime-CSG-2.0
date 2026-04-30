@@ -20,7 +20,7 @@ namespace RealtimeCSG
 
             _undoGroupIndex = -1;
 
-            if(_brushes.Length > 0)
+            if(_brushes != null && _brushes.Length > 0)
             {
                 if(!ignoreGroup)
                 {
