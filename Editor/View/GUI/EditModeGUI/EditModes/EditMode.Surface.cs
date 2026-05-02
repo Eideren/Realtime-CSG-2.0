@@ -148,7 +148,10 @@ namespace RealtimeCSG
 
             for(int i = surfaceStates.Length - 1; i >= 0; i--)
             {
-                surfaceStates[i].SelectAll();
+                if (surfaceStates[i].HaveSurfaceSelection)
+                {
+                    surfaceStates[i].SelectAll();
+                }
             }
 
             UpdateSelectedSurfaces();
