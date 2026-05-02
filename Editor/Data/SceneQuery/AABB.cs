@@ -28,12 +28,32 @@ namespace RealtimeCSG
 
         public Vector3 Center
         {
-            get => new Vector3((MinX + MaxX) * 0.5f, (MinY + MaxY) * 0.5f, (MinZ + MaxZ) * 0.5f);
+            get
+            {
+                if (Valid == true)
+                {
+                    return new Vector3((MinX + MaxX) * 0.5f, (MinY + MaxY) * 0.5f, (MinZ + MaxZ) * 0.5f);
+                }
+                else
+                {
+                    return Vector3.zero;
+                }
+            }
         }
 
         public Vector3 Size
         {
-            get => new Vector3(MaxX - MinX, MaxY - MinY, MaxZ - MinZ);
+            get
+            {
+                if (Valid == true)
+                {
+                    return new Vector3(MaxX - MinX, MaxY - MinY, MaxZ - MinZ);
+                }
+                else
+                {
+                    return Vector3.zero;
+                }
+            }
         }
 
         public Vector3 Min
