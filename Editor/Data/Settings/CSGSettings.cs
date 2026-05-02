@@ -310,8 +310,30 @@ namespace RealtimeCSG
 
         public static bool ShowTooltips = true;
 
-        [SerializeField]
-        public static Dictionary<PresetCategory, List<Preset>> Presets = new Dictionary<PresetCategory, List<Preset>>();
+        public static Dictionary<PresetCategory, List<Preset>> Presets
+        {
+            get
+            {
+                if(m_presets == null)
+                {
+                    m_presets = new Dictionary<PresetCategory, List<Preset>>();
+                }
+
+                for (int i = 0; i < Enum.GetValues(typeof(PresetCategory)).Length; i++)
+                {
+                    m_presets.TryAdd((PresetCategory)i, new List<Preset>());
+                }
+
+                return m_presets;
+            }
+
+            set
+            {
+                m_presets = value;
+            }
+        }
+
+        private static Dictionary<PresetCategory, List<Preset>> m_presets = new Dictionary<PresetCategory, List<Preset>>();
 
         public static bool DefaultPreserveUVs
         {
@@ -766,11 +788,6 @@ namespace RealtimeCSG
             catch
             {
                 loadedPresets = new Dictionary<PresetCategory, List<Preset>>();
-
-                for (int i = 0; i < System.Enum.GetValues(typeof(PresetCategory)).Length; i++)
-                {
-                    loadedPresets[(PresetCategory)i] = new List<Preset>();
-                }
             }
 
             Presets = loadedPresets;
