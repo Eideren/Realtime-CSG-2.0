@@ -29,7 +29,7 @@ namespace RealtimeCSG
 
                 bottomBarRect = haveOffset
                     ? new Rect(0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 18), width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT)
-                    : new Rect(0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 1), width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT);
+                    : new Rect(0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 3), width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT);
 
                 try
                 {
