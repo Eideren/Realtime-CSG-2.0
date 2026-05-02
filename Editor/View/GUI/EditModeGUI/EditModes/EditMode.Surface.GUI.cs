@@ -1309,6 +1309,12 @@ namespace RealtimeCSG
 
             CSGModel[] models               = InternalCSGModelManager.Models;
             bool       needLightmapUVUpdate = EditModeCommonGUI.NeedLightmapUVUpdate(models);
+
+            if (CSGSettings.UpdateLightmapUVButtonMode != CSGSettings.UpdateLightmapUVButtonState.InCSGToolWidow && CSGSettings.UpdateLightmapUVButtonMode != CSGSettings.UpdateLightmapUVButtonState.Both)
+            {
+                needLightmapUVUpdate = false;
+            }
+
             int        originalHeight       = SURFACE_EDIT_WINDOW_HEIGHT + (needLightmapUVUpdate ? LIGHT_MAP_UV_BUTTON_OFFSET : 0);
             float      visibleHeight        = Math.Min(originalHeight, maxHeight);
             float      y                    = windowRect.height - visibleHeight; // 252

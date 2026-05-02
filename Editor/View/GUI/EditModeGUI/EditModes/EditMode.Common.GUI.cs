@@ -415,9 +415,12 @@ namespace InternalRealtimeCSG
 
         public static void StartToolGUI()
         {
-            if(UpdateButtons(InternalCSGModelManager.Models))
+            if (CSGSettings.UpdateLightmapUVButtonMode == CSGSettings.UpdateLightmapUVButtonState.InCSGToolWidow || CSGSettings.UpdateLightmapUVButtonMode == CSGSettings.UpdateLightmapUVButtonState.Both)
             {
-                GUILayout.Space(10);
+                if (UpdateButtons(InternalCSGModelManager.Models))
+                {
+                    GUILayout.Space(10);
+                }
             }
         }
 

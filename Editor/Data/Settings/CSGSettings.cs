@@ -290,6 +290,16 @@ namespace RealtimeCSG
 
         public static bool ShowTooltips = true;
 
+        public enum UpdateLightmapUVButtonState
+        {
+            BottomBar,
+            InCSGToolWidow,
+            Both,
+            Hidden
+        }
+
+        static public UpdateLightmapUVButtonState UpdateLightmapUVButtonMode = UpdateLightmapUVButtonState.BottomBar;
+
         public static bool DefaultPreserveUVs
         {
             get => (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs;
@@ -734,6 +744,8 @@ namespace RealtimeCSG
             LinearStairsLengthOffset = EditorPrefs.GetFloat("LinearStairsLengthOffset", 0.0f);
             LinearStairsHeightOffset = EditorPrefs.GetFloat("LinearStairsHeightOffset", 0.0f);
 
+            UpdateLightmapUVButtonMode = (UpdateLightmapUVButtonState)EditorPrefs.GetInt("UpdateLightmapUVButtonMode", 1);
+
             DistanceUnit = GetEnum("DistanceUnit", DistanceUnit.Meters);
 
             ShowSceneInfo = EditorPrefs.GetBool("ShowSceneInfo", false);
@@ -826,6 +838,8 @@ namespace RealtimeCSG
             EditorPrefs.SetFloat("LinearStairsHeight", LinearStairsHeight);
             EditorPrefs.SetFloat("LinearStairsLengthOffset", LinearStairsLengthOffset);
             EditorPrefs.SetFloat("LinearStairsHeightOffset", LinearStairsHeightOffset);
+
+            EditorPrefs.SetInt("UpdateLightmapUVButtonMode", (int)UpdateLightmapUVButtonMode);
 
             SetMaterial("DefaultMaterial", DefaultMaterial);
 
