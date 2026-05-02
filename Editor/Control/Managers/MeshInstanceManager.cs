@@ -892,6 +892,19 @@ namespace InternalRealtimeCSG
             return (staticFlags & StaticEditorFlags.ContributeGI) == StaticEditorFlags.ContributeGI;
         }
 
+        public static bool DoesAnyModelUseLightmapUVs()
+        {
+            foreach(CSGModel _model in InternalCSGModelManager.Models)
+            {
+                if(UsesLightmapUVs(_model) == true)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static bool NeedToGenerateLightmapUVsForModel(CSGModel model)
         {
             if(!ModelTraits.IsModelEditable(model))
