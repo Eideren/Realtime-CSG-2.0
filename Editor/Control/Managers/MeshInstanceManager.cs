@@ -1236,10 +1236,6 @@ namespace InternalRealtimeCSG
                 instance.hideFlags = meshInstanceFlags;
             }
 
-            bool showVisibleSurfaces = instance.renderSurfaceType != RenderSurfaceType.Normal || (CSGSettings.VisibleHelperSurfaces & HelperSurfaceFlags.ShowVisibleSurfaces) != 0;
-
-            CSGVisibilityUtility.SetGameObjectVisibility(gameObject, showVisibleSurfaces);
-
             if(!instance.enabled)
             {
                 instance.enabled = true;
@@ -2245,11 +2241,6 @@ namespace InternalRealtimeCSG
                     if(!meshInstance)
                     {
                         continue;
-                    }
-
-                    if(meshInstance.renderSurfaceType == RenderSurfaceType.Normal)
-                    {
-                        CSGVisibilityUtility.SetGameObjectVisibility(meshInstance.gameObject, showVisibleSurfaces);
                     }
 
                     StaticEditorFlags oldStaticFlags = GameObjectUtility.GetStaticEditorFlags(meshInstance.gameObject);
