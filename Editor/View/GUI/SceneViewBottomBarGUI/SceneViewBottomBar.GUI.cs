@@ -29,7 +29,7 @@ namespace RealtimeCSG
 
                 bottomBarRect = haveOffset
                     ? new Rect(0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 18), width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT)
-                    : new Rect(0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 1), width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT);
+                    : new Rect(0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 3), width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT);
 
                 try
                 {
@@ -827,6 +827,45 @@ namespace RealtimeCSG
                 modified          = true;
             }
 
+#endregion
+
+#region "Update UVs" Button
+            if (CSGSettings.UpdateLightmapUVButtonMode == CSGSettings.UpdateLightmapUVButtonState.BottomBar || CSGSettings.UpdateLightmapUVButtonMode == CSGSettings.UpdateLightmapUVButtonState.Both)
+            {
+                if (MeshInstanceManager.DoesAnyModelUseLightmapUVs())
+                {
+                    GUI.changed = false;
+                    m_CurrentRect.width = 140;
+                    m_CurrentRect.y = 0;
+                    m_CurrentRect.height = layoutHeight - m_CurrentRect.y;
+                    m_CurrentRect.y += barSize.y;
+                    layoutX -= m_CurrentRect.width;
+                    m_CurrentRect.x = layoutX;
+
+                    GUIStyle uvButtonStyle = new GUIStyle(EditorStyles.toolbarButton);
+
+                    if (EditModeCommonGUI.NeedLightmapUVUpdate(InternalCSGModelManager.Models))
+                    {
+                        uvButtonStyle.normal.textColor = Color.red;
+                    }
+                    else
+                    {
+                        GUI.enabled = false;
+                    }
+
+                    if (GUI.Button(m_CurrentRect, "Update Lightmap UVs", uvButtonStyle))
+                    {
+                        CSGModelManager.BuildLightmapUvs();
+                    }
+
+                    GUI.enabled = true;
+
+                    if (GUI.changed)
+                    {
+                        modified = true;
+                    }
+                }
+            }
 #endregion
 
 #region Capture mouse clicks in empty space

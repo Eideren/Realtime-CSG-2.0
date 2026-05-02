@@ -892,6 +892,19 @@ namespace InternalRealtimeCSG
             return (staticFlags & StaticEditorFlags.ContributeGI) == StaticEditorFlags.ContributeGI;
         }
 
+        public static bool DoesAnyModelUseLightmapUVs()
+        {
+            foreach(CSGModel _model in InternalCSGModelManager.Models)
+            {
+                if(UsesLightmapUVs(_model) == true)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static bool NeedToGenerateLightmapUVsForModel(CSGModel model)
         {
             if(!ModelTraits.IsModelEditable(model))
@@ -1211,10 +1224,6 @@ namespace InternalRealtimeCSG
             {
                 instance.hideFlags = meshInstanceFlags;
             }
-
-            bool showVisibleSurfaces = instance.renderSurfaceType != RenderSurfaceType.Normal || (CSGSettings.VisibleHelperSurfaces & HelperSurfaceFlags.ShowVisibleSurfaces) != 0;
-
-            CSGVisibilityUtility.SetGameObjectVisibility(gameObject, showVisibleSurfaces);
 
             if(!instance.enabled)
             {
@@ -2221,11 +2230,6 @@ namespace InternalRealtimeCSG
                     if(!meshInstance)
                     {
                         continue;
-                    }
-
-                    if(meshInstance.renderSurfaceType == RenderSurfaceType.Normal)
-                    {
-                        CSGVisibilityUtility.SetGameObjectVisibility(meshInstance.gameObject, showVisibleSurfaces);
                     }
 
                     StaticEditorFlags oldStaticFlags = GameObjectUtility.GetStaticEditorFlags(meshInstance.gameObject);
