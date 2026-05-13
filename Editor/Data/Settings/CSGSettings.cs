@@ -290,24 +290,15 @@ namespace RealtimeCSG
 
         public static bool ShowTooltips = true;
 
-        static public float DefaultUVScale = 1.0f;
-
-        static public Vector2 InitalUVScale
+        public enum UpdateLightmapUVButtonState
         {
-            get
-            {
-                bool MatchingSurface = EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
-
-                if (MatchingSurface == true && EditMode == ToolEditMode.Generate)
-                {
-                    return GeneratorBase.MatchedUVScale;
-                }
-                else
-                {
-                    return new Vector2(DefaultUVScale, DefaultUVScale);
-                }
-            }
+            BottomBar,
+            InCSGToolWidow,
+            Both,
+            Hidden
         }
+
+        static public UpdateLightmapUVButtonState UpdateLightmapUVButtonMode = UpdateLightmapUVButtonState.BottomBar;
 
         public static bool DefaultPreserveUVs
         {
@@ -719,8 +710,6 @@ namespace RealtimeCSG
             HiddenSurfacesNotSelectable = EditorPrefs.GetBool("HiddenSurfacesNotSelectable", true);
             ShowTooltips                = EditorPrefs.GetBool("ShowTooltips", true);
 
-            DefaultUVScale              = EditorPrefs.GetFloat("DefaultUVScale", 1.0f);
-
             AutoRigidbody = EditorPrefs.GetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 
             DefaultPreserveUVs = EditorPrefs.GetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
@@ -754,6 +743,8 @@ namespace RealtimeCSG
             LinearStairsHeight       = EditorPrefs.GetFloat("LinearStairsHeight", 16.0f);
             LinearStairsLengthOffset = EditorPrefs.GetFloat("LinearStairsLengthOffset", 0.0f);
             LinearStairsHeightOffset = EditorPrefs.GetFloat("LinearStairsHeightOffset", 0.0f);
+
+            UpdateLightmapUVButtonMode = (UpdateLightmapUVButtonState)EditorPrefs.GetInt("UpdateLightmapUVButtonMode", 1);
 
             DistanceUnit = GetEnum("DistanceUnit", DistanceUnit.Meters);
 
@@ -813,8 +804,6 @@ namespace RealtimeCSG
 
             EditorPrefs.SetBool("ShowTooltips", ShowTooltips);
 
-            EditorPrefs.SetFloat("DefaultUVScale", DefaultUVScale);
-
             EditorPrefs.SetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 
             EditorPrefs.SetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
@@ -849,6 +838,8 @@ namespace RealtimeCSG
             EditorPrefs.SetFloat("LinearStairsHeight", LinearStairsHeight);
             EditorPrefs.SetFloat("LinearStairsLengthOffset", LinearStairsLengthOffset);
             EditorPrefs.SetFloat("LinearStairsHeightOffset", LinearStairsHeightOffset);
+
+            EditorPrefs.SetInt("UpdateLightmapUVButtonMode", (int)UpdateLightmapUVButtonMode);
 
             SetMaterial("DefaultMaterial", DefaultMaterial);
 
