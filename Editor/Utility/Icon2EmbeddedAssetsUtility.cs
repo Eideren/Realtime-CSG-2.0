@@ -187,6 +187,14 @@ namespace RealtimeCSG.Utilities
                 Append("public static class EmbeddedAssets");
                 Append("{");
                 indentLevel = 2;
+
+                Append("static EmbeddedAssets()");
+                Append("{");
+                indentLevel = 3;
+                Append("LoadIcons();");
+                indentLevel = 2;
+                Append("}");
+                Append("");
             }
 
             public string Complete()
@@ -254,12 +262,17 @@ namespace RealtimeCSG.Utilities
                     throw new ArgumentException($"Array {nameof(icons)} cannot be null or 0 length!");
                 }
 
-                Append($"public static readonly Dictionary<string, Texture2D> {name} = new Dictionary<string, Texture2D>");
+                Append($"public static Dictionary<string, Texture2D> {name} {{ get; private set; }}");
+                Append("public static void LoadIcons()");
                 Append("{");
                 indentLevel++;
                 int idx = 0;
 
-                foreach(Texture2D icon in icons)
+                Append($"{name} = new Dictionary<string, Texture2D>()");
+                Append("{");
+                indentLevel++;
+
+                foreach (Texture2D icon in icons)
                 {
                     string propName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(icon.name).Replace("_", string.Empty);
 
@@ -269,6 +282,8 @@ namespace RealtimeCSG.Utilities
 
                 indentLevel--;
                 Append("};");
+                indentLevel--;
+                Append("}");
             }
 
             public void Append(string text, bool newline = true)

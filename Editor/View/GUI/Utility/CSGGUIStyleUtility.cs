@@ -445,7 +445,7 @@ namespace RealtimeCSG
 
         private static GUIContent IconContent(string name)
         {
-            EmbeddedAssets.TryFindIcon(name, out Texture2D image);
+            Generated.EmbeddedAssets.TryFindIcon(name, out Texture2D image);
 
             return new GUIContent(image);
         }
