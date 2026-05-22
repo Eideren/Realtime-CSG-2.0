@@ -512,7 +512,7 @@ namespace RealtimeCSG
 
                             if (GUI.Toggle(m_CurrentRect, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value == CSGSettings.SnapVector.x, PresetString, buttonStyle))
                             {
-                                if (GUI.changed)
+                                if (GUI.changed && modified == false)
                                 {
                                     CSGSettings.SnapVector = new Vector3(CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value);
                                     CSGSettings.Save();
@@ -689,7 +689,7 @@ namespace RealtimeCSG
 
                             if (GUI.Toggle(m_CurrentRect, CSGSettings.Presets[PresetCategory.Angle_Snap][i].Value == CSGSettings.SnapRotation, PresetString, buttonStyle))
                             {
-                                if (GUI.changed)
+                                if (GUI.changed && modified == false)
                                 {
                                     CSGSettings.SnapRotation = CSGSettings.Presets[PresetCategory.Angle_Snap][i].Value;
                                     CSGSettings.Save();
@@ -867,16 +867,11 @@ namespace RealtimeCSG
 
                             if (GUI.Toggle(m_CurrentRect, CSGSettings.Presets[PresetCategory.Scale_Snap][i].Value == CSGSettings.SnapScale, PresetString, buttonStyle))
                             {
-                                if (GUI.changed)
+                                if (GUI.changed && modified == false)
                                 {
                                     CSGSettings.SnapScale = CSGSettings.Presets[PresetCategory.Scale_Snap][i].Value;
                                     CSGSettings.Save();
-
-                                    //Check if modified is false becuase without this you can no longer change scale with the plus and minus buttons
-                                    if (modified == false)
-                                    {
-                                        scaleSnap = CSGSettings.SnapScale;
-                                    }
+                                    scaleSnap = CSGSettings.SnapScale;
                                 }
                             }
 
