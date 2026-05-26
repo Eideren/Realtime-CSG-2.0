@@ -111,7 +111,30 @@ namespace RealtimeCSG
                         break;
 
                     case "EditModeGenerate":
-                        returnSize = new Vector2(294, 202);
+                        
+                        switch(((EditModeGenerate)EditModeManager.ActiveTool).BuilderMode)
+                        {
+                            case ShapeMode.FreeDraw:
+                                returnSize = new Vector2(275, 184);
+                                break;
+
+                            case ShapeMode.Box:
+                                returnSize = new Vector2(275, 180);
+                                break;
+
+                            case ShapeMode.Sphere:
+                                returnSize = new Vector2(294, 202);
+                                break;
+
+                            case ShapeMode.Cylinder:
+                                returnSize = new Vector2(315, 226);
+                                break;
+
+                            case ShapeMode.LinearStairs:
+                                returnSize = new Vector2(300, 283);
+                                break;
+                        }
+
                         break;
 
                     case "EditModeMeshEdit":
@@ -165,8 +188,6 @@ namespace RealtimeCSG
                         SurfaceModePadding = new Vector2(2, -10);
                     }
 
-                    Debug.Log(sceneView.rootVisualElement.contentRect.height);
-
                     //-2 and +31 adjusts for alignment with container and GUILayout.Spaces
                     //The GUILayout.Spaces are used to prevent clipping of the Active Tool Window
                     Rect viewRect = new Rect(-2 + SurfaceModePadding.x, ToolWindowSize.y - sceneView.rootVisualElement.contentRect.height + 31 + SurfaceModePadding.y, sceneView.rootVisualElement.contentRect.width, sceneView.rootVisualElement.contentRect.height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4));
@@ -205,11 +226,10 @@ namespace RealtimeCSG
             activeToolContainer.style.left = 5;
             activeToolContainer.style.bottom = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 10;
 
-
             activeToolContainer.style.width = ToolWindowSize.x;
             activeToolContainer.style.height = ToolWindowSize.y;
 
-            //activeToolContainer.style.backgroundColor = new Color(1, 0, 0, 1.0f);
+            //activeToolContainer.style.backgroundColor = new Color(1, 0, 0, 1);
 
             var root = sceneView.rootVisualElement;
 
