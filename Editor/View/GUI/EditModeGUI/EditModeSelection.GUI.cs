@@ -54,17 +54,21 @@ namespace RealtimeCSG
 
             GUILayout.BeginArea(viewRect);
 
+            /*
             if(EditModeManager.ActiveTool != null)
             {
                 EditModeManager.ActiveTool.OnSceneGUI(viewRect);
             }
+            */
 
             GUILayout.EndArea();
 
+            /*
             if(CSGSettings.EnableRealtimeCSG && !SceneDragToolManager.IsDraggingObjectInScene)
             {
                 SceneViewBottomBarGUI.ShowGUI(sceneView, false);
             }
+            */
 
             GUI.skin = originalSkin;
             Handles.BeginGUI();
