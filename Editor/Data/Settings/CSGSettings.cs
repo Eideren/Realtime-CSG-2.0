@@ -319,9 +319,46 @@ namespace RealtimeCSG
                     m_presets = new Dictionary<PresetCategory, List<Preset>>();
                 }
 
-                for (int i = 0; i < Enum.GetValues(typeof(PresetCategory)).Length; i++)
+                if (m_presets.Count == 0)
                 {
-                    m_presets.TryAdd((PresetCategory)i, new List<Preset>());
+                    for (int i = 0; i < Enum.GetValues(typeof(PresetCategory)).Length; i++)
+                    {
+                        PresetCategory category = (PresetCategory)i;
+
+                        m_presets.TryAdd(category, new List<Preset>());
+
+                        //Set Default Values
+                        switch(category)
+                        {
+                            case PresetCategory.Grid_Size:
+                                m_presets[category].Add(new Preset("", 1.0f));
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+
+                            case PresetCategory.Angle_Snap:
+                                m_presets[category].Add(new Preset("", 45.0f));
+                                m_presets[category].Add(new Preset("", 22.5f));
+                                m_presets[category].Add(new Preset("", 11.25f));
+                                m_presets[category].Add(new Preset("", 5.625f));
+                                break;
+
+                            case PresetCategory.Scale_Snap:
+                                m_presets[category].Add(new Preset("", 1.0f));
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+
+                            case PresetCategory.UV_Scale:
+                                m_presets[category].Add(new Preset("", 1.0f));
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+                        }
+                    }
                 }
 
                 return m_presets;
