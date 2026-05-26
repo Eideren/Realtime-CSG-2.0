@@ -165,9 +165,11 @@ namespace RealtimeCSG
                         SurfaceModePadding = new Vector2(2, -10);
                     }
 
-                    //-2 and +10 adjusts for the GUILayout.Spaces
+                    Debug.Log(sceneView.rootVisualElement.contentRect.height);
+
+                    //-2 and +31 adjusts for alignment with container and GUILayout.Spaces
                     //The GUILayout.Spaces are used to prevent clipping of the Active Tool Window
-                    Rect viewRect = new Rect(-2 + SurfaceModePadding.x, ToolWindowSize.y - 1220 + 10 + SurfaceModePadding.y, sceneView.rootVisualElement.contentRect.width, sceneView.rootVisualElement.contentRect.height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4));
+                    Rect viewRect = new Rect(-2 + SurfaceModePadding.x, ToolWindowSize.y - sceneView.rootVisualElement.contentRect.height + 31 + SurfaceModePadding.y, sceneView.rootVisualElement.contentRect.width, sceneView.rootVisualElement.contentRect.height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4));
 
                     GUILayout.BeginArea(viewRect);
 
@@ -201,10 +203,13 @@ namespace RealtimeCSG
             activeToolContainer.style.position = Position.Absolute;
 
             activeToolContainer.style.left = 5;
-            activeToolContainer.style.bottom = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 5;
+            activeToolContainer.style.bottom = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 10;
+
 
             activeToolContainer.style.width = ToolWindowSize.x;
             activeToolContainer.style.height = ToolWindowSize.y;
+
+            //activeToolContainer.style.backgroundColor = new Color(1, 0, 0, 1.0f);
 
             var root = sceneView.rootVisualElement;
 
