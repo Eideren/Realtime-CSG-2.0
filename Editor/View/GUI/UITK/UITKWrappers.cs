@@ -14,28 +14,29 @@ namespace RealtimeCSG
             SceneView.duringSceneGui += OnSceneGUI;
         }
 
-        static IMGUIContainer container;
+        static IMGUIContainer bottomBarContainer;
 
         private static void OnSceneGUI(SceneView sceneView)
         {
-            if (container == null)
+            if (bottomBarContainer == null)
             {
-                container = new IMGUIContainer(() =>
+                bottomBarContainer = new IMGUIContainer(() =>
                 {
                     SceneViewBottomBarGUI.ShowGUI(sceneView);
                 });
 
-                container.name = "RCSG-BottomBar";
+                bottomBarContainer.name = "RCSG-BottomBar";
             }
 
-            container.pickingMode = PickingMode.Position;
+            bottomBarContainer.pickingMode = PickingMode.Position;
 
-            container.style.position = Position.Absolute;
-            container.style.bottom = 0;
-            container.style.width = Length.Percent(100);
-            container.style.height = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4;
+            bottomBarContainer.style.position = Position.Absolute;
 
-            container.style.backgroundColor = new Color(0.24f, 0.24f, 0.24f, 1.0f);
+            bottomBarContainer.style.bottom = 0;
+            bottomBarContainer.style.width = Length.Percent(100);
+            bottomBarContainer.style.height = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4;
+
+            bottomBarContainer.style.backgroundColor = new Color(0.24f, 0.24f, 0.24f, 1.0f);
 
             var root = sceneView.rootVisualElement;
 
@@ -43,7 +44,7 @@ namespace RealtimeCSG
 
             if (CSGSettings.EnableRealtimeCSG == true && foundContainer == null && SceneDragToolManager.IsDraggingObjectInScene == false)
             {
-                root.Add(container);
+                root.Add(bottomBarContainer);
             }
             else if ((CSGSettings.EnableRealtimeCSG == false || SceneDragToolManager.IsDraggingObjectInScene == true) && foundContainer != null)
             {
@@ -147,13 +148,13 @@ namespace RealtimeCSG
             }
         }
 
-        static IMGUIContainer container;
+        static IMGUIContainer activeToolContainer;
 
         private static void OnSceneGUI(SceneView sceneView)
         {
-            if (container == null)
+            if (activeToolContainer == null)
             {
-                container = new IMGUIContainer(() =>
+                activeToolContainer = new IMGUIContainer(() =>
                 {
                     Handles.BeginGUI();
 
@@ -192,18 +193,18 @@ namespace RealtimeCSG
                     Handles.EndGUI();
                 });
 
-                container.name = "RCSG-ToolWindow";
+                activeToolContainer.name = "RCSG-ToolWindow";
             }
 
-            container.pickingMode = PickingMode.Position;
+            activeToolContainer.pickingMode = PickingMode.Position;
 
-            container.style.position = Position.Absolute;
+            activeToolContainer.style.position = Position.Absolute;
 
-            container.style.left = 5;
-            container.style.bottom = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 5;
+            activeToolContainer.style.left = 5;
+            activeToolContainer.style.bottom = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 5;
 
-            container.style.width = ToolWindowSize.x;
-            container.style.height = ToolWindowSize.y;
+            activeToolContainer.style.width = ToolWindowSize.x;
+            activeToolContainer.style.height = ToolWindowSize.y;
 
             var root = sceneView.rootVisualElement;
 
@@ -218,7 +219,7 @@ namespace RealtimeCSG
 
             if (CSGSettings.EnableRealtimeCSG == true && foundContainer == null && EditModeManager.ActiveTool != null && ForceHide == false)
             {
-                root.Add(container);
+                root.Add(activeToolContainer);
             }
             else if ((CSGSettings.EnableRealtimeCSG == false || EditModeManager.ActiveTool == null || SceneDragToolManager.IsDraggingObjectInScene == true|| ForceHide == true) && foundContainer != null)
             {
