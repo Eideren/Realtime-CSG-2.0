@@ -371,6 +371,15 @@ namespace RealtimeCSG
         }
 
         private static Dictionary<PresetCategory, List<Preset>> m_presets = new Dictionary<PresetCategory, List<Preset>>();
+        public enum UpdateLightmapUVButtonState
+        {
+            BottomBar,
+            InCSGToolWidow,
+            Both,
+            Hidden
+        }
+
+        static public UpdateLightmapUVButtonState UpdateLightmapUVButtonMode = UpdateLightmapUVButtonState.BottomBar;
 
         public static bool DefaultPreserveUVs
         {
@@ -828,6 +837,8 @@ namespace RealtimeCSG
             }
 
             Presets = loadedPresets;
+  
+            UpdateLightmapUVButtonMode = (UpdateLightmapUVButtonState)EditorPrefs.GetInt("UpdateLightmapUVButtonMode", 1);
 
             DistanceUnit = GetEnum("DistanceUnit", DistanceUnit.Meters);
 
@@ -923,6 +934,8 @@ namespace RealtimeCSG
             EditorPrefs.SetFloat("LinearStairsHeightOffset", LinearStairsHeightOffset);
 
             EditorPrefs.SetString("CSGPresets", Newtonsoft.Json.JsonConvert.SerializeObject(Presets));
+  
+            EditorPrefs.SetInt("UpdateLightmapUVButtonMode", (int)UpdateLightmapUVButtonMode);
 
             SetMaterial("DefaultMaterial", DefaultMaterial);
 

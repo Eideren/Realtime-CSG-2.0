@@ -18,6 +18,21 @@ namespace RealtimeCSG
                 return;
             }
 
+            HashSet<CSGBrush> uniqueBrushes = new HashSet<CSGBrush>();
+
+            for (int i = 0; i < selectedBrushSurfaces.Length; i++)
+            {
+                if (!selectedBrushSurfaces[i].brush)
+                {
+                    continue;
+                }
+
+                CSGBrush brush = selectedBrushSurfaces[i].brush;
+                uniqueBrushes.Add(brush);
+            }
+            
+            _brushes = uniqueBrushes.ToArray();
+
             _undoGroupIndex = -1;
 
             if(_brushes.Length > 0)

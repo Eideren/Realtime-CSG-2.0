@@ -15,6 +15,7 @@ namespace RealtimeCSG
             CSGSettings.SnapNonCSGObjects  = EditorGUILayout.ToggleLeft("Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects);
             CSGSettings.AutoRigidbody      = EditorGUILayout.ToggleLeft("Disable auto add rigidbodies", CSGSettings.AutoRigidbody);
             CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft("Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs);
+            CSGSettings.UpdateLightmapUVButtonMode = (CSGSettings.UpdateLightmapUVButtonState)EditorGUILayout.EnumPopup("Lightmap UVs Button", CSGSettings.UpdateLightmapUVButtonMode);
 
             EditorGUILayout.Space();
 
