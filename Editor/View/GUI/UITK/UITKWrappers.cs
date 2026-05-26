@@ -14,12 +14,21 @@ namespace RealtimeCSG
             SceneView.duringSceneGui += OnSceneGUI;
         }
 
+        static IMGUIContainer container;
+
         private static void OnSceneGUI(SceneView sceneView)
         {
-            IMGUIContainer container = new IMGUIContainer(() =>
+            if (container == null)
             {
-                SceneViewBottomBarGUI.ShowGUI(sceneView);
-            });
+                container = new IMGUIContainer(() =>
+                {
+                    SceneViewBottomBarGUI.ShowGUI(sceneView);
+                });
+
+                container.name = "RCSG-BottomBar";
+            }
+
+            container.pickingMode = PickingMode.Position;
 
             container.style.position = Position.Absolute;
             container.style.bottom = 0;
@@ -27,10 +36,6 @@ namespace RealtimeCSG
             container.style.height = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4;
 
             container.style.backgroundColor = new Color(0.24f, 0.24f, 0.24f, 1.0f);
-
-            container.name = "RCSG-BottomBar";
-
-            container.pickingMode = PickingMode.Position;
 
             var root = sceneView.rootVisualElement;
 
@@ -142,58 +147,71 @@ namespace RealtimeCSG
             }
         }
 
+        static IMGUIContainer container;
+
         private static void OnSceneGUI(SceneView sceneView)
         {
-            IMGUIContainer container = new IMGUIContainer(() =>
+            if (container == null)
             {
-                Handles.BeginGUI();
-
-                //For some reason the Surface Mode Window needs extra padding
-                Vector2 SurfaceModePadding = Vector2.zero;
-                if (ActiveToolName == "EditModeSurface")
+                container = new IMGUIContainer(() =>
                 {
-                    SurfaceModePadding = new Vector2(2, -10);
-                }
+                    Handles.BeginGUI();
 
-                //-2 and +10 adjusts for the GUILayout.Spaces
-                //The GUILayout.Spaces are used to prevent clipping of the Active Tool Window
-                Rect viewRect = new Rect(-2 + SurfaceModePadding.x, ToolWindowSize.y - 1220 + 10 + SurfaceModePadding.y, sceneView.rootVisualElement.contentRect.width, sceneView.rootVisualElement.contentRect.height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4));
+                    //For some reason the Surface Mode Window needs extra padding
+                    Vector2 SurfaceModePadding = Vector2.zero;
+                    if (ActiveToolName == "EditModeSurface")
+                    {
+                        SurfaceModePadding = new Vector2(2, -10);
+                    }
 
-                GUILayout.BeginArea(viewRect);
+                    //-2 and +10 adjusts for the GUILayout.Spaces
+                    //The GUILayout.Spaces are used to prevent clipping of the Active Tool Window
+                    Rect viewRect = new Rect(-2 + SurfaceModePadding.x, ToolWindowSize.y - 1220 + 10 + SurfaceModePadding.y, sceneView.rootVisualElement.contentRect.width, sceneView.rootVisualElement.contentRect.height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4));
 
-                GUILayout.BeginHorizontal();
+                    GUILayout.BeginArea(viewRect);
 
-                GUILayout.Space(2);
+                    GUILayout.BeginHorizontal();
 
-                GUILayout.BeginVertical();
+                    GUILayout.Space(2);
 
-                if (EditModeManager.ActiveTool != null)
-                {
-                    EditModeManager.ActiveTool.OnSceneGUI(viewRect);
-                }
+                    GUILayout.BeginVertical();
 
-                GUILayout.Space(10);
+                    if (EditModeManager.ActiveTool != null)
+                    {
+                        EditModeManager.ActiveTool.OnSceneGUI(viewRect);
+                    }
 
-                GUILayout.EndVertical();
+                    GUILayout.Space(10);
 
-                GUILayout.EndHorizontal();
+                    GUILayout.EndVertical();
 
-                GUILayout.EndArea();
+                    GUILayout.EndHorizontal();
 
-                Handles.EndGUI();
-            });
+                    GUILayout.EndArea();
 
-            container.name = "RCSG-ToolWindow";
+                    Handles.EndGUI();
+                });
+
+                container.name = "RCSG-ToolWindow";
+            }
+
+            container.pickingMode = PickingMode.Position;
+
+            container.style.position = Position.Absolute;
+
+            container.style.left = 5;
+            container.style.bottom = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 5;
+
+            container.style.width = ToolWindowSize.x;
+            container.style.height = ToolWindowSize.y;
 
             var root = sceneView.rootVisualElement;
 
             IMGUIContainer foundContainer = root.Q<IMGUIContainer>("RCSG-ToolWindow");
 
-            bool IsPlaceTool = (ActiveToolName == "EditModePlace");
-
             bool ForceHide = false;
 
-            if(IsPlaceTool && (EditModeManager.FilteredSelection.nodeTargets == null || EditModeManager.FilteredSelection.nodeTargets.Length == 0))
+            if(ActiveToolName == "EditModePlace" && (EditModeManager.FilteredSelection.nodeTargets == null || EditModeManager.FilteredSelection.nodeTargets.Length == 0))
             {
                 ForceHide = true;
             }
@@ -205,21 +223,6 @@ namespace RealtimeCSG
             else if ((CSGSettings.EnableRealtimeCSG == false || EditModeManager.ActiveTool == null || SceneDragToolManager.IsDraggingObjectInScene == true|| ForceHide == true) && foundContainer != null)
             {
                 root.Remove(foundContainer);
-            }
-
-            if(foundContainer != null)
-            {
-                foundContainer.style.position = Position.Absolute;
-
-                foundContainer.style.left = 5;
-                foundContainer.style.bottom = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 10;
-
-                foundContainer.style.width = ToolWindowSize.x;
-                foundContainer.style.height = ToolWindowSize.y;
-
-                //foundContainer.style.backgroundColor = new Color(1, 0, 0, 1.0f);
-
-                foundContainer.pickingMode = PickingMode.Position;
             }
         }
     }
