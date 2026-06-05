@@ -345,7 +345,6 @@ namespace RealtimeCSG
                                 break;
 
                             case PresetCategory.Scale_Snap:
-                                m_presets[category].Add(new Preset("", 1.0f));
                                 m_presets[category].Add(new Preset("", 0.5f));
                                 m_presets[category].Add(new Preset("", 0.25f));
                                 m_presets[category].Add(new Preset("", 0.125f));
