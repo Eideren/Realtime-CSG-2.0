@@ -23,6 +23,8 @@ namespace RealtimeCSG
 
         private int _dragGroup = -1;
 
+        bool PreviousShiftState = false;
+
 #region ValidateDrop
 
         public bool ValidateDrop(SceneView sceneView)
@@ -102,6 +104,7 @@ namespace RealtimeCSG
             _hoverBrushSurfaces      = null;
             _selectAllSurfaces       = false;
             _hoverOnSelectedSurfaces = false;
+            PreviousShiftState = false;
         }
 
 #endregion
@@ -291,6 +294,12 @@ namespace RealtimeCSG
                 }
             }
 
+            if (PreviousShiftState != Event.current.shift)
+            {
+                PreviousShiftState = Event.current.shift;
+                modified = true;
+            }
+
             bool needUpdate = false;
 
             if(modified)
@@ -303,8 +312,15 @@ namespace RealtimeCSG
                     RestoreMaterials(_hoverBrushSurfaces);
                 }
 
-                _hoverBrushSurfaces = HoverOnBrush(new CSGBrush[1] { highlightBrush }, highlightSurface);
-
+                if (Event.current.shift)
+                {
+                    _hoverBrushSurfaces = HoverOnAllBrushSurfaces(highlightBrush);
+                }
+                else
+                {
+                    _hoverBrushSurfaces = HoverOnBrush(new CSGBrush[1] { highlightBrush }, highlightSurface);
+                }
+                
                 if(_hoverBrushSurfaces != null)
                 {
                     _hoverBrushSurfaces = GetCombinedBrushes(_hoverBrushSurfaces);
@@ -314,12 +330,9 @@ namespace RealtimeCSG
             }
             else
             {
-                bool prevSelectAllSurfaces = _selectAllSurfaces;
-                _selectAllSurfaces = Event.current.shift;
-
                 if(_hoverBrushSurfaces != null)
                 {
-                    needUpdate = prevSelectAllSurfaces != _selectAllSurfaces;
+                    needUpdate = true;
 
                     ApplyMaterial(_hoverBrushSurfaces);
                 }
@@ -500,6 +513,27 @@ namespace RealtimeCSG
             return surfaces;
         }
 
+        SelectedBrushSurface[] HoverOnAllBrushSurfaces(CSGBrush hoverBrush)
+        {
+            if (hoverBrush == null)
+            {
+                _hoverOnSelectedSurfaces = false;
+                return null;
+            }
+            else
+            {
+                _hoverOnSelectedSurfaces = true;
+            }
+
+            List<SelectedBrushSurface> selectedSurfaces = new List<SelectedBrushSurface>();
+
+            for (int i = 0; i < hoverBrush.shape.surfaces.Length; i++)
+            {
+                selectedSurfaces.Add(new SelectedBrushSurface(hoverBrush, i));
+            }
+
+            return selectedSurfaces.ToArray();
+        }
 #endregion
 
 #region UpdateBrushMeshes

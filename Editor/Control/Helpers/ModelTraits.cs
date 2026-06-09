@@ -182,7 +182,7 @@ namespace RealtimeCSG
 
         public static bool IsModelEditable(CSGModel model)
         {
-            if(!model)
+            if(!model || SceneVisibilityManager.instance.IsHidden(model.gameObject) == true || SceneVisibilityManager.instance.IsPickingDisabled(model.gameObject) == true)
             {
                 return false;
             }
@@ -194,7 +194,7 @@ namespace RealtimeCSG
 
         public static bool IsModelSelectable(CSGModel model)
         {
-            if(!model || !model.isActiveAndEnabled)
+            if(!model || !model.isActiveAndEnabled || !IsModelEditable(model))
             {
                 return false;
             }
