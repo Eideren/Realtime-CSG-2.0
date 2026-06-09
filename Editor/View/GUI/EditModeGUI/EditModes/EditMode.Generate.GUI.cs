@@ -203,7 +203,9 @@ namespace RealtimeCSG
 
             GUILayout.EndHorizontal();
 
-            if(isSceneGUI)
+            GUI.enabled = !EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
+
+            if (isSceneGUI)
             {
                 GUILayout.Space(2);
                 EditorGUI.BeginChangeCheck();
@@ -217,6 +219,10 @@ namespace RealtimeCSG
                     CSGSettings.Save();
                 }
             }
+
+            GUI.enabled = true;
+
+            EditorPrefs.SetBool("GenerateUsingSurfaceMaterial", GUILayout.Toggle(EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false), "Match Surface", EditorStyles.miniButton));
         }
 
         private static Vector2 m_ScrollPos;

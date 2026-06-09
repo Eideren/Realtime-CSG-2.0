@@ -15,8 +15,13 @@ namespace RealtimeCSG
         private static readonly int bottomBarEditorOverlayHash = "BottomBarEditorOverlay".GetHashCode();
         private static readonly int bottomBarGUIHash = "BottomBarGUI".GetHashCode();
 
-        public static void ShowGUI(SceneView sceneView, bool haveOffset = true)
+        public static void ShowGUI(SceneView sceneView)
         {
+            if (CSGSettings.EnableRealtimeCSG == false)
+            {
+                return;
+            }
+
             InitStyles();
             CsgguiStyleUtility.InitStyles();
 
@@ -25,11 +30,7 @@ namespace RealtimeCSG
                 float height = sceneView.rootVisualElement.contentRect.height;
                 float width  = sceneView.rootVisualElement.contentRect.width;
 
-                Rect bottomBarRect;
-
-                bottomBarRect = haveOffset
-                    ? new Rect(0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 18), width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT)
-                    : new Rect(0, height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 3), width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT);
+                Rect bottomBarRect = new Rect(0, 0, width, CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT);
 
                 try
                 {
