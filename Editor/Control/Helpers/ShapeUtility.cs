@@ -29,8 +29,8 @@ namespace RealtimeCSG
 
                     if(shape.texGens[i].Scale.x == 0 && shape.texGens[i].Scale.y == 0)
                     {
-                        shape.texGens[i].Scale.x = 1.0f;
-                        shape.texGens[i].Scale.y = 1.0f;
+                        shape.texGens[i].Scale.x = CSGSettings.InitalUVScale.x;
+                        shape.texGens[i].Scale.y = CSGSettings.InitalUVScale.y;
                     }
 
                     if(shape.texGens[i].Scale.x < 0)

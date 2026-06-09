@@ -113,12 +113,14 @@ namespace RealtimeCSG
         [SerializeField] protected Quaternion toGridQuaternion = Quaternion.identity;
         [SerializeField] protected Quaternion fromGridQuaternion = Quaternion.identity;
 
+        public static Vector2 MatchedUVScale = Vector2.one;
+
         public CSGOperationType CurrentCSGOperationType
         {
             get => forceCurrentCSGOperationType == INVALID_CSG_OPERATION_TYPE ? currentCSGOperationType : forceCurrentCSGOperationType;
             set
             {
-                if(forceCurrentCSGOperationType == value)
+                if (forceCurrentCSGOperationType == value)
                 {
                     return;
                 }
@@ -130,18 +132,18 @@ namespace RealtimeCSG
 
         protected void UpdateOperationType(CSGOperationType opType)
         {
-            if(operationGameObject != null)
+            if (operationGameObject != null)
             {
                 CSGOperation operation = operationGameObject.GetComponent<CSGOperation>();
 
-                if(operation != null)
+                if (operation != null)
                 {
                     operation.operationType = opType;
                 }
 
                 CSGBrush brush = operationGameObject.GetComponent<CSGBrush>();
 
-                if(brush != null)
+                if (brush != null)
                 {
                     brush.operationType = opType;
                 }
@@ -158,44 +160,44 @@ namespace RealtimeCSG
             Reset();
 
             shapeIsValid = true;
-            isFinished   = false;
+            isFinished = false;
 
             _originalGridRotation = CSGGrid.ForcedGridRotation;
-            _originalGridCenter   = CSGGrid.ForcedGridCenter;
-            _originalForceGrid    = CSGGrid.ForceGrid;
+            _originalGridCenter = CSGGrid.ForcedGridCenter;
+            _originalForceGrid = CSGGrid.ForceGrid;
 
             geometryModel = null;
         }
 
         public virtual void Reset()
         {
-            editMode                     = EditMode.CreatePlane;
-            brushPosition                = MathConstants.zeroVector3;
-            brushRotation                = null;
-            ignoreModelRotation          = false;
-            parentGameObject             = null;
-            parentModel                  = null;
-            operationGameObject          = null;
-            parentTransform              = null;
-            generatedGameObjects         = null;
-            generatedBrushes             = null;
-            undoGroupIndex               = -1;
+            editMode = EditMode.CreatePlane;
+            brushPosition = MathConstants.zeroVector3;
+            brushRotation = null;
+            ignoreModelRotation = false;
+            parentGameObject = null;
+            parentModel = null;
+            operationGameObject = null;
+            parentTransform = null;
+            generatedGameObjects = null;
+            generatedBrushes = null;
+            undoGroupIndex = -1;
             forceCurrentCSGOperationType = INVALID_CSG_OPERATION_TYPE;
-            currentCSGOperationType      = INVALID_CSG_OPERATION_TYPE;
+            currentCSGOperationType = INVALID_CSG_OPERATION_TYPE;
         }
 
         protected virtual bool StartEditMode(Camera camera)
         {
-            if(editMode == EditMode.EditShape || editMode == EditMode.ExtrudeShape)
+            if (editMode == EditMode.EditShape || editMode == EditMode.ExtrudeShape)
             {
                 return false;
             }
 
             Undo.RecordObject(this, "Created shape");
 
-            if(GUIUtility.hotControl == shapeId)
+            if (GUIUtility.hotControl == shapeId)
             {
-                GUIUtility.hotControl      = 0;
+                GUIUtility.hotControl = 0;
                 GUIUtility.keyboardControl = 0;
                 EditorGUIUtility.SetWantsMouseJumping(0);
                 EditorGUIUtility.editingTextField = false;
@@ -203,17 +205,17 @@ namespace RealtimeCSG
 
             CalculateWorldSpaceTangents(camera);
             brushPosition = buildPlane.Project(ShapeSettings.GetCenter(buildPlane));
-            editMode      = EditMode.EditShape;
+            editMode = EditMode.EditShape;
 
             CSGPlane newPlane = buildPlane;
             ShapeSettings.CalculatePlane(ref newPlane);
 
-            if(newPlane.Normal.sqrMagnitude != 0)
+            if (newPlane.Normal.sqrMagnitude != 0)
             {
                 buildPlane = newPlane;
             }
 
-            if(ModelTraits.IsModelEditable(geometryModel))
+            if (ModelTraits.IsModelEditable(geometryModel))
             {
                 SelectionUtility.LastUsedModel = geometryModel;
             }
@@ -225,7 +227,7 @@ namespace RealtimeCSG
 
         protected void RevertToEditVertices()
         {
-            if(editMode != EditMode.ExtrudeShape)
+            if (editMode != EditMode.ExtrudeShape)
             {
                 return;
             }
@@ -236,20 +238,20 @@ namespace RealtimeCSG
         protected void CleanupGrid()
         {
             CSGGrid.ForcedGridRotation = _originalGridRotation;
-            CSGGrid.ForcedGridCenter   = _originalGridCenter;
-            CSGGrid.ForceGrid          = _originalForceGrid;
+            CSGGrid.ForcedGridCenter = _originalGridCenter;
+            CSGGrid.ForceGrid = _originalForceGrid;
         }
 
         protected void ResetVisuals()
         {
             visualSnappedEdges = null;
-            visualSnappedGrid  = null;
+            visualSnappedGrid = null;
             visualSnappedBrush = null;
         }
 
         protected void PaintSnapVisualisation()
         {
-            if(visualSnappedEdges != null)
+            if (visualSnappedEdges != null)
             {
                 PaintUtility.DrawLines(visualSnappedEdges.ToArray(), GUIConstants.OLD_THICK_LINE_SCALE, ColorSettings.SnappedEdges);
             }
@@ -257,16 +259,16 @@ namespace RealtimeCSG
             Matrix4x4 origMatrix = Handles.matrix;
             Handles.matrix = MathConstants.identityMatrix;
 
-            if(visualSnappedGrid != null)
+            if (visualSnappedGrid != null)
             {
                 PaintUtility.DrawDottedLines(visualSnappedGrid.ToArray(), ColorSettings.SnappedEdges);
             }
 
-            if(visualSnappedBrush != null)
+            if (visualSnappedBrush != null)
             {
-                if(visualSnappedBrush.compareTransformation != null && visualSnappedBrush.childData != null && visualSnappedBrush.childData.modelTransform)
+                if (visualSnappedBrush.compareTransformation != null && visualSnappedBrush.childData != null && visualSnappedBrush.childData.modelTransform)
                 {
-                    Color     color               = ColorSettings.HoverOutlines;
+                    Color color = ColorSettings.HoverOutlines;
                     Matrix4x4 brushTransformation = visualSnappedBrush.compareTransformation.localToWorldMatrix;
 
                     CSGRenderer.DrawOutlines(visualSnappedBrush.brushNodeID, brushTransformation, color, color, color, color, GUIConstants.OLD_THICK_LINE_SCALE);
@@ -281,7 +283,7 @@ namespace RealtimeCSG
             Vector3 direction = buildPlane.Normal;
             Quaternion rotation = brushRotation.HasValue ? brushRotation.Value : Quaternion.FromToRotation(MathConstants.upVector3, direction);
 
-            if(!ignoreModelRotation)
+            if (!ignoreModelRotation)
             {
                 rotation *= Quaternion.Inverse(parentModel.transform.rotation);
             }
@@ -292,7 +294,7 @@ namespace RealtimeCSG
 
         protected void UpdateBrushPosition()
         {
-            if(operationGameObject)
+            if (operationGameObject)
             {
                 Transform transform = operationGameObject.transform;
                 SetBrushTransformation(transform);
@@ -309,47 +311,47 @@ namespace RealtimeCSG
 
         protected void HandleKeyboard(EventType type)
         {
-            if(EditorGUIUtility.editingTextField)
+            if (EditorGUIUtility.editingTextField)
             {
                 return;
             }
 
             Camera camera = Camera.current;
 
-            switch(type)
+            switch (type)
             {
                 case EventType.ValidateCommand:
                 case EventType.KeyDown:
-                {
-                    SceneQueryUtility.ClearDeepClick();
-
-                    if(Keys.performActionKey.IsKeyPressed() || Keys.deleteSelectionKey.IsKeyPressed() || Keys.cancelActionKey.IsKeyPressed())
                     {
-                        Event.current.Use();
-                    }
+                        SceneQueryUtility.ClearDeepClick();
 
-                    break;
-                }
+                        if (Keys.performActionKey.IsKeyPressed() || Keys.deleteSelectionKey.IsKeyPressed() || Keys.cancelActionKey.IsKeyPressed())
+                        {
+                            Event.current.Use();
+                        }
+
+                        break;
+                    }
                 case EventType.KeyUp:
-                {
-                    if(Keys.performActionKey.IsKeyPressed())
                     {
-                        Commit(camera);
-                        Event.current.Use();
-                    }
-                    else if(Keys.cancelActionKey.IsKeyPressed())
-                    {
-                        PerformDeselectAll();
-                        Event.current.Use();
-                    }
-                    else if(Keys.deleteSelectionKey.IsKeyPressed())
-                    {
-                        PerformDelete();
-                        Event.current.Use();
-                    }
+                        if (Keys.performActionKey.IsKeyPressed())
+                        {
+                            Commit(camera);
+                            Event.current.Use();
+                        }
+                        else if (Keys.cancelActionKey.IsKeyPressed())
+                        {
+                            PerformDeselectAll();
+                            Event.current.Use();
+                        }
+                        else if (Keys.deleteSelectionKey.IsKeyPressed())
+                        {
+                            PerformDelete();
+                            Event.current.Use();
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
@@ -357,7 +359,7 @@ namespace RealtimeCSG
         {
             Vector2 textCenter2Da = HandleUtility.WorldToGUIPoint(circleCenter);
             Vector2 textCenter2Db = HandleUtility.WorldToGUIPoint(edgeCenter);
-            Vector2 normal2D      = (textCenter2Db - textCenter2Da).normalized;
+            Vector2 normal2D = (textCenter2Db - textCenter2Da).normalized;
 
             Vector2 textCenter2D = textCenter2Db;
             textCenter2D += normal2D * (HOVER_TEXT_DISTANCE * 2);
@@ -368,7 +370,7 @@ namespace RealtimeCSG
             PaintUtility.DrawLine(edgeCenter, textCenter, Color.black);
             PaintUtility.DrawDottedLine(edgeCenter, textCenter, ColorSettings.SnappedEdges);
 
-            if(float.IsNaN(length) || float.IsInfinity(length))
+            if (float.IsNaN(length) || float.IsInfinity(length))
             {
                 PaintUtility.DrawScreenText(textCenter2D, $"{name} --");
             }
@@ -382,12 +384,12 @@ namespace RealtimeCSG
         {
             bool hadForcedGrid = false;
 
-            if(IgnoreForcedGridForTangents)
+            if (IgnoreForcedGridForTangents)
             {
                 hadForcedGrid = CSGGrid.ForceGrid;
             }
 
-            if(hadForcedGrid)
+            if (hadForcedGrid)
             {
                 CSGGrid.ForceGrid = false;
                 CSGGrid.UpdateGridOrientation(camera);
@@ -397,16 +399,16 @@ namespace RealtimeCSG
 
             GeometryUtility.CalculateTangents(gridSpaceNormal, out Vector3 gridSpaceTangent, out Vector3 gridSpaceBinormal);
 
-            gridNormal   = CSGGrid.VectorFromGridSpace(gridSpaceNormal);
-            gridTangent  = CSGGrid.VectorFromGridSpace(gridSpaceTangent);
+            gridNormal = CSGGrid.VectorFromGridSpace(gridSpaceNormal);
+            gridTangent = CSGGrid.VectorFromGridSpace(gridSpaceTangent);
             gridBinormal = CSGGrid.VectorFromGridSpace(gridSpaceBinormal);
 
-            toGridMatrix       = CSGGrid.ToGridSpaceMatrix();
-            fromGridMatrix     = CSGGrid.FromGridSpaceMatrix();
-            toGridQuaternion   = CSGGrid.ToGridSpaceQuaternion();
+            toGridMatrix = CSGGrid.ToGridSpaceMatrix();
+            fromGridMatrix = CSGGrid.FromGridSpaceMatrix();
+            toGridQuaternion = CSGGrid.ToGridSpaceQuaternion();
             fromGridQuaternion = CSGGrid.FromGridSpaceQuaternion();
 
-            if(hadForcedGrid)
+            if (hadForcedGrid)
             {
                 CSGGrid.ForceGrid = true;
                 CSGGrid.UpdateGridOrientation(camera);
@@ -415,11 +417,11 @@ namespace RealtimeCSG
 
         protected void HideGenerateBrushes()
         {
-            if(generatedBrushes != null)
+            if (generatedBrushes != null)
             {
-                for(int i = 0; i < generatedBrushes.Length; i++)
+                for (int i = 0; i < generatedBrushes.Length; i++)
                 {
-                    if(generatedBrushes[i] && generatedBrushes[i].gameObject && generatedBrushes[i].gameObject.activeSelf)
+                    if (generatedBrushes[i] && generatedBrushes[i].gameObject && generatedBrushes[i].gameObject.activeSelf)
                     {
                         generatedBrushes[i].gameObject.SetActive(false);
                     }
@@ -434,55 +436,55 @@ namespace RealtimeCSG
 
             CSGModel lastUsedModel = SelectionUtility.LastUsedModel;
 
-            if(!ModelTraits.IsModelEditable(lastUsedModel))
+            if (!ModelTraits.IsModelEditable(lastUsedModel))
             {
                 lastUsedModel = null;
             }
 
             Transform lastUsedModelTransform = !lastUsedModel ? null : lastUsedModel.transform;
 
-            if(!lastUsedModelTransform || !lastUsedModel.isActiveAndEnabled)
+            if (!lastUsedModelTransform || !lastUsedModel.isActiveAndEnabled)
             {
-                if(prevSelection != null && prevSelection.Length > 0)
+                if (prevSelection != null && prevSelection.Length > 0)
                 {
-                    for(int i = 0; i < prevSelection.Length; i++)
+                    for (int i = 0; i < prevSelection.Length; i++)
                     {
-                        Object        obj   = prevSelection[i];
-                        CSGBrush      brush = obj as CSGBrush;
-                        MonoBehaviour mono  = obj as MonoBehaviour;
-                        GameObject    go    = obj as GameObject;
+                        Object obj = prevSelection[i];
+                        CSGBrush brush = obj as CSGBrush;
+                        MonoBehaviour mono = obj as MonoBehaviour;
+                        GameObject go = obj as GameObject;
 
-                        if(!brush)
+                        if (!brush)
                         {
-                            if(mono)
+                            if (mono)
                             {
                                 brush = mono.GetComponentInChildren<CSGBrush>();
                             }
 
-                            if(go)
+                            if (go)
                             {
                                 brush = go.GetComponentInChildren<CSGBrush>();
                             }
                         }
 
-                        if(!brush)
+                        if (!brush)
                         {
                             continue;
                         }
 
-                        if((brush.gameObject.hideFlags & (HideFlags.HideInHierarchy | HideFlags.NotEditable | HideFlags.DontSaveInBuild)) != 0)
+                        if ((brush.gameObject.hideFlags & (HideFlags.HideInHierarchy | HideFlags.NotEditable | HideFlags.DontSaveInBuild)) != 0)
                         {
                             continue;
                         }
 
-                        if(brush.childData == null || brush.childData.modelTransform == null)
+                        if (brush.childData == null || brush.childData.modelTransform == null)
                         {
                             continue;
                         }
 
                         CSGModel model = brush.childData.model;
 
-                        if(!model || !model.isActiveAndEnabled)
+                        if (!model || !model.isActiveAndEnabled)
                         {
                             continue;
                         }
@@ -494,11 +496,11 @@ namespace RealtimeCSG
                 }
             }
 
-            if(generatedBrushes != null && generatedBrushes.Length > 0)
+            if (generatedBrushes != null && generatedBrushes.Length > 0)
             {
-                for(int i = generatedBrushes.Length - 1; i >= 0; i--)
+                for (int i = generatedBrushes.Length - 1; i >= 0; i--)
                 {
-                    if(generatedBrushes[i])
+                    if (generatedBrushes[i])
                     {
                         continue;
                     }
@@ -506,13 +508,13 @@ namespace RealtimeCSG
                     ArrayUtility.RemoveAt(ref generatedBrushes, i);
                 }
 
-                for(int i = generatedGameObjects.Length - 1; i >= 0; i--)
+                for (int i = generatedGameObjects.Length - 1; i >= 0; i--)
                 {
-                    if(generatedGameObjects[i])
+                    if (generatedGameObjects[i])
                     {
                         CSGBrush brush = generatedGameObjects[i].GetComponentInChildren<CSGBrush>();
 
-                        if(brush && ArrayUtility.Contains(generatedBrushes, brush))
+                        if (brush && ArrayUtility.Contains(generatedBrushes, brush))
                         {
                             continue;
                         }
@@ -522,38 +524,38 @@ namespace RealtimeCSG
                 }
             }
 
-            if(generatedGameObjects == null || generatedGameObjects.Length != brushObjectCount)
+            if (generatedGameObjects == null || generatedGameObjects.Length != brushObjectCount)
             {
-                if(generatedBrushes != null && generatedBrushes.Length > 0)
+                if (generatedBrushes != null && generatedBrushes.Length > 0)
                 {
-                    for(int i = 0; i < generatedBrushes.Length; i++)
+                    for (int i = 0; i < generatedBrushes.Length; i++)
                     {
                         InternalCSGModelManager.OnDestroyed(generatedBrushes[i]);
                         DestroyImmediate(generatedBrushes[i]);
                     }
                 }
 
-                if(generatedGameObjects != null && generatedGameObjects.Length > 0)
+                if (generatedGameObjects != null && generatedGameObjects.Length > 0)
                 {
-                    for(int i = 0; i < generatedGameObjects.Length; i++)
+                    for (int i = 0; i < generatedGameObjects.Length; i++)
                     {
                         DestroyImmediate(generatedGameObjects[i]);
                     }
                 }
 
-                if(parentGameObject != null)
+                if (parentGameObject != null)
                 {
                     DestroyImmediate(parentGameObject);
                 }
 
-                if(lastUsedModelTransform == null)
+                if (lastUsedModelTransform == null)
                 {
                     parentGameObject = OperationsUtility.CreateGameObject(lastUsedModelTransform, "Model", true);
                     InternalCSGModelManager.CreateCSGModel(parentGameObject);
                     parentModel = parentGameObject.GetComponent<CSGModel>();
                     Undo.RegisterCreatedObjectUndo(parentGameObject, "Created model");
 
-                    if(brushObjectCount > 1)
+                    if (brushObjectCount > 1)
                     {
                         operationGameObject = OperationsUtility.CreateGameObject(parentGameObject.transform, "Operation", true);
 
@@ -562,7 +564,7 @@ namespace RealtimeCSG
 
                         CSGOperation operation = operationGameObject.AddComponent<CSGOperation>();
 
-                        if(CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
+                        if (CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
                         {
                             operation.operationType = CurrentCSGOperationType;
                         }
@@ -576,9 +578,9 @@ namespace RealtimeCSG
                         parentTransform = parentGameObject.transform;
                     }
                 }
-                else if(brushObjectCount > 1)
+                else if (brushObjectCount > 1)
                 {
-                    parentModel      = lastUsedModelTransform.GetComponent<CSGModel>();
+                    parentModel = lastUsedModelTransform.GetComponent<CSGModel>();
                     parentGameObject = OperationsUtility.CreateGameObject(lastUsedModelTransform, "Brushes", true);
                     Transform transform = parentGameObject.transform;
                     SetBrushTransformation(transform);
@@ -586,27 +588,27 @@ namespace RealtimeCSG
                     operationGameObject = parentGameObject;
                     CSGOperation operation = operationGameObject.AddComponent<CSGOperation>();
 
-                    if(CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
+                    if (CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
                     {
                         operation.operationType = CurrentCSGOperationType;
                     }
 
                     operation.handleAsOne = true;
-                    parentTransform       = operationGameObject.transform;
+                    parentTransform = operationGameObject.transform;
                     Undo.RegisterCreatedObjectUndo(parentGameObject, "Created brush");
                 }
                 else
                 {
-                    parentGameObject    = null;
+                    parentGameObject = null;
                     operationGameObject = null;
-                    parentTransform     = lastUsedModelTransform;
-                    parentModel         = lastUsedModelTransform.GetComponent<CSGModel>();
+                    parentTransform = lastUsedModelTransform;
+                    parentModel = lastUsedModelTransform.GetComponent<CSGModel>();
                 }
 
                 generatedGameObjects = new GameObject[brushObjectCount];
-                generatedBrushes     = new CSGBrush[brushObjectCount];
+                generatedBrushes = new CSGBrush[brushObjectCount];
 
-                for(int p = 0; p < brushObjectCount; p++)
+                for (int p = 0; p < brushObjectCount; p++)
                 {
                     string brushName = brushObjectCount == 1 ? "Brush" : $"Brush ({p})";
 
@@ -615,9 +617,9 @@ namespace RealtimeCSG
 
                     CSGBrush brushComponent = gameObject.AddComponent<CSGBrush>();
 
-                    if(operationGameObject == null)
+                    if (operationGameObject == null)
                     {
-                        if(CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
+                        if (CurrentCSGOperationType != INVALID_CSG_OPERATION_TYPE)
                         {
                             brushComponent.operationType = CurrentCSGOperationType;
                         }
@@ -627,9 +629,9 @@ namespace RealtimeCSG
                         SetBrushTransformation(transform);
                     }
 
-                    generatedBrushes[p]             = brushComponent;
+                    generatedBrushes[p] = brushComponent;
                     generatedBrushes[p].controlMesh = new ControlMesh();
-                    generatedBrushes[p].shape       = new Shape();
+                    generatedBrushes[p].shape = new Shape();
                     Undo.RegisterCreatedObjectUndo(gameObject, "Created brush");
                     generatedGameObjects[p] = gameObject;
                 }
@@ -644,11 +646,11 @@ namespace RealtimeCSG
 
         internal void MarkAllBrushesDirty()
         {
-            for(int i = 0; i < generatedBrushes.Length; i++)
+            for (int i = 0; i < generatedBrushes.Length; i++)
             {
                 CSGBrush brush = generatedBrushes[i];
 
-                if(!brush)
+                if (!brush)
                 {
                     continue;
                 }
@@ -661,7 +663,7 @@ namespace RealtimeCSG
 
         public bool UndoRedoPerformed()
         {
-            if(UpdateBaseShape(false))
+            if (UpdateBaseShape(false))
             {
                 return false;
             }
@@ -673,11 +675,11 @@ namespace RealtimeCSG
 
         public virtual void HandleEvents(SceneView sceneView, Rect sceneRect)
         {
-            if(Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseMove)
+            if (Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseMove)
             {
                 mouseIsDragging = false;
             }
-            else if(Event.current.type == EventType.MouseDrag)
+            else if (Event.current.type == EventType.MouseDrag)
             {
                 mouseIsDragging = true;
             }
@@ -685,13 +687,13 @@ namespace RealtimeCSG
             CreateControlIDs();
 
             // pretend we dragged so we don't click if we just changed edit modes
-            if(prevEditMode != editMode)
+            if (prevEditMode != editMode)
             {
-                prevEditMode    = editMode;
+                prevEditMode = editMode;
                 mouseIsDragging = true;
             }
 
-            switch(editMode)
+            switch (editMode)
             {
                 default:
                 case EditMode.CreatePlane:
@@ -711,7 +713,7 @@ namespace RealtimeCSG
 
         private void Cleanup()
         {
-            if(prevSelection != null)
+            if (prevSelection != null)
             {
                 Selection.objects = prevSelection;
             }
@@ -722,9 +724,9 @@ namespace RealtimeCSG
 
             prevSelection = null;
 
-            if(GUIUtility.hotControl == shapeId)
+            if (GUIUtility.hotControl == shapeId)
             {
-                GUIUtility.hotControl      = 0;
+                GUIUtility.hotControl = 0;
                 GUIUtility.keyboardControl = 0;
                 EditorGUIUtility.SetWantsMouseJumping(0);
                 EditorGUIUtility.editingTextField = false;
@@ -741,24 +743,24 @@ namespace RealtimeCSG
             CleanupGrid();
 
             {
-                if(generatedBrushes != null && generatedBrushes.Length > 0)
+                if (generatedBrushes != null && generatedBrushes.Length > 0)
                 {
-                    for(int i = 0; i < generatedBrushes.Length; i++)
+                    for (int i = 0; i < generatedBrushes.Length; i++)
                     {
                         InternalCSGModelManager.OnDestroyed(generatedBrushes[i]);
                         DestroyImmediate(generatedBrushes[i]);
                     }
                 }
 
-                if(generatedGameObjects != null && generatedGameObjects.Length > 0)
+                if (generatedGameObjects != null && generatedGameObjects.Length > 0)
                 {
-                    for(int i = 0; i < generatedGameObjects.Length; i++)
+                    for (int i = 0; i < generatedGameObjects.Length; i++)
                     {
                         DestroyImmediate(generatedGameObjects[i]);
                     }
                 }
 
-                if(parentGameObject != null)
+                if (parentGameObject != null)
                 {
                     DestroyImmediate(parentGameObject);
                 }
@@ -767,7 +769,7 @@ namespace RealtimeCSG
             Cleanup();
             Reset();
 
-            if(shapeCancelled != null)
+            if (shapeCancelled != null)
             {
                 shapeCancelled();
             }
@@ -775,25 +777,25 @@ namespace RealtimeCSG
 
         public void EndCommit()
         {
-            if(generatedBrushes == null)
+            if (generatedBrushes == null)
             {
                 return;
             }
 
             AABB bounds = BoundsUtilities.GetBounds(generatedBrushes);
 
-            if(!bounds.IsEmpty())
+            if (!bounds.IsEmpty())
             {
                 ControlMeshUtility.RebuildShapes(generatedBrushes);
                 CSGModel[] models = operationGameObject.GetComponentsInParent<CSGModel>(true);
-                CSGModel   model  = models.Length == 0 ? null : models[0];
+                CSGModel model = models.Length == 0 ? null : models[0];
                 model.forceUpdate = true;
 
                 InternalCSGModelManager.CheckForChanges(true);
                 Undo.CollapseUndoOperations(undoGroupIndex);
                 Cleanup();
 
-                if(generatedGameObjects != null && generatedGameObjects.Length > 0)
+                if (generatedGameObjects != null && generatedGameObjects.Length > 0)
                 {
                     Selection.objects = generatedGameObjects;
                 }
@@ -801,7 +803,7 @@ namespace RealtimeCSG
                 Reset();
             }
 
-            if(shapeCommitted != null)
+            if (shapeCommitted != null)
             {
                 shapeCommitted();
             }
@@ -832,14 +834,59 @@ namespace RealtimeCSG
         {
             Camera camera = Camera.current;
 
-            if(_doCommit)
+            if (_doCommit)
             {
                 Commit(camera);
             }
 
-            if(_doCancel)
+            if (_doCancel)
             {
                 Cancel();
+            }
+        }
+
+        public void MatchSurfaceMaterial(Camera _camera, CSGBrush _vertexOnBrush, Vector3 _hoverBuildPlaneNormal)
+        {
+            //Select material on generation surface
+            bool MatchSurfaceMaterial = EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
+
+            if (MatchSurfaceMaterial == true)
+            {
+                if (_vertexOnBrush != null)
+                {
+                    int closestIndex = -1;
+                    float closestDistance = float.MaxValue;
+
+                    for (int i = 0; i < _vertexOnBrush.shape.texGens.Length; i++)
+                    {
+                        bool intersects = SceneQueryUtility.FindSurfaceIntersection(_camera, _vertexOnBrush, _vertexOnBrush.childData.modelTransform.localToWorldMatrix, i, Event.current.mousePosition, out LegacySurfaceIntersection _surfaceIntersection);
+
+                        if (intersects)
+                        {
+                            Vector3 SurfacePlaneNormal = _surfaceIntersection.localPlane.Normal;
+
+                            if(_vertexOnBrush.operationType == CSGOperationType.Subtractive)
+                            {
+                                SurfacePlaneNormal *= -1;
+                            }
+
+                            if (SurfacePlaneNormal == _hoverBuildPlaneNormal)
+                            {
+                                if (_surfaceIntersection.distance < closestDistance)
+                                {
+                                    closestIndex = i;
+                                    closestDistance = _surfaceIntersection.distance;
+                                }
+                            }
+                        }
+                    }
+
+                    if (closestIndex > -1)
+                    {
+                        CSGSettings.DefaultMaterial = _vertexOnBrush.shape.texGens[closestIndex].RenderMaterial;
+                        MatchedUVScale = _vertexOnBrush.shape.texGens[closestIndex].Scale;
+                    }
+                }
             }
         }
     }
