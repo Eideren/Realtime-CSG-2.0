@@ -300,6 +300,25 @@ namespace RealtimeCSG
 
         static public UpdateLightmapUVButtonState UpdateLightmapUVButtonMode = UpdateLightmapUVButtonState.BottomBar;
 
+        static public float DefaultUVScale = 1.0f;
+
+        static public Vector2 InitalUVScale
+        {
+            get
+            {
+                bool MatchingSurface = EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
+
+                if (MatchingSurface == true && EditMode == ToolEditMode.Generate)
+                {
+                    return GeneratorBase.MatchedUVScale;
+                }
+                else
+                {
+                    return new Vector2(DefaultUVScale, DefaultUVScale);
+                }
+            }
+        }
+
         public static bool DefaultPreserveUVs
         {
             get => (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs;
@@ -712,6 +731,8 @@ namespace RealtimeCSG
 
             AutoRigidbody = EditorPrefs.GetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 
+            DefaultUVScale = EditorPrefs.GetFloat("DefaultUVScale", 1.0f);
+
             DefaultPreserveUVs = EditorPrefs.GetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
 
             SnapNonCSGObjects = EditorPrefs.GetBool("SnapNonCSGObjects", true);
@@ -805,6 +826,8 @@ namespace RealtimeCSG
             EditorPrefs.SetBool("ShowTooltips", ShowTooltips);
 
             EditorPrefs.SetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
+
+            EditorPrefs.SetFloat("DefaultUVScale", DefaultUVScale);
 
             EditorPrefs.SetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
 
