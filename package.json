@@ -1,6 +1,6 @@
 {
   "name": "com.prenominal.realtimecsg",
-  "version": "2.0.4",
+  "version": "2.1.6",
   "description": "Realtime-CSG is a CSG level design tool, that allows you to intuitively and rapidly create levels. With its non-destructive workflow, you can easily adjust your levels at any time, and iterate with instant feedback.",
   "displayName": "Realtime-CSG",
   "unity": "6000.3",
