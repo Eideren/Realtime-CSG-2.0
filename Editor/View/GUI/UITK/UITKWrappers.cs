@@ -160,10 +160,17 @@ namespace RealtimeCSG
 
                     case "EditModeSurface":
                         returnSize = new Vector2(232, EditModeSurfaceGUI.SURFACE_EDIT_WINDOW_HEIGHT);
+
                         if (HasLightmapButton)
                         {
                             returnSize.y += 20;
                         }
+
+                        if(CSGSettings.Presets[PresetCategory.UV_Scale].Count == 0)
+                        {
+                            returnSize.y -= 20;
+                        }
+
                         break;
                 }
 
