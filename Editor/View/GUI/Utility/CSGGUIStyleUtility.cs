@@ -12,6 +12,21 @@ namespace RealtimeCSG
 {
     internal static class CsgguiStyleUtility
     {
+        static CsgguiStyleUtility()
+        {
+            UnityEditor.SceneManagement.EditorSceneManager.activeSceneChangedInEditMode -= ActiveSceneChangedInEditMode;
+            UnityEditor.SceneManagement.EditorSceneManager.activeSceneChangedInEditMode += ActiveSceneChangedInEditMode;
+        }
+
+        private static void ActiveSceneChangedInEditMode(UnityEngine.SceneManagement.Scene _previousScene, UnityEngine.SceneManagement.Scene _nextScene)
+        {
+            m_StylesInitialized = false;
+
+            Generated.EmbeddedAssets.LoadIcons();
+
+            InitStyles();
+        }
+
         internal const int OPERATION_TYPE_COUNT = 3;
         internal const int SHAPE_MODE_COUNT = (int)ShapeMode.Last + 1;
         internal const int CLIP_TYPE_COUNT = 3;
@@ -62,13 +77,11 @@ namespace RealtimeCSG
         private const string CSG_SUBTRACTION_TOOLTIP = "Subtraction";
         private const string CSG_INTERSECTION_TOOLTIP = "Intersection";
 
-        private static readonly GUIContent[] proInActiveOperationTypes = { IconContent("icon_pro_csg_addition_small"), IconContent("icon_pro_csg_subtraction_small"), IconContent("icon_pro_csg_intersection_small") };
+        private static GUIContent[] proInActiveOperationTypes;
+        private static GUIContent[] proActiveOperationTypes;
 
-        private static readonly GUIContent[] proActiveOperationTypes = { IconContent("icon_pro_csg_addition_small_on"), IconContent("icon_pro_csg_subtraction_small_on"), IconContent("icon_pro_csg_intersection_small_on") };
-
-        private static readonly GUIContent[] personalInActiveOperationTypes = { IconContent("icon_pers_csg_addition_small"), IconContent("icon_pers_csg_subtraction_small"), IconContent("icon_pers_csg_intersection_small") };
-
-        private static readonly GUIContent[] personalActiveOperationTypes = { IconContent("icon_pers_csg_addition_small_on"), IconContent("icon_pers_csg_subtraction_small_on"), IconContent("icon_pers_csg_intersection_small_on") };
+        private static GUIContent[] personalInActiveOperationTypes;
+        private static GUIContent[] personalActiveOperationTypes;
 
         private static readonly string[] operationText = { " Addition", " Subtraction", " Intersection" };
 
@@ -82,10 +95,11 @@ namespace RealtimeCSG
 
         private const string CSG_PASSTHROUGH_TOOLTIP = "PassThrough|No CSG operation";
 
-        private static readonly GUIContent proPassThrough = IconContent("icon_pro_pass_through");
-        private static readonly GUIContent proPassThroughOn = IconContent("icon_pro_pass_through_on");
-        private static readonly GUIContent personalPassThrough = IconContent("icon_pers_pass_through");
-        private static readonly GUIContent personalPassThroughOn = IconContent("icon_pers_pass_through_on");
+        private static GUIContent proPassThrough;
+        private static GUIContent proPassThroughOn;
+
+        private static GUIContent personalPassThrough;
+        private static GUIContent personalPassThroughOn;
 
         private static readonly string passThroughText = " Pass through";
 
@@ -95,10 +109,10 @@ namespace RealtimeCSG
           , Keys.makeSelectedPassThroughKey
         );
 
-        private static readonly GUIContent proWireframe = IconContent("icon_pro_wireframe");
-        private static readonly GUIContent proWireframeOn = IconContent("icon_pro_wireframe_on");
-        private static readonly GUIContent personalWireframe = IconContent("icon_pers_wireframe");
-        private static readonly GUIContent personalWireframeOn = IconContent("icon_pers_wireframe_on");
+        private static GUIContent proWireframe;
+        private static GUIContent proWireframeOn;
+        private static GUIContent personalWireframe;
+        private static GUIContent personalWireframeOn;
 
         private static readonly string wireframeTooltip = "Show/Hide brush wireframe";
 
@@ -119,10 +133,10 @@ namespace RealtimeCSG
           , new ToolTip("Create Box brush", "Use this to create boxes", Keys.boxBuilderMode), new ToolTip("Create (Hemi)Sphere brush", "Use this to create (hemi)spheres", Keys.sphereBuilderMode), new ToolTip("Create Cylinder brush", "Use this to create cylinders", Keys.cylinderBuilderMode), new ToolTip("Create Linear Stairs", "Use this to create linear stairs", Keys.linearStairsBuilderMode)
         };
 
-        private static readonly GUIContent[] proInActiveClipTypes = { IconContent("icon_pro_remove_front"), IconContent("icon_pro_remove_behind"), IconContent("icon_pro_split") };
-        private static readonly GUIContent[] proActiveClipTypes = { IconContent("icon_pro_remove_front_on"), IconContent("icon_pro_remove_behind_on"), IconContent("icon_pro_split_on") };
-        private static readonly GUIContent[] personalInActiveClipTypes = { IconContent("icon_pers_remove_front"), IconContent("icon_pers_remove_behind"), IconContent("icon_pers_split") };
-        private static readonly GUIContent[] personalActiveClipTypes = { IconContent("icon_pers_remove_front_on"), IconContent("icon_pers_remove_behind_on"), IconContent("icon_pers_split_on") };
+        private static GUIContent[] proInActiveClipTypes;
+        private static GUIContent[] proActiveClipTypes;
+        private static GUIContent[] personalInActiveClipTypes;
+        private static GUIContent[] personalActiveClipTypes;
 
         private static readonly string[] clipText = { " Remove in front", " Remove behind", " Split" };
 
@@ -135,25 +149,25 @@ namespace RealtimeCSG
           , new ToolTip("Remove behind", "Remove the area behind the created clipping plane from the selected brushes"), new ToolTip("Split", "Split the selected brushes with the created splitting plane")
         };
 
-        private static readonly GUIContent proRebuildIcon = IconContent("icon_pro_rebuild");
-        private static readonly GUIContent proGridIcon = IconContent("icon_pro_grid");
-        private static readonly GUIContent proGridIconOn = IconContent("icon_pro_grid_on");
-        private static readonly GUIContent proGridSnapIcon = IconContent("icon_pro_gridsnap");
-        private static readonly GUIContent proGridSnapIconOn = IconContent("icon_pro_gridsnap_on");
-        private static readonly GUIContent proRelSnapIcon = IconContent("icon_pro_relsnap");
-        private static readonly GUIContent proRelSnapIconOn = IconContent("icon_pro_relsnap_on");
-        private static readonly GUIContent proNoSnapIcon = IconContent("icon_pro_nosnap");
-        private static readonly GUIContent proNoSnapIconOn = IconContent("icon_pro_nosnap_on");
+        private static GUIContent proRebuildIcon;
+        private static GUIContent proGridIcon;
+        private static GUIContent proGridIconOn;
+        private static GUIContent proGridSnapIcon;
+        private static GUIContent proGridSnapIconOn;
+        private static GUIContent proRelSnapIcon;
+        private static GUIContent proRelSnapIconOn;
+        private static GUIContent proNoSnapIcon;
+        private static GUIContent proNoSnapIconOn;
 
-        private static readonly GUIContent personalRebuildIcon = IconContent("icon_pers_rebuild");
-        private static readonly GUIContent personalGridIcon = IconContent("icon_pers_grid");
-        private static readonly GUIContent personalGridIconOn = IconContent("icon_pers_grid_on");
-        private static readonly GUIContent personalGridSnapIcon = IconContent("icon_pers_gridsnap");
-        private static readonly GUIContent personalGridSnapIconOn = IconContent("icon_pers_gridsnap_on");
-        private static readonly GUIContent personalRelSnapIcon = IconContent("icon_pers_relsnap");
-        private static readonly GUIContent personalRelSnapIconOn = IconContent("icon_pers_relsnap_on");
-        private static readonly GUIContent personalNoSnapIcon = IconContent("icon_pers_nosnap");
-        private static readonly GUIContent personalNoSnapIconOn = IconContent("icon_pers_nosnap_on");
+        private static GUIContent personalRebuildIcon;
+        private static GUIContent personalGridIcon;
+        private static GUIContent personalGridIconOn;
+        private static GUIContent personalGridSnapIcon;
+        private static GUIContent personalGridSnapIconOn;
+        private static GUIContent personalRelSnapIcon;
+        private static GUIContent personalRelSnapIconOn;
+        private static GUIContent personalNoSnapIcon;
+        private static GUIContent personalNoSnapIconOn;
 
         private static readonly CSGSkin proSkin = new CSGSkin();
         private static readonly CSGSkin personalSkin = new CSGSkin();
@@ -169,6 +183,8 @@ namespace RealtimeCSG
             {
                 return;
             }
+
+            LoadGUIContent();
 
             GUISkin oldSkin = GUI.skin;
             m_StylesInitialized = true;
@@ -421,6 +437,53 @@ namespace RealtimeCSG
             GUI.skin = oldSkin;
         }
 
+        private static void LoadGUIContent()
+        {
+            proInActiveOperationTypes = new GUIContent[] { IconContent("icon_pro_csg_addition_small"), IconContent("icon_pro_csg_subtraction_small"), IconContent("icon_pro_csg_intersection_small") };
+            proActiveOperationTypes = new GUIContent[] { IconContent("icon_pro_csg_addition_small_on"), IconContent("icon_pro_csg_subtraction_small_on"), IconContent("icon_pro_csg_intersection_small_on") };
+
+            personalActiveOperationTypes = new GUIContent[] { IconContent("icon_pers_csg_addition_small_on"), IconContent("icon_pers_csg_subtraction_small_on"), IconContent("icon_pers_csg_intersection_small_on") };
+            personalInActiveOperationTypes = new GUIContent[] { IconContent("icon_pers_csg_addition_small"), IconContent("icon_pers_csg_subtraction_small"), IconContent("icon_pers_csg_intersection_small") };
+
+            proPassThrough = IconContent("icon_pro_pass_through");
+            proPassThroughOn = IconContent("icon_pro_pass_through_on");
+
+            personalPassThrough = IconContent("icon_pers_pass_through");
+            personalPassThroughOn = IconContent("icon_pers_pass_through_on");
+
+            proWireframe = IconContent("icon_pro_wireframe");
+            proWireframeOn = IconContent("icon_pro_wireframe_on");
+
+            personalWireframe = IconContent("icon_pers_wireframe");
+            personalWireframeOn = IconContent("icon_pers_wireframe_on");
+
+            proInActiveClipTypes = new GUIContent[] { IconContent("icon_pro_remove_front"), IconContent("icon_pro_remove_behind"), IconContent("icon_pro_split") };
+            proActiveClipTypes = new GUIContent[] { IconContent("icon_pro_remove_front_on"), IconContent("icon_pro_remove_behind_on"), IconContent("icon_pro_split_on") };
+
+            personalInActiveClipTypes = new GUIContent[] { IconContent("icon_pers_remove_front"), IconContent("icon_pers_remove_behind"), IconContent("icon_pers_split") };
+            personalActiveClipTypes = new GUIContent[] { IconContent("icon_pers_remove_front_on"), IconContent("icon_pers_remove_behind_on"), IconContent("icon_pers_split_on") };
+
+            proRebuildIcon = IconContent("icon_pro_rebuild");
+            proGridIcon = IconContent("icon_pro_grid");
+            proGridIconOn = IconContent("icon_pro_grid_on");
+            proGridSnapIcon = IconContent("icon_pro_gridsnap");
+            proGridSnapIconOn = IconContent("icon_pro_gridsnap_on");
+            proRelSnapIcon = IconContent("icon_pro_relsnap");
+            proRelSnapIconOn = IconContent("icon_pro_relsnap_on");
+            proNoSnapIcon = IconContent("icon_pro_nosnap");
+            proNoSnapIconOn = IconContent("icon_pro_nosnap_on");
+
+            personalRebuildIcon = IconContent("icon_pers_rebuild");
+            personalGridIcon = IconContent("icon_pers_grid");
+            personalGridIconOn = IconContent("icon_pers_grid_on");
+            personalGridSnapIcon = IconContent("icon_pers_gridsnap");
+            personalGridSnapIconOn = IconContent("icon_pers_gridsnap_on");
+            personalRelSnapIcon = IconContent("icon_pers_relsnap");
+            personalRelSnapIconOn = IconContent("icon_pers_relsnap_on");
+            personalNoSnapIcon = IconContent("icon_pers_nosnap");
+            personalNoSnapIconOn = IconContent("icon_pers_nosnap_on");
+        }
+
         public static void ResetGUIState()
         {
             GUI.skin = null;
@@ -445,7 +508,7 @@ namespace RealtimeCSG
 
         private static GUIContent IconContent(string name)
         {
-            EmbeddedAssets.TryFindIcon(name, out Texture2D image);
+            Generated.EmbeddedAssets.TryFindIcon(name, out Texture2D image);
 
             return new GUIContent(image);
         }
