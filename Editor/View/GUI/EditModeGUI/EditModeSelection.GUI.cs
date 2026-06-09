@@ -147,7 +147,7 @@ namespace RealtimeCSG
             buttonArea.height = 13;
             buttonArea.width  = 13;
 
-            if (GUI.Button(buttonArea, EditorGUIUtility.IconContent("d_SearchJump Icon"), ""))
+            if (GUI.Button(buttonArea, EditorGUIUtility.IconContent("d_SearchJump Icon"), GUIStyle.none))
             {
                 EditModeToolWindowSceneGUI.GetWindow();
             }
