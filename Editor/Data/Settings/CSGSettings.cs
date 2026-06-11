@@ -50,6 +50,26 @@ namespace RealtimeCSG
       , Split
     }
 
+    public enum PresetCategory
+    {
+        UV_Scale,
+        Grid_Size,
+        Angle_Snap,
+        Scale_Snap
+    }
+
+    public class Preset
+    {
+        public Preset(string _label, float _value)
+        {
+            Label = _label;
+            Value = _value;
+        }
+
+        public string Label;
+        public float Value;
+    }
+
     public static class CSGSettings
     {
         public static bool ShowVisibleSurfaces
@@ -290,6 +310,66 @@ namespace RealtimeCSG
 
         public static bool ShowTooltips = true;
 
+        public static Dictionary<PresetCategory, List<Preset>> Presets
+        {
+            get
+            {
+                if(m_presets == null)
+                {
+                    m_presets = new Dictionary<PresetCategory, List<Preset>>();
+                }
+
+                if (m_presets.Count == 0)
+                {
+                    for (int i = 0; i < Enum.GetValues(typeof(PresetCategory)).Length; i++)
+                    {
+                        PresetCategory category = (PresetCategory)i;
+
+                        m_presets.TryAdd(category, new List<Preset>());
+
+                        //Set Default Values
+                        switch(category)
+                        {
+                            case PresetCategory.Grid_Size:
+                                m_presets[category].Add(new Preset("", 1.0f));
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+
+                            case PresetCategory.Angle_Snap:
+                                m_presets[category].Add(new Preset("", 45.0f));
+                                m_presets[category].Add(new Preset("", 22.5f));
+                                m_presets[category].Add(new Preset("", 11.25f));
+                                m_presets[category].Add(new Preset("", 5.625f));
+                                break;
+
+                            case PresetCategory.Scale_Snap:
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+
+                            case PresetCategory.UV_Scale:
+                                m_presets[category].Add(new Preset("", 1.0f));
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+                        }
+                    }
+                }
+
+                return m_presets;
+            }
+
+            set
+            {
+                m_presets = value;
+            }
+        }
+
+        private static Dictionary<PresetCategory, List<Preset>> m_presets = new Dictionary<PresetCategory, List<Preset>>();
         public enum UpdateLightmapUVButtonState
         {
             BottomBar,
@@ -765,6 +845,19 @@ namespace RealtimeCSG
             LinearStairsLengthOffset = EditorPrefs.GetFloat("LinearStairsLengthOffset", 0.0f);
             LinearStairsHeightOffset = EditorPrefs.GetFloat("LinearStairsHeightOffset", 0.0f);
 
+            Dictionary<PresetCategory, List<Preset>> loadedPresets = new Dictionary<PresetCategory, List<Preset>>();
+
+            try
+            {
+                loadedPresets = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<PresetCategory, List<Preset>>>(EditorPrefs.GetString("CSGPresets"));
+            }
+            catch
+            {
+                loadedPresets = new Dictionary<PresetCategory, List<Preset>>();
+            }
+
+            Presets = loadedPresets;
+  
             UpdateLightmapUVButtonMode = (UpdateLightmapUVButtonState)EditorPrefs.GetInt("UpdateLightmapUVButtonMode", 1);
 
             DistanceUnit = GetEnum("DistanceUnit", DistanceUnit.Meters);
@@ -862,6 +955,8 @@ namespace RealtimeCSG
             EditorPrefs.SetFloat("LinearStairsLengthOffset", LinearStairsLengthOffset);
             EditorPrefs.SetFloat("LinearStairsHeightOffset", LinearStairsHeightOffset);
 
+            EditorPrefs.SetString("CSGPresets", Newtonsoft.Json.JsonConvert.SerializeObject(Presets));
+  
             EditorPrefs.SetInt("UpdateLightmapUVButtonMode", (int)UpdateLightmapUVButtonMode);
 
             SetMaterial("DefaultMaterial", DefaultMaterial);

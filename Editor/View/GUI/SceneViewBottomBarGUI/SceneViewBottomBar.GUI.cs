@@ -464,6 +464,65 @@ namespace RealtimeCSG
 
                         //(x:429.00, y:2.00, width:17.00, height:15.00)
                         TooltipUtility.SetToolTip(positionMinnusTooltip, m_CurrentRect);
+
+                        //Preset
+                        float DefaultPresetWidth = 35;
+
+                        layoutX += 5;
+                        m_CurrentRect.width = DefaultPresetWidth;
+                        m_CurrentRect.y = 2;
+                        m_CurrentRect.height = layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y += barSize.y;
+                        m_CurrentRect.x = layoutX;
+
+                        for (int i = 0; i < CSGSettings.Presets[PresetCategory.Grid_Size].Count; i++)
+                        {
+                            GUIStyle buttonStyle = EditorStyles.miniButtonMid;
+
+                            if (i == 0)
+                            {
+                                buttonStyle = EditorStyles.miniButtonLeft;
+                            }
+                            else if (i == CSGSettings.Presets[PresetCategory.Grid_Size].Count - 1)
+                            {
+                                buttonStyle = EditorStyles.miniButtonRight;
+                            }
+
+                            string PresetString = CSGSettings.Presets[PresetCategory.Grid_Size][i].Label;
+
+                            if (string.IsNullOrEmpty(CSGSettings.Presets[PresetCategory.Grid_Size][i].Label) || string.IsNullOrWhiteSpace(CSGSettings.Presets[PresetCategory.Grid_Size][i].Label))
+                            {
+                                m_CurrentRect.width = DefaultPresetWidth;
+
+                                double RoundedPreset = System.Math.Round(CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, 3);
+                                PresetString = RoundedPreset.ToString();
+                                if (RoundedPreset < 1.0d)
+                                {
+                                    PresetString = PresetString.Replace("0.", ".");
+                                }
+                            }
+                            else
+                            {
+                                GUIContent presetLabelText = new GUIContent(PresetString);
+                                Vector2 labelSize = EditorStyles.label.CalcSize(presetLabelText);
+
+                                m_CurrentRect.width = Mathf.Max(labelSize.x + 15, DefaultPresetWidth);
+                            }
+
+                            m_CurrentRect.x = layoutX;
+
+                            if (GUI.Toggle(m_CurrentRect, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value == CSGSettings.SnapVector.x, PresetString, buttonStyle))
+                            {
+                                if (GUI.changed && modified == false)
+                                {
+                                    CSGSettings.SnapVector = new Vector3(CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value);
+                                    CSGSettings.Save();
+                                    moveSnapVector = CSGSettings.SnapVector;
+                                }
+                            }
+
+                            layoutX += m_CurrentRect.width;
+                        }
                     }
 
 #endregion
@@ -584,6 +643,63 @@ namespace RealtimeCSG
 
                         //(x:592.00, y:2.00, width:17.00, height:15.00)
                         TooltipUtility.SetToolTip(angleMinnusTooltip, m_CurrentRect);
+
+                        //Preset
+                        float DefaultPresetWidth = 48;
+
+                        layoutX += 5;
+                        m_CurrentRect.width = DefaultPresetWidth;
+                        m_CurrentRect.y = 2;
+                        m_CurrentRect.height = layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y += barSize.y;
+                        m_CurrentRect.x = layoutX;
+
+                        for (int i = 0; i < CSGSettings.Presets[PresetCategory.Angle_Snap].Count; i++)
+                        {
+                            GUIStyle buttonStyle = EditorStyles.miniButtonMid;
+
+                            if (i == 0)
+                            {
+                                buttonStyle = EditorStyles.miniButtonLeft;
+                            }
+                            else if (i == CSGSettings.Presets[PresetCategory.Angle_Snap].Count - 1)
+                            {
+                                buttonStyle = EditorStyles.miniButtonRight;
+                            }
+
+                            string PresetString = CSGSettings.Presets[PresetCategory.Angle_Snap][i].Label;
+
+                            if (string.IsNullOrEmpty(CSGSettings.Presets[PresetCategory.Angle_Snap][i].Label) || string.IsNullOrWhiteSpace(CSGSettings.Presets[PresetCategory.Angle_Snap][i].Label))
+                            {
+                                m_CurrentRect.width = DefaultPresetWidth;
+
+                                double RoundedPreset = System.Math.Round(CSGSettings.Presets[PresetCategory.Angle_Snap][i].Value, 3);
+                                PresetString = RoundedPreset.ToString() + "°";
+                                if (RoundedPreset < 1.0d)
+                                {
+                                    PresetString = PresetString.Replace("0.", ".");
+                                }
+                            }
+
+                            GUIContent presetLabelText = new GUIContent(PresetString);
+                            Vector2 labelSize = EditorStyles.label.CalcSize(presetLabelText);
+
+                            m_CurrentRect.width = Mathf.Max(labelSize.x + 15, DefaultPresetWidth);
+
+                            m_CurrentRect.x = layoutX;
+
+                            if (GUI.Toggle(m_CurrentRect, CSGSettings.Presets[PresetCategory.Angle_Snap][i].Value == CSGSettings.SnapRotation, PresetString, buttonStyle))
+                            {
+                                if (GUI.changed && modified == false)
+                                {
+                                    CSGSettings.SnapRotation = CSGSettings.Presets[PresetCategory.Angle_Snap][i].Value;
+                                    CSGSettings.Save();
+                                    rotationSnap = CSGSettings.SnapRotation;
+                                }
+                            }
+
+                            layoutX += m_CurrentRect.width;
+                        }
                     }
 
 #endregion
@@ -705,6 +821,63 @@ namespace RealtimeCSG
 
                         //(x:760.00, y:2.00, width:17.00, height:15.00)
                         TooltipUtility.SetToolTip(scaleMinnusTooltip, m_CurrentRect);
+
+                        //Preset
+                        float DefaultPresetWidth = 35;
+
+                        layoutX += 5;
+                        m_CurrentRect.width = DefaultPresetWidth;
+                        m_CurrentRect.y = 2;
+                        m_CurrentRect.height = layoutHeight - (m_CurrentRect.y + 1);
+                        m_CurrentRect.y += barSize.y;
+                        m_CurrentRect.x = layoutX;
+
+                        for (int i = 0; i < CSGSettings.Presets[PresetCategory.Scale_Snap].Count; i++)
+                        {
+                            GUIStyle buttonStyle = EditorStyles.miniButtonMid;
+
+                            if (i == 0)
+                            {
+                                buttonStyle = EditorStyles.miniButtonLeft;
+                            }
+                            else if (i == CSGSettings.Presets[PresetCategory.Scale_Snap].Count - 1)
+                            {
+                                buttonStyle = EditorStyles.miniButtonRight;
+                            }
+
+                            string PresetString = CSGSettings.Presets[PresetCategory.Scale_Snap][i].Label;
+
+                            if (string.IsNullOrEmpty(CSGSettings.Presets[PresetCategory.Scale_Snap][i].Label) || string.IsNullOrWhiteSpace(CSGSettings.Presets[PresetCategory.Scale_Snap][i].Label))
+                            {
+                                m_CurrentRect.width = DefaultPresetWidth;
+
+                                double RoundedPreset = System.Math.Round(CSGSettings.Presets[PresetCategory.Scale_Snap][i].Value, 3);
+                                PresetString = RoundedPreset.ToString();
+                                if (RoundedPreset < 1.0d)
+                                {
+                                    PresetString = PresetString.Replace("0.", ".");
+                                }
+                            }
+
+                            GUIContent presetLabelText = new GUIContent(PresetString);
+                            Vector2 labelSize = EditorStyles.label.CalcSize(presetLabelText);
+
+                            m_CurrentRect.width = Mathf.Max(labelSize.x + 15, DefaultPresetWidth);
+
+                            m_CurrentRect.x = layoutX;
+
+                            if (GUI.Toggle(m_CurrentRect, CSGSettings.Presets[PresetCategory.Scale_Snap][i].Value == CSGSettings.SnapScale, PresetString, buttonStyle))
+                            {
+                                if (GUI.changed && modified == false)
+                                {
+                                    CSGSettings.SnapScale = CSGSettings.Presets[PresetCategory.Scale_Snap][i].Value;
+                                    CSGSettings.Save();
+                                    scaleSnap = CSGSettings.SnapScale;
+                                }
+                            }
+
+                            layoutX += m_CurrentRect.width;
+                        }
                     }
 
 #endregion

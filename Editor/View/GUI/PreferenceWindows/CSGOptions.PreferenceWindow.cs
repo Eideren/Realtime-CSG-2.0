@@ -7,6 +7,8 @@ namespace RealtimeCSG
 {
     internal class CSGOptionsPreferenceWindow
     {
+        public static bool ShowPresetSettings = false;
+
         public static void PreferenceWindow()
         {
             EditorGUI.BeginChangeCheck();
@@ -43,11 +45,59 @@ namespace RealtimeCSG
 
             CSGSettings.ShowSceneInfo = EditorGUILayout.ToggleLeft("Show Scene Info", CSGSettings.ShowSceneInfo);
 
-            CSGSettings.DefaultUVScale = EditorGUILayout.FloatField("Default UV Scale", CSGSettings.DefaultUVScale);
+            EditorGUILayout.Space();
 
-            if (EditorGUI.EndChangeCheck())
+            ShowPresetSettings = EditorGUILayout.Foldout(ShowPresetSettings, "Presets", EditorStyles.foldoutHeader);
+
+            if (ShowPresetSettings)
             {
-                CSGSettings.Save();
+                for (int i = 0; i < System.Enum.GetValues(typeof(PresetCategory)).Length; i++)
+                {
+                    if (CSGSettings.Presets == null)
+                    {
+                        CSGSettings.Presets = new Dictionary<PresetCategory, List<Preset>>();
+                    }
+
+                    if (CSGSettings.Presets.ContainsKey((PresetCategory)i) == false)
+                    {
+                        CSGSettings.Presets[(PresetCategory)i] = new List<Preset>();
+                    }
+
+                    string PresetName = ((PresetCategory)i).ToString().Replace("_", " ");
+
+                    EditorGUILayout.LabelField(PresetName, EditorStyles.label);
+
+                    for (int j = 0; j < CSGSettings.Presets[(PresetCategory)i].Count; j++)
+                    {
+                        EditorGUILayout.BeginHorizontal();
+
+                        float value = EditorGUILayout.FloatField($"#{j + 1}", CSGSettings.Presets[(PresetCategory)i][j].Value);
+
+                        GUIContent presetLabel = new GUIContent("Label");
+                        EditorGUILayout.LabelField(presetLabel, GUILayout.Width(GUI.skin.label.CalcSize(presetLabel).x));
+                        string label = EditorGUILayout.TextField(CSGSettings.Presets[(PresetCategory)i][j].Label);
+
+                        CSGSettings.Presets[(PresetCategory)i][j] = new Preset(label, value);
+
+                        if (GUILayout.Button("X", GUILayout.Width(50)))
+                        {
+                            CSGSettings.Presets[(PresetCategory)i].RemoveAt(j);
+                            break;
+                        }
+
+                        EditorGUILayout.EndHorizontal();
+                    }
+
+                    if (GUILayout.Button($"Add {PresetName} Preset"))
+                    {
+                        CSGSettings.Presets[(PresetCategory)i].Add(new Preset("", 1.0f));
+                    }
+                }
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    CSGSettings.Save();
+                }
             }
         }
 

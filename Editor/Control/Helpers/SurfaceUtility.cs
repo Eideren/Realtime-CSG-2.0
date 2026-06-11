@@ -346,6 +346,17 @@ namespace RealtimeCSG
             }
         }
 
+        public static void SetScale(SelectedBrushSurface[] selectedBrushSurfaces, Vector2 scale)
+        {
+            SetScaleX(selectedBrushSurfaces, scale.x);
+            SetScaleY(selectedBrushSurfaces, scale.y);
+        }
+
+        public static void SetScale(SelectedBrushSurface[] selectedBrushSurfaces, float scale)
+        {
+            SetScale(selectedBrushSurfaces, new Vector2(scale, scale));
+        }
+
         public static void SetTranslationX(SelectedBrushSurface[] selectedBrushSurfaces, float translationX)
         {
             using(new UndoGroup(selectedBrushSurfaces, "Setting X translation of surface"))
