@@ -7,7 +7,12 @@ namespace RealtimeCSG
 {
     internal sealed class HierarchyWindowItemGUI
     {
-        internal static void OnHierarchyWindowItemOnGUI(EntityId entityID, Rect selectionRect)
+        internal static void OnHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
+        {
+            OnHierarchyWindowItemByEntityIdOnGUI(EntityIdUtility.GetEntityId(instanceID), selectionRect);
+        }
+
+        internal static void OnHierarchyWindowItemByEntityIdOnGUI(EntityId entityID, Rect selectionRect)
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode)
             {
