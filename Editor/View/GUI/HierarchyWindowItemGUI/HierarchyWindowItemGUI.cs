@@ -7,14 +7,14 @@ namespace RealtimeCSG
 {
     internal sealed class HierarchyWindowItemGUI
     {
-        internal static void OnHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
+        internal static void OnHierarchyWindowItemOnGUI(EntityId entityID, Rect selectionRect)
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
 
-            GameObject o = EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(instanceID)) as GameObject;
+            GameObject o = EditorUtility.EntityIdToObject(entityID) as GameObject;
 
             if(selectionRect.Contains(Event.current.mousePosition))
             {

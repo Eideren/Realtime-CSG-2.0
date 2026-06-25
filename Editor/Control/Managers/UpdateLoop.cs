@@ -56,8 +56,8 @@ namespace RealtimeCSG
 
             PrefabStage.prefabSaving += OnPrefabSaving;
 
-            EditorApplication.hierarchyWindowItemOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
-            EditorApplication.hierarchyWindowItemOnGUI += HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI += HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
 
             UnityCompilerDefineManager.UpdateUnityDefines();
         }
@@ -84,7 +84,7 @@ namespace RealtimeCSG
 
             EditorApplication.update                   -= OnFirstUpdate;
             EditorApplication.hierarchyChanged         -= OnHierarchyWindowChanged;
-            EditorApplication.hierarchyWindowItemOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
 
             SceneView.duringSceneGui -= SceneViewEventHandler.OnScene;
             Undo.undoRedoPerformed   -= UndoRedoPerformed;
