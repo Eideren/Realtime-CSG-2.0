@@ -56,7 +56,7 @@ namespace RealtimeCSG
 
             PrefabStage.prefabSaving += OnPrefabSaving;
 
-#if UNITY_6000_5_OR_NEWER
+#if UNITY_6000_4_OR_NEWER
             EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemByEntityIdOnGUI;
             EditorApplication.hierarchyWindowItemByEntityIdOnGUI += HierarchyWindowItemGUI.OnHierarchyWindowItemByEntityIdOnGUI;
 #else
@@ -89,7 +89,7 @@ namespace RealtimeCSG
 
             EditorApplication.update                   -= OnFirstUpdate;
             EditorApplication.hierarchyChanged         -= OnHierarchyWindowChanged;
-#if UNITY_6000_5_OR_NEWER
+#if UNITY_6000_4_OR_NEWER
             EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemByEntityIdOnGUI;
 #else
             EditorApplication.hierarchyWindowItemOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
