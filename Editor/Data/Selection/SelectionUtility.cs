@@ -479,15 +479,15 @@ namespace RealtimeCSG
             {
                 if(gameobject != null)
                 {
-                    EntityId instanceID = gameobject.GetEntityId();
+                    EntityId entityID = gameobject.GetEntityId();
                     
-                    if (selectedObjectsOnClick.Contains(instanceID))
+                    if (selectedObjectsOnClick.Contains(entityID))
                     {
-                        selectedObjectsOnClick.Remove(instanceID);
+                        selectedObjectsOnClick.Remove(entityID);
                     }
                     else
                     {
-                        selectedObjectsOnClick.Add(instanceID);
+                        selectedObjectsOnClick.Add(entityID);
                         addedSelection = true;
                     }
 
@@ -505,8 +505,8 @@ namespace RealtimeCSG
             {
                 if(gameobject != null)
                 {
-                    EntityId instanceID = gameobject.GetEntityId();
-                    selectedObjectsOnClick.Add(instanceID);
+                    EntityId entityID = gameobject.GetEntityId();
+                    selectedObjectsOnClick.Add(entityID);
 
                     Selection.entityIds = selectedObjectsOnClick.ToArray();
                     addedSelection        = true;
@@ -516,8 +516,8 @@ namespace RealtimeCSG
             {
                 if(gameobject != null)
                 {
-                    EntityId instanceID = gameobject.GetEntityId();
-                    selectedObjectsOnClick.Remove(instanceID);
+                    EntityId entityID = gameobject.GetEntityId();
+                    selectedObjectsOnClick.Remove(entityID);
 
                     Selection.entityIds = selectedObjectsOnClick.ToArray();
 
