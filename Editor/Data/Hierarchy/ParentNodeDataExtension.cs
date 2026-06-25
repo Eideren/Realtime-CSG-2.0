@@ -76,7 +76,7 @@ namespace RealtimeCSG
                 {
                     Transform iteratorTransform = iterator.transform;
 
-                    int iteratorParentTransformID = iteratorTransform.parent == null ? 0 : iteratorTransform.parent.GetInstanceID();
+                    int iteratorParentTransformID = iteratorTransform.parent == null ? 0 : iteratorTransform.parent.GetIntegerID();
 
                     // Compare the unity parent transform to the stored parent transform
                     if(iteratorParent.transformID != iteratorParentTransformID)
@@ -88,7 +88,7 @@ namespace RealtimeCSG
                         if(defaultCSGModel != null &&
                            defaultCSGModel.transform != null)
                         {
-                            defaultCSGInstanceID = defaultCSGModel.transform.GetInstanceID();
+                            defaultCSGInstanceID = defaultCSGModel.transform.GetIntegerID();
                         }
 
                         if(defaultCSGInstanceID == 0 || defaultCSGInstanceID != iteratorParent.transformID)
@@ -240,7 +240,7 @@ namespace RealtimeCSG
             {
                 Transform ancestor = ancestors[ancestorDepth];
 
-                if(!lastParent.FindSiblingIndex(ancestor.GetSiblingIndex(), ancestor.GetInstanceID(), out int childIndex))
+                if(!lastParent.FindSiblingIndex(ancestor.GetSiblingIndex(), ancestor.GetIntegerID(), out int childIndex))
                 {
                     break;
                 }
@@ -253,7 +253,7 @@ namespace RealtimeCSG
             {
                 HierarchyItem newAncestor = new HierarchyItem();
                 newAncestor.transform   = ancestors[ancestorDepth];
-                newAncestor.transformID = newAncestor.transform.GetInstanceID();
+                newAncestor.transformID = newAncestor.transform.GetIntegerID();
                 newAncestor.parent      = lastParent;
 
                 if(!lastParent.AddChildItem(newAncestor))

@@ -417,7 +417,7 @@ namespace RealtimeCSG
             // we keep adding parents, and their parents until we hit the root-objects
             for(int i = 0; i < selected.Count; i++)
             {
-                selectedIDs.Add(selected[i].GetInstanceID());
+                selectedIDs.Add(selected[i].GetIntegerID());
                 Transform transform = selected[i].transform;
                 Transform parent    = transform.parent;
 
@@ -448,7 +448,7 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if(selectedIDs.Contains(gameObject.GetInstanceID()))
+                        if(selectedIDs.Contains(gameObject.GetIntegerID()))
                         {
                             continue;
                         }
@@ -479,9 +479,9 @@ namespace RealtimeCSG
             {
                 if(gameobject != null)
                 {
-                    int instanceID = gameobject.GetInstanceID();
-
-                    if(selectedObjectsOnClick.Contains(instanceID))
+                    EntityId instanceID = gameobject.GetEntityId();
+                    
+                    if (selectedObjectsOnClick.Contains(instanceID))
                     {
                         selectedObjectsOnClick.Remove(instanceID);
                     }
@@ -505,7 +505,7 @@ namespace RealtimeCSG
             {
                 if(gameobject != null)
                 {
-                    int instanceID = gameobject.GetInstanceID();
+                    EntityId instanceID = gameobject.GetEntityId();
                     selectedObjectsOnClick.Add(instanceID);
 
                     Selection.entityIds = selectedObjectsOnClick.ToArray();
@@ -516,7 +516,7 @@ namespace RealtimeCSG
             {
                 if(gameobject != null)
                 {
-                    int instanceID = gameobject.GetInstanceID();
+                    EntityId instanceID = gameobject.GetEntityId();
                     selectedObjectsOnClick.Remove(instanceID);
 
                     Selection.entityIds = selectedObjectsOnClick.ToArray();

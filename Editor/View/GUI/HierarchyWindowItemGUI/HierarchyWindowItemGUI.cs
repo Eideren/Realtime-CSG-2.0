@@ -14,7 +14,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            GameObject o = EditorUtility.EntityIdToObject(instanceID) as GameObject;
+            GameObject o = EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(instanceID)) as GameObject;
 
             if(selectionRect.Contains(Event.current.mousePosition))
             {

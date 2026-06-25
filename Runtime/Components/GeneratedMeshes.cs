@@ -47,7 +47,7 @@ namespace InternalRealtimeCSG
                     return false;
                 }
             }
-            else if(sharedMesh.GetInstanceID() != 0)
+            else if(sharedMesh.GetIntegerID() != 0)
             {
                 return false;
             }
