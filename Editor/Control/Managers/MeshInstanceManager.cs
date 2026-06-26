@@ -759,7 +759,7 @@ namespace InternalRealtimeCSG
 
             if(meshDescription.surfaceParameter != 0)
             {
-                Object obj = EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(meshDescription.surfaceParameter));
+                Object obj = EntityIdUtility.IntegerIDToObject(meshDescription.surfaceParameter);
 
                 if(obj)
                 {

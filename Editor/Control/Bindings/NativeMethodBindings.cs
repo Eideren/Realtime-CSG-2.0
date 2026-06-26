@@ -81,13 +81,15 @@ namespace RealtimeCSG
         {
             UnityMethods unityMethods;
 
-            unityMethods.DebugLog        = delegate(string message, int uniqueObjectID) { Debug.Log(message, uniqueObjectID != 0 ? EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(uniqueObjectID)) : null); };
-            unityMethods.DebugLogError   = delegate(string message, int uniqueObjectID) { Debug.LogError(message, uniqueObjectID != 0 ? EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(uniqueObjectID)) : null); };
-            unityMethods.DebugLogWarning = delegate(string message, int uniqueObjectID) { Debug.LogWarning(message, uniqueObjectID != 0 ? EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(uniqueObjectID)) : null); };
+            
+
+            unityMethods.DebugLog        = delegate(string message, int uniqueObjectID) { Debug.Log(message, uniqueObjectID != 0 ? EntityIdUtility.IntegerIDToObject(uniqueObjectID) : null); };
+            unityMethods.DebugLogError   = delegate(string message, int uniqueObjectID) { Debug.LogError(message, uniqueObjectID != 0 ? EntityIdUtility.IntegerIDToObject(uniqueObjectID) : null); };
+            unityMethods.DebugLogWarning = delegate(string message, int uniqueObjectID) { Debug.LogWarning(message, uniqueObjectID != 0 ? EntityIdUtility.IntegerIDToObject(uniqueObjectID) : null); };
 
             unityMethods.NameForUserID = delegate(int uniqueObjectID)
             {
-                Object obj = uniqueObjectID != 0 ? EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(uniqueObjectID)) : null;
+                Object obj = uniqueObjectID != 0 ? EntityIdUtility.IntegerIDToObject(uniqueObjectID) : null;
 
                 return obj == null ? "<unknown>" : obj.name;
             };
@@ -294,9 +296,7 @@ namespace RealtimeCSG
 
             for(int i = 0; i < intersectionCount; i++)
             {
-                
-
-                Object        obj           = EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(m_OutputIntersections[i].brushUserID));
+                Object obj                  = EntityIdUtility.IntegerIDToObject(m_OutputIntersections[i].brushUserID);
                 MonoBehaviour monoBehaviour = obj as MonoBehaviour;
 
                 if(monoBehaviour == null || !monoBehaviour)
@@ -420,7 +420,7 @@ namespace RealtimeCSG
 
                 for(int i = 0; i < intersectionCount; i++)
                 {
-                    Object        obj           = EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(m_OutputIntersections[i].brushUserID));
+                    Object obj                  = EntityIdUtility.IntegerIDToObject(m_OutputIntersections[i].brushUserID);
                     MonoBehaviour monoBehaviour = obj as MonoBehaviour;
 
                     if(monoBehaviour == null || !monoBehaviour)
@@ -594,7 +594,7 @@ namespace RealtimeCSG
 
             for(int i = ids.Length - 1; i >= 0; i--)
             {
-                Object        obj        = EditorUtility.EntityIdToObject(EntityIdUtility.GetEntityId(ids[i]));
+                Object        obj        = EntityIdUtility.IntegerIDToObject(ids[i]);
                 MonoBehaviour brush      = obj as MonoBehaviour;
                 GameObject    gameObject = brush != null ? brush.gameObject : null;
 
