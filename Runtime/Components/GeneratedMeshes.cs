@@ -5,6 +5,7 @@ using RealtimeCSG.Components;
 using System.Linq;
 using UnityEngine.Serialization;
 using RealtimeCSG.Foundation;
+using static RealtimeCSG.EntityIdUtility;
 
 namespace InternalRealtimeCSG
 {
