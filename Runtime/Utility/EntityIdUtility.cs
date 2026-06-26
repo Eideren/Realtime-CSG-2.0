@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace RealtimeCSG
 {
@@ -45,6 +46,18 @@ namespace RealtimeCSG
             }
 
             return EntityId.None;
+        }
+
+        public static Object IntegerIDToObject(int _intID)
+        {
+            EntityId entityId = GetEntityId(_intID);
+
+            if(entityId == EntityId.None)
+            {
+                return null;
+            }
+
+            return EditorUtility.EntityIdToObject(entityId);
         }
     }
 }
