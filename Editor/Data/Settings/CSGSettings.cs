@@ -635,7 +635,7 @@ namespace RealtimeCSG
 
                 for(int j = 0; j < sceneViews.Count; j++)
                 {
-                    if(!ArrayUtility.Contains(ids, sceneViews[j].GetInstanceID()))
+                    if(!ArrayUtility.Contains(ids, sceneViews[j].GetIntegerID()))
                     {
                         foundAll = false;
 
@@ -668,14 +668,14 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        wireframeInstanceIDs[j] = sceneViews[j].GetInstanceID();
+                        wireframeInstanceIDs[j] = sceneViews[j].GetIntegerID();
                     }
                 }
             }
 
             for(int i = 0; i < sceneViews.Count; i++)
             {
-                if(ArrayUtility.Contains(wireframeInstanceIDs, sceneViews[i].GetInstanceID()))
+                if(ArrayUtility.Contains(wireframeInstanceIDs, sceneViews[i].GetIntegerID()))
                 {
                     wireframeSceneviews.Add(sceneViews[i].name);
                 }

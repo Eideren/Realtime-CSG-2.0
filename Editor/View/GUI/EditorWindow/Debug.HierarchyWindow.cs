@@ -263,7 +263,7 @@ namespace RealtimeCSG
 
                             if(mono)
                             {
-                                userID = mono.gameObject.GetInstanceID();
+                                userID = mono.gameObject.GetIntegerID();
                             }
                         }
 
@@ -307,7 +307,7 @@ namespace RealtimeCSG
                 {
                     foreach(CSGNode no in go.GetComponents<CSGNode>())
                     {
-                        int id = no.GetInstanceID();
+                        int id = no.GetIntegerID();
                         selectedInstanceIDs.Add(id);
                     }
                 }

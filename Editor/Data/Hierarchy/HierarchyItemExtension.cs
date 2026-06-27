@@ -197,7 +197,7 @@ namespace RealtimeCSG
         public static void Init(this HierarchyItem self, CSGNode node, int nodeID)
         {
             self.transform   = node.transform;
-            self.transformID = node.transform.GetInstanceID();
+            self.transformID = node.transform.GetIntegerID();
             self.nodeID      = nodeID;
         }
     }

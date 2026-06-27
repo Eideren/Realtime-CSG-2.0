@@ -271,7 +271,7 @@ namespace RealtimeCSG
                 Update();
             }
 
-            int instanceID = Mathf.Abs(brush.GetInstanceID());
+            int instanceID = Mathf.Abs(brush.GetIntegerID());
 
             return m_Outlines2D[instanceID % m_Outlines2D.Length];
         }

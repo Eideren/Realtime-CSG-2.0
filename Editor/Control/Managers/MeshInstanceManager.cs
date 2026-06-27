@@ -759,7 +759,7 @@ namespace InternalRealtimeCSG
 
             if(meshDescription.surfaceParameter != 0)
             {
-                Object obj = EditorUtility.EntityIdToObject(meshDescription.surfaceParameter);
+                Object obj = EntityIdUtility.IntegerIDToObject(meshDescription.surfaceParameter);
 
                 if(obj)
                 {
@@ -871,7 +871,7 @@ namespace InternalRealtimeCSG
             }
 
             sharedMesh      = new Mesh();
-            sharedMesh.name = $"<{baseName} generated {sharedMesh.GetInstanceID()}>";
+            sharedMesh.name = $"<{baseName} generated {sharedMesh.GetIntegerID()}>";
             sharedMesh.MarkDynamic();
 
             if(editorOnly)

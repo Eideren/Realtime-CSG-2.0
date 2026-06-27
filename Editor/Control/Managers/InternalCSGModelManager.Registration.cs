@@ -283,7 +283,7 @@ namespace RealtimeCSG
             {
                 dirty                                        = component.hierarchyItem.transformInitialized;
                 component.hierarchyItem.transform            = component.transform;
-                component.hierarchyItem.transformID          = component.transform.GetInstanceID();
+                component.hierarchyItem.transformID          = component.transform.GetIntegerID();
                 component.hierarchyItem.nodeID               = component.brushNodeID;
                 component.hierarchyItem.transformInitialized = true;
             }
@@ -416,7 +416,7 @@ namespace RealtimeCSG
             if(component.parentData.transformID == 0 && component.operationNodeID != CSGNode.INVALID_NODE_ID)
             {
                 component.parentData.transform   = component.transform;
-                component.parentData.transformID = component.transform.GetInstanceID();
+                component.parentData.transformID = component.transform.GetIntegerID();
                 component.parentData.nodeID      = component.operationNodeID;
             }
         }
@@ -524,7 +524,7 @@ namespace RealtimeCSG
                component.modelNodeID != CSGNode.INVALID_NODE_ID)
             {
                 component.parentData.transform   = component.transform;
-                component.parentData.transformID = component.transform.GetInstanceID();
+                component.parentData.transformID = component.transform.GetIntegerID();
                 component.parentData.nodeID      = component.modelNodeID;
             }
         }
@@ -579,7 +579,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(!External.generateBrush(brush.GetInstanceID(), out brush.brushNodeID))
+            if(!External.generateBrush(brush.GetIntegerID(), out brush.brushNodeID))
             {
                 Debug.LogError("Failed to generate ID for brush", brush);
 
@@ -665,7 +665,7 @@ namespace RealtimeCSG
                 return;
             }
 
-            if(!External.generateOperation(op.GetInstanceID(), out op.operationNodeID))
+            if(!External.generateOperation(op.GetIntegerID(), out op.operationNodeID))
             {
                 Debug.LogError("Failed to generate ID for operation");
 
@@ -739,7 +739,7 @@ namespace RealtimeCSG
                 model.defaultPhysicsMaterial = MaterialUtility.DefaultPhysicsMaterial;
             }
 
-            if(!External.generateModel(model.GetInstanceID(), out model.modelNodeID))
+            if(!External.generateModel(model.GetIntegerID(), out model.modelNodeID))
             {
                 Debug.LogError($"Failed to generate ID for model named {model.name}");
 
@@ -787,7 +787,7 @@ namespace RealtimeCSG
                 return External.updateBrushMesh(brushMeshID, brushMesh);
             }
 
-            brushMeshID = External.createBrushMesh(brush.GetInstanceID(), brushMesh);
+            brushMeshID = External.createBrushMesh(brush.GetIntegerID(), brushMesh);
 
             return External.setBrushMeshID(brush.brushNodeID, brushMeshID);
         }

@@ -9,12 +9,17 @@ namespace RealtimeCSG
     {
         internal static void OnHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
         {
+            OnHierarchyWindowItemByEntityIdOnGUI(EntityIdUtility.GetEntityId(instanceID), selectionRect);
+        }
+
+        internal static void OnHierarchyWindowItemByEntityIdOnGUI(EntityId entityID, Rect selectionRect)
+        {
             if(EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
 
-            GameObject o = EditorUtility.EntityIdToObject(instanceID) as GameObject;
+            GameObject o = EditorUtility.EntityIdToObject(entityID) as GameObject;
 
             if(selectionRect.Contains(Event.current.mousePosition))
             {
