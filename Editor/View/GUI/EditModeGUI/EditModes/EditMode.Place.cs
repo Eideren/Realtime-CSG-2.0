@@ -1745,7 +1745,14 @@ namespace RealtimeCSG
 
                         if((Tools.current == Tool.Scale || Tools.current == Tool.Rect) && (_toolEditMode == ToolEditMode.SizingBounds || _toolEditMode == ToolEditMode.None) && !_cloneDragKeyPressed)
                         {
-                            if(_hoverOnBoundsEdge != -1 || _hoverOnBoundsCenter != -1 || !_mouseIsDragging)
+                            bool DrawDots = true;
+
+                            if(CSGSettings.AllowDirectBrushDragging)
+                            {
+                                DrawDots = (_hoverOnBoundsEdge != -1 || _hoverOnBoundsCenter != -1 || !_mouseIsDragging);
+                            }
+
+                            if (DrawDots)
                             {
                                 if(_hoverOnBoundsCenter != -1)
                                 {
@@ -2116,13 +2123,16 @@ namespace RealtimeCSG
 
                             if(_hoverOnTarget != -1)
                             {
-                                if(Event.current.modifiers == EventModifiers.None ||
-                                   Event.current.modifiers == EventModifiers.Shift ||
-                                   Event.current.modifiers == EventModifiers.Control ||
-                                   Event.current.modifiers == (EventModifiers.Shift | EventModifiers.Control))
+                                if (CSGSettings.AllowDirectBrushDragging == true)
                                 {
-                                    _toolEditMode = ToolEditMode.MovingObject;
-                                    newControlID  = brushControlIDs[_hoverOnTarget];
+                                    if (Event.current.modifiers == EventModifiers.None ||
+                                        Event.current.modifiers == EventModifiers.Shift ||
+                                        Event.current.modifiers == EventModifiers.Control ||
+                                        Event.current.modifiers == (EventModifiers.Shift | EventModifiers.Control))
+                                    {
+                                        _toolEditMode = ToolEditMode.MovingObject;
+                                        newControlID = brushControlIDs[_hoverOnTarget];
+                                    }
                                 }
                             }
                             else if(Tools.current != Tool.Move)
@@ -2622,264 +2632,267 @@ namespace RealtimeCSG
                     }
                 }
 
-                for(int i = 0; i < brushControlIDs.Length; i++)
+                if (CSGSettings.AllowDirectBrushDragging)
                 {
-                    int brushControlID = brushControlIDs[i];
-
-                    if(currentHotControl != brushControlID)
+                    for (int i = 0; i < brushControlIDs.Length; i++)
                     {
-                        continue;
-                    }
+                        int brushControlID = brushControlIDs[i];
 
-                    EventType type = Event.current.GetTypeForControl(brushControlID);
-
-                    switch(type)
-                    {
-                        case EventType.MouseDrag:
+                        if (currentHotControl != brushControlID)
                         {
-                            if(Event.current.button != 0)
-                            {
-                                break;
-                            }
+                            continue;
+                        }
 
-                            if(CSGSettings.SnapVector == MathConstants.zeroVector3)
-                            {
-                                EditModeManager.ShowMessage("Positional snapping is set to zero, cannot move.");
+                        EventType type = Event.current.GetTypeForControl(brushControlID);
 
-                                break;
-                            }
-
-                            EditModeManager.ResetMessage();
-
-                            if(_firstMove)
-                            {
-                                EditorGUIUtility.SetWantsMouseJumping(1);
-                                _extraDeltaMovement = MathConstants.zeroVector3;
-                                _originalPoint      = _hoverIntersectionPoint;
-                                _startCamera        = camera;
-
-                                UpdateGrid(_startCamera);
-
-                                for(int b = 0; b < topTransforms.Length; b++)
+                        switch (type)
+                        {
+                            case EventType.MouseDrag:
                                 {
-                                    if(!topTransforms[b])
+                                    if (Event.current.button != 0)
                                     {
-                                        continue;
+                                        break;
                                     }
 
-                                    GameObject gameObject = topTransforms[b].gameObject;
-
-                                    if(gameObject.activeInHierarchy && !CSGPrefabUtility.IsPrefabAsset(gameObject))
+                                    if (CSGSettings.SnapVector == MathConstants.zeroVector3)
                                     {
-                                        dragGameObjects.Add(gameObject);
-                                    }
-                                }
+                                        EditModeManager.ShowMessage("Positional snapping is set to zero, cannot move.");
 
-                                sourceSurfaceAlignment      = PrefabSourceAlignment.AlignedFront;
-                                destinationSurfaceAlignment = PrefabDestinationAlignment.AlignToSurface;
-
-                                if(activeTransform != null)
-                                {
-                                    CSGNode topNode = activeTransform.GetComponentInChildren<CSGNode>();
-
-                                    if(topNode)
-                                    {
-                                        sourceSurfaceAlignment      = topNode.prefabSourceAlignment;
-                                        destinationSurfaceAlignment = topNode.prefabDestinationAlignment;
-                                    }
-                                }
-
-                                BoundsUtilities.GetBoundsCornerPoints(targetLocalBounds, projectedBounds);
-                            }
-
-                            Ray     mouseRay          = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-                            Vector3 worldIntersection = _movePlane.RayIntersection(mouseRay);
-
-                            if(!float.IsNaN(worldIntersection.x) && !float.IsNaN(worldIntersection.y)
-                            && !float.IsNaN(worldIntersection.z))
-                            {
-                                if((_prevModifiers & EventModifiers.Shift) != (SelectionUtility.CurrentModifiers & EventModifiers.Shift) && CSGGrid.ForceGrid && _startCamera != null)
-                                {
-                                    _prevModifiers = SelectionUtility.CurrentModifiers;
-                                    UpdateGridOrientation(_realMousePosition);
-                                    _extraDeltaMovement += _worldDeltaMovement;
-                                }
-
-                                worldIntersection = GeometryUtility.ProjectPointOnPlane(_movePlane, worldIntersection);
-
-                                if(_firstMove)
-                                {
-                                    _originalPoint      = worldIntersection;
-                                    _worldDeltaMovement = MathConstants.zeroVector3;
-                                    _firstMove          = false;
-                                }
-                                else
-                                {
-                                    _worldDeltaMovement = worldIntersection - _originalPoint;
-                                }
-                            }
-
-                            if(_worldDeltaMovement != MathConstants.zeroVector3 &&
-                               _cloneDragKeyPressed &&
-                               _toolEditMode == ToolEditMode.MovingObject &&
-                               !float.IsNaN(_worldDeltaMovement.x) &&
-                               !float.IsNaN(_worldDeltaMovement.y) &&
-                               !float.IsNaN(_worldDeltaMovement.z))
-                            {
-                                _toolEditMode = ToolEditMode.CloneDragging;
-                                topTransforms = EditModeManager.CloneTargets();
-
-                                for(int b = 0; b < topTransforms.Length; b++)
-                                {
-                                    if(!topTransforms[b])
-                                    {
-                                        continue;
+                                        break;
                                     }
 
-                                    GameObject gameObject = topTransforms[b].gameObject;
+                                    EditModeManager.ResetMessage();
 
-                                    if(gameObject.activeInHierarchy && !CSGPrefabUtility.IsPrefabAsset(gameObject))
+                                    if (_firstMove)
                                     {
-                                        dragGameObjects.Add(gameObject);
-                                    }
-                                }
-                            }
+                                        EditorGUIUtility.SetWantsMouseJumping(1);
+                                        _extraDeltaMovement = MathConstants.zeroVector3;
+                                        _originalPoint = _hoverIntersectionPoint;
+                                        _startCamera = camera;
 
-                            bool useRaySnapping = (Event.current.modifiers & EventModifiers.Shift) == EventModifiers.Shift;
+                                        UpdateGrid(_startCamera);
 
-                            if(useRaySnapping)
-                            {
-                                _ignoreSetTargets = true;
-
-                                try
-                                {
-                                    if(hoverOverBrushIndex < backupRotations.Length)
-                                    {
-                                        Vector3    brushPosition = backupPositions[hoverOverBrushIndex];
-                                        Quaternion brushRotation = backupRotations[hoverOverBrushIndex];
-                                        SelectionUtility.HideObjectsRemoteOnly(dragGameObjects);
-
-                                        LegacyBrushIntersection intersection = SceneQueryUtility.FindMeshIntersection(camera, Event.current.mousePosition);
-
-                                        Vector3    normal        = intersection.worldPlane.Normal;
-                                        Vector3    hoverPosition = intersection.worldIntersection;
-                                        Quaternion hoverRotation = SelectionUtility.FindDragOrientation(sceneView, normal, sourceSurfaceAlignment, destinationSurfaceAlignment);
-
-                                        CSGGrid.SetForcedGrid(camera, intersection.worldPlane);
-
-                                        switch(CSGSettings.ActiveSnappingMode)
+                                        for (int b = 0; b < topTransforms.Length; b++)
                                         {
-                                            case SnapMode.GridSnapping:
+                                            if (!topTransforms[b])
                                             {
-                                                Vector3[] localPoints = new Vector3[8];
-                                                CSGPlane  localPlane  = intersection.worldPlane;
+                                                continue;
+                                            }
 
-                                                for(int p = 0; p < localPoints.Length; p++)
+                                            GameObject gameObject = topTransforms[b].gameObject;
+
+                                            if (gameObject.activeInHierarchy && !CSGPrefabUtility.IsPrefabAsset(gameObject))
+                                            {
+                                                dragGameObjects.Add(gameObject);
+                                            }
+                                        }
+
+                                        sourceSurfaceAlignment = PrefabSourceAlignment.AlignedFront;
+                                        destinationSurfaceAlignment = PrefabDestinationAlignment.AlignToSurface;
+
+                                        if (activeTransform != null)
+                                        {
+                                            CSGNode topNode = activeTransform.GetComponentInChildren<CSGNode>();
+
+                                            if (topNode)
+                                            {
+                                                sourceSurfaceAlignment = topNode.prefabSourceAlignment;
+                                                destinationSurfaceAlignment = topNode.prefabDestinationAlignment;
+                                            }
+                                        }
+
+                                        BoundsUtilities.GetBoundsCornerPoints(targetLocalBounds, projectedBounds);
+                                    }
+
+                                    Ray mouseRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+                                    Vector3 worldIntersection = _movePlane.RayIntersection(mouseRay);
+
+                                    if (!float.IsNaN(worldIntersection.x) && !float.IsNaN(worldIntersection.y)
+                                    && !float.IsNaN(worldIntersection.z))
+                                    {
+                                        if ((_prevModifiers & EventModifiers.Shift) != (SelectionUtility.CurrentModifiers & EventModifiers.Shift) && CSGGrid.ForceGrid && _startCamera != null)
+                                        {
+                                            _prevModifiers = SelectionUtility.CurrentModifiers;
+                                            UpdateGridOrientation(_realMousePosition);
+                                            _extraDeltaMovement += _worldDeltaMovement;
+                                        }
+
+                                        worldIntersection = GeometryUtility.ProjectPointOnPlane(_movePlane, worldIntersection);
+
+                                        if (_firstMove)
+                                        {
+                                            _originalPoint = worldIntersection;
+                                            _worldDeltaMovement = MathConstants.zeroVector3;
+                                            _firstMove = false;
+                                        }
+                                        else
+                                        {
+                                            _worldDeltaMovement = worldIntersection - _originalPoint;
+                                        }
+                                    }
+
+                                    if (_worldDeltaMovement != MathConstants.zeroVector3 &&
+                                       _cloneDragKeyPressed &&
+                                       _toolEditMode == ToolEditMode.MovingObject &&
+                                       !float.IsNaN(_worldDeltaMovement.x) &&
+                                       !float.IsNaN(_worldDeltaMovement.y) &&
+                                       !float.IsNaN(_worldDeltaMovement.z))
+                                    {
+                                        _toolEditMode = ToolEditMode.CloneDragging;
+                                        topTransforms = EditModeManager.CloneTargets();
+
+                                        for (int b = 0; b < topTransforms.Length; b++)
+                                        {
+                                            if (!topTransforms[b])
+                                            {
+                                                continue;
+                                            }
+
+                                            GameObject gameObject = topTransforms[b].gameObject;
+
+                                            if (gameObject.activeInHierarchy && !CSGPrefabUtility.IsPrefabAsset(gameObject))
+                                            {
+                                                dragGameObjects.Add(gameObject);
+                                            }
+                                        }
+                                    }
+
+                                    bool useRaySnapping = (Event.current.modifiers & EventModifiers.Shift) == EventModifiers.Shift;
+
+                                    if (useRaySnapping)
+                                    {
+                                        _ignoreSetTargets = true;
+
+                                        try
+                                        {
+                                            if (hoverOverBrushIndex < backupRotations.Length)
+                                            {
+                                                Vector3 brushPosition = backupPositions[hoverOverBrushIndex];
+                                                Quaternion brushRotation = backupRotations[hoverOverBrushIndex];
+                                                SelectionUtility.HideObjectsRemoteOnly(dragGameObjects);
+
+                                                LegacyBrushIntersection intersection = SceneQueryUtility.FindMeshIntersection(camera, Event.current.mousePosition);
+
+                                                Vector3 normal = intersection.worldPlane.Normal;
+                                                Vector3 hoverPosition = intersection.worldIntersection;
+                                                Quaternion hoverRotation = SelectionUtility.FindDragOrientation(sceneView, normal, sourceSurfaceAlignment, destinationSurfaceAlignment);
+
+                                                CSGGrid.SetForcedGrid(camera, intersection.worldPlane);
+
+                                                switch (CSGSettings.ActiveSnappingMode)
                                                 {
-                                                    localPoints[p] = GeometryUtility.ProjectPointOnPlane(localPlane, hoverRotation * projectedBounds[p] + hoverPosition);
+                                                    case SnapMode.GridSnapping:
+                                                        {
+                                                            Vector3[] localPoints = new Vector3[8];
+                                                            CSGPlane localPlane = intersection.worldPlane;
+
+                                                            for (int p = 0; p < localPoints.Length; p++)
+                                                            {
+                                                                localPoints[p] = GeometryUtility.ProjectPointOnPlane(localPlane, hoverRotation * projectedBounds[p] + hoverPosition);
+                                                            }
+
+                                                            hoverPosition += CSGGrid.SnapDeltaToGrid(camera, MathConstants.zeroVector3, localPoints);
+
+                                                            break;
+                                                        }
+                                                    case SnapMode.RelativeSnapping:
+                                                        {
+                                                            hoverPosition += CSGGrid.SnapDeltaRelative(camera, MathConstants.zeroVector3);
+
+                                                            break;
+                                                        }
                                                 }
 
-                                                hoverPosition += CSGGrid.SnapDeltaToGrid(camera, MathConstants.zeroVector3, localPoints);
+                                                hoverPosition = GeometryUtility.ProjectPointOnPlane(intersection.worldPlane, hoverPosition);
 
-                                                break;
-                                            }
-                                            case SnapMode.RelativeSnapping:
-                                            {
-                                                hoverPosition += CSGGrid.SnapDeltaRelative(camera, MathConstants.zeroVector3);
+                                                _worldDeltaMovement = hoverPosition - brushPosition;
 
-                                                break;
+                                                Undo.RecordObjects(topTransforms, "Drag objects");
+                                                UpdateTargetBounds();
+                                                CSGEditorGUIUtility.RepaintAll();
+                                                Vector3 center = GridUtility.CleanPosition(brushPosition + _worldDeltaMovement);
+                                                Quaternion rotation = hoverRotation * Quaternion.Inverse(brushRotation);
+
+                                                MoveRotateObjects(topTransforms, center, rotation, _worldDeltaMovement);
                                             }
                                         }
-
-                                        hoverPosition = GeometryUtility.ProjectPointOnPlane(intersection.worldPlane, hoverPosition);
-
-                                        _worldDeltaMovement = hoverPosition - brushPosition;
-
-                                        Undo.RecordObjects(topTransforms, "Drag objects");
-                                        UpdateTargetBounds();
-                                        CSGEditorGUIUtility.RepaintAll();
-                                        Vector3    center   = GridUtility.CleanPosition(brushPosition + _worldDeltaMovement);
-                                        Quaternion rotation = hoverRotation * Quaternion.Inverse(brushRotation);
-
-                                        MoveRotateObjects(topTransforms, center, rotation, _worldDeltaMovement);
-                                    }
-                                }
-                                finally
-                                {
-                                    _ignoreSetTargets = false;
-                                    SelectionUtility.ShowObjectsAndUpdate(dragGameObjects);
-
-                                    if(!UpdateLoop.IsActive())
-                                    {
-                                        UpdateLoop.ResetUpdateRoutine();
-                                    }
-
-                                    for(int b = 0; b < brushes.Length; b++)
-                                    {
-                                        if(brushes[b])
+                                        finally
                                         {
-                                            BrushOutlineManager.ForceUpdateOutlines(brushes[b].brushNodeID);
+                                            _ignoreSetTargets = false;
+                                            SelectionUtility.ShowObjectsAndUpdate(dragGameObjects);
+
+                                            if (!UpdateLoop.IsActive())
+                                            {
+                                                UpdateLoop.ResetUpdateRoutine();
+                                            }
+
+                                            for (int b = 0; b < brushes.Length; b++)
+                                            {
+                                                if (brushes[b])
+                                                {
+                                                    BrushOutlineManager.ForceUpdateOutlines(brushes[b].brushNodeID);
+                                                }
+                                            }
+
+                                            CSGEditorGUIUtility.RepaintAll();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (float.IsNaN(_worldDeltaMovement.x) || float.IsNaN(_worldDeltaMovement.y) || float.IsNaN(_worldDeltaMovement.z))
+                                        {
+                                            break;
+                                        }
+
+                                        SnapMode activeSnappingMode = CSGSettings.ActiveSnappingMode;
+
+                                        if (MoveObjects(camera, topTransforms, _worldDeltaMovement, out _worldDeltaMovement, activeSnappingMode))
+                                        {
+                                            _originalPoint = worldIntersection;
                                         }
                                     }
 
-                                    CSGEditorGUIUtility.RepaintAll();
-                                }
-                            }
-                            else
-                            {
-                                if(float.IsNaN(_worldDeltaMovement.x) || float.IsNaN(_worldDeltaMovement.y) || float.IsNaN(_worldDeltaMovement.z))
-                                {
                                     break;
                                 }
-
-                                SnapMode activeSnappingMode = CSGSettings.ActiveSnappingMode;
-
-                                if(MoveObjects(camera, topTransforms, _worldDeltaMovement, out _worldDeltaMovement, activeSnappingMode))
+                            case EventType.MouseUp:
                                 {
-                                    _originalPoint = worldIntersection;
+                                    if (Event.current.button != 0)
+                                    {
+                                        break;
+                                    }
+
+                                    EditorGUIUtility.SetWantsMouseJumping(0);
+                                    _startCamera = null;
+                                    _toolEditMode = ToolEditMode.None;
+
+                                    UpdateTargetInfo();
+
+                                    GUIUtility.hotControl = 0;
+                                    GUIUtility.keyboardControl = 0;
+                                    EditorGUIUtility.editingTextField = false;
+                                    Event.current.Use();
+
+                                    CSGGrid.ForceGrid = false;
+                                    CSGEditorGUIUtility.RepaintAll();
+
+                                    break;
                                 }
-                            }
+                            case EventType.Repaint:
+                                {
+                                    Vector2 textCenter2D = Event.current.mousePosition;
+                                    textCenter2D.y += HOVER_TEXT_DISTANCE * 2;
 
-                            break;
-                        }
-                        case EventType.MouseUp:
-                        {
-                            if(Event.current.button != 0)
-                            {
-                                break;
-                            }
+                                    Vector3 movement = _worldDeltaMovement + _extraDeltaMovement;
 
-                            EditorGUIUtility.SetWantsMouseJumping(0);
-                            _startCamera  = null;
-                            _toolEditMode = ToolEditMode.None;
+                                    bool lockX = Mathf.Abs(movement.x) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON);
+                                    bool lockY = Mathf.Abs(movement.y) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON);
+                                    bool lockZ = Mathf.Abs(movement.z) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON);
 
-                            UpdateTargetInfo();
+                                    string text = Units.ToRoundedDistanceString(movement, lockX, lockY, lockZ);
+                                    PaintUtility.DrawScreenText(textCenter2D, text);
 
-                            GUIUtility.hotControl             = 0;
-                            GUIUtility.keyboardControl        = 0;
-                            EditorGUIUtility.editingTextField = false;
-                            Event.current.Use();
-
-                            CSGGrid.ForceGrid = false;
-                            CSGEditorGUIUtility.RepaintAll();
-
-                            break;
-                        }
-                        case EventType.Repaint:
-                        {
-                            Vector2 textCenter2D = Event.current.mousePosition;
-                            textCenter2D.y += HOVER_TEXT_DISTANCE * 2;
-
-                            Vector3 movement = _worldDeltaMovement + _extraDeltaMovement;
-
-                            bool lockX = Mathf.Abs(movement.x) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisX || Mathf.Abs(_movePlane.a) >= 1 - MathConstants.EQUALITY_EPSILON);
-                            bool lockY = Mathf.Abs(movement.y) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisY || Mathf.Abs(_movePlane.b) >= 1 - MathConstants.EQUALITY_EPSILON);
-                            bool lockZ = Mathf.Abs(movement.z) < MathConstants.CONSIDERED_ZERO && (CSGSettings.LockAxisZ || Mathf.Abs(_movePlane.c) >= 1 - MathConstants.EQUALITY_EPSILON);
-
-                            string text = Units.ToRoundedDistanceString(movement, lockX, lockY, lockZ);
-                            PaintUtility.DrawScreenText(textCenter2D, text);
-
-                            break;
+                                    break;
+                                }
                         }
                     }
                 }

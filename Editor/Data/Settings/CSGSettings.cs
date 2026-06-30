@@ -310,6 +310,8 @@ namespace RealtimeCSG
 
         public static bool ShowTooltips = true;
 
+        public static bool AllowDirectBrushDragging = false;
+
         public static Dictionary<PresetCategory, List<Preset>> Presets
         {
             get
@@ -817,6 +819,8 @@ namespace RealtimeCSG
 
             SnapNonCSGObjects = EditorPrefs.GetBool("SnapNonCSGObjects", true);
 
+            AllowDirectBrushDragging = EditorPrefs.GetBool("AllowDirectBrushDragging", false);
+
             AutoCommitExtrusion = EditorPrefs.GetBool("AutoCommitExtrusion", false);
 
             MaxSphereSplits = Mathf.Max(3, EditorPrefs.GetInt("MaxSphereSplits", 9));
@@ -925,6 +929,8 @@ namespace RealtimeCSG
             EditorPrefs.SetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
 
             EditorPrefs.SetBool("SnapNonCSGObjects", SnapNonCSGObjects);
+
+            EditorPrefs.SetBool("AllowDirectBrushDragging", AllowDirectBrushDragging);
 
             EditorPrefs.SetBool("AutoCommitExtrusion", AutoCommitExtrusion);
 
