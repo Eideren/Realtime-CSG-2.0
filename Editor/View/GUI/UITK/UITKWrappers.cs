@@ -192,7 +192,7 @@ namespace RealtimeCSG
                     Vector2 SurfaceModePadding = Vector2.zero;
                     if (ActiveToolName == "EditModeSurface")
                     {
-                        SurfaceModePadding = new Vector2(2, -10);
+                        SurfaceModePadding = new Vector2(-8, 0);
                     }
 
                     //-2 and +31 adjusts for alignment with container and GUILayout.Spaces
