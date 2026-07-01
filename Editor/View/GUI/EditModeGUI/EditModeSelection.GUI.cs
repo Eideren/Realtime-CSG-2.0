@@ -99,14 +99,9 @@ namespace RealtimeCSG
 
             GUIStyle windowStyle = GUI.skin.window;
 
-            float topBarSize = 20;
+            float topBarSize = 5;
 
-            if(CSGPrefabUtility.AreInPrefabMode())
-            {
-                topBarSize += 25;
-            }
-
-            Rect bounds = new Rect(10, 10 + topBarSize, 500, 40);
+            Rect bounds = new Rect(6, topBarSize, 500, 40);
 
             GUILayout.BeginArea(bounds, contentTitleLabel, windowStyle);
 
