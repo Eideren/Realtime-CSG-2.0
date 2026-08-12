@@ -50,26 +50,6 @@ namespace RealtimeCSG
                 OnEditModeSelectionSceneGUI();
             }
 
-            Rect viewRect = new Rect(4, 0, sceneView.rootVisualElement.contentRect.width, sceneView.rootVisualElement.contentRect.height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4));
-
-            GUILayout.BeginArea(viewRect);
-
-            /*
-            if(EditModeManager.ActiveTool != null)
-            {
-                EditModeManager.ActiveTool.OnSceneGUI(viewRect);
-            }
-            */
-
-            GUILayout.EndArea();
-
-            /*
-            if(CSGSettings.EnableRealtimeCSG && !SceneDragToolManager.IsDraggingObjectInScene)
-            {
-                SceneViewBottomBarGUI.ShowGUI(sceneView, false);
-            }
-            */
-
             GUI.skin = originalSkin;
             Handles.BeginGUI();
             TooltipUtility.DrawToolTip(false);
@@ -119,14 +99,9 @@ namespace RealtimeCSG
 
             GUIStyle windowStyle = GUI.skin.window;
 
-            float topBarSize = 20;
+            float topBarSize = 5;
 
-            if(CSGPrefabUtility.AreInPrefabMode())
-            {
-                topBarSize += 25;
-            }
-
-            Rect bounds = new Rect(10, 10 + topBarSize, 500, 40);
+            Rect bounds = new Rect(6, topBarSize, 500, 40);
 
             GUILayout.BeginArea(bounds, contentTitleLabel, windowStyle);
 
