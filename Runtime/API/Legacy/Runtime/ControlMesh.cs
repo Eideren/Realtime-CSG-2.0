@@ -1,6 +1,7 @@
 ﻿using System;
 using InternalRealtimeCSG;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RealtimeCSG.Legacy
 {
@@ -26,15 +27,19 @@ namespace RealtimeCSG.Legacy
         }
 
         /// <value>Index to the twin edge <see cref="RealtimeCSG.Legacy.HalfEdge"/> in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.HalfEdge"/> belongs to.</value>
+        [FormerlySerializedAs("TwinIndex")]
         public int twinIndex;
 
         /// <value>Index to the <see cref="RealtimeCSG.Legacy.Polygon"/> in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.HalfEdge"/> belongs to.</value>
+        [FormerlySerializedAs("PolygonIndex")]
         public short polygonIndex;
 
         /// <value>Is this edge considered an internal or external (hard) edge</value>
+        [FormerlySerializedAs("HardEdge")]
         public bool hardEdge;
 
         /// <value>Index to a vertex in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.HalfEdge"/> belongs to.</value>
+        [FormerlySerializedAs("VertexIndex")]
         public short vertexIndex;
     }
 
@@ -59,9 +64,11 @@ namespace RealtimeCSG.Legacy
         }
 
         /// <value>indices to <see cref="RealtimeCSG.Legacy.HalfEdge"/>s in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> this <see cref="RealtimeCSG.Legacy.Polygon"/> belongs to.</value>
+        [FormerlySerializedAs("EdgeIndices")]
         public int[] edgeIndices;
 
         /// <value>Index to the <see cref="RealtimeCSG.Legacy.TexGen"/> in the <see cref="RealtimeCSG.Legacy.ControlMesh"/> that this <see cref="RealtimeCSG.Legacy.Polygon"/> uses.</value>
+        [FormerlySerializedAs("TexGenIndex")]
         public int texGenIndex;
     }
 
@@ -77,12 +84,15 @@ namespace RealtimeCSG.Legacy
     public sealed class ControlMesh
     {
         /// <value>Vertices that are used by this <see cref="RealtimeCSG.Legacy.ControlMesh"/></value>
+        [FormerlySerializedAs("Vertices")]
         public Vector3[] vertices;
 
         /// <value><see cref="RealtimeCSG.Legacy.HalfEdge"/>s that are used by this <see cref="RealtimeCSG.Legacy.ControlMesh"/></value>
+        [FormerlySerializedAs("Edges")]
         public HalfEdge[] edges;
 
         /// <value><see cref="RealtimeCSG.Legacy.Polygon"/>s that are used by this <see cref="RealtimeCSG.Legacy.ControlMesh"/></value>
+        [FormerlySerializedAs("Polygons")]
         public Polygon[] polygons;
 
         /// <value><b>true</b> if valid, <b>false</b> if not.</value>
