@@ -18,7 +18,7 @@ namespace RealtimeCSG
 
         private static void OnSceneGUI(SceneView sceneView)
         {
-            if (bottomBarContainer == null)
+            if (CSGSettings.EnableRealtimeCSG == true && bottomBarContainer == null && SceneDragToolManager.IsDraggingObjectInScene == false)
             {
                 bottomBarContainer = new IMGUIContainer(() =>
                 {
@@ -26,29 +26,23 @@ namespace RealtimeCSG
                 });
 
                 bottomBarContainer.name = "RCSG-BottomBar";
+
+                bottomBarContainer.pickingMode = PickingMode.Position;
+
+                bottomBarContainer.style.position = Position.Absolute;
+
+                bottomBarContainer.style.bottom = 0;
+                bottomBarContainer.style.width = Length.Percent(100);
+                bottomBarContainer.style.height = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4;
+
+                bottomBarContainer.style.backgroundColor = new Color(0.24f, 0.24f, 0.24f, 1.0f);
+
+                sceneView.rootVisualElement.Add(bottomBarContainer);
             }
-
-            bottomBarContainer.pickingMode = PickingMode.Position;
-
-            bottomBarContainer.style.position = Position.Absolute;
-
-            bottomBarContainer.style.bottom = 0;
-            bottomBarContainer.style.width = Length.Percent(100);
-            bottomBarContainer.style.height = CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4;
-
-            bottomBarContainer.style.backgroundColor = new Color(0.24f, 0.24f, 0.24f, 1.0f);
-
-            var root = sceneView.rootVisualElement;
-
-            IMGUIContainer foundContainer = root.Q<IMGUIContainer>("RCSG-BottomBar");
-
-            if (CSGSettings.EnableRealtimeCSG == true && foundContainer == null && SceneDragToolManager.IsDraggingObjectInScene == false)
+            else if ((CSGSettings.EnableRealtimeCSG == false || SceneDragToolManager.IsDraggingObjectInScene == true) && bottomBarContainer != null)
             {
-                root.Add(bottomBarContainer);
-            }
-            else if ((CSGSettings.EnableRealtimeCSG == false || SceneDragToolManager.IsDraggingObjectInScene == true) && foundContainer != null)
-            {
-                root.Remove(foundContainer);
+                sceneView.rootVisualElement.Remove(bottomBarContainer);
+                bottomBarContainer = null;
             }
         }
     }
