@@ -16,6 +16,14 @@ namespace RealtimeCSG
         {
             UnityEditor.SceneManagement.EditorSceneManager.activeSceneChangedInEditMode -= ActiveSceneChangedInEditMode;
             UnityEditor.SceneManagement.EditorSceneManager.activeSceneChangedInEditMode += ActiveSceneChangedInEditMode;
+
+            EditorApplication.playModeStateChanged -= PlayModeStateChanged;
+            EditorApplication.playModeStateChanged += PlayModeStateChanged;
+        }
+
+        private static void PlayModeStateChanged(PlayModeStateChange _change)
+        {
+            CurrentPlayModeStateChange = _change;
         }
 
         private static void ActiveSceneChangedInEditMode(UnityEngine.SceneManagement.Scene _previousScene, UnityEngine.SceneManagement.Scene _nextScene)
@@ -26,6 +34,8 @@ namespace RealtimeCSG
 
             InitStyles();
         }
+
+        private static PlayModeStateChange CurrentPlayModeStateChange;
 
         internal const int OPERATION_TYPE_COUNT = 3;
         internal const int SHAPE_MODE_COUNT = (int)ShapeMode.Last + 1;
@@ -179,6 +189,11 @@ namespace RealtimeCSG
 
         public static void InitStyles()
         {
+            if(CurrentPlayModeStateChange == PlayModeStateChange.ExitingPlayMode)
+            {
+                return;
+            }
+
             if(m_StylesInitialized)
             {
                 return;
