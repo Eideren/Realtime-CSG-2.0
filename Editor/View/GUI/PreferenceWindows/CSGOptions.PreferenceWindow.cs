@@ -19,7 +19,7 @@ namespace RealtimeCSG
             CSGSettings.AutoRigidbody      = EditorGUILayout.ToggleLeft("Disable auto add rigidbodies", CSGSettings.AutoRigidbody);
             CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft("Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs);
             CSGSettings.UpdateLightmapUVButtonMode = (CSGSettings.UpdateLightmapUVButtonState)EditorGUILayout.EnumPopup("Lightmap UVs Button", CSGSettings.UpdateLightmapUVButtonMode);
-
+            
             EditorGUILayout.Space();
 
             CSGSettings.MaxCircleSides  = EditorGUILayout.IntField("Max Circle Sides", CSGSettings.MaxCircleSides);
@@ -94,11 +94,11 @@ namespace RealtimeCSG
                         CSGSettings.Presets[(PresetCategory)i].Add(new Preset("", 1.0f));
                     }
                 }
+            }
 
-                if (EditorGUI.EndChangeCheck())
-                {
-                    CSGSettings.Save();
-                }
+            if (EditorGUI.EndChangeCheck())
+            {
+                CSGSettings.Save();
             }
         }
 
