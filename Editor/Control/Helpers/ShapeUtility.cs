@@ -23,7 +23,7 @@ namespace RealtimeCSG
 
             for(int i = 0; i < shape.texGens.Length; i++)
             {
-                if((shape.texGens[i].Scale.x >= -MathConstants.MINIMUM_SCALE && shape.texGens[i].Scale.x <= MathConstants.MINIMUM_SCALE) || (shape.texGens[i].Scale.y >= -MathConstants.MINIMUM_SCALE && shape.texGens[i].Scale.y <= MathConstants.MINIMUM_SCALE))
+                if((shape.texGens[i].Scale.x > -MathConstants.MINIMUM_SCALE && shape.texGens[i].Scale.x < MathConstants.MINIMUM_SCALE) || (shape.texGens[i].Scale.y > -MathConstants.MINIMUM_SCALE && shape.texGens[i].Scale.y < MathConstants.MINIMUM_SCALE))
                 {
                     dirty = true;
 
