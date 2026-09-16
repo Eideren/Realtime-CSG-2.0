@@ -7,6 +7,21 @@ namespace RealtimeCSG
 {
     internal sealed class HierarchyWindowItemGUI
     {
+        private static Texture2D ModelIcon
+        {
+            get
+            {
+                if(m_ModelIcon == null)
+                {
+                    m_ModelIcon = Resources.Load<Texture2D>("GUI/icon_model");
+                }
+
+                return m_ModelIcon;
+            }
+        }
+
+        private static Texture2D m_ModelIcon = null;
+
         internal static void OnHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
         {
             OnHierarchyWindowItemByEntityIdOnGUI(EntityIdUtility.GetEntityId(instanceID), selectionRect);
@@ -14,11 +29,6 @@ namespace RealtimeCSG
 
         internal static void OnHierarchyWindowItemByEntityIdOnGUI(EntityId entityID, Rect selectionRect)
         {
-            if(EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                return;
-            }
-
             GameObject o = EditorUtility.EntityIdToObject(entityID) as GameObject;
 
             if(selectionRect.Contains(Event.current.mousePosition))
@@ -75,6 +85,13 @@ namespace RealtimeCSG
                 {
                     GUI.Label(selectionRect, skin.hierarchyPassThrough, CsgguiStyleUtility.RightAlignedLabel);
                 }
+            }
+
+            CSGModel model = node as CSGModel;
+
+            if (model != null)
+            {
+                GUI.Label(selectionRect, ModelIcon, CsgguiStyleUtility.RightAlignedLabel);
             }
         }
     }
