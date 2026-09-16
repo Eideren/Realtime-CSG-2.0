@@ -22,10 +22,17 @@ namespace RealtimeCSG
 
         private static Texture2D m_ModelIcon = null;
 
+#if !UNITY_6000_4_OR_NEWER
         internal static void OnHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
         {
-            OnHierarchyWindowItemByEntityIdOnGUI(EntityIdUtility.GetEntityId(instanceID), selectionRect);
+            if (EditorUtility.InstanceIDToObject(instanceID) == null)
+            {
+                return;
+            }
+
+            OnHierarchyWindowItemByEntityIdOnGUI(EditorUtility.InstanceIDToObject(instanceID).GetEntityId(), selectionRect);
         }
+#endif
 
         //Only runs in legacy hierarchy
         internal static void OnHierarchyWindowItemByEntityIdOnGUI(EntityId entityID, Rect selectionRect)
