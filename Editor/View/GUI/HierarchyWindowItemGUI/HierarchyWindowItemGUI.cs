@@ -150,7 +150,7 @@ namespace RealtimeCSG
                     OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyPassThrough.image;
                 }
 
-                EditorGUIUtility.SetIconForObject(operation, OperationIcon);
+                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Operations[i].gameObject, OperationIcon);
             }
         }
     }
