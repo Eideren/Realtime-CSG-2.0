@@ -847,6 +847,11 @@ namespace RealtimeCSG
 
         public void MatchSurfaceMaterial(Camera _camera, CSGBrush _vertexOnBrush, Vector3 _hoverBuildPlaneNormal)
         {
+            if(editMode != EditMode.CreatePlane)
+            {
+                return;
+            }
+
             //Select material on generation surface
             bool MatchSurfaceMaterial = EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
 
@@ -886,6 +891,10 @@ namespace RealtimeCSG
                         CSGSettings.DefaultMaterial = _vertexOnBrush.shape.texGens[closestIndex].RenderMaterial;
                         MatchedUVScale = _vertexOnBrush.shape.texGens[closestIndex].Scale;
                     }
+                }
+                else
+                {
+                    MatchedUVScale = new Vector2(CSGSettings.DefaultUVScale, CSGSettings.DefaultUVScale);
                 }
             }
         }
