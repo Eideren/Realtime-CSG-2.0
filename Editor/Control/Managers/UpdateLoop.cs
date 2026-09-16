@@ -64,6 +64,12 @@ namespace RealtimeCSG
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
 #endif
 
+            SceneView.beforeSceneGui -= HierarchyWindowItemGUI.BeforeSceneGUI;
+            SceneView.beforeSceneGui += HierarchyWindowItemGUI.BeforeSceneGUI;
+
+            SceneView.duringSceneGui -= HierarchyWindowItemGUI.DuringSceneGUI;
+            SceneView.duringSceneGui += HierarchyWindowItemGUI.DuringSceneGUI;
+
             UnityCompilerDefineManager.UpdateUnityDefines();
         }
 

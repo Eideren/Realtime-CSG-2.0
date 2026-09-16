@@ -27,6 +27,7 @@ namespace RealtimeCSG
             OnHierarchyWindowItemByEntityIdOnGUI(EntityIdUtility.GetEntityId(instanceID), selectionRect);
         }
 
+        //Only runs in legacy hierarchy
         internal static void OnHierarchyWindowItemByEntityIdOnGUI(EntityId entityID, Rect selectionRect)
         {
             GameObject o = EditorUtility.EntityIdToObject(entityID) as GameObject;
@@ -92,6 +93,57 @@ namespace RealtimeCSG
             if (model != null)
             {
                 GUI.Label(selectionRect, ModelIcon, CsgguiStyleUtility.RightAlignedLabel);
+            }
+        }
+
+        //Disable all icons before the scene view renders to hide the gizmo icons
+        internal static void BeforeSceneGUI(SceneView sceneView)
+        {
+            for(int i = 0; i < InternalCSGModelManager.Models.Length; i++)
+            {
+                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Models[i].gameObject, null);
+            }
+
+            for (int i = 0; i < InternalCSGModelManager.Brushes.Count; i++)
+            {
+                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Brushes[i].gameObject, null);
+            }
+
+            for (int i = 0; i < InternalCSGModelManager.Operations.Count; i++)
+            {
+                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Operations[i].gameObject, null);
+            }
+        }
+
+        //Set all icons again so they show up in the hierarchy
+        internal static void DuringSceneGUI(SceneView sceneView)
+        {
+            for (int i = 0; i < InternalCSGModelManager.Models.Length; i++)
+            {
+                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Models[i].gameObject, ModelIcon);
+            }
+
+            for (int i = 0; i < InternalCSGModelManager.Brushes.Count; i++)
+            {
+                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Brushes[i].gameObject, (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)InternalCSGModelManager.Brushes[i].operationType].image);
+            }
+
+            for (int i = 0; i < InternalCSGModelManager.Operations.Count; i++)
+            {
+                Texture2D OperationIcon = null;
+
+                CSGOperation operation = InternalCSGModelManager.Operations[i];
+
+                if (!operation.PassThrough)
+                {
+                    OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)operation.operationType].image;
+                }
+                else
+                {
+                    OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyPassThrough.image;
+                }
+
+                EditorGUIUtility.SetIconForObject(operation, OperationIcon);
             }
         }
     }
