@@ -13,7 +13,7 @@ namespace RealtimeCSG
             {
                 if(m_ModelIcon == null)
                 {
-                    m_ModelIcon = Resources.Load<Texture2D>("GUI/icon_model");
+                    m_ModelIcon = (Texture2D)EditorGUIUtility.IconContent("prematcube@2x").image;
                 }
 
                 return m_ModelIcon;
