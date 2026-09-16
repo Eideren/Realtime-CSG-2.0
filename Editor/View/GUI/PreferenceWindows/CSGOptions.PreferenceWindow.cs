@@ -24,6 +24,7 @@ namespace RealtimeCSG
 
             CSGSettings.MaxCircleSides  = EditorGUILayout.IntField("Max Circle Sides", CSGSettings.MaxCircleSides);
             CSGSettings.MaxSphereSplits = EditorGUILayout.IntField("Max Sphere Splits", CSGSettings.MaxSphereSplits);
+            CSGSettings.DefaultUVScale = EditorGUILayout.FloatField("Default UV Scale", CSGSettings.DefaultUVScale);
 
             EditorGUILayout.Space();
 
