@@ -113,6 +113,8 @@ namespace RealtimeCSG
         [SerializeField] protected Quaternion toGridQuaternion = Quaternion.identity;
         [SerializeField] protected Quaternion fromGridQuaternion = Quaternion.identity;
 
+        public static Material MatchedMaterial = null;
+
         public static Vector2 MatchedUVScale = Vector2.one;
 
         public CSGOperationType CurrentCSGOperationType
@@ -852,6 +854,8 @@ namespace RealtimeCSG
                 return;
             }
 
+            MatchedMaterial = null;
+
             //Select material on generation surface
             bool MatchSurfaceMaterial = EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
 
@@ -888,7 +892,7 @@ namespace RealtimeCSG
 
                     if (closestIndex > -1)
                     {
-                        CSGSettings.DefaultMaterial = _vertexOnBrush.shape.texGens[closestIndex].RenderMaterial;
+                        MatchedMaterial = _vertexOnBrush.shape.texGens[closestIndex].RenderMaterial;
                         MatchedUVScale = _vertexOnBrush.shape.texGens[closestIndex].Scale;
                     }
                 }

@@ -269,7 +269,25 @@ namespace RealtimeCSG
         public static float DefaultShapeHeight = 1.0f;
         public static uint CurveSides = 10;
         public static ClipMode ClipMode = ClipMode.RemovePositive;
-        public static Material DefaultMaterial = MaterialUtility.WallMaterial;
+        public static Material DefaultMaterial
+        {
+            get
+            {
+                if (EditMode == ToolEditMode.Generate && GeneratorBase.MatchedMaterial != null)
+                {
+                    return GeneratorBase.MatchedMaterial;
+                }
+
+                return SelectedMaterial;
+            }
+
+            set
+            {
+                SelectedMaterial = value;
+            }
+        }
+
+        public static Material SelectedMaterial = MaterialUtility.WallMaterial;
 
         private const TexGenFlags DEFAULT_TEXT_GEN_FLAGS_STATE = TexGenFlags.WorldSpaceTexture;
         public static TexGenFlags DefaultTexGenFlags = DEFAULT_TEXT_GEN_FLAGS_STATE;
