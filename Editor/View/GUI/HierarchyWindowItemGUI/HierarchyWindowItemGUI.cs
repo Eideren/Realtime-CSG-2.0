@@ -11,7 +11,7 @@ namespace RealtimeCSG
         {
             get
             {
-                if(m_ModelIcon == null)
+                if (m_ModelIcon == null)
                 {
                     m_ModelIcon = (Texture2D)EditorGUIUtility.IconContent("prematcube@2x").image;
                 }
@@ -39,13 +39,13 @@ namespace RealtimeCSG
         {
             GameObject o = EditorUtility.EntityIdToObject(entityID) as GameObject;
 
-            if(selectionRect.Contains(Event.current.mousePosition))
+            if (selectionRect.Contains(Event.current.mousePosition))
             {
                 Transform t = o == null ? null : o.transform;
                 SceneDragToolManager.OnHandleDragAndDrop(null, t, selectionRect);
             }
 
-            if(o == null)
+            if (o == null)
             {
                 return;
             }
@@ -54,7 +54,7 @@ namespace RealtimeCSG
 
             CSGNode node = o.GetComponent<CSGNode>();
 
-            if(node == null || !node.enabled || (node.hideFlags & (HideFlags.HideInHierarchy | HideFlags.HideInInspector)) != 0)
+            if (node == null || !node.enabled || (node.hideFlags & (HideFlags.HideInHierarchy | HideFlags.HideInInspector)) != 0)
             {
                 return;
             }
@@ -63,7 +63,7 @@ namespace RealtimeCSG
 
             CSGBrush brush = node as CSGBrush;
 
-            if(brush != null)
+            if (brush != null)
             {
                 operationType = brush.operationType;
                 CSGSkin skin = CsgguiStyleUtility.Skin;
@@ -75,16 +75,16 @@ namespace RealtimeCSG
 
             CSGOperation operation = node as CSGOperation;
 
-            if(operation != null)
+            if (operation != null)
             {
                 CSGSkin skin = CsgguiStyleUtility.Skin;
 
-                if(!operation.PassThrough)
+                if (!operation.PassThrough)
                 {
                     operationType = operation.operationType;
                     int operationTypeIndex = (int)operationType;
 
-                    if(operationTypeIndex >= 0 && operationTypeIndex < skin.hierarchyOperations.Length)
+                    if (operationTypeIndex >= 0 && operationTypeIndex < skin.hierarchyOperations.Length)
                     {
                         GUI.Label(selectionRect, skin.hierarchyOperations[operationTypeIndex], CsgguiStyleUtility.RightAlignedLabel);
                     }
@@ -130,7 +130,7 @@ namespace RealtimeCSG
         //Set all icons again so they show up in the hierarchy
         internal static void DuringSceneGUI(SceneView sceneView)
         {
-            if(Application.isPlaying)
+            if (Application.isPlaying)
             {
                 return;
             }
@@ -142,7 +142,7 @@ namespace RealtimeCSG
 
             for (int i = 0; i < InternalCSGModelManager.Brushes.Count; i++)
             {
-                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Brushes[i].gameObject, (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)InternalCSGModelManager.Brushes[i].operationType].image);
+                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Brushes[i].gameObject, (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)InternalCSGModelManager.Brushes[i].operationType]?.image);
             }
 
             for (int i = 0; i < InternalCSGModelManager.Operations.Count; i++)
@@ -153,11 +153,11 @@ namespace RealtimeCSG
 
                 if (!operation.PassThrough)
                 {
-                    OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)operation.operationType].image;
+                    OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)operation.operationType]?.image;
                 }
                 else
                 {
-                    OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyPassThrough.image;
+                    OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyPassThrough?.image;
                 }
 
                 EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Operations[i].gameObject, OperationIcon);
