@@ -106,7 +106,12 @@ namespace RealtimeCSG
         //Disable all icons before the scene view renders to hide the gizmo icons
         internal static void BeforeSceneGUI(SceneView sceneView)
         {
-            for(int i = 0; i < InternalCSGModelManager.Models.Length; i++)
+            if (Application.isPlaying)
+            {
+                return;
+            }
+
+            for (int i = 0; i < InternalCSGModelManager.Models.Length; i++)
             {
                 EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Models[i].gameObject, null);
             }
@@ -125,6 +130,11 @@ namespace RealtimeCSG
         //Set all icons again so they show up in the hierarchy
         internal static void DuringSceneGUI(SceneView sceneView)
         {
+            if(Application.isPlaying)
+            {
+                return;
+            }
+
             for (int i = 0; i < InternalCSGModelManager.Models.Length; i++)
             {
                 EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Models[i].gameObject, ModelIcon);

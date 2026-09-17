@@ -123,6 +123,8 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnDestroyed(this);
             }
+
+            UnityEditor.EditorGUIUtility.SetIconForObject(gameObject, null);
         }
 
         // detect if this node has been moved within the hierarchy
