@@ -41,7 +41,11 @@ namespace RealtimeCSG
             }
             else if ((CSGSettings.EnableRealtimeCSG == false || SceneDragToolManager.IsDraggingObjectInScene == true) && bottomBarContainer != null)
             {
-                sceneView.rootVisualElement.Remove(bottomBarContainer);
+                if (sceneView.rootVisualElement.Contains(bottomBarContainer))
+                {
+                    sceneView.rootVisualElement.Remove(bottomBarContainer);
+                }
+
                 bottomBarContainer = null;
             }
         }
@@ -237,7 +241,10 @@ namespace RealtimeCSG
             }
             else if ((CSGSettings.EnableRealtimeCSG == false || EditModeManager.ActiveTool == null || SceneDragToolManager.IsDraggingObjectInScene == true|| ForceHide == true) && activeToolContainer != null)
             {
-                sceneView.rootVisualElement.Remove(activeToolContainer);
+                if (sceneView.rootVisualElement.Contains(activeToolContainer))
+                {
+                    sceneView.rootVisualElement.Remove(activeToolContainer);
+                }
 
                 activeToolContainer = null;
             }
