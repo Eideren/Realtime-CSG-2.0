@@ -216,8 +216,6 @@ namespace RealtimeCSG.Components
 
             UnityEditor.SceneVisibilityManager.visibilityChanged -= OnSceneVisibilityChanged;
             UnityEditor.SceneVisibilityManager.pickingChanged -= OnScenePickingChanged;
-
-            UnityEditor.EditorGUIUtility.SetIconForObject(gameObject, null);
         }
 
         internal void OnTransformChildrenChanged()

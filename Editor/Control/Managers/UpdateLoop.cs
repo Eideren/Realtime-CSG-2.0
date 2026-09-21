@@ -34,7 +34,7 @@ namespace RealtimeCSG
 
         private void Initialize()
         {
-            if(_initialized)
+            if (_initialized)
             {
                 return;
             }
@@ -64,11 +64,13 @@ namespace RealtimeCSG
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
 #endif
 
-            SceneView.beforeSceneGui -= HierarchyWindowItemGUI.BeforeSceneGUI;
-            SceneView.beforeSceneGui += HierarchyWindowItemGUI.BeforeSceneGUI;
+#if UNITY_6000_5_OR_NEWER
+            Unity.Hierarchy.Editor.HierarchyWindow.BindView -= HierarchyWindowItemGUI.OnBindView;
+            Unity.Hierarchy.Editor.HierarchyWindow.BindView += HierarchyWindowItemGUI.OnBindView;
 
-            SceneView.duringSceneGui -= HierarchyWindowItemGUI.DuringSceneGUI;
-            SceneView.duringSceneGui += HierarchyWindowItemGUI.DuringSceneGUI;
+            Unity.Hierarchy.Editor.HierarchyWindow.BindView -= HierarchyWindowItemGUI.OnBindView;
+            Unity.Hierarchy.Editor.HierarchyWindow.BindViewItem += HierarchyWindowItemGUI.OnBindViewItem;
+#endif
 
             UnityCompilerDefineManager.UpdateUnityDefines();
         }

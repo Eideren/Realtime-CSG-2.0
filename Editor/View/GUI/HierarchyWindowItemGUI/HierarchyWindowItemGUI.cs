@@ -2,6 +2,7 @@
 using RealtimeCSG.Foundation;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace RealtimeCSG
 {
@@ -34,7 +35,7 @@ namespace RealtimeCSG
         }
 #endif
 
-        //Only runs in legacy hierarchy
+        //Legacy Hierarchy
         internal static void OnHierarchyWindowItemByEntityIdOnGUI(EntityId entityID, Rect selectionRect)
         {
             GameObject o = EditorUtility.EntityIdToObject(entityID) as GameObject;
@@ -103,65 +104,54 @@ namespace RealtimeCSG
             }
         }
 
-        //Disable all icons before the scene view renders to hide the gizmo icons
-        internal static void BeforeSceneGUI(SceneView sceneView)
+#if UNITY_6000_5_OR_NEWER
+        //New Hierarchy
+        internal static void OnBindViewItem(Unity.Hierarchy.Editor.HierarchyWindow window, Unity.Hierarchy.HierarchyView view, Unity.Hierarchy.HierarchyViewItem item)
         {
-            if (Application.isPlaying)
+            if (item.Handler is not Unity.Hierarchy.Editor.HierarchyGameObjectHandler handler)
             {
                 return;
             }
 
-            for (int i = 0; i < InternalCSGModelManager.Models.Length; i++)
-            {
-                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Models[i].gameObject, null);
-            }
-
-            for (int i = 0; i < InternalCSGModelManager.Brushes.Count; i++)
-            {
-                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Brushes[i].gameObject, null);
-            }
-
-            for (int i = 0; i < InternalCSGModelManager.Operations.Count; i++)
-            {
-                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Operations[i].gameObject, null);
-            }
-        }
-
-        //Set all icons again so they show up in the hierarchy
-        internal static void DuringSceneGUI(SceneView sceneView)
-        {
-            if (Application.isPlaying)
+            GameObject hierarchyGameObject = handler.GetGameObject(item.Node);
+            if (hierarchyGameObject == null)
             {
                 return;
             }
 
-            for (int i = 0; i < InternalCSGModelManager.Models.Length; i++)
+            CSGNode node = hierarchyGameObject.GetComponent<CSGNode>();
+
+            if (node != null)
             {
-                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Models[i].gameObject, ModelIcon);
-            }
+                StyleBackground newStyleBackground = new StyleBackground();
 
-            for (int i = 0; i < InternalCSGModelManager.Brushes.Count; i++)
-            {
-                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Brushes[i].gameObject, (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)InternalCSGModelManager.Brushes[i].operationType]?.image);
-            }
-
-            for (int i = 0; i < InternalCSGModelManager.Operations.Count; i++)
-            {
-                Texture2D OperationIcon = null;
-
-                CSGOperation operation = InternalCSGModelManager.Operations[i];
-
-                if (!operation.PassThrough)
+                if (node is CSGModel _model)
                 {
-                    OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)operation.operationType]?.image;
+                    newStyleBackground.value = Background.FromTexture2D(ModelIcon);
                 }
-                else
+                else if(node is CSGBrush _brush)
                 {
-                    OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyPassThrough?.image;
+                    newStyleBackground.value = Background.FromTexture2D((Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)_brush.operationType]?.image);
+                }
+                else if(node is CSGOperation _operation)
+                {
+                    Texture2D OperationIcon = null;
+
+                    if (!_operation.PassThrough)
+                    {
+                        OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyOperations[(int)_operation.operationType]?.image;
+                    }
+                    else
+                    {
+                        OperationIcon = (Texture2D)CsgguiStyleUtility.Skin.hierarchyPassThrough?.image;
+                    }
+
+                    newStyleBackground.value = Background.FromTexture2D(OperationIcon);
                 }
 
-                EditorGUIUtility.SetIconForObject(InternalCSGModelManager.Operations[i].gameObject, OperationIcon);
+                item.Icon.style.backgroundImage = newStyleBackground;
             }
         }
+#endif
     }
 }
