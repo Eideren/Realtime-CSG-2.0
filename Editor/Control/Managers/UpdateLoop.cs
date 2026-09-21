@@ -65,10 +65,7 @@ namespace RealtimeCSG
 #endif
 
 #if UNITY_6000_5_OR_NEWER
-            Unity.Hierarchy.Editor.HierarchyWindow.BindView -= HierarchyWindowItemGUI.OnBindView;
-            Unity.Hierarchy.Editor.HierarchyWindow.BindView += HierarchyWindowItemGUI.OnBindView;
-
-            Unity.Hierarchy.Editor.HierarchyWindow.BindView -= HierarchyWindowItemGUI.OnBindView;
+            Unity.Hierarchy.Editor.HierarchyWindow.BindViewItem -= HierarchyWindowItemGUI.OnBindViewItem;
             Unity.Hierarchy.Editor.HierarchyWindow.BindViewItem += HierarchyWindowItemGUI.OnBindViewItem;
 #endif
 
