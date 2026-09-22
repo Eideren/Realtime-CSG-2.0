@@ -491,9 +491,12 @@ namespace RealtimeCSG
 
                                 InternalCSGModelManager.CheckForChanges();
                                 EditorApplication.RepaintHierarchyWindow();
+#if UNITY_6000_5_OR_NEWER
+                                HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
                             }
 
-                            if(passThroughValue)
+                            if (passThroughValue)
                             {
                                 operationType = (CSGOperationType)255;
                             }
@@ -520,6 +523,9 @@ namespace RealtimeCSG
 
                             InternalCSGModelManager.CheckForChanges();
                             EditorApplication.RepaintHierarchyWindow();
+#if UNITY_6000_5_OR_NEWER
+                            HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
                         }
                     }
 
