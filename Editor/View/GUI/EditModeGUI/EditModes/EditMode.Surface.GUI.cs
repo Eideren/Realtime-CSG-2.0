@@ -1454,10 +1454,12 @@ namespace RealtimeCSG
             buttonArea.height =  13;
             buttonArea.width  =  13;
 
+            /*
             if(GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
             {
                 EditModeToolWindowSceneGUI.GetWindow();
             }
+            */
 
             TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
