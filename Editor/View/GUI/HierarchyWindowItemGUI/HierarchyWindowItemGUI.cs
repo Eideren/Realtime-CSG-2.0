@@ -1,5 +1,7 @@
 ﻿using RealtimeCSG.Components;
 using RealtimeCSG.Foundation;
+using Unity.Hierarchy;
+using Unity.Hierarchy.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -106,6 +108,13 @@ namespace RealtimeCSG
 
 #if UNITY_6000_5_OR_NEWER
         //New Hierarchy
+        internal static Unity.Hierarchy.Hierarchy TargetHierarchy;
+
+        internal static void OnBindView(HierarchyWindow window, HierarchyView view)
+        {
+            TargetHierarchy = view.Source;
+        }
+
         internal static void OnBindViewItem(Unity.Hierarchy.Editor.HierarchyWindow window, Unity.Hierarchy.HierarchyView view, Unity.Hierarchy.HierarchyViewItem item)
         {
             if (item.Handler is not Unity.Hierarchy.Editor.HierarchyGameObjectHandler handler)
@@ -151,6 +160,11 @@ namespace RealtimeCSG
 
                 item.Icon.style.backgroundImage = newStyleBackground;
             }
+        }
+
+        public static void RepaintHierarchy()
+        {
+            TargetHierarchy.SetDirty();
         }
 #endif
     }
