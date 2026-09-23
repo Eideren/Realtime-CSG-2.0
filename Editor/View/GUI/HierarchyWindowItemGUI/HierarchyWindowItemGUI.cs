@@ -132,6 +132,7 @@ namespace RealtimeCSG
 
             if (node != null)
             {
+                CsgguiStyleUtility.InitStyles();
                 StyleBackground newStyleBackground = new StyleBackground();
 
                 if (node is CSGModel _model)
