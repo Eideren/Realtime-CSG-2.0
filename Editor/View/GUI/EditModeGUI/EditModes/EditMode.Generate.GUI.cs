@@ -159,7 +159,7 @@ namespace RealtimeCSG
 
         private static void CommitOrCancel(bool isSceneGUI, EditModeGenerate tool)
         {
-            Material defaultMaterial = CSGSettings.DefaultMaterial;
+            Material defaultMaterial = CSGSettings.SelectedMaterial;
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
             if(isSceneGUI)
@@ -209,8 +209,6 @@ namespace RealtimeCSG
 
             GUILayout.EndHorizontal();
 
-            GUI.enabled = !EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
-
             if (isSceneGUI)
             {
                 GUILayout.Space(2);
@@ -225,8 +223,6 @@ namespace RealtimeCSG
                     CSGSettings.Save();
                 }
             }
-
-            GUI.enabled = true;
 
             EditorPrefs.SetBool("GenerateUsingSurfaceMaterial", GUILayout.Toggle(EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false), "Match Surface", EditorStyles.miniButton));
         }
