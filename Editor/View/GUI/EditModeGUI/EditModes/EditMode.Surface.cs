@@ -1637,7 +1637,7 @@ namespace RealtimeCSG
                             {
                                 case EventType.MouseDrag:
                                 {
-                                    if(Event.current.button != 0 || (Event.current.modifiers & ~EventModifiers.Control) != EventModifiers.None || GUIUtility.hotControl != controlID || controlID <= 0)
+                                    if(Event.current.button != 0 || (Event.current.modifiers & ~EventModifiers.Control) != EventModifiers.None || GUIUtility.hotControl != controlID || controlID <= 0 || CSGSettings.AllowTextureCoordinateDragging == false)
                                     {
                                         break;
                                     }
