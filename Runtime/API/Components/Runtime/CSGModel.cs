@@ -37,7 +37,7 @@ namespace RealtimeCSG.Components
           | ModelSettingsFlags.AutoUpdateRigidBody;
 
         /// <value>The version number of this instance of a <see cref="CSGModel" /></value>
-        [HideInInspector] public float version = CURRENT_VERSION;
+        [HideInInspector, FormerlySerializedAs("Version")] public float version = CURRENT_VERSION;
 
         public bool IsRenderable
         {
@@ -127,11 +127,11 @@ namespace RealtimeCSG.Components
 
 #region Settings
 
-        [EnumAsFlags] public ModelSettingsFlags settings = DefaultSettings;
-        [EnumAsFlags] public VertexChannelFlags vertexChannels = VertexChannelFlags.All;
-        [EnumAsFlags] public ReceiveGI receiveGI = ReceiveGI.Lightmaps;
+        [EnumAsFlags, FormerlySerializedAs("Settings")] public ModelSettingsFlags settings = DefaultSettings;
+        [EnumAsFlags, FormerlySerializedAs("VertexChannels")] public VertexChannelFlags vertexChannels = VertexChannelFlags.All;
+        [EnumAsFlags, FormerlySerializedAs("ReceiveGI")] public ReceiveGI receiveGI = ReceiveGI.Lightmaps;
 
-        [EnumAsFlags] public MeshColliderCookingOptions meshColliderCookingOptions =
+        [EnumAsFlags, FormerlySerializedAs("MeshColliderCookingOptions")] public MeshColliderCookingOptions meshColliderCookingOptions =
             MeshColliderCookingOptions.CookForFasterSimulation |
             MeshColliderCookingOptions.EnableMeshCleaning |
             MeshColliderCookingOptions.WeldColocatedVertices;
@@ -142,8 +142,8 @@ namespace RealtimeCSG.Components
 
 #if UNITY_EDITOR
 
-        public bool showGeneratedMeshes;
-        public PhysicsMaterial defaultPhysicsMaterial;
+        [FormerlySerializedAs("ShowGeneratedMeshes")] public bool showGeneratedMeshes;
+        [FormerlySerializedAs("DefaultPhysicsMaterial")] public PhysicsMaterial defaultPhysicsMaterial;
 
 #endif
 

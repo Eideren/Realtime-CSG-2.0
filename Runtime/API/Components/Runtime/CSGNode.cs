@@ -32,9 +32,9 @@ namespace RealtimeCSG.Components
     public abstract class CSGNode : MonoBehaviour
     {
 #if UNITY_EDITOR
-        [SerializeField] public PrefabInstantiateBehaviour prefabBehaviour = PrefabInstantiateBehaviour.Reference;
-        [SerializeField] public PrefabSourceAlignment prefabSourceAlignment = PrefabSourceAlignment.AlignedTop;
-        [SerializeField] public PrefabDestinationAlignment prefabDestinationAlignment = PrefabDestinationAlignment.AlignToSurface;
+        [SerializeField, FormerlySerializedAs("PrefabBehaviour")] public PrefabInstantiateBehaviour prefabBehaviour = PrefabInstantiateBehaviour.Reference;
+        [SerializeField, FormerlySerializedAs("PrefabSourceAlignment")] public PrefabSourceAlignment prefabSourceAlignment = PrefabSourceAlignment.AlignedTop;
+        [SerializeField, FormerlySerializedAs("PrefabDestinationAlignment")] public PrefabDestinationAlignment prefabDestinationAlignment = PrefabDestinationAlignment.AlignToSurface;
 
         public const int INVALID_NODE_ID = 0;
 #endif

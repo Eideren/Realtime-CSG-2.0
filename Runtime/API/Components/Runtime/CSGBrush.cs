@@ -23,7 +23,7 @@ namespace RealtimeCSG.Components
         public const float CURRENT_VERSION = 2.1f;
 
         /// <value>The version number of this instance of a <see cref="CSGBrush" /></value>
-        public float version = CURRENT_VERSION;
+        [FormerlySerializedAs("Version")] public float version = CURRENT_VERSION;
 
 #if UNITY_EDITOR
         public bool IsRegistered
@@ -37,17 +37,17 @@ namespace RealtimeCSG.Components
 #if UNITY_EDITOR
 
         /// <value>The CSG operation to perform with this brush</value>
-        public CSGOperationType operationType = CSGOperationType.Additive;
+        [FormerlySerializedAs("OperationType")] public CSGOperationType operationType = CSGOperationType.Additive;
 
-       public BrushFlags flags = BrushFlags.None;
+        [FormerlySerializedAs("Flags")] public BrushFlags flags = BrushFlags.None;
 
         /// <value>The <see cref="shape"/> that defines the shape by this brush together with its <see cref="controlMesh"/>.</value>
         /// <remarks><note>This will be replaced by <see cref="RealtimeCSG.Foundation.BrushMesh"/> eventually</note></remarks>
-        public Shape shape;
+        [FormerlySerializedAs("Shape")] public Shape shape;
 
         /// <value>The <see cref="controlMesh"/> that defines the shape by this brush together with its <see cref="shape"/>.</value>
         /// <remarks><note>This will be replaced by <see cref="RealtimeCSG.Foundation.BrushMesh"/> eventually</note></remarks>
-        public ControlMesh controlMesh;
+        [FormerlySerializedAs("ControlMesh")] public ControlMesh controlMesh;
 
 #endif
 

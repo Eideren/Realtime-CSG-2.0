@@ -1,6 +1,7 @@
 ﻿using System;
 using InternalRealtimeCSG;
 using UnityEngine;
+using UnityEngine.Serialization;
 using CSGOperationType = RealtimeCSG.Foundation.CSGOperationType;
 
 namespace RealtimeCSG.Components
@@ -15,6 +16,7 @@ namespace RealtimeCSG.Components
         public const float CURRENT_VERSION = 1.1f;
 
         /// <value>The version number of this instance of a <see cref="CSGOperation" /></value>
+        [FormerlySerializedAs("Version")]
         [HideInInspector] public float version = CURRENT_VERSION;
 
 #if UNITY_EDITOR
@@ -29,6 +31,7 @@ namespace RealtimeCSG.Components
 #if UNITY_EDITOR
 
         /// <value>The CSG operation to perform with this CSG branch</value>
+        [FormerlySerializedAs("OperationType")]
         public CSGOperationType operationType = CSGOperationType.Additive;
 
         [HideInInspector, SerializeField] internal bool passThrough;
@@ -59,6 +62,7 @@ namespace RealtimeCSG.Components
 #region Editor Settings
 
 #if UNITY_EDITOR
+        [FormerlySerializedAs("HandleAsOne")]
         public bool handleAsOne;
 #endif
 
