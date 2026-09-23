@@ -329,6 +329,7 @@ namespace RealtimeCSG
         public static bool ShowTooltips = true;
 
         public static bool AllowDirectBrushDragging = false;
+        public static bool AllowTextureCoordinateDragging = false;
 
         public static Dictionary<PresetCategory, List<Preset>> Presets
         {
@@ -838,6 +839,8 @@ namespace RealtimeCSG
             SnapNonCSGObjects = EditorPrefs.GetBool("SnapNonCSGObjects", true);
 
             AllowDirectBrushDragging = EditorPrefs.GetBool("AllowDirectBrushDragging", false);
+            
+            AllowTextureCoordinateDragging = EditorPrefs.GetBool("AllowTextureCoordinateDragging", true);
 
             AutoCommitExtrusion = EditorPrefs.GetBool("AutoCommitExtrusion", false);
 
@@ -949,6 +952,8 @@ namespace RealtimeCSG
             EditorPrefs.SetBool("SnapNonCSGObjects", SnapNonCSGObjects);
 
             EditorPrefs.SetBool("AllowDirectBrushDragging", AllowDirectBrushDragging);
+
+            EditorPrefs.SetBool("AllowTextureCoordinateDragging", AllowTextureCoordinateDragging);
 
             EditorPrefs.SetBool("AutoCommitExtrusion", AutoCommitExtrusion);
 

@@ -16,6 +16,7 @@ namespace RealtimeCSG
             CSGSettings.ShowTooltips       = EditorGUILayout.ToggleLeft("Show Tool-Tips", CSGSettings.ShowTooltips);
             CSGSettings.SnapNonCSGObjects  = EditorGUILayout.ToggleLeft("Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects);
             CSGSettings.AllowDirectBrushDragging = EditorGUILayout.ToggleLeft("Allow Direct Brush Dragging", CSGSettings.AllowDirectBrushDragging);
+            CSGSettings.AllowTextureCoordinateDragging = EditorGUILayout.ToggleLeft("Allow Texture Coordinate Dragging", CSGSettings.AllowTextureCoordinateDragging);
             CSGSettings.AutoRigidbody      = EditorGUILayout.ToggleLeft("Disable auto add rigidbodies", CSGSettings.AutoRigidbody);
             CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft("Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs);
             CSGSettings.UpdateLightmapUVButtonMode = (CSGSettings.UpdateLightmapUVButtonState)EditorGUILayout.EnumPopup("Lightmap UVs Button", CSGSettings.UpdateLightmapUVButtonMode);
