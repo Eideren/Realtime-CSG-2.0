@@ -144,6 +144,10 @@ namespace RealtimeCSG
             if(EditorGUI.EndChangeCheck())
             {
                 generator.CurrentCSGOperationType = operation;
+
+#if UNITY_6000_5_OR_NEWER
+                HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
             }
 
             GUILayout.EndVertical();
