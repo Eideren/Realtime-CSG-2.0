@@ -163,6 +163,7 @@ namespace RealtimeCSG
                 }
             }
 
+#if false
             for(int brushIndex = 0; brushIndex < Brushes.Count; brushIndex++)
             {
                 CSGBrush brush = Brushes[brushIndex];
@@ -236,6 +237,7 @@ namespace RealtimeCSG
                     ControlMeshUtility.RebuildShape(brush);
                 }
             }
+#endif
         }
 
 #endregion

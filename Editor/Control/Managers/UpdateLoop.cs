@@ -73,6 +73,8 @@ namespace RealtimeCSG
 #endif
 
             UnityCompilerDefineManager.UpdateUnityDefines();
+
+            InternalCSGModelManagerSystem.LazyInitialize();
         }
 
         private void OnPrefabSaving(GameObject obj)
@@ -117,6 +119,8 @@ namespace RealtimeCSG
             {
                 SceneToolRenderer.Cleanup();
             }
+
+            InternalCSGModelManagerSystem.Cleanup();
         }
 
         private static Scene m_CurrentScene;
@@ -255,6 +259,8 @@ namespace RealtimeCSG
             {
                 Debug.LogException(ex);
             }
+
+            InternalCSGModelManagerSystem.Tick();
         }
 
         public static void ResetUpdateRoutine()
