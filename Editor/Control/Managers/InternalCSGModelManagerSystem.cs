@@ -63,17 +63,18 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                // TODO: simplify this
-                var brushTransform = brush.hierarchyItem.transform;
-                var currentLocalToWorldMatrix = brushTransform.localToWorldMatrix;
-                var prevTransformMatrix = brush.compareTransformation.localToWorldMatrix;
+                // TODO: further reduce marshalling on this
+                Transform brushTransform = brush.hierarchyItem.transform;
+                Matrix4x4 currentLocalToWorldMatrix = brushTransform.localToWorldMatrix;
+                Matrix4x4 prevTransformMatrix = brush.compareTransformation.localToWorldMatrix;
                 {
                     var modelTransform = brush.childData.model.transform;
                     brush.compareTransformation.localToWorldMatrix = currentLocalToWorldMatrix;
                     brush.compareTransformation.brushToModelSpaceMatrix = modelTransform.worldToLocalMatrix *
                         brush.compareTransformation.localToWorldMatrix;
+                    //brush.compareTransformation.brushToModelSpaceMatrix = modelTransform.worldToLocalMatrix * currentLocalToWorldMatrix;
 
-                    var localToModelMatrix = brush.compareTransformation.brushToModelSpaceMatrix;
+                    Matrix4x4 localToModelMatrix = brush.compareTransformation.brushToModelSpaceMatrix;
                     External.setBrushToModelSpace(brushNodeID, localToModelMatrix);
 
                     if (brush.controlMesh != null)

@@ -170,6 +170,10 @@ namespace InternalRealtimeCSG
                 {
                     if(CSGProjectSettings.Instance.saveMeshesInSceneFiles || !EditorApplication.isPlayingOrWillChangePlaymode)
                     {
+                        if (meshInstance.cachedMeshCollider)
+                        {
+                            meshInstance.cachedMeshCollider.enabled = true;
+                        }
                         Object.DestroyImmediate(meshInstance);
                     }
                     else

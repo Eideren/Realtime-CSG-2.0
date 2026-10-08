@@ -1534,11 +1534,6 @@ namespace InternalRealtimeCSG
                     meshColliderComponent = gameObject.GetComponent<MeshCollider>();
                 }
 
-                if(meshColliderComponent && !meshColliderComponent.enabled)
-                {
-                    meshColliderComponent.enabled = true;
-                }
-
                 if(!meshColliderComponent)
                 {
                     meshColliderComponent                 = gameObject.AddComponent<MeshCollider>();
@@ -1598,11 +1593,9 @@ namespace InternalRealtimeCSG
                     meshColliderComponent.sharedMesh = instance.sharedMesh;
                 }
 
-                // .. for some reason this fixes mesh-colliders not being found with ray-casts in the editor?
                 if(instance.dirty)
                 {
-                    meshColliderComponent.enabled = false;
-                    meshColliderComponent.enabled = true;
+                    InternalCSGModelManagerSystem.FlagMeshColliderForCooking(meshColliderComponent);
                 }
             }
             else
