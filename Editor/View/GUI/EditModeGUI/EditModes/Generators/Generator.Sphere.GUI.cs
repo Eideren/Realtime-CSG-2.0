@@ -149,7 +149,6 @@ namespace RealtimeCSG
 
         public static bool OnShowGUI(GeneratorSphere generator, bool isSceneGUI)
         {
-            CsgguiStyleUtility.InitStyles();
             OnGUIContents(generator, isSceneGUI);
 
             return true;

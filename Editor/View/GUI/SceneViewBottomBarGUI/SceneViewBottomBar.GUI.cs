@@ -23,7 +23,6 @@ namespace RealtimeCSG
             }
 
             InitStyles();
-            CsgguiStyleUtility.InitStyles();
 
             if(sceneView != null)
             {

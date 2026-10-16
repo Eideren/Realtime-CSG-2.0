@@ -1370,7 +1370,6 @@ namespace RealtimeCSG
 
         public static void OnSceneGUI(Rect windowRect, EditModeSurface tool)
         {
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
 
             float maxHeight = windowRect.height - 80;
@@ -1522,7 +1521,6 @@ namespace RealtimeCSG
             m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModeSurface tool = EditModeManager.ActiveTool as EditModeSurface;
 
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
         }

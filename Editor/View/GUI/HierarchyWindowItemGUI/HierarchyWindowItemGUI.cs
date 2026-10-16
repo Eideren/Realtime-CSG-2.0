@@ -53,8 +53,6 @@ namespace RealtimeCSG
                 return;
             }
 
-            CsgguiStyleUtility.InitStyles();
-
             CSGNode node = o.GetComponent<CSGNode>();
 
             if (node == null || !node.enabled || (node.hideFlags & (HideFlags.HideInHierarchy | HideFlags.HideInInspector)) != 0)
@@ -132,7 +130,6 @@ namespace RealtimeCSG
 
             if (node != null)
             {
-                CsgguiStyleUtility.InitStyles();
                 StyleBackground newStyleBackground = new StyleBackground();
 
                 if (node is CSGModel _model)

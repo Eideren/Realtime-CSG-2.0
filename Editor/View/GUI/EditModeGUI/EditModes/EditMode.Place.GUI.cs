@@ -19,7 +19,6 @@ namespace RealtimeCSG
 
         public static void OnSceneGUI(EditModePlace tool)
         {
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
@@ -124,7 +123,6 @@ namespace RealtimeCSG
             m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModePlace tool = EditModeManager.ActiveTool as EditModePlace;
 
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
         }

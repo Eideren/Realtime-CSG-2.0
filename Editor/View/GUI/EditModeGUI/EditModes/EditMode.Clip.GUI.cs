@@ -33,7 +33,6 @@ namespace RealtimeCSG
             m_DoCommit = false; // unity bug workaround
             m_DoCancel = false; // unity bug workaround
 
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
@@ -306,7 +305,6 @@ namespace RealtimeCSG
             m_DoCommit = false; // unity bug workaround
             m_DoCancel = false; // unity bug workaround
 
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
 

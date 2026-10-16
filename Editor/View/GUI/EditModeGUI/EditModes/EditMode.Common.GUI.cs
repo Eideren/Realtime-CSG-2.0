@@ -25,8 +25,6 @@ namespace InternalRealtimeCSG
 
         public static void UpdateLightmapUVButton(ref Rect rect)
         {
-            CsgguiStyleUtility.InitStyles();
-
             if(IndentableButton(updateLightmapUVContent, ref rect, CsgguiStyleUtility.RedButton))
             {
                 CSGModelManager.BuildLightmapUvs();
@@ -35,8 +33,6 @@ namespace InternalRealtimeCSG
 
         public static void UpdateLightmapUVButton()
         {
-            CsgguiStyleUtility.InitStyles();
-
             if(IndentableButton(updateLightmapUVContent, CsgguiStyleUtility.RedButton))
             {
                 CSGModelManager.BuildLightmapUvs();

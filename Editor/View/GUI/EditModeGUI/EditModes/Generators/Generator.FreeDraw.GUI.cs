@@ -124,7 +124,6 @@ namespace RealtimeCSG
 
         public static bool OnShowGUI(GeneratorFreeDraw generator, bool isSceneGUI)
         {
-            CsgguiStyleUtility.InitStyles();
             OnGUIContents(generator, isSceneGUI);
 
             return true;

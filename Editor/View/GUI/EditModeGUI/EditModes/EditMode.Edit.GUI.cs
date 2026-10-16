@@ -19,7 +19,6 @@ namespace RealtimeCSG
 
         public static void OnSceneGUI(EditModeMeshEdit tool)
         {
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
@@ -122,7 +121,6 @@ namespace RealtimeCSG
         {
             m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModeMeshEdit tool = EditModeManager.ActiveTool as EditModeMeshEdit;
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
         }
