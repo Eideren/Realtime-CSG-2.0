@@ -252,6 +252,7 @@ namespace RealtimeCSG
                     ColorSettings.Update();
                 }
 
+                InternalCSGModelManagerSystem.Tick();
                 InternalCSGModelManager.CheckForChanges();
                 TooltipUtility.CleanCache();
             }
@@ -259,8 +260,6 @@ namespace RealtimeCSG
             {
                 Debug.LogException(ex);
             }
-
-            InternalCSGModelManagerSystem.Tick();
         }
 
         public static void ResetUpdateRoutine()
