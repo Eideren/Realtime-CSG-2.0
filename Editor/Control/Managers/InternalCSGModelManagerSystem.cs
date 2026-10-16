@@ -55,7 +55,7 @@ namespace RealtimeCSG
                 Component component = changedBrushes[brushIndex];
                 CSGBrush brush = component as CSGBrush;
 
-                var brushNodeID = brush.brushNodeID;
+                int brushNodeID = brush.brushNodeID;
 
                 // make sure it's registered, otherwise ignore it
                 if (brushNodeID == CSGNode.INVALID_NODE_ID)
@@ -68,7 +68,7 @@ namespace RealtimeCSG
                 Matrix4x4 currentLocalToWorldMatrix = brushTransform.localToWorldMatrix;
                 Matrix4x4 prevTransformMatrix = brush.compareTransformation.localToWorldMatrix;
                 {
-                    var modelTransform = brush.childData.model.transform;
+                    Transform modelTransform = brush.childData.model.transform;
                     brush.compareTransformation.localToWorldMatrix = currentLocalToWorldMatrix;
                     brush.compareTransformation.brushToModelSpaceMatrix = modelTransform.worldToLocalMatrix *
                         brush.compareTransformation.localToWorldMatrix;
@@ -104,8 +104,6 @@ namespace RealtimeCSG
                     ControlMeshUtility.RebuildShape(brush);
                 }
             }
-            //var nodeChanges = dispatcher.GetTransformChangesAndClear<CSGNode>(ObjectDispatcher.TransformTrackingType.GlobalTRS, Unity.Collections.Allocator.Temp);
-            //nodeChanges.Dispose();
         }
 
 
@@ -117,7 +115,7 @@ namespace RealtimeCSG
             double editorTime = EditorTime();
             for (int i = colliderBakeTimers.Count - 1; i >= 0; i--)
             {
-                var bakeTimer = colliderBakeTimers[i];
+                ColliderBakeTimer bakeTimer = colliderBakeTimers[i];
                 if (forceAll || editorTime > bakeTimer.timeToBake)
                 {
                     // TODO: bake in background job?
@@ -157,10 +155,10 @@ namespace RealtimeCSG
         }
         static void ColliderBakePopAll()
         {
-            var generatedMeshInstances = GameObject.FindObjectsByType<GeneratedMeshInstance>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            GeneratedMeshInstance[] generatedMeshInstances = GameObject.FindObjectsByType<GeneratedMeshInstance>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < generatedMeshInstances.Length; i++)
             {
-                var collider = generatedMeshInstances[i].cachedMeshCollider;
+                MeshCollider collider = generatedMeshInstances[i].cachedMeshCollider;
                 if (collider)
                 {
                     collider.enabled = true;
