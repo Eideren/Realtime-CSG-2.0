@@ -11,7 +11,6 @@ namespace RealtimeCSG
         public static void DrawInfoGUI(SceneView sceneView)
         {
             InitStyles(sceneView);
-            CsgguiStyleUtility.InitStyles();
 
             try
             {

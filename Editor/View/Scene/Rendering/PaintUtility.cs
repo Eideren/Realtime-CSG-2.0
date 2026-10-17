@@ -2737,7 +2737,6 @@ namespace RealtimeCSG
             if(rect.width >= 0 || rect.height >= 0)
             {
                 Handles.BeginGUI();
-                CsgguiStyleUtility.InitStyles();
                 CsgguiStyleUtility.SelectionRectStyle.Draw(rect, GUIContent.none, false, false, false, false);
                 Handles.EndGUI();
             }

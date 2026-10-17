@@ -11,8 +11,6 @@ namespace RealtimeCSG
     {
         public static bool PassThroughButton(bool passThrough, bool mixedValues)
         {
-            CsgguiStyleUtility.InitStyles();
-
             CSGSkin rcsgSkin = CsgguiStyleUtility.Skin;
             Color   oldColor = GUI.color;
             GUI.color = Color.white;
@@ -52,8 +50,6 @@ namespace RealtimeCSG
 
         public static CSGOperationType ChooseOperation(CSGOperationType operation, bool mixedValues)
         {
-            CsgguiStyleUtility.InitStyles();
-
             CSGSkin rcsgSkin = CsgguiStyleUtility.Skin;
 
             if(rcsgSkin == null)

@@ -13,8 +13,6 @@ namespace RealtimeCSG
 
         public static float OnEditModeSelectionGUI()
         {
-            CsgguiStyleUtility.InitStyles();
-
             EditorGUI.BeginChangeCheck();
 
             ToolEditMode newEditMode = (ToolEditMode)CSGEditorGUIUtility.ToolbarWrapped((int)EditModeManager.EditMode, ref m_EditModeRects, out Rect editModeBounds, CsgguiStyleUtility.BrushEditModeContent, CsgguiStyleUtility.BrushEditModeTooltips);
@@ -86,8 +84,6 @@ namespace RealtimeCSG
 
         private static void OnEditModeSelectionSceneGUI()
         {
-            CsgguiStyleUtility.InitStyles();
-
             if(CsgguiStyleUtility.BrushEditModeNames == null || CsgguiStyleUtility.BrushEditModeNames.Length == 0)
             {
                 return;
@@ -105,7 +101,6 @@ namespace RealtimeCSG
 
             GUILayout.BeginArea(bounds, contentTitleLabel, windowStyle);
 
-            CsgguiStyleUtility.InitStyles();
             EditorGUI.BeginChangeCheck();
 
             ToolEditMode newEditMode = (ToolEditMode)CSGEditorGUIUtility.ToolbarWrapped((int)EditModeManager.EditMode, ref m_EditModeRects, out Rect _, CsgguiStyleUtility.BrushEditModeContent, CsgguiStyleUtility.BrushEditModeTooltips, 20, bounds.width);
@@ -258,7 +253,6 @@ namespace RealtimeCSG
                     }
                 }
 
-                CsgguiStyleUtility.InitStyles();
                 ShowRealtimeCSGDisabledMessage();
 
                 if(models.Length > 0 && models.Length == targets.Length)

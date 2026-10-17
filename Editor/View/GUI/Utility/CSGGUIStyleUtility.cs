@@ -16,6 +16,14 @@ namespace RealtimeCSG
         {
             UnityEditor.SceneManagement.EditorSceneManager.activeSceneChangedInEditMode -= ActiveSceneChangedInEditMode;
             UnityEditor.SceneManagement.EditorSceneManager.activeSceneChangedInEditMode += ActiveSceneChangedInEditMode;
+
+            // Callers may implicitly run this static constructor when accessing some of the properties of this type.
+            // In theory, depending on the current point at which the caller calls into this method, it may or may not throw. For example, calling it
+            // within an InitializeOnLoad would throw as Unity is not yet ready to manipulate styles.
+            // I have not found an existing case while running RCSG that behaves so
+            // If a caller does stumble on this issue, I recommend moving their logic into InitStyles,
+            // leaving it to other systems trigger this method at a more appropriate time.
+            InitStyles();
         }
 
         private static void ActiveSceneChangedInEditMode(UnityEngine.SceneManagement.Scene _previousScene, UnityEngine.SceneManagement.Scene _nextScene)
@@ -173,7 +181,7 @@ namespace RealtimeCSG
             get => EditorGUIUtility.isProSkin ? proSkin : personalSkin;
         }
 
-        public static void InitStyles()
+        private static void InitStyles()
         {
             if(m_StylesInitialized)
             {
@@ -184,13 +192,12 @@ namespace RealtimeCSG
 
             LoadGUIContent();
 
-            GUISkin oldSkin = GUI.skin;
             m_StylesInitialized = true;
-            SetDefaultGUISkin();
+            var defaultSkin = EditorGUIUtility.GetBuiltinSkin(EditorGUIUtility.isProSkin ? EditorSkin.Scene : EditorSkin.Inspector);
 
             Texture2D whiteTexture = MaterialUtility.CreateSolidColorTexture(8, 8, Color.white);
 
-            SceneTextLabel          = new GUIStyle(GUI.skin.textArea);
+            SceneTextLabel          = new GUIStyle(defaultSkin.textArea);
             SceneTextLabel.richText = true;
 
             SceneTextLabel.onActive.background  = whiteTexture;
@@ -203,7 +210,7 @@ namespace RealtimeCSG
             SceneTextLabel.onHover.textColor   = Color.black;
             SceneTextLabel.onNormal.textColor  = Color.black;
 
-            GUIStyle toolTipStyle = new GUIStyle(GUI.skin.textArea);
+            GUIStyle toolTipStyle = new GUIStyle(defaultSkin.textArea);
             toolTipStyle.richText      =  true;
             toolTipStyle.wordWrap      =  true;
             toolTipStyle.stretchHeight =  true;
@@ -221,16 +228,16 @@ namespace RealtimeCSG
             RightAlignedLabel           = new GUIStyle();
             RightAlignedLabel.alignment = TextAnchor.MiddleRight;
 
-            UnpaddedWindow                = new GUIStyle(GUI.skin.window);
+            UnpaddedWindow                = new GUIStyle(defaultSkin.window);
             UnpaddedWindow.padding.left   = 2;
             UnpaddedWindow.padding.bottom = 2;
 
             EmptyMaterialStyle                   = new GUIStyle(GUIStyle.none);
             EmptyMaterialStyle.normal.background = MaterialUtility.CreateSolidColorTexture(2, 2, Color.black);
 
-            SelectionRectStyle = GetStyle("selectionRect");
+            SelectionRectStyle = defaultSkin.FindStyle("selectionRect");
 
-            GUIStyle redToolbarDropDown = GetStyle("toolbarDropDown");
+            GUIStyle redToolbarDropDown = defaultSkin.FindStyle("toolbarDropDown");
 
             proSkin.redToolbarDropDown                    = new GUIStyle(redToolbarDropDown);
             proSkin.redToolbarDropDown.normal.textColor   = Color.Lerp(Color.red, redToolbarDropDown.normal.textColor, 0.5f);
@@ -240,8 +247,8 @@ namespace RealtimeCSG
             personalSkin.redToolbarDropDown.normal.textColor   = Color.Lerp(Color.red, redToolbarDropDown.normal.textColor, 0.5f);
             personalSkin.redToolbarDropDown.onNormal.textColor = Color.Lerp(Color.red, redToolbarDropDown.onNormal.textColor, 0.125f);
 
-            proSkin.menuItem      = GetStyle("MenuItem");
-            personalSkin.menuItem = GetStyle("MenuItem");
+            proSkin.menuItem      = defaultSkin.FindStyle("MenuItem");
+            personalSkin.menuItem = defaultSkin.FindStyle("MenuItem");
 
             proSkin.lockedBackgroundColor             = Color.Lerp(Color.white, Color.red, 0.5f);
             proSkin.xToolbarButton                    = new GUIStyle(EditorStyles.toolbarButton);
@@ -265,18 +272,18 @@ namespace RealtimeCSG
             personalSkin.zToolbarButton.normal.textColor   = Color.Lerp(Handles.zAxisColor, Color.white, 0.75f);
             personalSkin.zToolbarButton.onNormal.textColor = Color.Lerp(Handles.zAxisColor, Color.black, 0.25f);
 
-            RedTextArea                  = new GUIStyle(GUI.skin.textArea);
+            RedTextArea                  = new GUIStyle(defaultSkin.textArea);
             RedTextArea.normal.textColor = Color.red;
 
-            RedTextLabel                  = new GUIStyle(GUI.skin.label);
+            RedTextLabel                  = new GUIStyle(defaultSkin.label);
             RedTextLabel.normal.textColor = Color.red;
             RedTextLabel.richText         = true;
             RedTextLabel.wordWrap         = true;
 
-            RedButton                  = new GUIStyle(GUI.skin.button);
+            RedButton                  = new GUIStyle(defaultSkin.button);
             RedButton.normal.textColor = Color.red;
 
-            WrapLabel          = new GUIStyle(GUI.skin.label);
+            WrapLabel          = new GUIStyle(defaultSkin.label);
             WrapLabel.wordWrap = true;
 
             VersionLabelStyle           = new GUIStyle(EditorStyles.label);
@@ -418,7 +425,7 @@ namespace RealtimeCSG
             pro.messageStyle        = new GUIStyle(skin2.textArea);
             pro.messageWarningStyle = new GUIStyle(pro.messageStyle);
 
-            UnselectedIconLabelStyle          = new GUIStyle(GUI.skin.label);
+            UnselectedIconLabelStyle          = new GUIStyle(defaultSkin.label);
             UnselectedIconLabelStyle.richText = true;
             Color color = UnselectedIconLabelStyle.normal.textColor;
 
@@ -429,10 +436,8 @@ namespace RealtimeCSG
 
             UnselectedIconLabelStyle.normal.textColor = color;
 
-            SelectedIconLabelStyle          = new GUIStyle(GUI.skin.label);
+            SelectedIconLabelStyle          = new GUIStyle(defaultSkin.label);
             SelectedIconLabelStyle.richText = true;
-
-            GUI.skin = oldSkin;
         }
 
         private static void LoadGUIContent()
@@ -509,21 +514,6 @@ namespace RealtimeCSG
             Generated.EmbeddedAssets.TryFindIcon(name, out Texture2D image);
 
             return new GUIContent(image);
-        }
-
-        public static GUIStyle GetStyle(string styleName)
-        {
-            GUIStyle s = GUI.skin.FindStyle(styleName);
-
-            if(s == null)
-            {
-                GUISkin oldSkin = GUI.skin;
-                SetDefaultGUISkin();
-                s        = GUI.skin.FindStyle(styleName);
-                GUI.skin = oldSkin;
-            }
-
-            return s;
         }
     }
 }

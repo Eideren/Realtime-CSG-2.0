@@ -124,7 +124,6 @@ namespace RealtimeCSG
 
         public static bool OnShowGUI(GeneratorBox generator, bool isSceneGUI)
         {
-            CsgguiStyleUtility.InitStyles();
             OnGUIContents(generator, isSceneGUI);
 
             return true;

@@ -19,7 +19,6 @@ namespace RealtimeCSG
         public static bool OnSceneGUI(EditModeGenerate tool)
         {
             tool.CurrentGenerator.StartGUI();
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
@@ -322,7 +321,6 @@ namespace RealtimeCSG
         {
             m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             tool.CurrentGenerator.StartGUI();
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(tool, false, height);
             tool.CurrentGenerator.FinishGUI();
