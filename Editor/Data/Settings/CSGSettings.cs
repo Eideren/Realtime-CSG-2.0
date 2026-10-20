@@ -436,6 +436,8 @@ namespace RealtimeCSG
             }
         }
 
+        public static bool SyncronizeUnityGrid = true;
+
         public static bool SnapNonCSGObjects = true;
 
         public static bool AutoRigidbody
@@ -1010,6 +1012,32 @@ namespace RealtimeCSG
             }
 
             EditorPrefs.SetString("Wireframe", builder.ToString());
+        }
+
+#endregion
+
+#region Grid
+        private static Vector3 LastGridSize;
+
+        public static void SyncronizeGrid()
+        {
+            bool GridChanged = false;
+
+            if (LastGridSize != EditorSnapSettings.gridSize)
+            {
+                GridChanged = true;
+
+                SnapVector = EditorSnapSettings.gridSize;
+
+                LastGridSize = EditorSnapSettings.gridSize;
+            }
+
+            if (GridChanged)
+            {
+                UpdateSnapSettings();
+                Save();
+                CSGEditorGUIUtility.RepaintAll();
+            }
         }
 
 #endregion

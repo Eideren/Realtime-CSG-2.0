@@ -245,6 +245,11 @@ namespace RealtimeCSG
 
             UpdateOnSceneChange();
 
+            if (CSGSettings.SyncronizeUnityGrid)
+            {
+                CSGSettings.SyncronizeGrid();
+            }
+
             try
             {
                 if(!ColorSettings.IsInitialized)
