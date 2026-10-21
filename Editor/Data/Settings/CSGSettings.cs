@@ -955,7 +955,7 @@ namespace RealtimeCSG
 
             EditorPrefs.SetBool("SnapNonCSGObjects", SnapNonCSGObjects);
 
-            EditorPrefs.GetBool("SyncronizeGrids", SyncronizeGrids);
+            EditorPrefs.SetBool("SyncronizeGrids", SyncronizeGrids);
 
             EditorPrefs.SetBool("AllowDirectBrushDragging", AllowDirectBrushDragging);
 
