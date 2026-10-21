@@ -245,7 +245,7 @@ namespace RealtimeCSG
 
             UpdateOnSceneChange();
 
-            if (CSGSettings.SyncronizeUnityGrid)
+            if (CSGSettings.SyncronizeGrids)
             {
                 CSGSettings.SyncronizeGrid();
             }
