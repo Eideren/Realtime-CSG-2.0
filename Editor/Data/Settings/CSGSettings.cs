@@ -436,7 +436,7 @@ namespace RealtimeCSG
             }
         }
 
-        public static bool SyncronizeUnityGrid = true;
+        public static bool SyncronizeGrids = true;
 
         public static bool SnapNonCSGObjects = true;
 
@@ -840,6 +840,8 @@ namespace RealtimeCSG
 
             SnapNonCSGObjects = EditorPrefs.GetBool("SnapNonCSGObjects", true);
 
+            SyncronizeGrids = EditorPrefs.GetBool("SyncronizeGrids", false);
+
             AllowDirectBrushDragging = EditorPrefs.GetBool("AllowDirectBrushDragging", false);
             
             AllowTextureCoordinateDragging = EditorPrefs.GetBool("AllowTextureCoordinateDragging", true);
@@ -952,6 +954,8 @@ namespace RealtimeCSG
             EditorPrefs.SetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
 
             EditorPrefs.SetBool("SnapNonCSGObjects", SnapNonCSGObjects);
+
+            EditorPrefs.GetBool("SyncronizeGrids", SyncronizeGrids);
 
             EditorPrefs.SetBool("AllowDirectBrushDragging", AllowDirectBrushDragging);
 
