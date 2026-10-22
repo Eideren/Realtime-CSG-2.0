@@ -28,14 +28,13 @@ namespace RealtimeCSG
 
         private static void ActiveSceneChangedInEditMode(UnityEngine.SceneManagement.Scene _previousScene, UnityEngine.SceneManagement.Scene _nextScene)
         {
-            m_StylesInitialized = false;
+            //Call InitStyles when the scene changes to prevent icons from disapearing
+            InitStyles();
         }
 
         internal const int OPERATION_TYPE_COUNT = 3;
         internal const int SHAPE_MODE_COUNT = (int)ShapeMode.Last + 1;
         internal const int CLIP_TYPE_COUNT = 3;
-
-        private static bool m_StylesInitialized;
 
         public static string[] BrushEditModeNames;
         public static GUIContent[] BrushEditModeContent;
@@ -183,16 +182,10 @@ namespace RealtimeCSG
 
         private static void InitStyles()
         {
-            if(m_StylesInitialized)
-            {
-                return;
-            }
-
             Generated.EmbeddedAssets.LoadIcons();
 
             LoadGUIContent();
 
-            m_StylesInitialized = true;
             var defaultSkin = EditorGUIUtility.GetBuiltinSkin(EditorGUIUtility.isProSkin ? EditorSkin.Scene : EditorSkin.Inspector);
 
             Texture2D whiteTexture = MaterialUtility.CreateSolidColorTexture(8, 8, Color.white);
