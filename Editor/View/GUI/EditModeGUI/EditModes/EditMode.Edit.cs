@@ -2576,7 +2576,7 @@ namespace RealtimeCSG
                             break;
                         }
 
-                        if(!UpdateSelection())
+                        if(Event.current.button == 0 && !UpdateSelection())
                         {
                             if(_brushSelection.HaveSelection)
                             {

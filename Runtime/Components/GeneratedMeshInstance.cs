@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using MeshQuery = RealtimeCSG.Foundation.MeshQuery;
 using GeneratedMeshDescription = RealtimeCSG.Foundation.GeneratedMeshDescription;
+using static RealtimeCSG.EntityIdUtility;
 
 namespace InternalRealtimeCSG
 {
@@ -157,7 +158,7 @@ namespace InternalRealtimeCSG
 
         public bool IsValid()
         {
-            if((!physicsMaterial || physicsMaterial.GetInstanceID() != 0) && (!renderMaterial || renderMaterial.GetInstanceID() != 0))
+            if((!physicsMaterial || physicsMaterial.GetIntegerID() != 0) && (!renderMaterial || renderMaterial.GetIntegerID() != 0))
             {
                 if(sharedMesh)
                 {
@@ -166,7 +167,7 @@ namespace InternalRealtimeCSG
                         return false;
                     }
                 }
-                else if(!ReferenceEquals(sharedMesh, null) && sharedMesh.GetInstanceID() != 0)
+                else if(!ReferenceEquals(sharedMesh, null) && sharedMesh.GetIntegerID() != 0)
                 {
                     return false;
                 }
@@ -200,7 +201,7 @@ namespace InternalRealtimeCSG
                 {
                     if(physicsMaterial)
                     {
-                        meshDescription.surfaceParameter = physicsMaterial.GetInstanceID();
+                        meshDescription.surfaceParameter = physicsMaterial.GetIntegerID();
                     }
                 }
             }
@@ -210,14 +211,14 @@ namespace InternalRealtimeCSG
                 {
                     if(renderMaterial)
                     {
-                        meshDescription.surfaceParameter = renderMaterial.GetInstanceID();
+                        meshDescription.surfaceParameter = renderMaterial.GetIntegerID();
                     }
                 }
                 else if(!ReferenceEquals(physicsMaterial, null))
                 {
                     if(physicsMaterial)
                     {
-                        meshDescription.surfaceParameter = physicsMaterial.GetInstanceID();
+                        meshDescription.surfaceParameter = physicsMaterial.GetIntegerID();
                     }
                 }
             }

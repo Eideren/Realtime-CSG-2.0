@@ -567,6 +567,7 @@ namespace RealtimeCSG
 
         private static SurfaceState m_SurfaceState;
         private const int LIGHT_MAP_UV_BUTTON_OFFSET = 20;
+        private const int PRESET_ROW_OFFSET = 18;
 
         private const int BOX_OFFSET = 4;
         private const int BOX_WIDTH = 213;
@@ -575,12 +576,12 @@ namespace RealtimeCSG
         private const int TEXTURE_LOCKED_BOX_HEIGHT = 22;
         private const int SELECTION_BOX_HEIGHT = 22;
         private const int TRANSFORMATION_BOX_HEIGHT = 58;
-        private const int UV_COMMANDS_BOX_HEIGHT = 76;
+        private const int UV_COMMANDS_BOX_HEIGHT = 76 + PRESET_ROW_OFFSET;
         private const int SURFACE_FLAGS_BOX_HEIGHT = 56;
 
         private const int SURFACE_EDIT_TITLE_HEIGHT = 16;
 
-        private const int SURFACE_EDIT_WINDOW_HEIGHT = SURFACE_EDIT_TITLE_HEIGHT
+        internal const int SURFACE_EDIT_WINDOW_HEIGHT = SURFACE_EDIT_TITLE_HEIGHT
           + MATERIAL_VIEW_BOX_HEIGHT + BOX_OFFSET
           + TEXTURE_LOCKED_BOX_HEIGHT + BOX_OFFSET
           + SELECTION_BOX_HEIGHT + BOX_OFFSET
@@ -903,6 +904,77 @@ namespace RealtimeCSG
 
             TooltipUtility.SetToolTip(toolTipHalfScale, tempRect);
 
+            if (CSGSettings.Presets[PresetCategory.UV_Scale].Count > 0)
+            {
+                tempRect.Set(rect.x + 8, rect.y + offset + 75, 45, 16);
+                GUI.Label(tempRect, "Preset", EditorStyles.miniLabel);
+
+                float ButtonStartingOffset = rect.x + 57;
+                float ButtonAreaWidth = BOX_WIDTH - ButtonStartingOffset + 4;
+
+                float PresetButtonWidth = ButtonAreaWidth / (float)CSGSettings.Presets[PresetCategory.UV_Scale].Count;
+
+                for (int i = 0; i < CSGSettings.Presets[PresetCategory.UV_Scale].Count; i++)
+                {
+                    GUIStyle presetStyle = middleStyle;
+
+                    if (i == 0)
+                    {
+                        presetStyle = leftStyle;
+                    }
+                    else if (i == CSGSettings.Presets[PresetCategory.UV_Scale].Count - 1)
+                    {
+                        presetStyle = rightStyle;
+                    }
+
+                    string PresetString = CSGSettings.Presets[PresetCategory.UV_Scale][i].Label;
+
+                    if (string.IsNullOrEmpty(CSGSettings.Presets[PresetCategory.UV_Scale][i].Label) || string.IsNullOrWhiteSpace(CSGSettings.Presets[PresetCategory.UV_Scale][i].Label))
+                    {
+                        double RoundedPreset = Math.Round(CSGSettings.Presets[PresetCategory.UV_Scale][i].Value, 3);
+                        PresetString = RoundedPreset.ToString();
+                        if (RoundedPreset < 1.0d)
+                        {
+                            PresetString = PresetString.Replace("0.", ".");
+                        }
+                    }
+
+                    //Determine if all selected surfaces use the same UV scale
+                    bool AllSurfacesHaveSameUVScale = true;
+                    Vector2 FirstFoundScale = new Vector2(float.MaxValue, float.MaxValue);
+                    foreach (SelectedBrushSurface _surface in m_SurfaceState.selectedBrushSurfaces)
+                    {
+                        CSGBrush brush = _surface.brush;
+                        int surfaceIndex = _surface.surfaceIndex;
+                        int texGenIndex = brush.shape.surfaces[surfaceIndex].TexGenIndex;
+
+                        if (FirstFoundScale == new Vector2(float.MaxValue, float.MaxValue))
+                        {
+                            FirstFoundScale = brush.shape.texGens[texGenIndex].Scale;
+                        }
+                        else if (brush.shape.texGens[texGenIndex].Scale != FirstFoundScale)
+                        {
+                            AllSurfacesHaveSameUVScale = false;
+                            break;
+                        }
+                    }
+
+                    tempRect.Set(ButtonStartingOffset + (PresetButtonWidth * i), rect.y + offset + 75, PresetButtonWidth, 15);
+                    if (GUI.Toggle(tempRect, AllSurfacesHaveSameUVScale && FirstFoundScale == new Vector2(CSGSettings.Presets[PresetCategory.UV_Scale][i].Value, CSGSettings.Presets[PresetCategory.UV_Scale][i].Value), PresetString, presetStyle))
+                    {
+                        if (GUI.changed)
+                        {
+                            SurfaceUtility.SetScale(m_SurfaceState.selectedBrushSurfaces, CSGSettings.Presets[PresetCategory.UV_Scale][i].Value);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //Remove space that was allocated for presets
+                offset -= 18;
+            }
+
             offset += UV_COMMANDS_BOX_HEIGHT;
 
             offset += BOX_OFFSET;
@@ -946,7 +1018,7 @@ namespace RealtimeCSG
         {
             EditModeCommonGUI.StartToolGUI();
 
-            if(Event.current.type == EventType.Layout)
+            if (Event.current.type == EventType.Layout)
             {
                 m_SurfaceState = new SurfaceState();
                 m_SurfaceState.Init(tool);
@@ -1298,7 +1370,6 @@ namespace RealtimeCSG
 
         public static void OnSceneGUI(Rect windowRect, EditModeSurface tool)
         {
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
 
             float maxHeight = windowRect.height - 80;
@@ -1309,13 +1380,23 @@ namespace RealtimeCSG
 
             CSGModel[] models               = InternalCSGModelManager.Models;
             bool       needLightmapUVUpdate = EditModeCommonGUI.NeedLightmapUVUpdate(models);
-            int        originalHeight       = SURFACE_EDIT_WINDOW_HEIGHT + (needLightmapUVUpdate ? LIGHT_MAP_UV_BUTTON_OFFSET : 0);
+          
+            if (CSGSettings.UpdateLightmapUVButtonMode != CSGSettings.UpdateLightmapUVButtonState.InCSGToolWidow && CSGSettings.UpdateLightmapUVButtonMode != CSGSettings.UpdateLightmapUVButtonState.Both)
+            {
+                needLightmapUVUpdate = false;
+            }
+
+            int        originalHeight       = SURFACE_EDIT_WINDOW_HEIGHT + (needLightmapUVUpdate ? LIGHT_MAP_UV_BUTTON_OFFSET : 0) - (CSGSettings.Presets[PresetCategory.UV_Scale].Count <= 0 ? PRESET_ROW_OFFSET : 0);
             float      visibleHeight        = Math.Min(originalHeight, maxHeight);
             float      y                    = windowRect.height - visibleHeight; // 252
 
             Rect currentArea = sceneGUIRect;
             currentArea.y      = y;
             currentArea.height = visibleHeight;
+
+            //Padding to prevent clipping of left and bottom edge of surfaces window
+            currentArea.x += 10;
+            currentArea.y -= 10;
 
             Rect      boxArea               = currentArea;
             const int scrollbarWidth        = 10;
@@ -1335,6 +1416,7 @@ namespace RealtimeCSG
             }
 
             GUI.Box(boxArea, m_ContentSurfacesLabel, windowStyle);
+
             int windowControlID = GUIUtility.GetControlID(sceneViewSurfaceOverlayHash, FocusType.Keyboard, boxArea);
 
             currentArea.x     += 5;
@@ -1371,10 +1453,12 @@ namespace RealtimeCSG
             buttonArea.height =  13;
             buttonArea.width  =  13;
 
+            /*
             if(GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
             {
                 EditModeToolWindowSceneGUI.GetWindow();
             }
+            */
 
             TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
@@ -1437,7 +1521,6 @@ namespace RealtimeCSG
             m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModeSurface tool = EditModeManager.ActiveTool as EditModeSurface;
 
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
         }

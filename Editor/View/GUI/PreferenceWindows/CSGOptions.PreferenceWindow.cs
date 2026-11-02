@@ -7,19 +7,25 @@ namespace RealtimeCSG
 {
     internal class CSGOptionsPreferenceWindow
     {
+        public static bool ShowPresetSettings = false;
+
         public static void PreferenceWindow()
         {
             EditorGUI.BeginChangeCheck();
 
             CSGSettings.ShowTooltips       = EditorGUILayout.ToggleLeft("Show Tool-Tips", CSGSettings.ShowTooltips);
             CSGSettings.SnapNonCSGObjects  = EditorGUILayout.ToggleLeft("Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects);
+            CSGSettings.AllowDirectBrushDragging = EditorGUILayout.ToggleLeft("Allow Direct Brush Dragging", CSGSettings.AllowDirectBrushDragging);
+            CSGSettings.AllowTextureCoordinateDragging = EditorGUILayout.ToggleLeft("Allow Texture Coordinate Dragging", CSGSettings.AllowTextureCoordinateDragging);
             CSGSettings.AutoRigidbody      = EditorGUILayout.ToggleLeft("Disable auto add rigidbodies", CSGSettings.AutoRigidbody);
             CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft("Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs);
-
+            CSGSettings.UpdateLightmapUVButtonMode = (CSGSettings.UpdateLightmapUVButtonState)EditorGUILayout.EnumPopup("Lightmap UVs Button", CSGSettings.UpdateLightmapUVButtonMode);
+            
             EditorGUILayout.Space();
 
             CSGSettings.MaxCircleSides  = EditorGUILayout.IntField("Max Circle Sides", CSGSettings.MaxCircleSides);
             CSGSettings.MaxSphereSplits = EditorGUILayout.IntField("Max Sphere Splits", CSGSettings.MaxSphereSplits);
+            CSGSettings.DefaultUVScale = EditorGUILayout.FloatField("Default UV Scale", CSGSettings.DefaultUVScale);
 
             EditorGUILayout.Space();
 
@@ -42,7 +48,57 @@ namespace RealtimeCSG
 
             CSGSettings.ShowSceneInfo = EditorGUILayout.ToggleLeft("Show Scene Info", CSGSettings.ShowSceneInfo);
 
-            if(EditorGUI.EndChangeCheck())
+            EditorGUILayout.Space();
+
+            ShowPresetSettings = EditorGUILayout.Foldout(ShowPresetSettings, "Presets", EditorStyles.foldoutHeader);
+
+            if (ShowPresetSettings)
+            {
+                for (int i = 0; i < System.Enum.GetValues(typeof(PresetCategory)).Length; i++)
+                {
+                    if (CSGSettings.Presets == null)
+                    {
+                        CSGSettings.Presets = new Dictionary<PresetCategory, List<Preset>>();
+                    }
+
+                    if (CSGSettings.Presets.ContainsKey((PresetCategory)i) == false)
+                    {
+                        CSGSettings.Presets[(PresetCategory)i] = new List<Preset>();
+                    }
+
+                    string PresetName = ((PresetCategory)i).ToString().Replace("_", " ");
+
+                    EditorGUILayout.LabelField(PresetName, EditorStyles.label);
+
+                    for (int j = 0; j < CSGSettings.Presets[(PresetCategory)i].Count; j++)
+                    {
+                        EditorGUILayout.BeginHorizontal();
+
+                        float value = EditorGUILayout.FloatField($"#{j + 1}", CSGSettings.Presets[(PresetCategory)i][j].Value);
+
+                        GUIContent presetLabel = new GUIContent("Label");
+                        EditorGUILayout.LabelField(presetLabel, GUILayout.Width(GUI.skin.label.CalcSize(presetLabel).x));
+                        string label = EditorGUILayout.TextField(CSGSettings.Presets[(PresetCategory)i][j].Label);
+
+                        CSGSettings.Presets[(PresetCategory)i][j] = new Preset(label, value);
+
+                        if (GUILayout.Button("X", GUILayout.Width(50)))
+                        {
+                            CSGSettings.Presets[(PresetCategory)i].RemoveAt(j);
+                            break;
+                        }
+
+                        EditorGUILayout.EndHorizontal();
+                    }
+
+                    if (GUILayout.Button($"Add {PresetName} Preset"))
+                    {
+                        CSGSettings.Presets[(PresetCategory)i].Add(new Preset("", 1.0f));
+                    }
+                }
+            }
+
+            if (EditorGUI.EndChangeCheck())
             {
                 CSGSettings.Save();
             }

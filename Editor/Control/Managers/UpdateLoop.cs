@@ -34,7 +34,7 @@ namespace RealtimeCSG
 
         private void Initialize()
         {
-            if(_initialized)
+            if (_initialized)
             {
                 return;
             }
@@ -56,10 +56,25 @@ namespace RealtimeCSG
 
             PrefabStage.prefabSaving += OnPrefabSaving;
 
+#if UNITY_6000_4_OR_NEWER
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemByEntityIdOnGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI += HierarchyWindowItemGUI.OnHierarchyWindowItemByEntityIdOnGUI;
+#else
             EditorApplication.hierarchyWindowItemOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
+#endif
+
+#if UNITY_6000_5_OR_NEWER
+            Unity.Hierarchy.Editor.HierarchyWindow.BindView -= HierarchyWindowItemGUI.OnBindView;
+            Unity.Hierarchy.Editor.HierarchyWindow.BindView += HierarchyWindowItemGUI.OnBindView;
+
+            Unity.Hierarchy.Editor.HierarchyWindow.BindViewItem -= HierarchyWindowItemGUI.OnBindViewItem;
+            Unity.Hierarchy.Editor.HierarchyWindow.BindViewItem += HierarchyWindowItemGUI.OnBindViewItem;
+#endif
 
             UnityCompilerDefineManager.UpdateUnityDefines();
+
+            InternalCSGModelManagerSystem.LazyInitialize();
         }
 
         private void OnPrefabSaving(GameObject obj)
@@ -84,7 +99,11 @@ namespace RealtimeCSG
 
             EditorApplication.update                   -= OnFirstUpdate;
             EditorApplication.hierarchyChanged         -= OnHierarchyWindowChanged;
+#if UNITY_6000_4_OR_NEWER
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemByEntityIdOnGUI;
+#else
             EditorApplication.hierarchyWindowItemOnGUI -= HierarchyWindowItemGUI.OnHierarchyWindowItemOnGUI;
+#endif
 
             SceneView.duringSceneGui -= SceneViewEventHandler.OnScene;
             Undo.undoRedoPerformed   -= UndoRedoPerformed;
@@ -100,6 +119,8 @@ namespace RealtimeCSG
             {
                 SceneToolRenderer.Cleanup();
             }
+
+            InternalCSGModelManagerSystem.Cleanup();
         }
 
         private static Scene m_CurrentScene;
@@ -231,6 +252,7 @@ namespace RealtimeCSG
                     ColorSettings.Update();
                 }
 
+                InternalCSGModelManagerSystem.Tick();
                 InternalCSGModelManager.CheckForChanges();
                 TooltipUtility.CleanCache();
             }

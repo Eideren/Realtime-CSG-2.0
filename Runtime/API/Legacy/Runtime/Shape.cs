@@ -14,21 +14,21 @@ namespace RealtimeCSG.Legacy
     public sealed class Shape
     {
         /// <value>Version of the Shape</value>
-        [SerializeField] public float version = 1.0f;
+        [SerializeField, FormerlySerializedAs("Version")] public float version = 1.0f;
 
         /// <value>An array of <see cref="RealtimeCSG.Legacy.Surface"/>s, one for each polygon.</value>
         /// <remarks><see cref="RealtimeCSG.Legacy.Surface"/> are used to store information about the orientation of the polygons that are associated with this surface.</remarks>
-        [SerializeField]
+        [SerializeField, FormerlySerializedAs("Surfaces")]
         public Surface[] surfaces = Array.Empty<Surface>();
 
         /// <value>An array of <see cref="RealtimeCSG.Legacy.TexGen"/>s, one for each polygon.</value>
         /// <remarks><see cref="RealtimeCSG.Legacy.TexGen"/> are used to generate texture coordinates for the polygons that are associated with this surface.</remarks>
-        [SerializeField]
+        [SerializeField, FormerlySerializedAs("TexGens")]
         public TexGen[] texGens = Array.Empty<TexGen>();
 
         /// <value>An array of <see cref="RealtimeCSG.Legacy.TexGenFlags"/>s, one for each polygon.</value>
         /// <remarks><see cref="RealtimeCSG.Legacy.TexGenFlags"/> are used to define if a polygon is visible, part of a collision mesh etc.</remarks>
-        [SerializeField]
+        [SerializeField, FormerlySerializedAs("TexGenFlags")]
         public TexGenFlags[] texGenFlags = Array.Empty<TexGenFlags>();
 
         // Do not use this anymore, it's deprecated

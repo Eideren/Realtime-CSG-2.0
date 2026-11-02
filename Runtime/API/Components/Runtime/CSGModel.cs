@@ -37,7 +37,7 @@ namespace RealtimeCSG.Components
           | ModelSettingsFlags.AutoUpdateRigidBody;
 
         /// <value>The version number of this instance of a <see cref="CSGModel" /></value>
-        [HideInInspector] public float version = CURRENT_VERSION;
+        [HideInInspector, FormerlySerializedAs("Version")] public float version = CURRENT_VERSION;
 
         public bool IsRenderable
         {
@@ -127,11 +127,11 @@ namespace RealtimeCSG.Components
 
 #region Settings
 
-        [EnumAsFlags] public ModelSettingsFlags settings = DefaultSettings;
-        [EnumAsFlags] public VertexChannelFlags vertexChannels = VertexChannelFlags.All;
-        [EnumAsFlags] public ReceiveGI receiveGI = ReceiveGI.Lightmaps;
+        [EnumAsFlags, FormerlySerializedAs("Settings")] public ModelSettingsFlags settings = DefaultSettings;
+        [EnumAsFlags, FormerlySerializedAs("VertexChannels")] public VertexChannelFlags vertexChannels = VertexChannelFlags.All;
+        [EnumAsFlags, FormerlySerializedAs("ReceiveGI")] public ReceiveGI receiveGI = ReceiveGI.Lightmaps;
 
-        [EnumAsFlags] public MeshColliderCookingOptions meshColliderCookingOptions =
+        [EnumAsFlags, FormerlySerializedAs("MeshColliderCookingOptions")] public MeshColliderCookingOptions meshColliderCookingOptions =
             MeshColliderCookingOptions.CookForFasterSimulation |
             MeshColliderCookingOptions.EnableMeshCleaning |
             MeshColliderCookingOptions.WeldColocatedVertices;
@@ -142,8 +142,8 @@ namespace RealtimeCSG.Components
 
 #if UNITY_EDITOR
 
-        public bool showGeneratedMeshes;
-        public PhysicsMaterial defaultPhysicsMaterial;
+        [FormerlySerializedAs("ShowGeneratedMeshes")] public bool showGeneratedMeshes;
+        [FormerlySerializedAs("DefaultPhysicsMaterial")] public PhysicsMaterial defaultPhysicsMaterial;
 
 #endif
 
@@ -191,6 +191,9 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnEnabled(this);
             }
+
+            UnityEditor.SceneVisibilityManager.visibilityChanged += OnSceneVisibilityChanged;
+            UnityEditor.SceneVisibilityManager.pickingChanged += OnScenePickingChanged;
         }
 
         internal void OnDisable()
@@ -199,6 +202,9 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnDisabled(this);
             }
+
+            UnityEditor.SceneVisibilityManager.visibilityChanged -= OnSceneVisibilityChanged;
+            UnityEditor.SceneVisibilityManager.pickingChanged -= OnScenePickingChanged;
         }
 
         internal void OnDestroy()
@@ -207,6 +213,9 @@ namespace RealtimeCSG.Components
             {
                 CSGSceneManagerRedirector.Interface.OnDestroyed(this);
             }
+
+            UnityEditor.SceneVisibilityManager.visibilityChanged -= OnSceneVisibilityChanged;
+            UnityEditor.SceneVisibilityManager.pickingChanged -= OnScenePickingChanged;
         }
 
         internal void OnTransformChildrenChanged()
@@ -234,8 +243,46 @@ namespace RealtimeCSG.Components
                 CSGSceneManagerRedirector.Interface.OnUpdate(this);
             }
         }
+
+        void OnSceneVisibilityChanged()
+        {
+            //Ensure children match model's scene visibility
+            if (UnityEditor.SceneVisibilityManager.instance.IsHidden(gameObject))
+            {
+                if (UnityEditor.SceneVisibilityManager.instance.AreAllDescendantsHidden(gameObject) == false)
+                {
+                    UnityEditor.SceneVisibilityManager.instance.Hide(gameObject, true);
+                }
+            }
+            else
+            {
+                if (UnityEditor.SceneVisibilityManager.instance.AreAllDescendantsVisible(gameObject) == false)
+                {
+                    UnityEditor.SceneVisibilityManager.instance.Show(gameObject, true);
+                }
+            }
+        }
+
+        void OnScenePickingChanged()
+        {
+            //Ensure children match model's scene pickability
+            if (UnityEditor.SceneVisibilityManager.instance.IsPickingDisabled(gameObject))
+            {
+                if (UnityEditor.SceneVisibilityManager.instance.IsPickingDisabledOnAllDescendants(gameObject) == false)
+                {
+                    UnityEditor.SceneVisibilityManager.instance.DisablePicking(gameObject, true);
+                }
+            }
+            else
+            {
+                if (UnityEditor.SceneVisibilityManager.instance.IsPickingEnabledOnAllDescendants(gameObject) == false)
+                {
+                    UnityEditor.SceneVisibilityManager.instance.EnablePicking(gameObject, true);
+                }
+            }
+        }
 #endif
 
-#endregion
+        #endregion
     }
 }

@@ -33,7 +33,6 @@ namespace RealtimeCSG
             m_DoCommit = false; // unity bug workaround
             m_DoCancel = false; // unity bug workaround
 
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
@@ -60,10 +59,12 @@ namespace RealtimeCSG
             buttonArea.height =  13;
             buttonArea.width  =  13;
 
+            /*
             if(GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
             {
                 EditModeToolWindowSceneGUI.GetWindow();
             }
+            */
 
             TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
@@ -304,7 +305,6 @@ namespace RealtimeCSG
             m_DoCommit = false; // unity bug workaround
             m_DoCancel = false; // unity bug workaround
 
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
 

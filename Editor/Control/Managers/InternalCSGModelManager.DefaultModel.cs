@@ -132,9 +132,7 @@ namespace RealtimeCSG
                 transform.localRotation = Quaternion.identity;
 
                 const StaticEditorFlags defaultFlags = StaticEditorFlags.BatchingStatic |
-                    StaticEditorFlags.NavigationStatic |
                     StaticEditorFlags.OccludeeStatic |
-                    StaticEditorFlags.OffMeshLinkGeneration |
                     StaticEditorFlags.ReflectionProbeStatic;
 
                 GameObjectUtility.SetStaticEditorFlags(sceneState.defaultModel.gameObject, defaultFlags);

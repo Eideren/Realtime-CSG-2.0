@@ -19,7 +19,6 @@ namespace RealtimeCSG
 
         public static void OnSceneGUI(EditModePlace tool)
         {
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
@@ -47,10 +46,12 @@ namespace RealtimeCSG
             buttonArea.height =  13;
             buttonArea.width  =  13;
 
+            /*
             if(GUI.Button(buttonArea, GUIContent.none, "ToolbarSearchCancelButton"))
             {
                 EditModeToolWindowSceneGUI.GetWindow();
             }
+            */
 
             TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
@@ -122,7 +123,6 @@ namespace RealtimeCSG
             m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModePlace tool = EditModeManager.ActiveTool as EditModePlace;
 
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
         }
@@ -201,9 +201,12 @@ namespace RealtimeCSG
 
                     InternalCSGModelManager.CheckForChanges();
                     EditorApplication.RepaintHierarchyWindow();
+#if UNITY_6000_5_OR_NEWER
+                    HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
                 }
 
-                if(passThroughValue)
+                if (passThroughValue)
                 {
                     operationType = (CSGOperationType)255;
                 }
@@ -232,6 +235,9 @@ namespace RealtimeCSG
 
                 InternalCSGModelManager.CheckForChanges();
                 EditorApplication.RepaintHierarchyWindow();
+#if UNITY_6000_5_OR_NEWER
+                HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
             }
 
             GUILayout.EndVertical();

@@ -67,7 +67,7 @@ namespace RealtimeCSG
             }
             else
             {
-                SceneViewBottomBarGUI.ShowGUI(sceneView);
+                //SceneViewBottomBarGUI.ShowGUI(sceneView);
                 SceneViewInfoGUI.DrawInfoGUI(sceneView);
             }
 
@@ -77,7 +77,7 @@ namespace RealtimeCSG
 
             if(Event.current.type == EventType.Repaint)
             {
-                SceneViewBottomBarGUI.ShowGUI(sceneView, false);
+                //SceneViewBottomBarGUI.ShowGUI(sceneView, false);
                 SceneViewInfoGUI.DrawInfoGUI(sceneView);
             }
 

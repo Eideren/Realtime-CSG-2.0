@@ -417,7 +417,7 @@ namespace RealtimeCSG
             // we keep adding parents, and their parents until we hit the root-objects
             for(int i = 0; i < selected.Count; i++)
             {
-                selectedIDs.Add(selected[i].GetInstanceID());
+                selectedIDs.Add(selected[i].GetIntegerID());
                 Transform transform = selected[i].transform;
                 Transform parent    = transform.parent;
 
@@ -448,7 +448,7 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        if(selectedIDs.Contains(gameObject.GetInstanceID()))
+                        if(selectedIDs.Contains(gameObject.GetIntegerID()))
                         {
                             continue;
                         }
@@ -472,23 +472,22 @@ namespace RealtimeCSG
 
             gameobject = SceneQueryUtility.FindSelectionBase(gameobject);
 
-            // TODO: convert to entityIds
-            List<int> selectedObjectsOnClick = new List<int>(Selection.instanceIDs);
-            bool      addedSelection         = false;
+            List<EntityId> selectedObjectsOnClick = new List<EntityId>(Selection.entityIds);
+            bool addedSelection = false;
 
             if(EditorGUI.actionKey)
             {
                 if(gameobject != null)
                 {
-                    int instanceID = gameobject.GetInstanceID();
-
-                    if(selectedObjectsOnClick.Contains(instanceID))
+                    EntityId entityID = gameobject.GetEntityId();
+                    
+                    if (selectedObjectsOnClick.Contains(entityID))
                     {
-                        selectedObjectsOnClick.Remove(instanceID);
+                        selectedObjectsOnClick.Remove(entityID);
                     }
                     else
                     {
-                        selectedObjectsOnClick.Add(instanceID);
+                        selectedObjectsOnClick.Add(entityID);
                         addedSelection = true;
                     }
 
@@ -498,8 +497,7 @@ namespace RealtimeCSG
                     }
                     else
                     {
-                        // TODO: convert to entityIds
-                        Selection.instanceIDs = selectedObjectsOnClick.ToArray();
+                        Selection.entityIds = selectedObjectsOnClick.ToArray();
                     }
                 }
             }
@@ -507,11 +505,10 @@ namespace RealtimeCSG
             {
                 if(gameobject != null)
                 {
-                    int instanceID = gameobject.GetInstanceID();
-                    selectedObjectsOnClick.Add(instanceID);
+                    EntityId entityID = gameobject.GetEntityId();
+                    selectedObjectsOnClick.Add(entityID);
 
-                    // TODO: convert to entityIds
-                    Selection.instanceIDs = selectedObjectsOnClick.ToArray();
+                    Selection.entityIds = selectedObjectsOnClick.ToArray();
                     addedSelection        = true;
                 }
             }
@@ -519,11 +516,10 @@ namespace RealtimeCSG
             {
                 if(gameobject != null)
                 {
-                    int instanceID = gameobject.GetInstanceID();
-                    selectedObjectsOnClick.Remove(instanceID);
+                    EntityId entityID = gameobject.GetEntityId();
+                    selectedObjectsOnClick.Remove(entityID);
 
-                    // TODO: convert to entityIds
-                    Selection.instanceIDs = selectedObjectsOnClick.ToArray();
+                    Selection.entityIds = selectedObjectsOnClick.ToArray();
 
                     return;
                 }

@@ -14,9 +14,7 @@ namespace RealtimeCSG
         {
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
             GUILayout.Label(content, width65);
-            GUI.enabled = false;
             value       = EditorGUILayout.FloatField(Mathf.Clamp(value, minValue, maxValue));
-            GUI.enabled = true;
 
             if(GUILayout.Button("-", "buttonleft", width25))
             {
@@ -37,9 +35,7 @@ namespace RealtimeCSG
         {
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
             GUILayout.Label(content, width65);
-            GUI.enabled = false;
             value       = EditorGUILayout.IntField(Mathf.Clamp(value, minValue, maxValue));
-            GUI.enabled = true;
 
             if(GUILayout.Button("-", "buttonleft", width25))
             {
@@ -213,7 +209,6 @@ namespace RealtimeCSG
 
         public static bool OnShowGUI(GeneratorCylinder generator, bool isSceneGUI)
         {
-            CsgguiStyleUtility.InitStyles();
             OnGUIContents(generator, isSceneGUI);
 
             return true;

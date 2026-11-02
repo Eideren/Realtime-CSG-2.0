@@ -50,6 +50,26 @@ namespace RealtimeCSG
       , Split
     }
 
+    public enum PresetCategory
+    {
+        UV_Scale,
+        Grid_Size,
+        Angle_Snap,
+        Scale_Snap
+    }
+
+    public class Preset
+    {
+        public Preset(string _label, float _value)
+        {
+            Label = _label;
+            Value = _value;
+        }
+
+        public string Label;
+        public float Value;
+    }
+
     public static class CSGSettings
     {
         public static bool ShowVisibleSurfaces
@@ -249,7 +269,25 @@ namespace RealtimeCSG
         public static float DefaultShapeHeight = 1.0f;
         public static uint CurveSides = 10;
         public static ClipMode ClipMode = ClipMode.RemovePositive;
-        public static Material DefaultMaterial = MaterialUtility.WallMaterial;
+        public static Material DefaultMaterial
+        {
+            get
+            {
+                if (EditMode == ToolEditMode.Generate && GeneratorBase.MatchedMaterial != null)
+                {
+                    return GeneratorBase.MatchedMaterial;
+                }
+
+                return SelectedMaterial;
+            }
+
+            set
+            {
+                SelectedMaterial = value;
+            }
+        }
+
+        public static Material SelectedMaterial = MaterialUtility.WallMaterial;
 
         private const TexGenFlags DEFAULT_TEXT_GEN_FLAGS_STATE = TexGenFlags.WorldSpaceTexture;
         public static TexGenFlags DefaultTexGenFlags = DEFAULT_TEXT_GEN_FLAGS_STATE;
@@ -289,6 +327,98 @@ namespace RealtimeCSG
         public static bool HiddenSurfacesNotSelectable = true;
 
         public static bool ShowTooltips = true;
+
+        public static bool AllowDirectBrushDragging = false;
+        public static bool AllowTextureCoordinateDragging = false;
+
+        public static Dictionary<PresetCategory, List<Preset>> Presets
+        {
+            get
+            {
+                if(m_presets == null)
+                {
+                    m_presets = new Dictionary<PresetCategory, List<Preset>>();
+                }
+
+                if (m_presets.Count == 0)
+                {
+                    for (int i = 0; i < Enum.GetValues(typeof(PresetCategory)).Length; i++)
+                    {
+                        PresetCategory category = (PresetCategory)i;
+
+                        m_presets.TryAdd(category, new List<Preset>());
+
+                        //Set Default Values
+                        switch(category)
+                        {
+                            case PresetCategory.Grid_Size:
+                                m_presets[category].Add(new Preset("", 1.0f));
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+
+                            case PresetCategory.Angle_Snap:
+                                m_presets[category].Add(new Preset("", 45.0f));
+                                m_presets[category].Add(new Preset("", 22.5f));
+                                m_presets[category].Add(new Preset("", 11.25f));
+                                m_presets[category].Add(new Preset("", 5.625f));
+                                break;
+
+                            case PresetCategory.Scale_Snap:
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+
+                            case PresetCategory.UV_Scale:
+                                m_presets[category].Add(new Preset("", 1.0f));
+                                m_presets[category].Add(new Preset("", 0.5f));
+                                m_presets[category].Add(new Preset("", 0.25f));
+                                m_presets[category].Add(new Preset("", 0.125f));
+                                break;
+                        }
+                    }
+                }
+
+                return m_presets;
+            }
+
+            set
+            {
+                m_presets = value;
+            }
+        }
+
+        private static Dictionary<PresetCategory, List<Preset>> m_presets = new Dictionary<PresetCategory, List<Preset>>();
+        public enum UpdateLightmapUVButtonState
+        {
+            BottomBar,
+            InCSGToolWidow,
+            Both,
+            Hidden
+        }
+
+        static public UpdateLightmapUVButtonState UpdateLightmapUVButtonMode = UpdateLightmapUVButtonState.BottomBar;
+
+        static public float DefaultUVScale = 1.0f;
+
+        static public Vector2 InitalUVScale
+        {
+            get
+            {
+                bool MatchingSurface = EditorPrefs.GetBool("GenerateUsingSurfaceMaterial", false);
+
+                if (MatchingSurface == true && EditMode == ToolEditMode.Generate)
+                {
+                    return GeneratorBase.MatchedUVScale;
+                }
+                else
+                {
+                    return new Vector2(DefaultUVScale, DefaultUVScale);
+                }
+            }
+        }
 
         public static bool DefaultPreserveUVs
         {
@@ -526,7 +656,7 @@ namespace RealtimeCSG
 
                 for(int j = 0; j < sceneViews.Count; j++)
                 {
-                    if(!ArrayUtility.Contains(ids, sceneViews[j].GetInstanceID()))
+                    if(!ArrayUtility.Contains(ids, sceneViews[j].GetIntegerID()))
                     {
                         foundAll = false;
 
@@ -559,14 +689,14 @@ namespace RealtimeCSG
                             continue;
                         }
 
-                        wireframeInstanceIDs[j] = sceneViews[j].GetInstanceID();
+                        wireframeInstanceIDs[j] = sceneViews[j].GetIntegerID();
                     }
                 }
             }
 
             for(int i = 0; i < sceneViews.Count; i++)
             {
-                if(ArrayUtility.Contains(wireframeInstanceIDs, sceneViews[i].GetInstanceID()))
+                if(ArrayUtility.Contains(wireframeInstanceIDs, sceneViews[i].GetIntegerID()))
                 {
                     wireframeSceneviews.Add(sceneViews[i].name);
                 }
@@ -702,9 +832,15 @@ namespace RealtimeCSG
 
             AutoRigidbody = EditorPrefs.GetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 
+            DefaultUVScale = EditorPrefs.GetFloat("DefaultUVScale", 1.0f);
+
             DefaultPreserveUVs = EditorPrefs.GetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
 
             SnapNonCSGObjects = EditorPrefs.GetBool("SnapNonCSGObjects", true);
+
+            AllowDirectBrushDragging = EditorPrefs.GetBool("AllowDirectBrushDragging", false);
+            
+            AllowTextureCoordinateDragging = EditorPrefs.GetBool("AllowTextureCoordinateDragging", true);
 
             AutoCommitExtrusion = EditorPrefs.GetBool("AutoCommitExtrusion", false);
 
@@ -733,6 +869,21 @@ namespace RealtimeCSG
             LinearStairsHeight       = EditorPrefs.GetFloat("LinearStairsHeight", 16.0f);
             LinearStairsLengthOffset = EditorPrefs.GetFloat("LinearStairsLengthOffset", 0.0f);
             LinearStairsHeightOffset = EditorPrefs.GetFloat("LinearStairsHeightOffset", 0.0f);
+
+            Dictionary<PresetCategory, List<Preset>> loadedPresets = new Dictionary<PresetCategory, List<Preset>>();
+
+            try
+            {
+                loadedPresets = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<PresetCategory, List<Preset>>>(EditorPrefs.GetString("CSGPresets"));
+            }
+            catch
+            {
+                loadedPresets = new Dictionary<PresetCategory, List<Preset>>();
+            }
+
+            Presets = loadedPresets;
+  
+            UpdateLightmapUVButtonMode = (UpdateLightmapUVButtonState)EditorPrefs.GetInt("UpdateLightmapUVButtonMode", 1);
 
             DistanceUnit = GetEnum("DistanceUnit", DistanceUnit.Meters);
 
@@ -794,9 +945,15 @@ namespace RealtimeCSG
 
             EditorPrefs.SetBool("AutoRigidbody", (CSGModel.DefaultSettings & ModelSettingsFlags.AutoUpdateRigidBody) == ModelSettingsFlags.AutoUpdateRigidBody);
 
+            EditorPrefs.SetFloat("DefaultUVScale", DefaultUVScale);
+
             EditorPrefs.SetBool("DefaultPreserveUVs", (CSGModel.DefaultSettings & ModelSettingsFlags.PreserveUVs) == ModelSettingsFlags.PreserveUVs);
 
             EditorPrefs.SetBool("SnapNonCSGObjects", SnapNonCSGObjects);
+
+            EditorPrefs.SetBool("AllowDirectBrushDragging", AllowDirectBrushDragging);
+
+            EditorPrefs.SetBool("AllowTextureCoordinateDragging", AllowTextureCoordinateDragging);
 
             EditorPrefs.SetBool("AutoCommitExtrusion", AutoCommitExtrusion);
 
@@ -826,6 +983,10 @@ namespace RealtimeCSG
             EditorPrefs.SetFloat("LinearStairsHeight", LinearStairsHeight);
             EditorPrefs.SetFloat("LinearStairsLengthOffset", LinearStairsLengthOffset);
             EditorPrefs.SetFloat("LinearStairsHeightOffset", LinearStairsHeightOffset);
+
+            EditorPrefs.SetString("CSGPresets", Newtonsoft.Json.JsonConvert.SerializeObject(Presets));
+  
+            EditorPrefs.SetInt("UpdateLightmapUVButtonMode", (int)UpdateLightmapUVButtonMode);
 
             SetMaterial("DefaultMaterial", DefaultMaterial);
 

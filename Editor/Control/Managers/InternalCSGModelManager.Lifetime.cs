@@ -121,7 +121,8 @@ namespace RealtimeCSG
                     forceHierarchyUpdate = true;
                     m_IsInitialized      = true;
 
-                    OnHierarchyModified();
+                    //OnHierarchyModified();
+                    m_IsHierarchyModified = true;
                     UpdateRemoteMeshes();
                 }
 
@@ -134,7 +135,6 @@ namespace RealtimeCSG
 
                 if(m_IsHierarchyModified || forceHierarchyUpdate)
                 {
-                    OnHierarchyModified();
                     OnHierarchyModified();
                     m_IsHierarchyModified = false;
                 }

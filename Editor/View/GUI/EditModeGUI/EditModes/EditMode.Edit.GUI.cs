@@ -19,7 +19,6 @@ namespace RealtimeCSG
 
         public static void OnSceneGUI(EditModeMeshEdit tool)
         {
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             GUILayout.BeginHorizontal(CsgguiStyleUtility.contentEmpty);
 
@@ -46,10 +45,12 @@ namespace RealtimeCSG
             buttonArea.height =  13;
             buttonArea.width  =  13;
 
+            /*
             if(GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
             {
                 EditModeToolWindowSceneGUI.GetWindow();
             }
+            */
 
             TooltipUtility.SetToolTip(CsgguiStyleUtility.popOutTooltip, buttonArea);
 
@@ -120,7 +121,6 @@ namespace RealtimeCSG
         {
             m_LastGuiRect = Rect.MinMaxRect(-1, -1, -1, -1);
             EditModeMeshEdit tool = EditModeManager.ActiveTool as EditModeMeshEdit;
-            CsgguiStyleUtility.InitStyles();
             InitLocalStyles();
             OnGUIContents(false, tool);
         }
@@ -199,9 +199,12 @@ namespace RealtimeCSG
 
                         InternalCSGModelManager.CheckForChanges();
                         EditorApplication.RepaintHierarchyWindow();
+#if UNITY_6000_5_OR_NEWER
+                        HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
                     }
 
-                    if(passThroughValue)
+                    if (passThroughValue)
                     {
                         operationType = (CSGOperationType)255;
                     }
@@ -230,6 +233,9 @@ namespace RealtimeCSG
 
                     InternalCSGModelManager.CheckForChanges();
                     EditorApplication.RepaintHierarchyWindow();
+#if UNITY_6000_5_OR_NEWER
+                    HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
                 }
             }
 

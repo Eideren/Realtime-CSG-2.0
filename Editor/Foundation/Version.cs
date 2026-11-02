@@ -1,9 +1,14 @@
 namespace RealtimeCSG.Foundation
 {
-    // TODO: automatically retrieve version from package version
-    internal static class Versioning
+    public struct Version
     {
-        public const string PLUGIN_VERSION = "2_000";
-        public const string PLUGIN_DLL_VERSION = "1_559";
+        public byte Major { get; set; }
+        public byte Minor { get; set; }
+        public byte Revision { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Major}.{Minor}.{Revision}";
+        }
     }
 }

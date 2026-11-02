@@ -759,7 +759,7 @@ namespace InternalRealtimeCSG
 
             if(meshDescription.surfaceParameter != 0)
             {
-                Object obj = EditorUtility.EntityIdToObject(meshDescription.surfaceParameter);
+                Object obj = EntityIdUtility.IntegerIDToObject(meshDescription.surfaceParameter);
 
                 if(obj)
                 {
@@ -871,7 +871,7 @@ namespace InternalRealtimeCSG
             }
 
             sharedMesh      = new Mesh();
-            sharedMesh.name = $"<{baseName} generated {sharedMesh.GetInstanceID()}>";
+            sharedMesh.name = $"<{baseName} generated {sharedMesh.GetIntegerID()}>";
             sharedMesh.MarkDynamic();
 
             if(editorOnly)
@@ -890,6 +890,19 @@ namespace InternalRealtimeCSG
             StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(model.gameObject);
 
             return (staticFlags & StaticEditorFlags.ContributeGI) == StaticEditorFlags.ContributeGI;
+        }
+
+        public static bool DoesAnyModelUseLightmapUVs()
+        {
+            foreach(CSGModel _model in InternalCSGModelManager.Models)
+            {
+                if(UsesLightmapUVs(_model) == true)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static bool NeedToGenerateLightmapUVsForModel(CSGModel model)
@@ -1073,17 +1086,6 @@ namespace InternalRealtimeCSG
 
             StaticEditorFlags meshStaticFlags = modelStaticFlags;
 
-            bool walkable = renderSurfaceType !=
-                RenderSurfaceType.Hidden &&
-                renderSurfaceType != RenderSurfaceType.ShadowOnly &&
-                renderSurfaceType != RenderSurfaceType.Culled &&
-                renderSurfaceType != RenderSurfaceType.Trigger;
-
-            if(!walkable) // TODO: fix navigation flags
-            {
-                meshStaticFlags &= ~StaticEditorFlags.NavigationStatic;
-            }
-
             // This fixes a bug in 2018.3 where it tries to generate lightmaps for ShadowOnly surfaces ..
             // .. but then rage quits because it doesn't have any normals
             if(renderSurfaceType == RenderSurfaceType.ShadowOnly)
@@ -1222,10 +1224,6 @@ namespace InternalRealtimeCSG
             {
                 instance.hideFlags = meshInstanceFlags;
             }
-
-            bool showVisibleSurfaces = instance.renderSurfaceType != RenderSurfaceType.Normal || (CSGSettings.VisibleHelperSurfaces & HelperSurfaceFlags.ShowVisibleSurfaces) != 0;
-
-            CSGVisibilityUtility.SetGameObjectVisibility(gameObject, showVisibleSurfaces);
 
             if(!instance.enabled)
             {
@@ -1536,11 +1534,6 @@ namespace InternalRealtimeCSG
                     meshColliderComponent = gameObject.GetComponent<MeshCollider>();
                 }
 
-                if(meshColliderComponent && !meshColliderComponent.enabled)
-                {
-                    meshColliderComponent.enabled = true;
-                }
-
                 if(!meshColliderComponent)
                 {
                     meshColliderComponent                 = gameObject.AddComponent<MeshCollider>();
@@ -1600,11 +1593,9 @@ namespace InternalRealtimeCSG
                     meshColliderComponent.sharedMesh = instance.sharedMesh;
                 }
 
-                // .. for some reason this fixes mesh-colliders not being found with ray-casts in the editor?
                 if(instance.dirty)
                 {
-                    meshColliderComponent.enabled = false;
-                    meshColliderComponent.enabled = true;
+                    InternalCSGModelManagerSystem.FlagMeshColliderForCooking(meshColliderComponent);
                 }
             }
             else
@@ -2232,11 +2223,6 @@ namespace InternalRealtimeCSG
                     if(!meshInstance)
                     {
                         continue;
-                    }
-
-                    if(meshInstance.renderSurfaceType == RenderSurfaceType.Normal)
-                    {
-                        CSGVisibilityUtility.SetGameObjectVisibility(meshInstance.gameObject, showVisibleSurfaces);
                     }
 
                     StaticEditorFlags oldStaticFlags = GameObjectUtility.GetStaticEditorFlags(meshInstance.gameObject);

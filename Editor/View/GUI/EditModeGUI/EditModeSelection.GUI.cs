@@ -13,8 +13,6 @@ namespace RealtimeCSG
 
         public static float OnEditModeSelectionGUI()
         {
-            CsgguiStyleUtility.InitStyles();
-
             EditorGUI.BeginChangeCheck();
 
             ToolEditMode newEditMode = (ToolEditMode)CSGEditorGUIUtility.ToolbarWrapped((int)EditModeManager.EditMode, ref m_EditModeRects, out Rect editModeBounds, CsgguiStyleUtility.BrushEditModeContent, CsgguiStyleUtility.BrushEditModeTooltips);
@@ -48,22 +46,6 @@ namespace RealtimeCSG
             if(!SceneDragToolManager.IsDraggingObjectInScene)
             {
                 OnEditModeSelectionSceneGUI();
-            }
-
-            Rect viewRect = new Rect(4, 0, sceneView.rootVisualElement.contentRect.width, sceneView.rootVisualElement.contentRect.height - (CsgguiStyleUtility.BOTTOM_TOOL_BAR_HEIGHT + 4));
-
-            GUILayout.BeginArea(viewRect);
-
-            if(EditModeManager.ActiveTool != null)
-            {
-                EditModeManager.ActiveTool.OnSceneGUI(viewRect);
-            }
-
-            GUILayout.EndArea();
-
-            if(CSGSettings.EnableRealtimeCSG && !SceneDragToolManager.IsDraggingObjectInScene)
-            {
-                SceneViewBottomBarGUI.ShowGUI(sceneView, false);
             }
 
             GUI.skin = originalSkin;
@@ -102,8 +84,6 @@ namespace RealtimeCSG
 
         private static void OnEditModeSelectionSceneGUI()
         {
-            CsgguiStyleUtility.InitStyles();
-
             if(CsgguiStyleUtility.BrushEditModeNames == null || CsgguiStyleUtility.BrushEditModeNames.Length == 0)
             {
                 return;
@@ -115,18 +95,12 @@ namespace RealtimeCSG
 
             GUIStyle windowStyle = GUI.skin.window;
 
-            float topBarSize = 20;
+            float topBarSize = 5;
 
-            if(CSGPrefabUtility.AreInPrefabMode())
-            {
-                topBarSize += 25;
-            }
-
-            Rect bounds = new Rect(10, 10 + topBarSize, 500, 40);
+            Rect bounds = new Rect(6, topBarSize, 500, 40);
 
             GUILayout.BeginArea(bounds, contentTitleLabel, windowStyle);
 
-            CsgguiStyleUtility.InitStyles();
             EditorGUI.BeginChangeCheck();
 
             ToolEditMode newEditMode = (ToolEditMode)CSGEditorGUIUtility.ToolbarWrapped((int)EditModeManager.EditMode, ref m_EditModeRects, out Rect _, CsgguiStyleUtility.BrushEditModeContent, CsgguiStyleUtility.BrushEditModeTooltips, 20, bounds.width);
@@ -143,7 +117,7 @@ namespace RealtimeCSG
             buttonArea.height = 13;
             buttonArea.width  = 13;
 
-            if(GUI.Button(buttonArea, GUIContent.none, "SearchCancelButton"))
+            if (GUI.Button(buttonArea, EditorGUIUtility.IconContent("d_SearchJump Icon"), GUIStyle.none))
             {
                 EditModeToolWindowSceneGUI.GetWindow();
             }
@@ -279,7 +253,6 @@ namespace RealtimeCSG
                     }
                 }
 
-                CsgguiStyleUtility.InitStyles();
                 ShowRealtimeCSGDisabledMessage();
 
                 if(models.Length > 0 && models.Length == targets.Length)
@@ -512,9 +485,12 @@ namespace RealtimeCSG
 
                                 InternalCSGModelManager.CheckForChanges();
                                 EditorApplication.RepaintHierarchyWindow();
+#if UNITY_6000_5_OR_NEWER
+                                HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
                             }
 
-                            if(passThroughValue)
+                            if (passThroughValue)
                             {
                                 operationType = (CSGOperationType)255;
                             }
@@ -541,6 +517,9 @@ namespace RealtimeCSG
 
                             InternalCSGModelManager.CheckForChanges();
                             EditorApplication.RepaintHierarchyWindow();
+#if UNITY_6000_5_OR_NEWER
+                            HierarchyWindowItemGUI.RepaintHierarchy();
+#endif
                         }
                     }
 

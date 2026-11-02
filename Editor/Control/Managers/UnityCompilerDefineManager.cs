@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System.Text;
+using RealtimeCSG.Foundation;
 using UnityEditor.Build;
+using Version = RealtimeCSG.Foundation.Version;
 
 namespace RealtimeCSG
 {
@@ -14,7 +16,7 @@ namespace RealtimeCSG
 
         private static bool IsObsolete(Enum value)
         {
-            FieldInfo fi = value.GetType().GetField(value.ToString());
+            FieldInfo           fi         = value.GetType().GetField(value.ToString());
             ObsoleteAttribute[] attributes = (ObsoleteAttribute[])fi.GetCustomAttributes(typeof(ObsoleteAttribute), false);
 
             return attributes.Length > 0;
@@ -26,16 +28,11 @@ namespace RealtimeCSG
 
             requiredDefines.Add(REAL_TIME_CSG_DEFINE);
 
-            const string v                  = Foundation.Versioning.PLUGIN_VERSION;
-            int          index              = v.IndexOfAny(new[] { '_', '.' });
-            string       releaseVersionPart = v.Remove(index);
-            string       lowerPart          = v.Substring(index + 1);
-            string       majorVersionPart   = lowerPart.Remove(1);
-            string       minorVersionPart   = lowerPart.Substring(1);
+            Version v = VersionManager.Version;
 
-            string releaseVersion = $"{REAL_TIME_CSG_DEFINE}_{releaseVersionPart}";
-            string majorVersion   = $"{releaseVersion}_{majorVersionPart}";
-            string minorVersion   = $"{majorVersion}_{minorVersionPart}";
+            string releaseVersion = $"{REAL_TIME_CSG_DEFINE}_{v.Major}";
+            string majorVersion   = $"{releaseVersion}_{v.Minor}";
+            string minorVersion   = $"{majorVersion}_{v.Revision}";
 
             requiredDefines.Add(releaseVersion);
             requiredDefines.Add(majorVersion);
