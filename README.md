@@ -1,3 +1,5 @@
+**Looking for legacy support for versions of Unity older than 6.3? [Try our legacy repo](https://github.com/LogicalError/realtime-CSG-for-unity/blob/master/README.md)!**
+
 This GitHub page holds the updated version of the Unity plugin Realtime-CSG.
 
 If you use this plugin, please let us know, we'd love to see what you've done with it!
