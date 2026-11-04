@@ -280,7 +280,13 @@ namespace RealtimeCSG
 
                 if(targetNodes.Length > 0)
                 {
+                    if (targetNodes[0] == null)
+                    {
+                        return;
+                    }
+
                     GameObject gameObject = targetNodes[0].gameObject;
+
                     isPrefab                   = CSGPrefabUtility.IsPrefabAsset(gameObject);
                     prefabBehaviour            = targetNodes[0].prefabBehaviour;
                     prefabSourceAlignment      = targetNodes[0].prefabSourceAlignment;
