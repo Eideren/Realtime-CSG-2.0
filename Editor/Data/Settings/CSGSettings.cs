@@ -436,6 +436,8 @@ namespace RealtimeCSG
             }
         }
 
+        public static bool SyncronizeGrids = true;
+
         public static bool SnapNonCSGObjects = true;
 
         public static bool AutoRigidbody
@@ -838,6 +840,8 @@ namespace RealtimeCSG
 
             SnapNonCSGObjects = EditorPrefs.GetBool("SnapNonCSGObjects", true);
 
+            SyncronizeGrids = EditorPrefs.GetBool("SyncronizeGrids", false);
+
             AllowDirectBrushDragging = EditorPrefs.GetBool("AllowDirectBrushDragging", false);
             
             AllowTextureCoordinateDragging = EditorPrefs.GetBool("AllowTextureCoordinateDragging", true);
@@ -951,6 +955,8 @@ namespace RealtimeCSG
 
             EditorPrefs.SetBool("SnapNonCSGObjects", SnapNonCSGObjects);
 
+            EditorPrefs.SetBool("SyncronizeGrids", SyncronizeGrids);
+
             EditorPrefs.SetBool("AllowDirectBrushDragging", AllowDirectBrushDragging);
 
             EditorPrefs.SetBool("AllowTextureCoordinateDragging", AllowTextureCoordinateDragging);
@@ -1010,6 +1016,32 @@ namespace RealtimeCSG
             }
 
             EditorPrefs.SetString("Wireframe", builder.ToString());
+        }
+
+#endregion
+
+#region Grid
+        private static Vector3 LastGridSize;
+
+        public static void SyncronizeGrid()
+        {
+            bool GridChanged = false;
+
+            if (LastGridSize != EditorSnapSettings.gridSize)
+            {
+                GridChanged = true;
+
+                SnapVector = EditorSnapSettings.gridSize;
+
+                LastGridSize = EditorSnapSettings.gridSize;
+            }
+
+            if (GridChanged)
+            {
+                UpdateSnapSettings();
+                Save();
+                CSGEditorGUIUtility.RepaintAll();
+            }
         }
 
 #endregion

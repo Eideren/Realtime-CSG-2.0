@@ -744,7 +744,9 @@ namespace InternalRealtimeCSG
             GetGameObjectAndGeneratedMeshInstance(unusedInstances, meshDescription, out GameObject meshInstanceGameObject, out GeneratedMeshInstance meshInstance);
 
             meshInstance.Reset();
-            meshInstanceGameObject.SetActive(false);
+            
+            //meshInstanceGameObject.SetActive(false);
+
             meshInstanceGameObject.transform.SetParent(generatedMeshesTransform, false);
             meshInstanceGameObject.transform.localPosition = MathConstants.zeroVector3;
             meshInstanceGameObject.transform.localRotation = MathConstants.identityQuaternion;
@@ -793,7 +795,9 @@ namespace InternalRealtimeCSG
             meshInstance.physicsMaterial   = physicsMaterial;
             meshInstance.renderSurfaceType = renderSurfaceType;
 
-            meshInstanceGameObject.SetActive(true);
+            //meshInstanceGameObject.SetActive(true);
+
+            meshInstance.HandleOutsideOfGeneratedMeshesParent();
 
             Initialize(generatedMeshes, meshInstance);
 

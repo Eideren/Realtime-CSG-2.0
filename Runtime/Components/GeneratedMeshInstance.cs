@@ -226,9 +226,14 @@ namespace InternalRealtimeCSG
 
         internal void OnEnable()
         {
+            HandleOutsideOfGeneratedMeshesParent();
+        }
+
+        public void HandleOutsideOfGeneratedMeshesParent()
+        {
             // Workaround for when Unity gets confused with some prefab instance merging and moves
             //    the GeneratedMeshInstances out of its GeneratedMeshes container
-            if(transform.parent && !transform.parent.GetComponent<GeneratedMeshes>())
+            if (transform.parent && !transform.parent.GetComponent<GeneratedMeshes>())
             {
                 gameObject.hideFlags = HideFlags.None;
 
@@ -239,22 +244,22 @@ namespace InternalRealtimeCSG
                 catch
                 {
                     // Work-around for nested prefab instance issues ..
-                    if(gameObject.activeSelf)
+                    if (gameObject.activeSelf)
                     {
                         gameObject.SetActive(false);
 
                         MonoBehaviour[] childBehaviours = gameObject.GetComponentsInChildren<MonoBehaviour>();
 
-                        foreach(MonoBehaviour component in childBehaviours)
+                        foreach (MonoBehaviour component in childBehaviours)
                         {
                             DestroyImmediate(component);
                         }
 
                         Component[] childComponents = gameObject.GetComponentsInChildren<Component>();
 
-                        foreach(Component component in childComponents)
+                        foreach (Component component in childComponents)
                         {
-                            if(!(component is Transform))
+                            if (!(component is Transform))
                             {
                                 DestroyImmediate(component);
                             }
@@ -265,7 +270,7 @@ namespace InternalRealtimeCSG
                 }
             }
 
-            if(sharedMesh)
+            if (sharedMesh)
             {
                 sharedMesh.GetUVs(1, sUVList);
                 hasUV2 = sUVList != null && sUVList.Count == sharedMesh.vertexCount;

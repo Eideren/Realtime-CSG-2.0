@@ -14,13 +14,19 @@ namespace RealtimeCSG
             EditorGUI.BeginChangeCheck();
 
             CSGSettings.ShowTooltips       = EditorGUILayout.ToggleLeft("Show Tool-Tips", CSGSettings.ShowTooltips);
-            CSGSettings.SnapNonCSGObjects  = EditorGUILayout.ToggleLeft("Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects);
+            
             CSGSettings.AllowDirectBrushDragging = EditorGUILayout.ToggleLeft("Allow Direct Brush Dragging", CSGSettings.AllowDirectBrushDragging);
             CSGSettings.AllowTextureCoordinateDragging = EditorGUILayout.ToggleLeft("Allow Texture Coordinate Dragging", CSGSettings.AllowTextureCoordinateDragging);
             CSGSettings.AutoRigidbody      = EditorGUILayout.ToggleLeft("Disable auto add rigidbodies", CSGSettings.AutoRigidbody);
             CSGSettings.DefaultPreserveUVs = EditorGUILayout.ToggleLeft("Preserve UVs (Default)", CSGSettings.DefaultPreserveUVs);
             CSGSettings.UpdateLightmapUVButtonMode = (CSGSettings.UpdateLightmapUVButtonState)EditorGUILayout.EnumPopup("Lightmap UVs Button", CSGSettings.UpdateLightmapUVButtonMode);
             
+            EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
+            CSGSettings.SnapNonCSGObjects = EditorGUILayout.ToggleLeft("Snap Non-CSG Objects to the grid", CSGSettings.SnapNonCSGObjects);
+            CSGSettings.SyncronizeGrids = EditorGUILayout.ToggleLeft("Syncronize RCSG and Unity Grids", CSGSettings.SyncronizeGrids);
+
             EditorGUILayout.Space();
 
             CSGSettings.MaxCircleSides  = EditorGUILayout.IntField("Max Circle Sides", CSGSettings.MaxCircleSides);

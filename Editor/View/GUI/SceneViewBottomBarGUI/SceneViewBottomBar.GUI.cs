@@ -364,6 +364,11 @@ namespace RealtimeCSG
                             modified         = true;
                             moveSnapVector.y = moveSnapVector.x;
                             moveSnapVector.z = moveSnapVector.x;
+
+                            if (CSGSettings.SyncronizeGrids)
+                            {
+                                EditorSnapSettings.gridSize = new Vector3(moveSnapVector.x, moveSnapVector.x, moveSnapVector.x);
+                            }
                         }
 
                         EditorGUI.showMixedValue = false;
@@ -445,6 +450,11 @@ namespace RealtimeCSG
 
                             GridUtility.DoubleGridSize();
                             moveSnapVector = CSGSettings.SnapVector;
+
+                            if (CSGSettings.SyncronizeGrids)
+                            {
+                                EditorSnapSettings.gridSize = CSGSettings.SnapVector;
+                            }
                         }
 
                         //(x:410.00, y:2.00, width:19.00, height:15.00)
@@ -463,6 +473,11 @@ namespace RealtimeCSG
 
                             GridUtility.HalfGridSize();
                             moveSnapVector = CSGSettings.SnapVector;
+
+                            if (CSGSettings.SyncronizeGrids)
+                            {
+                                EditorSnapSettings.gridSize = CSGSettings.SnapVector;
+                            }
                         }
 
                         //(x:429.00, y:2.00, width:17.00, height:15.00)
@@ -520,7 +535,14 @@ namespace RealtimeCSG
                                 {
                                     GUIUtility.keyboardControl = 0;
 
-                                    CSGSettings.SnapVector = new Vector3(CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value);
+                                    Vector3 GridSize = new Vector3(CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value, CSGSettings.Presets[PresetCategory.Grid_Size][i].Value);
+
+                                    if (CSGSettings.SyncronizeGrids)
+                                    {
+                                        EditorSnapSettings.gridSize = GridSize;
+                                    }
+
+                                    CSGSettings.SnapVector = GridSize;
                                     CSGSettings.Save();
                                     moveSnapVector = CSGSettings.SnapVector;
                                 }
