@@ -39,8 +39,6 @@ namespace RealtimeCSG
                 return;
             }
 
-            CSGKeysPreferenceWindow.ReadKeys();
-
             _initialized = true;
 
             CSGSceneManagerRedirector.Interface = new CSGSceneManagerInstance();
