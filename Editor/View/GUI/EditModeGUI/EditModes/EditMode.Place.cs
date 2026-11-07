@@ -1927,7 +1927,7 @@ namespace RealtimeCSG
                     {
                         SceneQueryUtility.ClearDeepClick();
 
-                        if(Tools.viewTool != ViewTool.FPS && Keys.cloneDragActivate.IsKeyPressed())
+                        if(Keys.cloneDragActivate.IsKeyPressed())
                         {
                             _cloneDragKeyPressed = true;
                             Event.current.Use();
