@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using UnityEditor;
 using UnityEditor.ShortcutManagement;
@@ -91,18 +92,14 @@ namespace RealtimeCSG
 
     internal class KeyEvent
     {
-        public KeyEvent(string shortcutId, bool hold = false, params KeyCodeWithModifier[]? forcedKeys)
+        public KeyEvent(string shortcutId, [AllowNull] IShortcutContext context, bool hold = false, params KeyCodeWithModifier[]? forcedKeys)
         {
+            this.context = context;
             this.hold = hold;
             this.shortcutId = shortcutId;
             this.forcedKeys = forcedKeys ?? Array.Empty<KeyCodeWithModifier>();
             ShortcutManager.instance.shortcutBindingChanged += (arg) => ReloadShortcut();
             ReloadShortcut();
-        }
-
-        public KeyEvent(KeyCode code, EventModifiers modifier)
-        {
-            keys = new[] { new KeyCodeWithModifier(code, modifier) };
         }
 
         private void ReloadShortcut()
@@ -129,9 +126,10 @@ namespace RealtimeCSG
             keys = agg.ToArray();
         }
 
+        [AllowNull, MaybeNull] private readonly IShortcutContext context;
         private readonly bool hold;
         private readonly string? shortcutId;
-        private KeyCodeWithModifier[] forcedKeys = Array.Empty<KeyCodeWithModifier>();
+        private KeyCodeWithModifier[] forcedKeys;
         private KeyCodeWithModifier[] keys = Array.Empty<KeyCodeWithModifier>();
 
         public bool IsEmpty()
@@ -141,18 +139,10 @@ namespace RealtimeCSG
 
         public bool IsKeyPressed()
         {
-            if(!CSGSettings.EnableRealtimeCSG)
+            if(context is not null && !context.active)
             {
                 return false;
             }
-
-            if (!Keys.ShortcutsActive)
-            {
-                return false;
-            }
-
-            if (EditorWindow.focusedWindow is not SceneView)
-                return false;
 
             for(int i = 0; i < keys.Length; i++)
             {
@@ -242,15 +232,5 @@ namespace RealtimeCSG
               , var _                  => ObjectNames.NicifyVariableName(code.ToString())
             };
         }
-    }
-
-    internal class KeyDescription : Attribute
-    {
-        public KeyDescription(string name)
-        {
-            this.name = name;
-        }
-
-        public readonly string name;
     }
 }
