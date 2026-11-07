@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
 namespace RealtimeCSG
@@ -89,54 +91,52 @@ namespace RealtimeCSG
 
     internal class KeyEvent
     {
-        public KeyEvent(KeyCode code)
+        public KeyEvent(string shortcutId, bool hold = false, params KeyCodeWithModifier[]? forcedKeys)
         {
-            keys        = new[] { new KeyCodeWithModifier(code) };
-            defaultKeys = keys;
-        }
-
-        public KeyEvent(KeyCode code, bool hold)
-        {
-            keys        = new[] { new KeyCodeWithModifier(code, EventModifiers.None, hold) };
-            defaultKeys = keys;
+            this.hold = hold;
+            this.shortcutId = shortcutId;
+            this.forcedKeys = forcedKeys ?? Array.Empty<KeyCodeWithModifier>();
+            ShortcutManager.instance.shortcutBindingChanged += (arg) => ReloadShortcut();
+            ReloadShortcut();
         }
 
         public KeyEvent(KeyCode code, EventModifiers modifier)
         {
-            keys        = new[] { new KeyCodeWithModifier(code, modifier) };
-            defaultKeys = keys;
+            keys = new[] { new KeyCodeWithModifier(code, modifier) };
         }
 
-        public KeyEvent(KeyCode code, EventModifiers modifier, bool hold)
+        private void ReloadShortcut()
         {
-            keys        = new[] { new KeyCodeWithModifier(code, modifier, hold) };
-            defaultKeys = keys;
-        }
-
-        public KeyEvent(params KeyCode[] keyCodes)
-        {
-            keys = new KeyCodeWithModifier[keyCodes.Length];
-
-            for(int i = 0; i < keyCodes.Length; i++)
+            var agg = new List<KeyCodeWithModifier>(forcedKeys);
+            if (shortcutId != null)
             {
-                keys[i] = new KeyCodeWithModifier(keyCodes[i]);
+                foreach (var seq in ShortcutManager.instance.GetShortcutBinding(shortcutId).keyCombinationSequence)
+                {
+                    var modifiers = EventModifiers.None;
+                    if ((seq.modifiers & ShortcutModifiers.Alt) != 0)
+                        modifiers |= EventModifiers.Alt;
+                    if ((seq.modifiers & ShortcutModifiers.Action) != 0)
+                        modifiers |= EventModifiers.Control | EventModifiers.Command;
+                    if ((seq.modifiers & ShortcutModifiers.Control) != 0)
+                        modifiers |= EventModifiers.Control;
+                    if ((seq.modifiers & ShortcutModifiers.Shift) != 0)
+                        modifiers |= EventModifiers.Shift;
+
+                    agg.Add(new KeyCodeWithModifier(seq.keyCode, modifiers, hold));
+                }
             }
 
-            defaultKeys = keys;
+            keys = agg.ToArray();
         }
 
-        public KeyEvent(params KeyCodeWithModifier[] keys)
-        {
-            this.keys   = keys;
-            defaultKeys = keys;
-        }
-
-        public readonly KeyCodeWithModifier[] defaultKeys;
-        public KeyCodeWithModifier[] keys;
+        private readonly bool hold;
+        private readonly string? shortcutId;
+        private KeyCodeWithModifier[] forcedKeys = Array.Empty<KeyCodeWithModifier>();
+        private KeyCodeWithModifier[] keys = Array.Empty<KeyCodeWithModifier>();
 
         public bool IsEmpty()
         {
-            return keys == null || keys.Length == 0;
+            return keys.Length == 0;
         }
 
         public bool IsKeyPressed()
@@ -145,6 +145,14 @@ namespace RealtimeCSG
             {
                 return false;
             }
+
+            if (!Keys.ShortcutsActive)
+            {
+                return false;
+            }
+
+            if (EditorWindow.focusedWindow is not SceneView)
+                return false;
 
             for(int i = 0; i < keys.Length; i++)
             {

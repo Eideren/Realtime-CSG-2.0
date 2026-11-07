@@ -73,7 +73,7 @@ namespace RealtimeCSG
             "Pop out tool window",
             "Click this to turn this into a floating tool window.\n" +
             "Close that tool window to get the in scene tool window back"
-          , new KeyEvent(KeyCode.F2, EventModifiers.Control)
+          , Keys.popOutToolWindowKey
         );
 
         private const string CSG_ADDITION_TOOLTIP = "Addition";

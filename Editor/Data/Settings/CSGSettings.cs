@@ -470,6 +470,7 @@ namespace RealtimeCSG
         public static void SetRealtimeCSGEnabled(bool isEnabled)
         {
             EnableRealtimeCSG = isEnabled;
+            Keys.ShortcutsActive = EnableRealtimeCSG;
 
             if(!EnableRealtimeCSG)
             {
@@ -817,6 +818,7 @@ namespace RealtimeCSG
 
             ClipMode          = GetEnum("ClipMode", ClipMode.RemovePositive);
             EnableRealtimeCSG = EditorPrefs.GetBool("EnableRealtimeCSG", true);
+            Keys.ShortcutsActive = EnableRealtimeCSG;
 
             DefaultMaterial = GetMaterial("DefaultMaterial", MaterialUtility.WallMaterial);
 
