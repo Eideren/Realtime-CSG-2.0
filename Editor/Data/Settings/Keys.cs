@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using RealtimeCSG.Foundation;
 using UnityEditor.ShortcutManagement;
@@ -9,11 +10,12 @@ namespace RealtimeCSG
     {
         // type is initialized from top to bottom, keep this at the top as other statics rely on this being assigned
         private static readonly InSceneView inSceneViewContext = new();
+        private static readonly InNonConsumingSceneView inNonConsumingSceneView = new(inSceneViewContext);
 
         // Specific handling for these two keys, we cannot rebind keys baked into menu item declaration,
         // we'll just provide an additional key user can bind on top of the default one in those cases
 
-        [Shortcut("RCSG/ Turn Realtime-CSG on or off (besides Ctrl+F3)", KeyCode.None)]
+        [Shortcut("RCSG/ Turn Realtime-CSG on or off (besides Ctrl+F3)")]
         private static void ToggleRealtimeCSG(ShortcutArguments args)
         {
             CSGSettings.SetRealtimeCSGEnabled(!CSGSettings.EnableRealtimeCSG);
@@ -22,7 +24,7 @@ namespace RealtimeCSG
         private const string idPopOutToolWindowKey = "RCSG/Tools: Popout Tool Window (besides Ctrl+F2)";
         public static readonly KeyEvent popOutToolWindowKey = new KeyEvent(idPopOutToolWindowKey, null, false, new KeyCodeWithModifier(KeyCode.F2, EventModifiers.Control));
 
-        [Shortcut(idPopOutToolWindowKey, KeyCode.None)]
+        [Shortcut(idPopOutToolWindowKey)]
         private static void PopoutToolWindow(ShortcutArguments args)
         {
             EditModeToolWindowSceneGUI.GetWindow();
@@ -49,12 +51,50 @@ namespace RealtimeCSG
             new KeyCodeWithModifier(KeyCode.KeypadEnter)
         );
 
-        [Shortcut(idCancelActionKey, typeof(InSceneView), KeyCode.None)]
-        [Shortcut(idPerformActionKey, typeof(InSceneView), KeyCode.None)]
+        [Shortcut(idCancelActionKey, typeof(InSceneView))]
+        [Shortcut(idPerformActionKey, typeof(InSceneView))]
         private static void DummyInputSwallower1(ShortcutArguments args)
         {
             // Shortcuts' function are handled in-context by RCSG instead of globally through static functions
             // This is just a dummy to ensure shortcuts are registered within the manager
+        }
+
+
+
+
+        private const string idOperationMoveBefore = "RCSG/Selection: Move operation before";
+        private const string idOperationMoveAfter = "RCSG/Selection: Move operation after";
+
+        [Shortcut(idOperationMoveBefore, typeof(InNonConsumingSceneView), KeyCode.PageUp)]
+        private static void MoveBefore(ShortcutArguments args)
+        {
+            var trs = Selection.transforms;
+            trs = trs.OrderBy(x => x.GetSiblingIndex()).ToArray();
+
+            foreach (var transform in trs)
+            {
+                var i = transform.GetSiblingIndex();
+                if (i > 0)
+                    transform.SetSiblingIndex(i - 1);
+            }
+
+            InternalCSGModelManager.UpdateHierarchy();
+        }
+
+        [Shortcut(idOperationMoveAfter, typeof(InNonConsumingSceneView), KeyCode.PageDown)]
+        private static void MoveAfter(ShortcutArguments args)
+        {
+            var trs = Selection.transforms;
+            trs = trs.OrderByDescending(x => x.GetSiblingIndex()).ToArray();
+
+            foreach (var transform in trs)
+            {
+                var i = transform.GetSiblingIndex();
+                if (i < transform.parent.childCount - 1)
+                    transform.SetSiblingIndex(i + 1);
+            }
+
+            InternalCSGModelManager.UpdateHierarchy();
         }
 
 
@@ -196,19 +236,55 @@ namespace RealtimeCSG
 
         public static bool SceneViewShortcutsActive
         {
-            get => inSceneViewContext.active;
-            set => inSceneViewContext.active = value;
+            get => inSceneViewContext.Active;
+            set => inSceneViewContext.Active = value;
         }
 
         static Keys()
         {
-            EditorApplication.delayCall += static () => ShortcutManager.RegisterContext(inSceneViewContext);
+            EditorApplication.delayCall += static () =>
+            {
+                ShortcutManager.RegisterContext(inSceneViewContext);
+                ShortcutManager.RegisterContext(inNonConsumingSceneView);
+            };
         }
 
-        private class InSceneView : IShortcutContext
+        private class InSceneView : IConsumableShortcutContext
         {
-            public bool active { get; set; }
-            bool IShortcutContext.active => EditorWindow.focusedWindow is SceneView && Tools.viewTool != ViewTool.FPS;
+            private int _frameConsumed = -1;
+            public bool Active { get; set; }
+
+            public bool CanRaiseEvent => Active 
+                                         && EditorWindow.focusedWindow is SceneView
+                                         && Tools.viewTool != ViewTool.FPS;
+
+            bool IShortcutContext.active => CanRaiseEvent && _frameConsumed == Time.frameCount;
+
+            public void Consume() => _frameConsumed = Time.frameCount;
+        }
+
+        private class InNonConsumingSceneView : IShortcutContext
+        {
+            private readonly InSceneView _parent;
+
+            public InNonConsumingSceneView(InSceneView parent) => _parent = parent;
+
+            bool IShortcutContext.active => _parent.Active
+                                            && EditorWindow.focusedWindow is SceneView
+                                            && Tools.viewTool != ViewTool.FPS;
+        }
+        
+        internal interface IConsumableShortcutContext : IShortcutContext
+        {
+            /// <summary>
+            /// Whether the current context is valid
+            /// </summary>
+            bool CanRaiseEvent { get; }
+
+            /// <summary>
+            /// Mark this context as having consumed the key event
+            /// </summary>
+            void Consume();
         }
 
         public static bool HandleSceneValidate(IEditMode tool, bool checkForTextEditing = true)

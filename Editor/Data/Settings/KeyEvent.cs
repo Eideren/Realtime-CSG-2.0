@@ -92,7 +92,7 @@ namespace RealtimeCSG
 
     internal class KeyEvent
     {
-        public KeyEvent(string shortcutId, [AllowNull] IShortcutContext context, bool hold = false, params KeyCodeWithModifier[]? forcedKeys)
+        public KeyEvent(string shortcutId, [AllowNull] Keys.IConsumableShortcutContext context, bool hold = false, [AllowNull] params KeyCodeWithModifier[] forcedKeys)
         {
             this.context = context;
             this.hold = hold;
@@ -126,9 +126,9 @@ namespace RealtimeCSG
             keys = agg.ToArray();
         }
 
-        [AllowNull, MaybeNull] private readonly IShortcutContext context;
+        [AllowNull, MaybeNull] private readonly Keys.IConsumableShortcutContext context;
         private readonly bool hold;
-        private readonly string? shortcutId;
+        [AllowNull, MaybeNull] private readonly string shortcutId;
         private KeyCodeWithModifier[] forcedKeys;
         private KeyCodeWithModifier[] keys = Array.Empty<KeyCodeWithModifier>();
 
@@ -137,9 +137,9 @@ namespace RealtimeCSG
             return keys.Length == 0;
         }
 
-        public bool IsKeyPressed()
+        public bool IsKeyPressed(bool consume = true)
         {
-            if(context is not null && !context.active)
+            if(context is not null && !context.CanRaiseEvent)
             {
                 return false;
             }
@@ -148,6 +148,8 @@ namespace RealtimeCSG
             {
                 if(keys[i].IsKeyPressed())
                 {
+                    if (consume)
+                        context?.Consume();
                     return true;
                 }
             }
