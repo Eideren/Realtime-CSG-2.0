@@ -1,4 +1,5 @@
-﻿using RealtimeCSG.Components;
+﻿using System;
+using RealtimeCSG.Components;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -1025,6 +1026,15 @@ namespace RealtimeCSG
 
             startTime = EditorApplication.timeSinceStartup;
 
+            // This is O(NlogN) but it may be optimized into approximately O(N) by
+            // 1. Sorting operations and brushes in place on every call, will be O(NlogN) on initial call, will be ~O(N) on successive calls
+            // 2. Concat those two into a single array by scanning through operations and brushes at the same time, picking from one or the other depending on the sort
+            // 3. UpdateNodePosition on every item of that array
+            // No idea if any of the callers expect those items to move though, so leaving it at that for now.
+            // -Eideren
+            var tempBuffer = System.Buffers.ArrayPool<NodePositionUpdate>.Shared.Rent(Brushes.Count + Operations.Count);
+            int tempBufferHead = 0;
+
             for(int i = Operations.Count - 1; i >= 0; i--)
             {
                 CSGOperation item = Operations[i];
@@ -1041,7 +1051,7 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                ParentNodeDataExtensions.UpdateNodePosition(item.parentData, parentData);
+                tempBuffer[tempBufferHead++] = new(item.parentData, parentData, item.transform.GetSiblingIndex());
             }
 
             for(int i = Brushes.Count - 1; i >= 0; i--)
@@ -1060,8 +1070,17 @@ namespace RealtimeCSG
                     continue;
                 }
 
-                ParentNodeDataExtensions.UpdateNodePosition(item.hierarchyItem, parentData);
+                tempBuffer[tempBufferHead++] = new(item.hierarchyItem, parentData, item.transform.GetSiblingIndex());
             }
+
+            Array.Sort(tempBuffer, 0, tempBufferHead);
+
+            foreach (var nodeData in tempBuffer.AsSpan()[..tempBufferHead])
+            {
+                ParentNodeDataExtensions.UpdateNodePosition(nodeData.HierarchyItem, nodeData.ParentData);
+            }
+
+            System.Buffers.ArrayPool<NodePositionUpdate>.Shared.Return(tempBuffer);
 
             if(External.setChildNodes != null)
             {
@@ -1107,6 +1126,25 @@ namespace RealtimeCSG
             }
 
             UpdateHierarchyTime = EditorApplication.timeSinceStartup - startTime;
+        }
+
+        private struct NodePositionUpdate : IComparable<NodePositionUpdate>
+        {
+            public HierarchyItem HierarchyItem { get; set; }
+            public ParentNodeData ParentData { get; set; }
+            public int Order { get; set; }
+
+            public NodePositionUpdate(HierarchyItem hierarchyItem, ParentNodeData parentData, int order)
+            {
+                HierarchyItem = hierarchyItem;
+                ParentData = parentData;
+                Order = order;
+            }
+
+            public int CompareTo(NodePositionUpdate other)
+            {
+                return -Order.CompareTo(other.Order);
+            }
         }
     }
 }
