@@ -677,6 +677,13 @@ namespace RealtimeCSG
 
         public virtual void HandleEvents(SceneView sceneView, Rect sceneRect)
         {
+            if (Event.current.type is EventType.MouseDown or EventType.MouseMove or EventType.MouseDrag 
+                && Event.current.alt
+                && Tools.viewTool == ViewTool.Pan)
+            {
+                return;
+            }
+            
             if (Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseMove)
             {
                 mouseIsDragging = false;
